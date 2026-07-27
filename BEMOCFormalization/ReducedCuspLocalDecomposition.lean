@@ -723,4 +723,101 @@ theorem reducedLatitudeCusp_eq_lowerConstant_add_powerBranch
       _ = _ := by
         dsimp [K, ν]
 
+/-
+## Resonant range
+
+At `α = 1` the sharp second-derivative envelope is `A / x`.  Integrating
+once gives the logarithmic growth of the first derivative.  This is the
+borderline estimate needed before extracting the physical
+`(s-t)² log |s-t|` branch.
+-/
+
+/-- A convenient nonnegative coefficient for the resonant logarithmic
+first-derivative estimate. -/
+noncomputable def reducedCuspResonantD1MajorantCoefficient : ℝ :=
+  |reducedLatitudeCuspD1Value 1 1| +
+    reducedCuspD2MajorantCoefficient 1
+
+theorem reducedCuspResonantD1MajorantCoefficient_nonneg :
+    0 ≤ reducedCuspResonantD1MajorantCoefficient := by
+  unfold reducedCuspResonantD1MajorantCoefficient
+  exact add_nonneg (abs_nonneg _)
+    (reducedCuspD2MajorantCoefficient_nonneg 1)
+
+/-- Sharp logarithmic growth of the first reduced-cusp derivative at the
+resonant exponent. -/
+theorem abs_reducedLatitudeCuspD1Value_one_le_log
+    {x : ℝ} (hx : 0 < x) (hx1 : x ≤ 1) :
+    |reducedLatitudeCuspD1Value 1 x| ≤
+      |reducedLatitudeCuspD1Value 1 1| +
+        reducedCuspD2MajorantCoefficient 1 * (-Real.log x) := by
+  let A := reducedCuspD2MajorantCoefficient 1
+  have hA : 0 ≤ A := reducedCuspD2MajorantCoefficient_nonneg 1
+  have hD2int :
+      IntervalIntegrable (reducedLatitudeCuspD2Value 1) volume x 1 :=
+    intervalIntegrable_reducedLatitudeCuspD2Value_pos hx hx1
+  have hFTC :
+      (∫ y in x..1, reducedLatitudeCuspD2Value 1 y) =
+        reducedLatitudeCuspD1Value 1 1 -
+          reducedLatitudeCuspD1Value 1 x := by
+    apply intervalIntegral.integral_eq_sub_of_hasDerivAt
+    · intro y hy
+      rw [uIcc_of_le hx1] at hy
+      exact hasDerivAt_reducedLatitudeCuspD1Value
+        (α := 1) (hx.trans_le hy.1)
+    · exact hD2int
+  have hmajor :
+      IntervalIntegrable (fun y : ℝ ↦ A * y⁻¹) volume x 1 := by
+    apply ContinuousOn.intervalIntegrable_of_Icc hx1
+    exact continuousOn_const.mul
+      (continuousOn_id.inv₀
+        (fun y hy hzero ↦ by
+          simp only [id_eq] at hzero
+          rw [hzero] at hy
+          linarith [hy.1]))
+  have hnorm := intervalIntegral.norm_integral_le_of_norm_le
+    (f := reducedLatitudeCuspD2Value 1)
+    (g := fun y : ℝ ↦ A * y⁻¹) (by
+      filter_upwards [ae_restrict_mem measurableSet_uIoc] with y hy
+      rw [uIoc_of_le hx1] at hy
+      have hy0 : 0 < y := hx.trans hy.1
+      have hb :=
+        abs_reducedLatitudeCuspD2Value_le_rpow
+          (α := 1) hy0 (by norm_num)
+      have hyrpow : y ^ ((1 : ℝ) / 2 - 3 / 2) = y⁻¹ := by
+        norm_num
+        exact Real.rpow_neg_one y
+      simp only [Real.norm_eq_abs]
+      rw [hyrpow] at hb
+      simpa [A, reducedCuspD2MajorantCoefficient] using hb) hmajor
+  have hint :
+      |∫ y in x..1, reducedLatitudeCuspD2Value 1 y| ≤
+        A * (-Real.log x) := by
+    have hnorm' :
+        |∫ y in x..1, reducedLatitudeCuspD2Value 1 y| ≤
+          |∫ y in x..1, A * y⁻¹| := by
+      simpa [Real.norm_eq_abs] using hnorm
+    calc
+      _ ≤ |∫ y in x..1, A * y⁻¹| := hnorm'
+      _ = A * (-Real.log x) := by
+        rw [intervalIntegral.integral_const_mul,
+          integral_inv_of_pos hx (by norm_num)]
+        have hlogdiv : Real.log (1 / x) = -Real.log x := by
+          rw [one_div, Real.log_inv]
+        rw [hlogdiv, abs_of_nonneg
+          (mul_nonneg hA (neg_nonneg.mpr
+            (Real.log_nonpos hx.le hx1)))]
+  calc
+    |reducedLatitudeCuspD1Value 1 x| =
+        |reducedLatitudeCuspD1Value 1 1 -
+          ∫ y in x..1, reducedLatitudeCuspD2Value 1 y| := by
+      congr 1
+      rw [hFTC]
+      ring
+    _ ≤ |reducedLatitudeCuspD1Value 1 1| +
+        |∫ y in x..1, reducedLatitudeCuspD2Value 1 y| := abs_sub _ _
+    _ ≤ |reducedLatitudeCuspD1Value 1 1| + A * (-Real.log x) :=
+      add_le_add_left hint _
+    _ = _ := rfl
+
 end BEMOC

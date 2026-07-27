@@ -235,6 +235,12 @@ split into checked modules under `BEMOCFormalization/`.
 - fixed-square two-moment bounds for both the power cusp and the resonant
   quadratic-log cusp, including the quadratic reduced-variable substitution
   and exact cancellation of the apparent scale-dependent `a² log a` term;
+- the resonant reduced-cusp principal subtraction, proved directly from the
+  centered angular integral: exact integration of the quadratic model,
+  near/away cosine comparison, the estimate
+  `|h₁''(x)-c₁/x|=O(x⁻¹ᐟ²)`, two justified integrations, and the exact local
+  decomposition
+  `h₁(x)=C₀+A₁x+c₁x log x+x^(3/2)B(x)` with uniformly bounded `B`;
 - the endpoint-safe algebraic core of the unequal-scale even-power series:
   `Q=(B/A)²`, degree-four polynomial/geometric normal summability, and the
   monomial bound `16 A^(β-4) Q^(m-2)` even when a squared radius vanishes;
@@ -311,8 +317,9 @@ edge cases, and verification gates are recorded in
    termwise derivative passes, the closed-rectangle derivative identity,
    scale conversion, and the concrete mixed Taylor/Peano transfer are
    checked.  Thus the unequal-scale same-hemisphere estimate in (5.6) is
-   unconditional.  The remaining closure is concentrated in the resonant
-   local reduced-cusp subtraction in (5.4), retaining the graded powers
+   unconditional.  The resonant local reduced-cusp subtraction in (5.4) is
+   also complete.  The remaining closure is concentrated in inserting the
+   local decompositions into neighboring blocks, retaining the graded powers
    while bounding (5.5), and applying the resulting bounds to the comparable,
    central, and antipodal rectangles.
 3. The analytic proof of Wagner's configuration-uniform lower bound for

@@ -43,6 +43,7 @@ import BEMOCFormalization.LatitudeVariableMixedDerivative
 import BEMOCFormalization.LatitudeWeakSingularity
 import BEMOCFormalization.ReducedCuspDerivatives
 import BEMOCFormalization.ReducedCuspLocalDecomposition
+import BEMOCFormalization.ReducedCuspResonant
 import BEMOCFormalization.ReducedCuspQuadratic
 import BEMOCFormalization.RealBinomialSeries
 import BEMOCFormalization.MixedTaylorRemainder

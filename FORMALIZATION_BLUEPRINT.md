@@ -389,7 +389,7 @@ is not integrable on the diagonal.
 
 This module should not mention BEMOC.
 
-### L4. Local kernel expansion — nonresonant cases complete
+### L4. Local kernel expansion — reduced-cusp decomposition complete
 
 Create `BEMOCFormalization/LatitudeKernelLocal.lean`.
 
@@ -417,11 +417,11 @@ H₁(x) + x log(1/x) B₁(x),         α = 1;
 Current split:
 
 - the nonresonant ranges `0 < α < 1` and `1 < α < 2` are proved;
-- formalize `α = 1` in a separate namespace/file section;
-- combine only at the exported theorem.
-
-The remaining risk is the logarithmic resonant normalization, not the
-nonresonant branch decomposition.
+- at `α = 1`, the exact principal coefficient has been isolated directly
+  from the angular integral and Lean proves
+  `h₁(x)=C₀+A₁x+c₁x log x+x^(3/2)B(x)` with `B` uniformly bounded;
+- the remaining work is to combine these decompositions in the exported
+  neighboring/comparable block theorems.
 
 ### L5. Comparable and polar blocks — analytic closure pending
 
@@ -574,7 +574,7 @@ audit, Git commit, and push.
 |---|---|---|
 | 1 | Unequal-series termwise `(2,2)` differentiation | Complete |
 | 2 | Unequal pointwise-to-block closure | Complete |
-| 3 | Resonant `α = 1` cusp decomposition | All exponent ranges covered |
+| 3 | Resonant `α = 1` cusp decomposition | Complete |
 | 4 | Sharp comparable estimate | Unconditional comparable-block estimate |
 | 5 | Central/antipodal instantiation and L7 endpoint | `exists_bemocLatitudeDeficit_concrete_bound` |
 | 6 | Component assembly and final audit | Unconditional BEMOC upper theorem |
