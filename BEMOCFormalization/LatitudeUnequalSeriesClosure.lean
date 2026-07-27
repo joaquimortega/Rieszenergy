@@ -1,0 +1,1099 @@
+import BEMOCFormalization.LatitudeAngularExpansion
+
+/-!
+# Normal convergence of the differentiated unequal-latitude series
+
+This module packages the coefficient side of the termwise `(2,2)`
+differentiation in (5.6).  The geometric factor is the squared angular
+ratio `Q=(B/A)²`; the generalized binomial coefficient is sampled at the
+even indices.  Four derivatives cost only a fourth-degree polynomial.
+-/
+
+open Set
+
+namespace BEMOC
+
+set_option maxHeartbeats 800000
+
+noncomputable def evenAngularDerivativeCoefficient
+    (α : ℝ) (m : ℕ) : ℝ :=
+  |Ring.choose (α / 2) (2 * m)| *
+    |normalizedCosineMoment (2 * m)| *
+    ((m : ℝ) + 1) ^ (4 : ℕ)
+
+theorem evenAngularDerivativeCoefficient_nonneg
+    (α : ℝ) (m : ℕ) :
+    0 ≤ evenAngularDerivativeCoefficient α m := by
+  unfold evenAngularDerivativeCoefficient
+  positivity
+
+/-- The coefficient sequence surviving four height derivatives is normally
+summable against every fixed geometric ratio `q<1`. -/
+theorem summable_evenAngularDerivativeCoefficient_mul_pow
+    (α : ℝ) {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
+    Summable (fun m : ℕ ↦
+      evenAngularDerivativeCoefficient α m * q ^ m) := by
+  have hsqrt0 : 0 ≤ Real.sqrt q := Real.sqrt_nonneg q
+  have hsqrt1 : |Real.sqrt q| < 1 := by
+    rw [abs_of_nonneg hsqrt0]
+    exact (Real.sqrt_lt' zero_lt_one).2 (by simpa using hq1)
+  have hbase :=
+    (summable_nat_add_one_pow_mul_real_choose_mul_pow
+      4 (α / 2) (Real.sqrt q) hsqrt1).norm
+  have heven :
+      Summable (fun m : ℕ ↦
+        ‖(((2 * m : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
+          Ring.choose (α / 2) (2 * m) *
+          Real.sqrt q ^ (2 * m)‖) :=
+    hbase.comp_injective (fun _ _ h ↦ by omega)
+  apply heven.of_nonneg_of_le
+  · intro m
+    exact mul_nonneg
+      (evenAngularDerivativeCoefficient_nonneg α m) (pow_nonneg hq0 m)
+  · intro m
+    have hmoment := abs_normalizedCosineMoment_le_one (2 * m)
+    have hweight :
+        ((m : ℝ) + 1) ^ (4 : ℕ) ≤
+          (((2 * m : ℕ) : ℝ) + 1) ^ (4 : ℕ) := by
+      apply pow_le_pow_left₀ (by positivity)
+      norm_num
+      have hm0 : (0 : ℝ) ≤ (m : ℝ) := by positivity
+      linarith
+    have hsqrtSq : Real.sqrt q ^ 2 = q := Real.sq_sqrt hq0
+    have hsqrtPow : Real.sqrt q ^ (2 * m) = q ^ m := by
+      rw [pow_mul, hsqrtSq]
+    unfold evenAngularDerivativeCoefficient
+    rw [← hsqrtPow]
+    simp only [norm_mul, Real.norm_eq_abs, abs_mul, abs_pow,
+      abs_of_nonneg hsqrt0]
+    have hcoeff :
+        |Ring.choose (α / 2) (2 * m)| *
+              |normalizedCosineMoment (2 * m)| *
+              ((m : ℝ) + 1) ^ (4 : ℕ) ≤
+            |Ring.choose (α / 2) (2 * m)| *
+              (((2 * m : ℕ) : ℝ) + 1) ^ (4 : ℕ) := by
+      calc
+        |Ring.choose (α / 2) (2 * m)| *
+              |normalizedCosineMoment (2 * m)| *
+              ((m : ℝ) + 1) ^ (4 : ℕ) ≤
+            |Ring.choose (α / 2) (2 * m)| * 1 *
+              ((m : ℝ) + 1) ^ (4 : ℕ) := by
+          gcongr
+        _ ≤
+            |Ring.choose (α / 2) (2 * m)| *
+              (((2 * m : ℕ) : ℝ) + 1) ^ (4 : ℕ) := by
+          simpa using
+            mul_le_mul_of_nonneg_left hweight
+              (abs_nonneg (Ring.choose (α / 2) (2 * m)))
+    apply mul_le_mul_of_nonneg_right _ (pow_nonneg hsqrt0 (2 * m))
+    have hbaseNonneg : 0 ≤ (((2 * m : ℕ) : ℝ) + 1) := by positivity
+    rw [abs_of_nonneg hbaseNonneg]
+    simpa [Nat.cast_mul, mul_comm] using hcoeff
+
+/-- The shifted sequence occurring after the first two even modes are
+separated is also summable. -/
+theorem summable_shifted_evenAngularDerivativeCoefficient_mul_pow
+    (α : ℝ) {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
+    Summable (fun r : ℕ ↦
+      evenAngularDerivativeCoefficient α (r + 2) * q ^ r) := by
+  by_cases hq : q = 0
+  · subst q
+    apply summable_of_ne_finset_zero (s := {0})
+    intro r hr
+    simp only [Finset.mem_singleton] at hr
+    simp [hr]
+  · have hfull :=
+      summable_evenAngularDerivativeCoefficient_mul_pow α hq0 hq1
+    have htail :
+        Summable (fun r : ℕ ↦
+          evenAngularDerivativeCoefficient α (r + 2) * q ^ (r + 2)) :=
+      hfull.comp_injective (fun _ _ h ↦ by omega)
+    have hq2 : q ^ 2 ≠ 0 := pow_ne_zero 2 hq
+    have hscaled := htail.mul_left (q ^ 2)⁻¹
+    convert hscaled using 1
+    funext r
+    rw [pow_add]
+    field_simp
+    ring
+
+/-! ## Uniform bounds for the finite Leibniz formula -/
+
+private theorem angularKernelA_le_four_of_mem
+    {s t : ℝ} (hs : s ∈ Icc (-1 : ℝ) 1)
+    (ht : t ∈ Icc (-1 : ℝ) 1) :
+    angularKernelA s t ≤ 4 := by
+  unfold angularKernelA
+  have habs : |s| * |t| ≤ 1 := by
+    calc
+      |s| * |t| ≤ 1 * 1 := by
+        exact mul_le_mul (abs_le.mpr hs) (abs_le.mpr ht)
+          (abs_nonneg _) (by norm_num)
+      _ = 1 := by norm_num
+  have hst : -1 ≤ s * t := by
+    calc
+      -1 ≤ -(|s| * |t|) := by linarith
+      _ = -|s * t| := by rw [abs_mul]
+      _ ≤ s * t := neg_abs_le _
+  linarith
+
+private theorem abs_height_le_one_of_mem
+    {s : ℝ} (hs : s ∈ Icc (-1 : ℝ) 1) :
+    |s| ≤ 1 :=
+  abs_le.mpr hs
+
+/-- For `0 < α < 2`, every one of the four falling factors generated by
+four differentiations is bounded by a fixed multiple of `m+1`. -/
+theorem abs_latitude_even_exponent_sub_le
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (m r : ℕ) (hr : r ≤ 3) :
+    |α / 2 - 2 * (m : ℝ) - r| ≤
+      5 * ((m : ℝ) + 1) := by
+  rw [abs_le]
+  have hm0 : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+  have hr0 : (0 : ℝ) ≤ (r : ℝ) := Nat.cast_nonneg r
+  have hr3 : (r : ℝ) ≤ 3 := by exact_mod_cast hr
+  constructor
+  · have hm0 : (0 : ℝ) ≤ m := by positivity
+    nlinarith
+  ·
+    nlinarith
+
+/-- Product form of the preceding estimate.  This is intentionally
+generous; the constant is kept numerical so the final normal majorant has
+no hidden dependence on the mode. -/
+theorem abs_latitude_even_falling_four_le
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) (m : ℕ) :
+    |(α / 2 - 2 * (m : ℝ)) *
+        (α / 2 - 2 * (m : ℝ) - 1) *
+        (α / 2 - 2 * (m : ℝ) - 2) *
+        (α / 2 - 2 * (m : ℝ) - 3)| ≤
+      625 * ((m : ℝ) + 1) ^ (4 : ℕ) := by
+  rw [abs_mul, abs_mul, abs_mul]
+  have h0 := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
+  have h1 := abs_latitude_even_exponent_sub_le hα0 hα2 m 1 (by omega)
+  have h2 := abs_latitude_even_exponent_sub_le hα0 hα2 m 2 (by omega)
+  have h3 := abs_latitude_even_exponent_sub_le hα0 hα2 m 3 (by omega)
+  norm_num at h0
+  norm_num at h1 h2 h3
+  calc
+    |α / 2 - 2 * (m : ℝ)| *
+          |α / 2 - 2 * (m : ℝ) - 1| *
+          |α / 2 - 2 * (m : ℝ) - 2| *
+          |α / 2 - 2 * (m : ℝ) - 3| ≤
+        (5 * ((m : ℝ) + 1)) *
+          (5 * ((m : ℝ) + 1)) *
+          (5 * ((m : ℝ) + 1)) *
+          (5 * ((m : ℝ) + 1)) := by gcongr
+    _ = 625 * ((m : ℝ) + 1) ^ (4 : ℕ) := by ring
+
+private theorem latitude_common_factor_eq
+    {α A u v : ℝ} (hA : 0 < A) (m : ℕ) (hm : 2 ≤ m) :
+    (4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) *
+        A ^ (α / 2 - 2 * (m : ℝ)) =
+      16 * A ^ (α / 2 - 4) *
+        (4 * u * v / A ^ 2) ^ (m - 2) := by
+  have h := unequalDerivativeMonomial_eq_normalized
+    (β := α / 2) (A := A) (u := u) (v := v)
+    (m := m) (a := 0) (b := 2) (c := 2)
+    hA (by omega) (by omega) (by omega) hm
+  unfold unequalDerivativeMonomial at h
+  have hr := Real.rpow_sub_natCast hA.ne' (α / 2) (2 * m)
+  have hcast : ((2 * m : ℕ) : ℝ) = 2 * (m : ℝ) := by norm_num
+  rw [hcast] at hr
+  simp only [Nat.add_zero, Nat.sub_self, pow_zero, mul_one] at h
+  rw [← h]
+  rw [hr]
+  field_simp [pow_ne_zero _ hA.ne']
+  push_cast
+  ring
+
+private theorem abs_unequalRadiusPower_le
+    {A s : ℝ} {m : ℕ} (hm : 2 ≤ m)
+    (hs : s ∈ Icc (-1 : ℝ) 1)
+    (huA : 1 - s ^ 2 ≤ A) :
+    |unequalRadiusPower m s| ≤
+      A ^ 2 * (1 - s ^ 2) ^ (m - 2) := by
+  have hu0 : 0 ≤ 1 - s ^ 2 := by nlinarith [hs.1, hs.2]
+  have hA0 : 0 ≤ A := hu0.trans huA
+  unfold unequalRadiusPower
+  rw [abs_of_nonneg (pow_nonneg hu0 m)]
+  rw [show m = (m - 2) + 2 by omega, pow_add]
+  calc
+    (1 - s ^ 2) ^ (m - 2) * (1 - s ^ 2) ^ 2 ≤
+        (1 - s ^ 2) ^ (m - 2) * A ^ 2 := by
+      gcongr
+    _ = A ^ 2 * (1 - s ^ 2) ^ (m - 2) := by ring
+
+private theorem abs_unequalRadiusPowerD1_le
+    {A s : ℝ} {m : ℕ} (hm : 2 ≤ m)
+    (hs : s ∈ Icc (-1 : ℝ) 1)
+    (huA : 1 - s ^ 2 ≤ A) :
+    |unequalRadiusPowerD1 m s| ≤
+      2 * ((m : ℝ) + 1) * A * (1 - s ^ 2) ^ (m - 2) := by
+  have hu0 : 0 ≤ 1 - s ^ 2 := by nlinarith [hs.1, hs.2]
+  have hA0 : 0 ≤ A := hu0.trans huA
+  have hsabs := abs_height_le_one_of_mem hs
+  have hmcast : (0 : ℝ) ≤ m := by positivity
+  have hmle : (m : ℝ) ≤ (m : ℝ) + 1 := by linarith
+  have hpow :
+      (1 - s ^ 2) ^ (m - 1) =
+        (1 - s ^ 2) ^ (m - 2) * (1 - s ^ 2) := by
+    rw [show m - 1 = (m - 2) + 1 by omega, pow_add, pow_one]
+  unfold unequalRadiusPowerD1
+  simp only [abs_mul, abs_of_nonneg hmcast, abs_pow,
+    abs_of_nonneg hu0, abs_neg]
+  norm_num
+  rw [hpow]
+  calc
+    (m : ℝ) *
+          ((1 - s ^ 2) ^ (m - 2) * (1 - s ^ 2)) *
+          (2 * |s|) ≤
+        ((m : ℝ) + 1) *
+          ((1 - s ^ 2) ^ (m - 2) * A) * (2 * 1) := by
+      gcongr
+    _ = 2 * ((m : ℝ) + 1) * A *
+          (1 - s ^ 2) ^ (m - 2) := by ring
+
+private theorem abs_unequalRadiusPowerD2_le
+    {A s : ℝ} {m : ℕ} (hm : 2 ≤ m)
+    (hs : s ∈ Icc (-1 : ℝ) 1)
+    (huA : 1 - s ^ 2 ≤ A) (hA4 : A ≤ 4) :
+    |unequalRadiusPowerD2 m s| ≤
+      16 * ((m : ℝ) + 1) ^ 2 *
+        (1 - s ^ 2) ^ (m - 2) := by
+  have hu0 : 0 ≤ 1 - s ^ 2 := by nlinarith [hs.1, hs.2]
+  have hA0 : 0 ≤ A := hu0.trans huA
+  have hsabs := abs_height_le_one_of_mem hs
+  have hmcast : (0 : ℝ) ≤ m := by positivity
+  have hm1 :
+      |(m : ℝ) - 1| ≤ (m : ℝ) + 1 := by
+    rw [abs_le]
+    constructor <;> linarith
+  have hmle : (m : ℝ) ≤ (m : ℝ) + 1 := by linarith
+  have hssq : (2 * |s|) ^ 2 ≤ 4 := by
+    nlinarith [abs_nonneg s, sq_nonneg (|s| - 1)]
+  have hu4 : 1 - s ^ 2 ≤ 4 := huA.trans hA4
+  have hpow :
+      (1 - s ^ 2) ^ (m - 1) =
+        (1 - s ^ 2) ^ (m - 2) * (1 - s ^ 2) := by
+    rw [show m - 1 = (m - 2) + 1 by omega, pow_add, pow_one]
+  unfold unequalRadiusPowerD2
+  calc
+    |_ + _| ≤
+        |(m : ℝ) * ((m : ℝ) - 1) *
+            (1 - s ^ 2) ^ (m - 2) * (-2 * s) ^ 2| +
+          |(m : ℝ) * (1 - s ^ 2) ^ (m - 1) * (-2)| :=
+      abs_add _ _
+    _ ≤
+        ((m : ℝ) + 1) * ((m : ℝ) + 1) *
+            (1 - s ^ 2) ^ (m - 2) * (2 * 1) ^ 2 +
+          ((m : ℝ) + 1) *
+            ((1 - s ^ 2) ^ (m - 2) * 4) * 2 := by
+      simp only [abs_mul, abs_pow, abs_neg,
+        abs_of_nonneg hmcast, abs_of_nonneg hu0]
+      norm_num
+      rw [hpow]
+      gcongr
+    _ ≤ 16 * ((m : ℝ) + 1) ^ 2 *
+          (1 - s ^ 2) ^ (m - 2) := by
+      have hw : 1 ≤ (m : ℝ) + 1 := by
+        have : (0 : ℝ) ≤ m := by positivity
+        linarith
+      have hcoef :
+          4 * ((m : ℝ) + 1) ^ 2 + 8 * ((m : ℝ) + 1) ≤
+            16 * ((m : ℝ) + 1) ^ 2 := by nlinarith [sq_nonneg ((m : ℝ) + 1)]
+      have hupow : 0 ≤ (1 - s ^ 2) ^ (m - 2) := pow_nonneg hu0 _
+      calc
+        _ = (4 * ((m : ℝ) + 1) ^ 2 + 8 * ((m : ℝ) + 1)) *
+              (1 - s ^ 2) ^ (m - 2) := by ring
+        _ ≤ (16 * ((m : ℝ) + 1) ^ 2) *
+              (1 - s ^ 2) ^ (m - 2) :=
+          mul_le_mul_of_nonneg_right hcoef hupow
+        _ = _ := by ring
+
+private theorem rpow_sub_nat_le_four_pow_mul
+    {A e : ℝ} (hA : 0 < A) (hA4 : A ≤ 4)
+    {r k : ℕ} (hrk : r ≤ k) :
+    A ^ (e - r) ≤
+      (4 : ℝ) ^ (k - r) * A ^ (e - k) := by
+  have hexp :
+      e - (r : ℝ) = (e - (k : ℝ)) + ((k - r : ℕ) : ℝ) := by
+    push_cast
+    rw [Nat.cast_sub hrk]
+    ring
+  rw [hexp, Real.rpow_add hA, Real.rpow_natCast]
+  have hpow : A ^ (k - r) ≤ (4 : ℝ) ^ (k - r) :=
+    pow_le_pow_left₀ hA.le hA4 _
+  exact (mul_le_mul_of_nonneg_left hpow
+    (Real.rpow_nonneg hA.le (e - k))).trans_eq (by ring)
+
+private theorem abs_unequalAPow_le
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    |unequalAPow e s t| = angularKernelA s t ^ e := by
+  unfold unequalAPow
+  exact abs_of_pos (Real.rpow_pos_of_pos hA _)
+
+private theorem abs_unequalAPowS_le
+    {α s t : ℝ} {m : ℕ}
+    (hα0 : 0 < α) (hα2 : α < 2)
+    (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |unequalAPowS (α / 2 - 2 * (m : ℝ)) s t| ≤
+      10 * ((m : ℝ) + 1) *
+        angularKernelA s t ^
+          (α / 2 - 2 * (m : ℝ) - 1) := by
+  have he := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
+  norm_num at he
+  have ht1 := abs_height_le_one_of_mem ht
+  have hw : 0 ≤ (m : ℝ) + 1 := by positivity
+  unfold unequalAPowS
+  rw [abs_mul, abs_mul,
+    abs_of_pos (Real.rpow_pos_of_pos hA _), abs_mul, abs_neg]
+  norm_num
+  have hp : 0 ≤ angularKernelA s t ^
+      (α / 2 - 2 * (m : ℝ) - 1) :=
+    Real.rpow_nonneg hA.le _
+  calc
+    |α / 2 - 2 * (m : ℝ)| *
+          angularKernelA s t ^ (α / 2 - 2 * (m : ℝ) - 1) *
+          (2 * |t|) ≤
+        (5 * ((m : ℝ) + 1)) *
+          angularKernelA s t ^ (α / 2 - 2 * (m : ℝ) - 1) *
+          (2 * 1) := by gcongr
+    _ = _ := by ring
+
+private theorem abs_unequalAPowT_le
+    {α s t : ℝ} {m : ℕ}
+    (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |unequalAPowT (α / 2 - 2 * (m : ℝ)) s t| ≤
+      10 * ((m : ℝ) + 1) *
+        angularKernelA s t ^
+          (α / 2 - 2 * (m : ℝ) - 1) := by
+  have hAsym : angularKernelA t s = angularKernelA s t := by
+    unfold angularKernelA
+    ring
+  have hA' : 0 < angularKernelA t s := by rwa [hAsym]
+  simpa [unequalAPowT, unequalAPowS, mul_comm, mul_left_comm,
+    mul_assoc, hAsym] using
+    (abs_unequalAPowS_le (α := α) (s := t) (t := s) (m := m)
+      hα0 hα2 hs hA')
+
+private theorem abs_unequalAPowSS_le
+    {α s t : ℝ} {m : ℕ}
+    (hα0 : 0 < α) (hα2 : α < 2)
+    (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |unequalAPowSS (α / 2 - 2 * (m : ℝ)) s t| ≤
+      100 * ((m : ℝ) + 1) ^ 2 *
+        angularKernelA s t ^
+          (α / 2 - 2 * (m : ℝ) - 2) := by
+  have he0 := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
+  have he1 := abs_latitude_even_exponent_sub_le hα0 hα2 m 1 (by omega)
+  norm_num at he0 he1
+  have ht1 := abs_height_le_one_of_mem ht
+  unfold unequalAPowSS
+  simp only [abs_mul, abs_pow, abs_neg,
+    abs_of_pos (Real.rpow_pos_of_pos hA _)]
+  norm_num
+  calc
+    |α / 2 - 2 * (m : ℝ)| *
+          |α / 2 - 2 * (m : ℝ) - 1| *
+          angularKernelA s t ^ (α / 2 - 2 * (m : ℝ) - 2) *
+          (2 * |t|) ^ 2 ≤
+        (5 * ((m : ℝ) + 1)) * (5 * ((m : ℝ) + 1)) *
+          angularKernelA s t ^ (α / 2 - 2 * (m : ℝ) - 2) *
+          (2 * 1) ^ 2 := by gcongr
+    _ = _ := by ring
+
+private theorem abs_unequalAPowTT_le
+    {α s t : ℝ} {m : ℕ}
+    (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |unequalAPowTT (α / 2 - 2 * (m : ℝ)) s t| ≤
+      100 * ((m : ℝ) + 1) ^ 2 *
+        angularKernelA s t ^
+          (α / 2 - 2 * (m : ℝ) - 2) := by
+  have hAsym : angularKernelA t s = angularKernelA s t := by
+    unfold angularKernelA
+    ring
+  have hA' : 0 < angularKernelA t s := by rwa [hAsym]
+  simpa [unequalAPowTT, unequalAPowSS, mul_comm, mul_left_comm,
+    mul_assoc, hAsym] using
+    (abs_unequalAPowSS_le (α := α) (s := t) (t := s) (m := m)
+      hα0 hα2 hs hA')
+
+private theorem abs_unequalAPowST_le
+    {α s t : ℝ} {m : ℕ}
+    (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |unequalAPowST (α / 2 - 2 * (m : ℝ)) s t| ≤
+      256 * ((m : ℝ) + 1) ^ 2 *
+        angularKernelA s t ^
+          (α / 2 - 2 * (m : ℝ) - 2) := by
+  let e := α / 2 - 2 * (m : ℝ)
+  let A := angularKernelA s t
+  let w := (m : ℝ) + 1
+  have he0 := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
+  have he1 := abs_latitude_even_exponent_sub_le hα0 hα2 m 1 (by omega)
+  norm_num at he0 he1
+  have hs1 := abs_height_le_one_of_mem hs
+  have ht1 := abs_height_le_one_of_mem ht
+  have hA4 := angularKernelA_le_four_of_mem hs ht
+  have hp12 : A ^ (e - 1) ≤ 4 * A ^ (e - 2) := by
+    simpa [A, e] using
+      (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
+        hA hA4 (r := 1) (k := 2) (by omega))
+  have hA2nonneg : 0 ≤ A ^ (e - 2) := Real.rpow_nonneg hA.le _
+  have hw : 1 ≤ w := by
+    dsimp [w]
+    have : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+    linarith
+  unfold unequalAPowST
+  dsimp only [e, A, w] at *
+  calc
+    |_ + _| ≤
+        |e * (e - 1) * A ^ (e - 2) *
+          (-2 * s) * (-2 * t)| +
+        |e * A ^ (e - 1) * (-2)| := abs_add _ _
+    _ ≤
+        100 * w ^ 2 * A ^ (e - 2) +
+          10 * w * (4 * A ^ (e - 2)) := by
+      simp only [abs_mul, abs_neg]
+      norm_num
+      rw [abs_of_pos (Real.rpow_pos_of_pos hA (e - 2)),
+        abs_of_pos (Real.rpow_pos_of_pos hA (e - 1))]
+      apply add_le_add
+      · calc
+          |e| * |e - 1| * A ^ (e - 2) *
+                (2 * |s|) * (2 * |t|) ≤
+              (5 * w) * (5 * w) * A ^ (e - 2) *
+                (2 * 1) * (2 * 1) := by gcongr
+          _ = 100 * w ^ 2 * A ^ (e - 2) := by ring
+      · calc
+          |e| * A ^ (e - 1) * 2 ≤
+              (5 * w) * (4 * A ^ (e - 2)) * 2 := by gcongr
+          _ = 10 * w * (4 * A ^ (e - 2)) := by ring
+    _ ≤ 256 * w ^ 2 * A ^ (e - 2) := by
+      have hcoeff : 140 * w ^ 2 ≤ 256 * w ^ 2 := by
+        nlinarith [sq_nonneg w]
+      calc
+        _ ≤ 140 * w ^ 2 * A ^ (e - 2) := by
+          have hww : 0 ≤ (w - 1) * w :=
+            mul_nonneg (sub_nonneg.mpr hw) (zero_le_one.trans hw)
+          have := mul_le_mul_of_nonneg_right
+            (show 100 * w ^ 2 + 40 * w ≤ 140 * w ^ 2 by
+              nlinarith) hA2nonneg
+          convert this using 1 <;> ring
+        _ ≤ _ := mul_le_mul_of_nonneg_right hcoeff hA2nonneg
+
+private theorem abs_unequalAPowSST_le
+    {α s t : ℝ} {m : ℕ}
+    (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |unequalAPowSST (α / 2 - 2 * (m : ℝ)) s t| ≤
+      2048 * ((m : ℝ) + 1) ^ 3 *
+        angularKernelA s t ^
+          (α / 2 - 2 * (m : ℝ) - 3) := by
+  let e := α / 2 - 2 * (m : ℝ)
+  let A := angularKernelA s t
+  let w := (m : ℝ) + 1
+  have he0 := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
+  have he1 := abs_latitude_even_exponent_sub_le hα0 hα2 m 1 (by omega)
+  have he2 := abs_latitude_even_exponent_sub_le hα0 hα2 m 2 (by omega)
+  norm_num at he0 he1 he2
+  have hs1 := abs_height_le_one_of_mem hs
+  have ht1 := abs_height_le_one_of_mem ht
+  have hA4 := angularKernelA_le_four_of_mem hs ht
+  have hp23 : A ^ (e - 2) ≤ 4 * A ^ (e - 3) := by
+    simpa [A, e] using
+      (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
+        hA hA4 (r := 2) (k := 3) (by omega))
+  have hA3nonneg : 0 ≤ A ^ (e - 3) := Real.rpow_nonneg hA.le _
+  have hw : 1 ≤ w := by
+    dsimp [w]
+    have : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+    linarith
+  unfold unequalAPowSST
+  dsimp only [e, A, w] at *
+  calc
+    |_ + _| ≤
+        |e * (e - 1) * (e - 2) * A ^ (e - 3) *
+          (-2 * s) * (-2 * t) ^ 2| +
+        |2 * e * (e - 1) * A ^ (e - 2) *
+          (-2 * t) * (-2)| := abs_add _ _
+    _ ≤
+        1000 * w ^ 3 * A ^ (e - 3) +
+          200 * w ^ 2 * (4 * A ^ (e - 3)) := by
+      simp only [abs_mul, abs_pow, abs_neg]
+      norm_num
+      rw [abs_of_pos (Real.rpow_pos_of_pos hA (e - 3)),
+        abs_of_pos (Real.rpow_pos_of_pos hA (e - 2))]
+      apply add_le_add
+      · calc
+          |e| * |e - 1| * |e - 2| * A ^ (e - 3) *
+                (2 * |s|) * (2 * |t|) ^ 2 ≤
+              (5 * w) * (5 * w) * (5 * w) * A ^ (e - 3) *
+                (2 * 1) * (2 * 1) ^ 2 := by gcongr
+          _ = 1000 * w ^ 3 * A ^ (e - 3) := by ring
+      · calc
+          2 * |e| * |e - 1| * A ^ (e - 2) *
+                (2 * |t|) * 2 ≤
+              2 * (5 * w) * (5 * w) * (4 * A ^ (e - 3)) *
+                (2 * 1) * 2 := by gcongr
+          _ = 200 * w ^ 2 * (4 * A ^ (e - 3)) := by ring
+    _ ≤ 2048 * w ^ 3 * A ^ (e - 3) := by
+      have hcoef : 1800 * w ^ 3 ≤ 2048 * w ^ 3 := by
+        have : 0 ≤ w ^ 3 := pow_nonneg (by positivity) _
+        nlinarith
+      calc
+        _ ≤ 1800 * w ^ 3 * A ^ (e - 3) := by
+          have hww : 0 ≤ (w - 1) * w ^ 2 :=
+            mul_nonneg (sub_nonneg.mpr hw)
+              (pow_nonneg (zero_le_one.trans hw) _)
+          have := mul_le_mul_of_nonneg_right
+            (show 1000 * w ^ 3 + 800 * w ^ 2 ≤ 1800 * w ^ 3 by
+              nlinarith)
+            hA3nonneg
+          convert this using 1 <;> ring
+        _ ≤ _ := mul_le_mul_of_nonneg_right hcoef hA3nonneg
+
+private theorem abs_unequalAPowSTT_le
+    {α s t : ℝ} {m : ℕ}
+    (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |unequalAPowSTT (α / 2 - 2 * (m : ℝ)) s t| ≤
+      2048 * ((m : ℝ) + 1) ^ 3 *
+        angularKernelA s t ^
+          (α / 2 - 2 * (m : ℝ) - 3) := by
+  have hAsym : angularKernelA t s = angularKernelA s t := by
+    unfold angularKernelA
+    ring
+  have hA' : 0 < angularKernelA t s := by rwa [hAsym]
+  simpa [unequalAPowSTT, unequalAPowSST, mul_comm, mul_left_comm,
+    mul_assoc, hAsym] using
+    (abs_unequalAPowSST_le (α := α) (s := t) (t := s) (m := m)
+      hα0 hα2 ht hs hA')
+
+private theorem abs_unequalAPowSSTT_le
+    {α s t : ℝ} {m : ℕ}
+    (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |unequalAPowSSTT (α / 2 - 2 * (m : ℝ)) s t| ≤
+      32768 * ((m : ℝ) + 1) ^ 4 *
+        angularKernelA s t ^
+          (α / 2 - 2 * (m : ℝ) - 4) := by
+  let e := α / 2 - 2 * (m : ℝ)
+  let A := angularKernelA s t
+  let w := (m : ℝ) + 1
+  have he0 := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
+  have he1 := abs_latitude_even_exponent_sub_le hα0 hα2 m 1 (by omega)
+  have he2 := abs_latitude_even_exponent_sub_le hα0 hα2 m 2 (by omega)
+  have he3 := abs_latitude_even_exponent_sub_le hα0 hα2 m 3 (by omega)
+  norm_num at he0 he1 he2 he3
+  have hs1 := abs_height_le_one_of_mem hs
+  have ht1 := abs_height_le_one_of_mem ht
+  have hA4 := angularKernelA_le_four_of_mem hs ht
+  have hp34 : A ^ (e - 3) ≤ 4 * A ^ (e - 4) := by
+    simpa [A, e] using
+      (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
+        hA hA4 (r := 3) (k := 4) (by omega))
+  have hp24 : A ^ (e - 2) ≤ 16 * A ^ (e - 4) := by
+    convert
+      (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
+        hA hA4 (r := 2) (k := 4) (by omega)) using 1 <;>
+      norm_num [A, e]
+  have hA4nonneg : 0 ≤ A ^ (e - 4) := Real.rpow_nonneg hA.le _
+  have hw : 1 ≤ w := by
+    dsimp [w]
+    have : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+    linarith
+  unfold unequalAPowSSTT
+  dsimp only [e, A, w] at *
+  calc
+    |_ + _ + _| ≤
+        |e * (e - 1) * (e - 2) * (e - 3) *
+          A ^ (e - 4) * (-2 * s) ^ 2 * (-2 * t) ^ 2| +
+        |4 * e * (e - 1) * (e - 2) *
+          A ^ (e - 3) * (-2 * s) * (-2 * t) * (-2)| +
+        |2 * e * (e - 1) * A ^ (e - 2) * (-2) ^ 2| := by
+      exact (abs_add _ _).trans (add_le_add_right (abs_add _ _) _)
+    _ ≤
+        10000 * w ^ 4 * A ^ (e - 4) +
+          4000 * w ^ 3 * (4 * A ^ (e - 4)) +
+          200 * w ^ 2 * (16 * A ^ (e - 4)) := by
+      simp only [abs_mul, abs_pow, abs_neg]
+      norm_num
+      rw [abs_of_pos (Real.rpow_pos_of_pos hA (e - 4)),
+        abs_of_pos (Real.rpow_pos_of_pos hA (e - 3)),
+        abs_of_pos (Real.rpow_pos_of_pos hA (e - 2))]
+      apply add_le_add
+      · apply add_le_add
+        · calc
+            |e| * |e - 1| * |e - 2| * |e - 3| *
+                  A ^ (e - 4) * (2 * |s|) ^ 2 *
+                  (2 * |t|) ^ 2 ≤
+                (5 * w) * (5 * w) * (5 * w) * (5 * w) *
+                  A ^ (e - 4) * (2 * 1) ^ 2 * (2 * 1) ^ 2 := by gcongr
+            _ = 10000 * w ^ 4 * A ^ (e - 4) := by ring
+        · calc
+            4 * |e| * |e - 1| * |e - 2| * A ^ (e - 3) *
+                  (2 * |s|) * (2 * |t|) * 2 ≤
+                4 * (5 * w) * (5 * w) * (5 * w) *
+                  (4 * A ^ (e - 4)) * (2 * 1) * (2 * 1) * 2 := by
+              gcongr
+            _ = 4000 * w ^ 3 * (4 * A ^ (e - 4)) := by ring
+      · calc
+          2 * |e| * |e - 1| *
+              angularKernelA s t ^ (e - 2) * 4 ≤
+              2 * (5 * w) * (5 * w) *
+                (16 * angularKernelA s t ^ (e - 4)) * 4 := by
+            gcongr
+          _ = 200 * w ^ 2 * (16 * A ^ (e - 4)) := by ring
+    _ ≤ 32768 * w ^ 4 * A ^ (e - 4) := by
+      have hcoef : 29200 * w ^ 4 ≤ 32768 * w ^ 4 := by
+        have : 0 ≤ w ^ 4 := pow_nonneg (by positivity) _
+        nlinarith
+      calc
+        _ ≤ 29200 * w ^ 4 * A ^ (e - 4) := by
+          have h23 : 0 ≤ (w - 1) * w ^ 2 :=
+            mul_nonneg (sub_nonneg.mpr hw)
+              (pow_nonneg (zero_le_one.trans hw) _)
+          have h34 : 0 ≤ (w - 1) * w ^ 3 :=
+            mul_nonneg (sub_nonneg.mpr hw)
+              (pow_nonneg (zero_le_one.trans hw) _)
+          have := mul_le_mul_of_nonneg_right
+            (show 10000 * w ^ 4 + 16000 * w ^ 3 + 3200 * w ^ 2 ≤
+                29200 * w ^ 4 by
+              nlinarith)
+            hA4nonneg
+          convert this using 1 <;> ring
+        _ ≤ _ := mul_le_mul_of_nonneg_right hcoef hA4nonneg
+
+private theorem rpow_sub_nat_mul_pow
+    {A e : ℝ} (hA : 0 < A) (k : ℕ) :
+    A ^ (e - k) * A ^ k = A ^ e := by
+  rw [← Real.rpow_natCast]
+  rw [← Real.rpow_add hA]
+  congr 1
+  push_cast
+  ring
+
+/-- Explicit mode-by-mode `(2,2)` estimate on a left-small rectangle.
+The deliberately generous constant absorbs the nine finite Leibniz
+contributions, while preserving the sharp fourth-degree mode loss and the
+uniform geometric ratio `15/16`. -/
+theorem abs_latitudeEvenPowerSummandDSSTT_le_on_leftSmall_rectangle
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k))
+    {m : ℕ} (hm : 2 ≤ m) :
+    |latitudeEvenPowerSummandDSSTT α m s t| ≤
+      4194304 * ((m : ℝ) + 1) ^ (4 : ℕ) *
+        angularKernelA s t ^ (α / 2 - 4) *
+        ((15 : ℝ) / 16) ^ (m - 2) := by
+  let A := angularKernelA s t
+  let u := 1 - s ^ 2
+  let v := 1 - t ^ 2
+  let e := α / 2 - 2 * (m : ℝ)
+  let w := (m : ℝ) + 1
+  have hsSphere : s ∈ Icc (-1 : ℝ) 1 :=
+    ⟨(bandBoundaryHeight_mem hN (j + 1)).1.trans hs.1,
+      hs.2.trans (bandBoundaryHeight_mem hN j).2⟩
+  have htSphere : t ∈ Icc (-1 : ℝ) 1 :=
+    ⟨(bandBoundaryHeight_mem hN (k + 1)).1.trans ht.1,
+      ht.2.trans (bandBoundaryHeight_mem hN k).2⟩
+  have hAbounds :=
+    leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht
+  have hA : 0 < A := hAbounds.1
+  have hu0 : 0 ≤ u := by
+    dsimp [u]
+    nlinarith [hsSphere.1, hsSphere.2]
+  have hv0 : 0 ≤ v := by
+    dsimp [v]
+    nlinarith [htSphere.1, htSphere.2]
+  have huA : u ≤ A := by
+    have hv0' : 0 ≤ 1 - t ^ 2 := by
+      nlinarith [htSphere.1, htSphere.2]
+    dsimp [u, A]
+    rw [angularKernelA_eq_radiusSq_add]
+    calc
+      1 - s ^ 2 ≤ (1 - s ^ 2) + (1 - t ^ 2) :=
+        le_add_of_nonneg_right hv0'
+      _ ≤ (1 - s ^ 2) + (1 - t ^ 2) + (s - t) ^ 2 :=
+        le_add_of_nonneg_right (sq_nonneg (s - t))
+  have hvA : v ≤ A := by
+    have hu0' : 0 ≤ 1 - s ^ 2 := by
+      nlinarith [hsSphere.1, hsSphere.2]
+    dsimp [v, A]
+    rw [angularKernelA_eq_radiusSq_add]
+    calc
+      1 - t ^ 2 ≤ (1 - s ^ 2) + (1 - t ^ 2) :=
+        le_add_of_nonneg_left hu0'
+      _ ≤ (1 - s ^ 2) + (1 - t ^ 2) + (s - t) ^ 2 :=
+        le_add_of_nonneg_right (sq_nonneg (s - t))
+  have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hsSphere htSphere
+  have hw : 1 ≤ w := by
+    dsimp [w]
+    have : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+    linarith
+  have hP0 :
+      |unequalAPow e s t| = A ^ e := by
+    exact abs_unequalAPow_le hA
+  have hP1s :
+      |unequalAPowS e s t| ≤ 10 * w * A ^ (e - 1) := by
+    exact abs_unequalAPowS_le hα0 hα2 htSphere hA
+  have hP1t :
+      |unequalAPowT e s t| ≤ 10 * w * A ^ (e - 1) := by
+    exact abs_unequalAPowT_le hα0 hα2 hsSphere hA
+  have hP2ss :
+      |unequalAPowSS e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) := by
+    have hbase := abs_unequalAPowSS_le
+      (α := α) (m := m) hα0 hα2 htSphere hA
+    simpa [e, w, A] using hbase.trans (by
+      have hp : 0 ≤ ((m : ℝ) + 1) ^ 2 *
+          angularKernelA s t ^ (α / 2 - 2 * (m : ℝ) - 2) := by positivity
+      nlinarith)
+  have hP2st :
+      |unequalAPowST e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) :=
+    abs_unequalAPowST_le hα0 hα2 hsSphere htSphere hA
+  have hP2tt :
+      |unequalAPowTT e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) := by
+    have hbase := abs_unequalAPowTT_le
+      (α := α) (m := m) hα0 hα2 hsSphere hA
+    simpa [e, w, A] using hbase.trans (by
+      have hp : 0 ≤ ((m : ℝ) + 1) ^ 2 *
+          angularKernelA s t ^ (α / 2 - 2 * (m : ℝ) - 2) := by positivity
+      nlinarith)
+  have hP3sst :
+      |unequalAPowSST e s t| ≤ 2048 * w ^ 3 * A ^ (e - 3) :=
+    abs_unequalAPowSST_le hα0 hα2 hsSphere htSphere hA
+  have hP3stt :
+      |unequalAPowSTT e s t| ≤ 2048 * w ^ 3 * A ^ (e - 3) :=
+    abs_unequalAPowSTT_le hα0 hα2 hsSphere htSphere hA
+  have hP4 :
+      |unequalAPowSSTT e s t| ≤ 32768 * w ^ 4 * A ^ (e - 4) :=
+    abs_unequalAPowSSTT_le hα0 hα2 hsSphere htSphere hA
+  have hU0 :
+      |unequalRadiusPower m s| ≤ A ^ 2 * u ^ (m - 2) :=
+    abs_unequalRadiusPower_le hm hsSphere huA
+  have hU1 :
+      |unequalRadiusPowerD1 m s| ≤
+        2 * w * A * u ^ (m - 2) :=
+    abs_unequalRadiusPowerD1_le hm hsSphere huA
+  have hU2 :
+      |unequalRadiusPowerD2 m s| ≤
+        16 * w ^ 2 * u ^ (m - 2) :=
+    abs_unequalRadiusPowerD2_le hm hsSphere huA hA4
+  have hV0 :
+      |unequalRadiusPower m t| ≤ A ^ 2 * v ^ (m - 2) :=
+    abs_unequalRadiusPower_le hm htSphere hvA
+  have hV1 :
+      |unequalRadiusPowerD1 m t| ≤
+        2 * w * A * v ^ (m - 2) :=
+    abs_unequalRadiusPowerD1_le hm htSphere hvA
+  have hV2 :
+      |unequalRadiusPowerD2 m t| ≤
+        16 * w ^ 2 * v ^ (m - 2) :=
+    abs_unequalRadiusPowerD2_le hm htSphere hvA hA4
+  let X :=
+    unequalAPowSS e s t * unequalRadiusPower m s +
+      2 * unequalAPowS e s t * unequalRadiusPowerD1 m s +
+      unequalAPow e s t * unequalRadiusPowerD2 m s
+  let XT :=
+    unequalAPowSST e s t * unequalRadiusPower m s +
+      2 * unequalAPowST e s t * unequalRadiusPowerD1 m s +
+      unequalAPowT e s t * unequalRadiusPowerD2 m s
+  let XTT :=
+    unequalAPowSSTT e s t * unequalRadiusPower m s +
+      2 * unequalAPowSTT e s t * unequalRadiusPowerD1 m s +
+      unequalAPowTT e s t * unequalRadiusPowerD2 m s
+  have hAe21 : A ^ (e - 2) * A ^ 2 = A ^ e :=
+    rpow_sub_nat_mul_pow hA 2
+  have hAe11 : A ^ (e - 1) * A = A ^ e := by
+    simpa using rpow_sub_nat_mul_pow hA 1
+  have hAe32 : A ^ (e - 3) * A ^ 2 = A ^ (e - 1) := by
+    have h := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 2
+    have hexp : e - 3 = (e - 1) - (2 : ℝ) := by ring
+    rw [hexp]
+    exact h
+  have hAe21' : A ^ (e - 2) * A = A ^ (e - 1) := by
+    have h := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
+    have hexp : e - 2 = (e - 1) - (1 : ℝ) := by ring
+    rw [hexp]
+    simpa using h
+  have hAe42 : A ^ (e - 4) * A ^ 2 = A ^ (e - 2) := by
+    have h := rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 2
+    have hexp : e - 4 = (e - 2) - (2 : ℝ) := by ring
+    rw [hexp]
+    exact h
+  have hAe31 : A ^ (e - 3) * A = A ^ (e - 2) := by
+    have h := rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 1
+    have hexp : e - 3 = (e - 2) - (1 : ℝ) := by ring
+    rw [hexp]
+    simpa using h
+  have hX : |X| ≤ 1024 * w ^ 2 * A ^ e * u ^ (m - 2) := by
+    dsimp only [X]
+    calc
+      |_ + _ + _| ≤
+          |unequalAPowSS e s t| * |unequalRadiusPower m s| +
+          2 * |unequalAPowS e s t| * |unequalRadiusPowerD1 m s| +
+          |unequalAPow e s t| * |unequalRadiusPowerD2 m s| := by
+        simpa [abs_mul] using
+          (abs_add
+            (unequalAPowSS e s t * unequalRadiusPower m s +
+              2 * unequalAPowS e s t * unequalRadiusPowerD1 m s)
+            (unequalAPow e s t * unequalRadiusPowerD2 m s)).trans
+            (add_le_add_right
+              (abs_add
+                (unequalAPowSS e s t * unequalRadiusPower m s)
+                (2 * unequalAPowS e s t * unequalRadiusPowerD1 m s)) _)
+      _ ≤
+          (256 * w ^ 2 * A ^ (e - 2)) * (A ^ 2 * u ^ (m - 2)) +
+          2 * (10 * w * A ^ (e - 1)) *
+            (2 * w * A * u ^ (m - 2)) +
+          A ^ e * (16 * w ^ 2 * u ^ (m - 2)) := by
+        have hP0le : |unequalAPow e s t| ≤ A ^ e := hP0.le
+        gcongr
+      _ = 312 * w ^ 2 * A ^ e * u ^ (m - 2) := by
+        calc
+          _ = (256 * w ^ 2 * (A ^ (e - 2) * A ^ 2) +
+                40 * w ^ 2 * (A ^ (e - 1) * A) +
+                16 * w ^ 2 * A ^ e) * u ^ (m - 2) := by ring
+          _ = _ := by rw [hAe21, hAe11]; ring
+      _ ≤ 1024 * w ^ 2 * A ^ e * u ^ (m - 2) := by
+        have hp : 0 ≤ w ^ 2 * A ^ e * u ^ (m - 2) := by positivity
+        nlinarith
+  have hXT :
+      |XT| ≤ 4096 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by
+    dsimp only [XT]
+    calc
+      |_ + _ + _| ≤
+          |unequalAPowSST e s t| * |unequalRadiusPower m s| +
+          2 * |unequalAPowST e s t| * |unequalRadiusPowerD1 m s| +
+          |unequalAPowT e s t| * |unequalRadiusPowerD2 m s| := by
+        simpa [abs_mul] using
+          (abs_add
+            (unequalAPowSST e s t * unequalRadiusPower m s +
+              2 * unequalAPowST e s t * unequalRadiusPowerD1 m s)
+            (unequalAPowT e s t * unequalRadiusPowerD2 m s)).trans
+            (add_le_add_right
+              (abs_add
+                (unequalAPowSST e s t * unequalRadiusPower m s)
+                (2 * unequalAPowST e s t * unequalRadiusPowerD1 m s)) _)
+      _ ≤
+          (2048 * w ^ 3 * A ^ (e - 3)) * (A ^ 2 * u ^ (m - 2)) +
+          2 * (256 * w ^ 2 * A ^ (e - 2)) *
+            (2 * w * A * u ^ (m - 2)) +
+          (10 * w * A ^ (e - 1)) *
+            (16 * w ^ 2 * u ^ (m - 2)) := by gcongr
+      _ = 3232 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by
+        calc
+          _ = (2048 * w ^ 3 * (A ^ (e - 3) * A ^ 2) +
+                1024 * w ^ 3 * (A ^ (e - 2) * A) +
+                160 * w ^ 3 * A ^ (e - 1)) * u ^ (m - 2) := by ring
+          _ = _ := by rw [hAe32, hAe21']; ring
+      _ ≤ 4096 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by
+        have hp : 0 ≤ w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by positivity
+        nlinarith
+  have hXTT :
+      |XTT| ≤ 65536 * w ^ 4 * A ^ (e - 2) * u ^ (m - 2) := by
+    dsimp only [XTT]
+    calc
+      |_ + _ + _| ≤
+          |unequalAPowSSTT e s t| * |unequalRadiusPower m s| +
+          2 * |unequalAPowSTT e s t| * |unequalRadiusPowerD1 m s| +
+          |unequalAPowTT e s t| * |unequalRadiusPowerD2 m s| := by
+        simpa [abs_mul] using
+          (abs_add
+            (unequalAPowSSTT e s t * unequalRadiusPower m s +
+              2 * unequalAPowSTT e s t * unequalRadiusPowerD1 m s)
+            (unequalAPowTT e s t * unequalRadiusPowerD2 m s)).trans
+            (add_le_add_right
+              (abs_add
+                (unequalAPowSSTT e s t * unequalRadiusPower m s)
+                (2 * unequalAPowSTT e s t * unequalRadiusPowerD1 m s)) _)
+      _ ≤
+          (32768 * w ^ 4 * A ^ (e - 4)) * (A ^ 2 * u ^ (m - 2)) +
+          2 * (2048 * w ^ 3 * A ^ (e - 3)) *
+            (2 * w * A * u ^ (m - 2)) +
+          (256 * w ^ 2 * A ^ (e - 2)) *
+            (16 * w ^ 2 * u ^ (m - 2)) := by gcongr
+      _ = 45056 * w ^ 4 * A ^ (e - 2) * u ^ (m - 2) := by
+        calc
+          _ = (32768 * w ^ 4 * (A ^ (e - 4) * A ^ 2) +
+                8192 * w ^ 4 * (A ^ (e - 3) * A) +
+                4096 * w ^ 4 * A ^ (e - 2)) * u ^ (m - 2) := by ring
+          _ = _ := by rw [hAe42, hAe31]; ring
+      _ ≤ 65536 * w ^ 4 * A ^ (e - 2) * u ^ (m - 2) := by
+        have hp : 0 ≤ w ^ 4 * A ^ (e - 2) * u ^ (m - 2) := by positivity
+        nlinarith
+  have hraw :
+      |latitudeEvenPowerSummandDSSTT α m s t| ≤
+        262144 * w ^ 4 * (4 : ℝ) ^ m *
+          A ^ e * u ^ (m - 2) * v ^ (m - 2) := by
+    unfold latitudeEvenPowerSummandDSSTT
+    dsimp only
+    change |(4 : ℝ) ^ m *
+      (XTT * unequalRadiusPower m t +
+        2 * XT * unequalRadiusPowerD1 m t +
+        X * unequalRadiusPowerD2 m t)| ≤ _
+    rw [abs_mul, abs_of_nonneg (pow_nonneg (by norm_num) m)]
+    calc
+      (4 : ℝ) ^ m * |_ + _ + _| ≤
+          (4 : ℝ) ^ m *
+            (|XTT| * |unequalRadiusPower m t| +
+              2 * |XT| * |unequalRadiusPowerD1 m t| +
+              |X| * |unequalRadiusPowerD2 m t|) := by
+        gcongr
+        simpa [abs_mul] using
+          (abs_add
+            (XTT * unequalRadiusPower m t +
+              2 * XT * unequalRadiusPowerD1 m t)
+            (X * unequalRadiusPowerD2 m t)).trans
+            (add_le_add_right
+              (abs_add
+                (XTT * unequalRadiusPower m t)
+                (2 * XT * unequalRadiusPowerD1 m t)) _)
+      _ ≤ (4 : ℝ) ^ m *
+          ((65536 * w ^ 4 * A ^ (e - 2) * u ^ (m - 2)) *
+              (A ^ 2 * v ^ (m - 2)) +
+            2 * (4096 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2)) *
+              (2 * w * A * v ^ (m - 2)) +
+            (1024 * w ^ 2 * A ^ e * u ^ (m - 2)) *
+              (16 * w ^ 2 * v ^ (m - 2))) := by gcongr
+      _ = 98304 * w ^ 4 * (4 : ℝ) ^ m *
+          A ^ e * u ^ (m - 2) * v ^ (m - 2) := by
+        calc
+          _ = (4 : ℝ) ^ m *
+              (65536 * w ^ 4 * (A ^ (e - 2) * A ^ 2) +
+                16384 * w ^ 4 * (A ^ (e - 1) * A) +
+                16384 * w ^ 4 * A ^ e) *
+              u ^ (m - 2) * v ^ (m - 2) := by ring
+          _ = _ := by rw [hAe21, hAe11]; ring
+      _ ≤ 262144 * w ^ 4 * (4 : ℝ) ^ m *
+          A ^ e * u ^ (m - 2) * v ^ (m - 2) := by
+        have hp : 0 ≤ w ^ 4 * (4 : ℝ) ^ m *
+            A ^ e * u ^ (m - 2) * v ^ (m - 2) := by positivity
+        convert mul_le_mul_of_nonneg_right
+          (show (98304 : ℝ) ≤ 262144 by norm_num) hp using 1 <;> ring
+  have hcommon :=
+    latitude_common_factor_eq (α := α) (A := A) (u := u) (v := v)
+      hA m hm
+  have hQ :=
+    leftSmallSame_rectangle_unequalAngularRatio_le hN j k hjk hs ht
+  have hQ0 := unequalAngularRatio_nonneg hsSphere htSphere
+  have hpow :
+      unequalAngularRatio s t ^ (m - 2) ≤
+        ((15 : ℝ) / 16) ^ (m - 2) :=
+    pow_le_pow_left₀ hQ0 hQ _
+  calc
+    |latitudeEvenPowerSummandDSSTT α m s t| ≤
+        262144 * w ^ 4 *
+          ((4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e) := by
+      simpa [mul_assoc, mul_left_comm, mul_comm] using hraw
+    _ = 262144 * w ^ 4 *
+        (16 * A ^ (α / 2 - 4) *
+          unequalAngularRatio s t ^ (m - 2)) := by
+      rw [hcommon]
+      rfl
+    _ ≤ 262144 * w ^ 4 *
+        (16 * A ^ (α / 2 - 4) *
+          ((15 : ℝ) / 16) ^ (m - 2)) := by
+      gcongr
+    _ = 4194304 * ((m : ℝ) + 1) ^ (4 : ℕ) *
+        angularKernelA s t ^ (α / 2 - 4) *
+        ((15 : ℝ) / 16) ^ (m - 2) := by
+      dsimp [w, A]
+      ring
+
+noncomputable def latitudeEvenPowerDSSTTSeriesTerm
+    (α : ℝ) (m : ℕ) (s t : ℝ) : ℝ :=
+  (Ring.choose (α / 2) (2 * m) *
+    normalizedCosineMoment (2 * m)) *
+    latitudeEvenPowerSummandDSSTT α m s t
+
+/-- The coefficient-weighted fourth derivative tail is normally
+summable at every point of a left-small rectangle.  The first two modes
+are absent from this shifted formulation and are inserted in the next
+theorem as a finite prefix. -/
+theorem summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    Summable (fun r : ℕ ↦
+      latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t) := by
+  have hA :=
+    (leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht).1
+  have hcoef :=
+    summable_shifted_evenAngularDerivativeCoefficient_mul_pow
+      α (q := (15 : ℝ) / 16) (by norm_num) (by norm_num)
+  have hmaj := hcoef.mul_left
+    (4194304 * angularKernelA s t ^ (α / 2 - 4))
+  apply hmaj.of_norm_bounded
+  intro r
+  have hterm :=
+    abs_latitudeEvenPowerSummandDSSTT_le_on_leftSmall_rectangle
+      hα0 hα2 hN hjk hs ht (m := r + 2) (by omega)
+  rw [show r + 2 - 2 = r by omega] at hterm
+  unfold latitudeEvenPowerDSSTTSeriesTerm
+  change |(Ring.choose (α / 2) (2 * (r + 2)) *
+    normalizedCosineMoment (2 * (r + 2))) *
+    latitudeEvenPowerSummandDSSTT α (r + 2) s t| ≤ _
+  rw [abs_mul]
+  calc
+    |Ring.choose (α / 2) (2 * (r + 2)) *
+        normalizedCosineMoment (2 * (r + 2))| *
+        |latitudeEvenPowerSummandDSSTT α (r + 2) s t| ≤
+      (|Ring.choose (α / 2) (2 * (r + 2))| *
+        |normalizedCosineMoment (2 * (r + 2))|) *
+      (4194304 * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
+        angularKernelA s t ^ (α / 2 - 4) *
+        ((15 : ℝ) / 16) ^ r) := by
+      rw [abs_mul]
+      gcongr
+    _ =
+      4194304 * angularKernelA s t ^ (α / 2 - 4) *
+        (evenAngularDerivativeCoefficient α (r + 2) *
+          ((15 : ℝ) / 16) ^ r) := by
+      unfold evenAngularDerivativeCoefficient
+      ring
+
+/-- Normal convergence of the complete coefficient-weighted `(2,2)`
+derivative series; modes `0` and `1` form a finite prefix. -/
+theorem summable_latitudeEvenPowerDSSTTSeriesTerm
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    Summable (fun m : ℕ ↦
+      latitudeEvenPowerDSSTTSeriesTerm α m s t) := by
+  rw [← summable_nat_add_iff 2]
+  simpa [Nat.add_comm] using
+    summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
+      hα0 hα2 hN hjk hs ht
+
+end BEMOC

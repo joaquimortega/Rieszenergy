@@ -303,12 +303,15 @@ edge cases, and verification gates are recorded in
    polar estimate, exhaustive geometric partition, pointwise-to-row
    arithmetic, L7 summation, the actual even-series identity, the complete
    finite summand derivative, and the concrete mixed Taylor/Peano transfer
-   are checked.  The remaining closure is concentrated in two analytic
-   estimates: complete the local reduced-cusp subtraction (5.4), including
-   the lower and resonant exponent ranges, and retain the graded powers while
-   bounding (5.5); then normally sum the already differentiated terms in
-   (5.6) and apply those two bounds to the comparable, unequal, central, and
-   antipodal rectangles.
+   are checked.  For the unequal-scale series in (5.6), the actual fourth
+   mixed derivative of every even mode now has an explicit
+   `(m+1)^4 (15/16)^(m-2)` majorant on each left-small rectangle, and the
+   complete coefficient-weighted derivative series is proved summable.
+   The remaining closure is concentrated in transferring this normal
+   convergence to the derivative of the summed kernel, completing the
+   resonant local reduced-cusp subtraction in (5.4), retaining the graded
+   powers while bounding (5.5), and applying these bounds to the comparable,
+   unequal, central, and antipodal rectangles.
 3. The analytic proof of Wagner's configuration-uniform lower bound for
    optimal negative Riesz energies.  Its exact normalized statement and all
    downstream specializations are now formalized as `HasWagnerLowerBound`.
