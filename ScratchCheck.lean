@@ -1,0 +1,9 @@
+import BEMOCFormalization
+#check Fin.sum_univ_eq_sum_range
+#check Fin.sum_univ_succ
+#check Finset.sum_range_add
+#check Finset.sum_range_succ
+#check Finset.sum_bij
+#check Finset.sum_equiv
+#check Equiv.sum_comp
+#check Fintype.sum_equiv

@@ -1,0 +1,23 @@
+.lake/
+.agents/
+.codex/
+.git-data/
+
+__pycache__/
+*.py[cod]
+
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+
+# Generated manuscript PDFs; source PDF figures and references remain tracked.
+BEMOCOneEnergy.pdf
+BEMOCOneEnergyAssessment.pdf
+BEMOCRieszEnergies.pdf
+Riesz2.pdf
+SumdistAssessment.pdf
+sumdist.pdf
+
+.DS_Store

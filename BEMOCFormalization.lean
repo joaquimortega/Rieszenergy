@@ -1,0 +1,46 @@
+import BEMOCFormalization.Core
+import BEMOCFormalization.ConcreteWithinRing
+import BEMOCFormalization.CrossRingEstimate
+import BEMOCFormalization.LatitudeAxialBridge
+import BEMOCFormalization.LatitudeAngularJetBounds
+import BEMOCFormalization.LatitudeBands
+import BEMOCFormalization.LatitudeCentralOppositeBlocks
+import BEMOCFormalization.LatitudeCoefficientDerivatives
+import BEMOCFormalization.LatitudeComparableBlocks
+import BEMOCFormalization.LatitudeComparableGeometry
+import BEMOCFormalization.LatitudeComparableRadiusBounds
+import BEMOCFormalization.LatitudeComparableDerivativeEnvelope
+import BEMOCFormalization.LatitudeDecomposition
+import BEMOCFormalization.LatitudeDiagonalCuspBlocks
+import BEMOCFormalization.LatitudeDiagonalBandBridge
+import BEMOCFormalization.LatitudeEstimate
+import BEMOCFormalization.LatitudeConcreteBlocks
+import BEMOCFormalization.LatitudeKernelLocal
+import BEMOCFormalization.LatitudeL2
+import BEMOCFormalization.LatitudePairClassification
+import BEMOCFormalization.LatitudePairSymmetry
+import BEMOCFormalization.LatitudePointwiseAssembly
+import BEMOCFormalization.LatitudePolarBlocks
+import BEMOCFormalization.LatitudePowerJetBounds
+import BEMOCFormalization.LatitudeRowArithmetic
+import BEMOCFormalization.LatitudeSmoothOppositeBlocks
+import BEMOCFormalization.LatitudePushforward
+import BEMOCFormalization.LatitudeSeparatedBlocks
+import BEMOCFormalization.LatitudeUnequalBlocks
+import BEMOCFormalization.LatitudeUnequalGeometry
+import BEMOCFormalization.LatitudeUnequalSeries
+import BEMOCFormalization.LatitudeUnequalSummand
+import BEMOCFormalization.LatitudeVariableMixedBound
+import BEMOCFormalization.LatitudeVariableMixedDerivative
+import BEMOCFormalization.LatitudeWeakSingularity
+import BEMOCFormalization.ReducedCuspDerivatives
+import BEMOCFormalization.ReducedCuspQuadratic
+import BEMOCFormalization.TwoMomentPeano
+import BEMOCFormalization.WithinRingLimit
+
+/-!
+# BEMOC negative Riesz energies
+
+Public entry point for the core formalization, the concrete within-ring
+and cross-ring estimates, and the sharp square-subsequence within-ring limit.
+-/

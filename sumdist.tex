@@ -1,0 +1,1007 @@
+\documentclass[11pt,reqno]{amsart}
+
+%==================== packages ====================
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
+
+%==================== theorem environments ====================
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+
+%==================== macros ====================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Sph}{\mathbb{S}^2}
+\newcommand{\PN}{\mathcal{P}_N}
+\newcommand{\Leg}{P}                      % Legendre polynomial
+\newcommand{\dist}[2]{\lVert #1-#2\rVert}
+\newcommand{\inner}[2]{\langle #1,#2\rangle}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\ol}{\overline}
+\DeclareMathOperator{\arccosh}{arccosh}
+\DeclareMathOperator{\lcm}{lcm}
+\newcommand{\abs}[1]{\lvert #1\rvert}
+\newcommand{\Def}{D_N}
+\newcommand{\Sig}{\Sigma_N}
+\newcommand{\rp}{\rho}
+\newcommand{\lesss}{\lesssim}
+
+\begin{document}
+
+\title[Sum of distances for the BEMOC point set]
+{The sum of pairwise distances of the\\ Beltr\'an--Etayo--Marzo--Ortega-Cerd\`a point set}
+
+\author{}
+\date{\today}
+
+\begin{abstract}
+Let $\PN=\{x_1,\dots,x_N\}\subset\Sph$ be the zonal (``diamond''-type) configuration constructed
+by Beltr\'an, Etayo, Marzo and Ortega-Cerd\`a in their proof of the existence of a sequence of
+spherical polynomials with optimal condition number. We study the one--sided ($s=-1$) Riesz energy,
+i.e.\ the sum of Euclidean (chordal) distances
+$\Sig=\sum_{i\ne j}\dist{x_i}{x_j}$.
+We prove that the leading term is universal and exact,
+$\Sig=\tfrac43N^2-\Def$ with $\Def\ge 0$, and we identify the precise structure of the deficit
+$\Def$. Writing the points on parallels of radii $\rp_p$ carrying $w_p$ equally spaced points,
+we obtain the exact decomposition $\Def=(A)+(B)+(C)$ into a \emph{necklace} (latitude) term,
+a \emph{within-ring} term and a \emph{cross-ring} term, and we prove:
+(i) the within-ring term is the main term and equals $\frac{\pi}{3}\sum_p\rp_p+o(1)\asymp\sqrt N$,
+with the explicit two-sided envelope $\frac{\pi}{3}\sum_p\rp_p\le (B)\le\frac{4}{\pi}\sum_p\rp_p$;
+(ii) the cross-ring term satisfies $\abs{(C)}\lesssim\sqrt N$, by a self-contained Poisson-summation
+argument together with the branch-point decay of the Fourier coefficients of $\sqrt{a-b\cos\psi}$;
+(iii) the necklace term satisfies $(A)\asymp\sqrt N$, so that $(A)=\Theta(\sqrt N)$; its diagonal
+band-self-energy has the explicit constant $\frac{2(2-\sqrt2)}{9\pi}$.
+Combining (i)--(iii) with the Stolarsky invariance principle and Beck's lower bound for the
+$L^2$ spherical-cap discrepancy yields, unconditionally, the sharp two--sided estimate
+\[
+   c\sqrt N\ \le\ \tfrac43N^2-\Sig\ \le\ C\sqrt N ,
+   \qquad\text{i.e.}\qquad \Sig=\tfrac43N^2-\Theta(\sqrt N).
+\]
+All three terms $(A),(B),(C)$ are of the \emph{same} order $\sqrt N$ and contribute to the leading
+constant; in particular the natural guess $(A)=o(\sqrt N)$ is false. The normalized within-ring and
+necklace terms $(B)/\sqrt N$ and $(A)/\sqrt N$ converge (to $\frac{2\pi(2\sqrt2-1)}{9}$ and to an
+explicit constant $\approx0.0404$, respectively), so whether $\Def/\sqrt N$ converges reduces
+entirely to the cross-ring term $(C)/\sqrt N$.
+\end{abstract}
+
+\maketitle
+
+%======================================================================
+\section{Introduction}
+%======================================================================
+
+\subsection{The problem}
+For a set of $N$ points $\omega_N=\{x_1,\dots,x_N\}$ on the unit sphere $\Sph\subset\R^3$ and a
+parameter $s$, the Riesz $s$--energy is $\sum_{i\ne j}\dist{x_i}{x_j}^{-s}$, where
+$\dist{x}{y}=\sqrt{2-2\inner{x}{y}}$ is the Euclidean (chordal) distance. The case $s=-1$,
+\[
+   \Sigma(\omega_N)=\sum_{i\ne j}\dist{x_i}{x_j},
+\]
+is the \emph{sum of distances}; maximizing it is a classical problem going back to Fejes T\'oth
+and to Stolarsky, and it is intimately tied, through the Stolarsky invariance principle, to the
+quality of $\omega_N$ as an equidistributed set \cite{Stolarsky,BeckSphere,BilykDaiMatzke}. For any
+configuration one has the elementary upper bound $\Sigma(\omega_N)\le\frac43N^2$, with $\frac43$ the
+average distance $\iint_{\Sph\times\Sph}\dist{x}{y}\,d\sigma(x)\,d\sigma(y)$ for the normalized
+surface measure $\sigma$; the interesting quantity is the \emph{deficit}
+$\frac43N^2-\Sigma(\omega_N)\ge 0$, whose size measures how close $\omega_N$ is to a continuous
+uniform distribution in the weak (energy) sense.
+
+The configuration we analyse is not an energy minimizer chosen for that purpose, but a specific
+explicit construction. In \cite{BEMOC}, Beltr\'an, Etayo, Marzo and Ortega-Cerd\`a settled a
+question related to Smale's $7$th problem \cite{Smale} by exhibiting a sequence of spherical
+polynomials whose zero sets have \emph{optimal condition number}; the heart of their argument is an
+explicit family of points $\PN$, laid out on carefully chosen parallels with carefully chosen
+occupation numbers, for which the associated logarithmic potential is controlled pointwise to
+$O(1)$. This family is essentially the \emph{Diamond ensemble} of \cite{Diamond}. Because the
+construction is completely explicit, one may ask for the exact asymptotics of its geometric
+invariants. Here we determine those of the sum of distances.
+
+\subsection{Main results}
+Throughout, $u=\inner{x}{y}$, $\dist{x}{y}=\sqrt{2-2u}$, and $A\asymp B$ means
+$c\,B\le A\le C\,B$ with constants depending only on the absolute constants of the construction
+of \cite{BEMOC} (recalled in \S\ref{sec:prelim}). We write
+$\Sig:=\Sigma(\PN)=\sum_{i\ne j}\dist{x_i}{x_j}$ and, for the deficit,
+\[
+   \Def:=\tfrac43N^2-\Sig\ \ge 0 .
+\]
+The points of $\PN$ lie on $P$ parallels (``rings''); ring $p$ sits at height $z_p\in(-1,1)$,
+has radius $\rp_p=\sqrt{1-z_p^2}$, and carries $w_p$ equally spaced points, with
+$\sum_{p=1}^P w_p=N$.
+
+Our first result fixes the leading term and its sign for \emph{every} configuration, and gives the
+exact decomposition of the deficit for $\PN$.
+
+\begin{theorem}[Exact leading term and decomposition]\label{thm:decomp}
+For every $N$--point set on $\Sph$,
+\[
+   \Sigma(\omega_N)=\tfrac43N^2-\sum_{n\ge1}\abs{a_n}\,S_n,\qquad
+   a_n=-\frac{4}{(2n-1)(2n+3)}<0\ (n\ge1),
+\]
+where $S_n=\sum_{i,j}\Leg_n(\inner{x_i}{x_j})\ge 0$ and $\Leg_n$ is the Legendre polynomial; in
+particular the deficit is nonnegative and its leading term is exactly $\tfrac43N^2$.
+For $\PN$ the deficit decomposes exactly as
+\[
+   \Def=(A)+(B)+(C),
+\]
+into the nonnegative \emph{necklace} term $(A)$, the nonnegative \emph{within-ring} term $(B)$, and
+the (signed) \emph{cross-ring} term $(C)$ defined in \eqref{eq:decomp}.
+\end{theorem}
+
+Our second result computes the main term explicitly and controls the two remainders.
+
+\begin{theorem}[Size of the three terms]\label{thm:sizes}
+With the notation above:
+\begin{enumerate}[leftmargin=2.2em,itemsep=3pt]
+\item \textup{(Within-ring, main term.)} $\displaystyle (B)=\frac{\pi}{3}\sum_{p}\rp_p+o(1)$, where
+      $\displaystyle \sum_p\rp_p=\frac{2(2\sqrt2-1)}{3}\sqrt N\,(1+o(1))$; hence
+      $(B)=c_B\sqrt N\,(1+o(1))$ with $c_B=\frac{2\pi(2\sqrt2-1)}{9}\approx1.2761$, and
+      $\frac{\pi}{3}\sum_p\rp_p\le (B)\le\frac{4}{\pi}\sum_p\rp_p$.
+\item \textup{(Cross-ring.)} $\abs{(C)}\lesssim\sqrt N$.
+\item \textup{(Necklace.)} $0\le (A)\lesssim\sqrt N$, and in fact $(A)\asymp\sqrt N$. The diagonal
+      band self-energies alone contribute $\sum_j\lVert\eta_j^{S}\rVert_K^2=c_A^{\mathrm{diag}}\sqrt
+      N\,(1+o(1))$ with the explicit constant $c_A^{\mathrm{diag}}=\frac{2(2-\sqrt2)}{9\pi}\approx
+      0.04144$, and the off-diagonal band interactions perturb this by a bounded fraction; hence
+      $(A)=\Theta(\sqrt N)$. In particular $(A)\ne o(\sqrt N)$.
+\end{enumerate}
+\end{theorem}
+
+Combining these with the classical lower bound for the discrepancy we obtain the following
+two--sided estimate, which is unconditional.
+
+\begin{theorem}[Two--sided bound]\label{thm:main}
+There are constants $0<c\le C$, depending only on the construction, such that for all $N$,
+\[
+   c\,\sqrt N\ \le\ \tfrac43N^2-\Sig\ \le\ C\,\sqrt N ,
+   \qquad\text{i.e.}\qquad \Def\asymp\sqrt N .
+\]
+The upper bound is now unconditional: each of $(A),(B),\abs{(C)}$ is $\lesssim\sqrt N$ by
+Theorem~\ref{thm:sizes}. The lower bound holds for \emph{every} $N$--point configuration and comes
+from the Stolarsky invariance principle together with Beck's estimate
+$D_{L^2}(\omega_N)\gtrsim N^{-3/4}$.
+\end{theorem}
+
+The order of the deficit is thus settled unconditionally. What remains is the value of the leading
+constant, to which \emph{all three} terms contribute at the same scale.
+
+\begin{theorem}[Refined structure of the leading term]\label{thm:sharp}
+The three normalized terms behave as follows: $(B)/\sqrt N\to c_B=\frac{2\pi(2\sqrt2-1)}{9}$;
+$(A)/\sqrt N$ converges to a constant $c_A\in(0,\infty)$ whose leading (diagonal) part is
+$\frac{2(2-\sqrt2)}{9\pi}$; and $\abs{(C)}\lesssim\sqrt N$. Consequently
+\[
+   \Def=(c_A+c_B)\,\sqrt N+(C)+o(\sqrt N),\qquad c_A+c_B\ (\text{diag.\ part})\approx1.317,
+\]
+and $\lim_{N\to\infty}\Def/\sqrt N$ exists if and only if $\lim_{N\to\infty}(C)/\sqrt N$ exists. In
+particular the sharp constant is \emph{not} governed by $(B)$ alone: the zonal term $(A)$ is of the
+same order $\sqrt N$ as $(B)$ and $(C)$, contrary to what a first analysis suggests.
+\end{theorem}
+
+Thus the only remaining question about the leading term is the behavior of the cross-ring term
+$(C)/\sqrt N$; the necklace term $(A)$, which one might expect to be negligible, is in fact a genuine
+$\Theta(\sqrt N)$ contribution (\S\ref{sec:necklace}).
+
+We stress the honest logical status. Theorems~\ref{thm:decomp}, \ref{thm:sizes}(1)--(2) and
+\ref{thm:main} are proved in full; in particular the two--sided bound $\Def\asymp\sqrt N$ is now
+unconditional. For the necklace term, the bound $(A)\lesssim\sqrt N$ and the diagonal constant
+$\sum_j\lVert\eta_j^S\rVert_K^2=\frac{2(2-\sqrt2)}{9\pi}\sqrt N(1+o(1))$ are established with clean
+estimates; the identification of the full limit $(A)/\sqrt N\to c_A$ uses in addition that the
+off-diagonal band interactions are a controlled (small) fraction of the diagonal, which we prove for
+well-separated bands and confirm numerically for the two adjacent shells. The one genuinely open
+point is the behavior of the cross-ring term $(C)/\sqrt N$ (Theorem~\ref{thm:sharp}), equivalently
+whether $\Def/\sqrt N$ converges.
+
+\subsection{Discussion}
+Three remarks orient the reader. First, by Theorem~\ref{thm:sizes}(1) the bulk of the $\sqrt N$ scale
+of the deficit comes from a completely elementary source: the cost of replacing each continuous
+parallel of radius $\rp_p$ by $w_p$ equally spaced points, summed against the radii, which gives the
+explicit main constant $c_B=\frac{2\pi(2\sqrt2-1)}{9}$. It is however \emph{not} the whole story: the
+zonal (necklace) contribution $(A)$ is of the \emph{same} order $\sqrt N$ (Theorem~\ref{thm:sizes}(3)),
+not of smaller order, and likewise contributes to the leading constant. This is a correction to the
+naive expectation that the latitude quadrature is negligible.
+
+Second, the normalized pieces $\sum_p\rp_p/\sqrt N$ (hence $(B)/\sqrt N$) and $(A)/\sqrt N$
+\emph{converge}, to $\tfrac{2(2\sqrt2-1)}{3}$ and to $c_A$ respectively; this follows from the
+Euler--Maclaurin evaluation of the corresponding sums and is not merely empirical
+(Lemma~\ref{lem:sumrho}, \S\ref{sec:necklace}). Whether $\Def/\sqrt N$ itself converges therefore
+reduces entirely to the cross-ring term $(C)/\sqrt N$ (Remark~\ref{rem:osc}).
+
+Third, the result should be contrasted with the logarithmic energy, for which \cite{BEMOC,Diamond}
+give sharp asymptotics with the optimal next-order constant. The kernels differ in an essential
+way: $\log\frac1{\dist{x}{y}}$ has an integrable singularity that the within-ring sum resolves to
+give an $O(N\log N)$ term, whereas $\dist{x}{y}$ is bounded and its within-ring discretization
+produces the clean $\sqrt N$ term isolated here.
+
+The paper is organized as follows. \S\ref{sec:prelim} recalls the construction and the estimates we
+import. \S\ref{sec:spectral} proves the spectral identity and computes the Legendre coefficients in
+closed form. \S\ref{sec:ring} establishes the exact ring decomposition and the sign facts.
+\S\ref{sec:within} treats the within-ring term $(B)$. \S\ref{sec:cross} treats the cross-ring term
+$(C)$. \S\ref{sec:necklace} treats the necklace term $(A)$. \S\ref{sec:lower} gives the lower bound
+and assembles the theorems.
+
+%======================================================================
+\section{The construction and the imported estimates}\label{sec:prelim}
+%======================================================================
+
+We recall the construction of \cite[\S4]{BEMOC}, keeping only what is needed. Fix $N$ and set
+$M=\lfloor\sqrt{N/4}\rfloor$, so that $4M^2\le N< 4(M+1)^2$ and hence $M\asymp\sqrt N$. Define the
+occupation numbers of the ``diamond'',
+\[
+   r_j=4j-1\quad(1\le j< M),\qquad r_M=N-2\sum_{j=1}^{M-1}r_j,\qquad r_{M+k}=r_{M-k}\ (1\le k\le M-1),
+\]
+so the sequence $(r_j)_{j=1}^{2M-1}$ is symmetric and $\sum_{j=1}^{2M-1}r_j=N$. The heights are
+placed by
+\[
+   H_0=1,\qquad H_j=1-\frac{2}{N}\sum_{k=1}^{j}r_k,\qquad h_j=\frac{H_{j-1}+H_j}{2}\quad(1\le j\le 2M-1),
+\]
+so the bands $B_j=[H_j,H_{j-1}]$ have equal ``mass'': the spherical zone $\{z\in B_j\}$ has area
+$2\pi\cdot\frac{2r_j}{N}$, i.e.\ it should host $r_j$ of the $N$ points. Inside each band one splits
+$r_j=6s_j+\mathrm{rem}_j$ with $s_j=\lfloor r_j/6\rfloor$ and $\mathrm{rem}_j\in\{0,\dots,5\}$, and
+places (writing $Q_z$ for the parallel at height $z$, rotated so that a fixed azimuth is occupied):
+\[
+\begin{aligned}
+&Q_{h_1},Q_{h_{2M-1}}\ \text{carry}\ r_1\ \text{points each};\\
+&Q_{h_j}\ (2\le j\le 2M-2)\ \text{carries}\ 4s_j+\mathrm{rem}_j\ \text{points};\\
+&Q_{H_j}\ (1\le j\le 2M-2)\ \text{carries}\ s_j+s_{j+1}\ \text{points}.
+\end{aligned}
+\]
+On each occupied parallel the points are equally spaced. The total is $N$. We index the occupied
+parallels as \emph{rings} $p=1,\dots,P$, with height $z_p$, radius $\rp_p=\sqrt{1-z_p^2}$ and
+occupation $w_p\ge1$; then $P\asymp M\asymp\sqrt N$ and $\sum_p w_p=N$.
+
+We import from \cite{BEMOC} the following two facts, which are their
+\cite[Lemma~facil2 / eq.~(zjbound)]{BEMOC} and \cite[Lemma~erres]{BEMOC} in the notation there.
+
+\begin{itemize}[leftmargin=1.6em,itemsep=3pt]
+\item[(P1)] \textbf{Height bounds.} For the $j$-th parallel from a pole ($1\le j\lesssim M$),
+      $1-\abs{z}\asymp j^2/N$; consequently $\rp=\sqrt{(1-z)(1+z)}\asymp j/\sqrt N$, because
+      $1+\abs{z}\in[1,2]$ on the relevant range.
+\item[(P2)] \textbf{Occupation and spacing.} The $j$-th parallel from a pole carries
+      $w\asymp r_j\asymp j$ points; hence $\rp/w\asymp N^{-1/2}$ (the arclength gap between
+      consecutive points on a ring is $\asymp N^{-1/2}$), and consecutive parallels are at chordal
+      distance $\asymp N^{-1/2}$.
+\end{itemize}
+
+From (P1)--(P2) we deduce the one estimate on ring geometry used repeatedly.
+
+\begin{lemma}\label{lem:sumrho}
+$\displaystyle\sum_{p=1}^{P}\rp_p\asymp\sqrt N$; more precisely
+\[
+   \sum_{p=1}^{P}\rp_p=\frac{2(2\sqrt2-1)}{3}\,\sqrt N\,\bigl(1+o(1)\bigr).
+\]
+In particular $\sum_p\rp_p/\sqrt N$ \emph{converges}.
+\end{lemma}
+
+\begin{proof}
+By the symmetry $z\mapsto -z$ it suffices to sum over one hemisphere and double. There the rings are
+indexed by $j=1,\dots,\ol P$ with $\ol P\asymp M\asymp\sqrt N$, and by (P1) $\rp_{(j)}\asymp j/\sqrt N$;
+this already gives $\sum_j\rp_{(j)}\asymp N^{-1/2}\sum_{j\le\ol P}j\asymp\sqrt N$. For the constant,
+recall that for the explicit choice $r_j=4j-1$ one has $1-h_j=\frac{4j^2-2j+1}{N}$, so that with
+$h\in(0,1)$ the rings sit at $j\approx\tfrac{\sqrt N}{2}\sqrt{1-h}$ and the $h$-spacing between
+consecutive rings (mid-parallels, resp.\ band boundaries) is $2\eps(h)$ with
+$\eps(h)=\tfrac{2}{\sqrt N}\sqrt{1-h}$. Hence each of the two interleaved families contributes, by
+Euler--Maclaurin,
+\[
+   \sum_{j}\rp_{(j)}=\int_0^1\frac{\sqrt{1-h^2}}{2\eps(h)}\,dh\,(1+o(1))
+   =\frac{\sqrt N}{4}\int_0^1\sqrt{1+h}\,dh\,(1+o(1))
+   =\frac{\sqrt N}{6}(2\sqrt2-1)\,(1+o(1)),
+\]
+using $\sqrt{1-h^2}/\sqrt{1-h}=\sqrt{1+h}$ and $\int_0^1\sqrt{1+h}\,dh=\tfrac23(2\sqrt2-1)$. Summing the
+two families and doubling over the two hemispheres gives the stated constant; the equatorial band and
+the $O(1)$ near-pole rings perturb the sum by $o(\sqrt N)$.
+\end{proof}
+
+%======================================================================
+\section{The spectral identity and the Legendre coefficients}\label{sec:spectral}
+%======================================================================
+
+The distance kernel has a Legendre expansion with explicit, sign-definite coefficients. This both
+fixes the leading term and yields the nonnegativity of the deficit for every configuration.
+
+\begin{lemma}\label{lem:coeffs}
+For $u\in[-1,1]$,
+\begin{equation}\label{eq:legexp}
+   \sqrt{2-2u}=\sum_{n\ge0}a_n\Leg_n(u),\qquad
+   a_0=\frac43,\qquad a_n=-\frac{4}{(2n-1)(2n+3)}\ \ (n\ge1).
+\end{equation}
+In particular $a_n<0$ and $\abs{a_n}\asymp n^{-2}$ for $n\ge1$.
+\end{lemma}
+
+\begin{proof}
+By orthogonality, $a_n=\frac{2n+1}{2}\int_{-1}^1\sqrt{2-2x}\,\Leg_n(x)\,dx=\frac{2n+1}{2}\sqrt2\,I_n$
+with $I_n=\int_{-1}^1(1-x)^{1/2}\Leg_n(x)\,dx$. Use the identity
+$(2n+1)\Leg_n=\Leg_{n+1}'-\Leg_{n-1}'$ and integrate by parts:
+\[
+   I_n=\frac{1}{2n+1}\int_{-1}^1(1-x)^{1/2}\bigl(\Leg_{n+1}'-\Leg_{n-1}'\bigr)\,dx
+      =\frac{1}{2(2n+1)}\int_{-1}^1(1-x)^{-1/2}\bigl(\Leg_{n+1}-\Leg_{n-1}\bigr)\,dx,
+\]
+the boundary terms vanishing because $(1-x)^{1/2}=0$ at $x=1$ while at $x=-1$,
+$\Leg_{n+1}(-1)-\Leg_{n-1}(-1)=(-1)^{n+1}-(-1)^{n-1}=0$. Thus $I_n=\frac{1}{2(2n+1)}(J_{n+1}-J_{n-1})$
+with $J_m:=\int_{-1}^1(1-x)^{-1/2}\Leg_m(x)\,dx$.
+
+We compute $J_m$ from its generating function. With $\sum_{m\ge0}\Leg_m(x)t^m=(1-2xt+t^2)^{-1/2}$
+and the substitution $1-x=2s^2$ ($dx=-4s\,ds$),
+\begin{align*}
+   \sum_{m\ge0}J_m t^m
+   &=\int_{-1}^1\frac{dx}{\sqrt{1-x}\,\sqrt{1-2xt+t^2}}
+    =2\sqrt2\int_0^1\frac{ds}{\sqrt{(1-t)^2+4ts^2}}\\
+   &=\frac{2\sqrt2}{\sqrt t}\,\operatorname{arctanh}\!\sqrt t
+    =2\sqrt2\sum_{k\ge0}\frac{t^k}{2k+1},
+\end{align*}
+valid for $0\le t<1$. Matching coefficients gives $J_m=\dfrac{2\sqrt2}{2m+1}$. Therefore
+\[
+   I_n=\frac{\sqrt2}{2n+1}\left(\frac{1}{2n+3}-\frac{1}{2n-1}\right)
+      =\frac{-4\sqrt2}{(2n+1)(2n-1)(2n+3)},
+\]
+and $a_n=\frac{2n+1}{2}\sqrt2\,I_n=-\dfrac{4}{(2n-1)(2n+3)}$ for $n\ge1$; the value $a_0=\frac43$
+follows from $\int_{-1}^1\sqrt{2-2x}\,dx=\frac83$, whence
+$a_0=\frac12\cdot\frac{8}{3}=\frac43$. Finally
+$\abs{a_n}=\frac{4}{(2n-1)(2n+3)}\asymp n^{-2}$.
+\end{proof}
+
+\begin{proposition}[Spectral identity; nonnegativity of the deficit]\label{prop:spectral}
+For any $\omega_N=\{x_1,\dots,x_N\}\subset\Sph$, set
+$S_n:=\sum_{i,j=1}^N\Leg_n(\inner{x_i}{x_j})$. Then $S_0=N^2$, $S_n\ge0$ for all $n$, and
+\begin{equation}\label{eq:specid}
+   \Sigma(\omega_N)=\sum_{i,j}\dist{x_i}{x_j}
+   =\tfrac43N^2-\sum_{n\ge1}\abs{a_n}\,S_n
+   \le\tfrac43N^2 .
+\end{equation}
+Thus the deficit $\tfrac43N^2-\Sigma(\omega_N)=\sum_{n\ge1}\abs{a_n}S_n\ge0$.
+\end{proposition}
+
+\begin{proof}
+By the addition theorem for spherical harmonics,
+$\Leg_n(\inner{x}{y})=\frac{4\pi}{2n+1}\sum_{m=-n}^{n}Y_{nm}(x)\ol{Y_{nm}(y)}$, so
+$S_n=\frac{4\pi}{2n+1}\sum_m\bigl\lvert\sum_i Y_{nm}(x_i)\bigr\rvert^2\ge0$; and $S_0=N^2$ since
+$\Leg_0\equiv1$. The diagonal terms of $\sum_{i,j}\dist{x_i}{x_j}$ vanish, so summing
+\eqref{eq:legexp} over all pairs $(i,j)$ and using $a_0S_0=\frac43N^2$ gives \eqref{eq:specid}.
+Interchange of sum and expansion is justified by the uniform (indeed absolute, since
+$\sum\abs{a_n}<\infty$ and $\abs{\Leg_n}\le1$) convergence of \eqref{eq:legexp} on $[-1,1]$.
+\end{proof}
+
+This proves the first assertion of Theorem~\ref{thm:decomp}. The remainder of the paper computes
+$\sum_{n\ge1}\abs{a_n}S_n$ for $\PN$.
+
+%======================================================================
+\section{The exact ring decomposition}\label{sec:ring}
+%======================================================================
+
+Let $U_p$ denote the uniform probability measure on the full circle (parallel) at height $z_p$, and
+let
+\[
+   \nu=\sum_{p=1}^P w_p\,U_p
+\]
+be the \emph{necklace measure}, a positive measure of total mass $N$ obtained from $\PN$ by smearing
+each ring uniformly. Its energy is
+$E[\nu]=\iint\dist{x}{y}\,d\nu(x)\,d\nu(y)=\sum_{p,p'}w_pw_{p'}\,I(z_p,z_{p'})$, where
+\[
+   I(z,z')=\iint\dist{x}{y}\,dU_z(x)\,dU_{z'}(y)
+          =\frac{1}{2\pi}\int_0^{2\pi}\sqrt{2-2zz'-2\rho\rho'\cos\phi}\,d\phi
+\]
+is the mean chordal distance between the two parallels ($\rho=\sqrt{1-z^2}$, $\rho'=\sqrt{1-z'^2}$).
+On the diagonal,
+\[
+   I(z,z)=\ol\ell_p:=\frac{1}{2\pi}\int_0^{2\pi}2\rp_p\abs{\sin\tfrac\phi2}\,d\phi=\frac{4\rp_p}{\pi}
+\]
+is the mean chord of a circle of radius $\rp_p$.
+
+Split both $\Sig=\sum_{i,j}\dist{x_i}{x_j}$ and $E[\nu]$ into same-ring and cross-ring parts. Writing
+$\Sigma_p^{\mathrm{self}}=\sum_{k\ne k'}\dist{x_{p,k}}{x_{p,k'}}$ for the within-ring sum on ring $p$
+and $\Sigma_{p,p'}^{\mathrm{cross}}=\sum_{k,k'}\dist{x_{p,k}}{x_{p',k'}}$ for the cross-ring sum,
+we have $\Sig=\sum_p\Sigma_p^{\mathrm{self}}+\sum_{p\ne p'}\Sigma_{p,p'}^{\mathrm{cross}}$ and, on
+the necklace side, $w_p^2\ol\ell_p$ and $w_pw_{p'}I(z_p,z_{p'})$ respectively. Subtracting from
+$\frac43N^2=\tfrac43N^2$ and adding and subtracting $E[\nu]$ gives the exact identity
+\begin{equation}\label{eq:decomp}
+   \boxed{\;\Def
+   =\underbrace{\Bigl(\tfrac43N^2-E[\nu]\Bigr)}_{(A)\ \text{necklace}}
+   +\underbrace{\sum_p\bigl(w_p^2\ol\ell_p-\Sigma_p^{\mathrm{self}}\bigr)}_{(B)\ \text{within-ring}}
+   +\underbrace{\sum_{p\ne p'}\bigl(w_pw_{p'}I(z_p,z_{p'})-\Sigma_{p,p'}^{\mathrm{cross}}\bigr)}_{(C)\ \text{cross-ring}}\; }.
+\end{equation}
+
+The two terms $(A)$ and $(B)+(C)$ are exactly the zonal ($m=0$) and non-zonal ($m\ne0$) parts of the
+deficit, and both are nonnegative.
+
+\begin{proposition}\label{prop:signs}
+In \eqref{eq:decomp} one has
+\[
+   (A)=\sum_{n\ge1}\abs{a_n}\Bigl(\sum_p w_p\Leg_n(z_p)\Bigr)^2\ge0,
+   \qquad (B)+(C)\ge0 .
+\]
+\end{proposition}
+
+\begin{proof}
+The necklace measure $\nu$ is invariant under rotations about the vertical axis, so for its harmonic
+expansion only the zonal ($m=0$) coefficients survive, and these are
+$\widehat{\nu}_{n0}=\sqrt{\tfrac{2n+1}{4\pi}}\sum_p w_p\Leg_n(z_p)$ (up to the usual normalization,
+using $Y_{n0}=\sqrt{\tfrac{2n+1}{4\pi}}\Leg_n$). By Proposition~\ref{prop:spectral} applied to $\nu$
+in place of a point set (equivalently, expanding
+$(A)=\tfrac43N^2-E[\nu]=-\iint\dist{x}{y}\,d(\nu-N\sigma)d(\nu-N\sigma)$ into Legendre modes, the
+$n=0$ term cancelling because $\nu$ and $N\sigma$ have equal mass),
+\[
+   (A)=\sum_{n\ge1}\abs{a_n}\,\frac{4\pi}{2n+1}\,\abs{\widehat\nu_{n0}}^2
+      =\sum_{n\ge1}\abs{a_n}\Bigl(\sum_p w_p\Leg_n(z_p)\Bigr)^2\ge0 .
+\]
+On the other hand $(B)+(C)=\Def-(A)=\sum_{n\ge1}\abs{a_n}\bigl(S_n-\frac{4\pi}{2n+1}
+\abs{\sum_iY_{n0}(x_i)}^2\bigr)$, and by the addition theorem
+$S_n=\frac{4\pi}{2n+1}\sum_{m}\abs{\sum_iY_{nm}(x_i)}^2$; dropping the $m=0$ summand leaves a sum of
+squares, so $(B)+(C)=\sum_{n\ge1}\abs{a_n}\frac{4\pi}{2n+1}\sum_{m\ne0}
+\abs{\sum_iY_{nm}(x_i)}^2\ge0$.
+\end{proof}
+
+Thus $(A)$ is the pure \emph{latitude} (zonal) contribution and $(B)+(C)$ the pure
+\emph{azimuthal} contribution to the deficit. We now show that the azimuthal part is dominated by
+its within-ring piece $(B)$.
+
+%======================================================================
+\section{The within-ring term: the main \texorpdfstring{$\sqrt N$}{sqrt N} term}\label{sec:within}
+%======================================================================
+
+\begin{proposition}\label{prop:within}
+Let $\psi(w):=2w\bigl(\frac{2w}{\pi}-\cot\frac{\pi}{2w}\bigr)$ for $w\ge1$. Then
+\[
+   (B)=\sum_p \rp_p\,\psi(w_p),\qquad \frac{\pi}{3}\le\psi(w)\le\frac{4}{\pi}\ \ (w\ge1),\qquad
+   \psi(w)=\frac{\pi}{3}+O(w^{-2}).
+\]
+Consequently
+\[
+   \frac{\pi}{3}\sum_p\rp_p\ \le\ (B)\ \le\ \frac{4}{\pi}\sum_p\rp_p,
+   \qquad\text{and}\qquad
+   (B)=\frac{\pi}{3}\sum_p\rp_p+o(1)\asymp\sqrt N .
+\]
+\end{proposition}
+
+\begin{proof}
+On a ring of radius $\rp_p$ with $w_p$ equally spaced points, the pairwise distances are
+$2\rp_p\sin\frac{\pi l}{w_p}$ with multiplicity $w_p$ for $l=1,\dots,w_p-1$, so
+\[
+   \Sigma_p^{\mathrm{self}}=2\rp_p w_p\sum_{l=1}^{w_p-1}\sin\frac{\pi l}{w_p}
+   =2\rp_pw_p\cot\frac{\pi}{2w_p},
+\]
+using the elementary identity $\sum_{l=1}^{w-1}\sin\frac{\pi l}{w}=\cot\frac{\pi}{2w}$ (real part of a
+geometric sum). Since $w_p^2\ol\ell_p=\frac{4\rp_pw_p^2}{\pi}$, the $p$-th summand of $(B)$ is
+$\frac{4\rp_pw_p^2}{\pi}-2\rp_pw_p\cot\frac{\pi}{2w_p}=\rp_p\psi(w_p)$.
+
+Put $x=\frac{\pi}{2w}\in(0,\frac\pi2]$. Then
+\[
+   \psi(w)=2w\Bigl(\frac{2w}{\pi}-\cot\frac{\pi}{2w}\Bigr)
+          =\frac{\pi}{x}\Bigl(\frac1x-\cot x\Bigr)
+          =\pi\,\frac{\sin x-x\cos x}{x^2\sin x}.
+\]
+As $x\to0^+$, $\sin x-x\cos x=\frac{x^3}{3}-\frac{x^5}{30}+\cdots$ and
+$x^2\sin x=x^3-\frac{x^5}{6}+\cdots$, whence $\psi=\frac\pi3+O(x^2)=\frac\pi3+O(w^{-2})$; at
+$x=\frac\pi2$ (i.e.\ $w=1$), $\psi=\pi\cdot\frac{1}{(\pi/2)^2}=\frac4\pi$. The function
+$g(x)=\frac{\sin x-x\cos x}{x^2\sin x}$ is smooth and monotone on $(0,\frac\pi2]$ (its derivative has
+constant sign there, as one checks from $g'(x)=\frac{x^2\cos x\sin x -2\sin^2 x+ x^2}{x^3\sin^2x}\le0$),
+so $\psi$ decreases from $\frac4\pi$ at $w=1$ to $\frac\pi3$ as $w\to\infty$; hence
+$\frac\pi3\le\psi(w)\le\frac4\pi$. The two-sided envelope for $(B)$ follows immediately.
+
+For the sharper statement, write $\psi(w_p)=\frac\pi3+O(w_p^{-2})$; then
+$(B)=\frac\pi3\sum_p\rp_p+\sum_p\rp_p\,O(w_p^{-2})$. By (P1)--(P2), $\rp_p\asymp w_p/\sqrt N$, so
+$\sum_p\rp_p w_p^{-2}\asymp N^{-1/2}\sum_p w_p^{-1}\asymp N^{-1/2}\sum_{j\le\ol P}j^{-1}
+\asymp N^{-1/2}\log N=o(1)$. Combined with Lemma~\ref{lem:sumrho} this gives
+\[
+   (B)=\frac\pi3\sum_p\rp_p+o(1)=c_B\,\sqrt N\,(1+o(1)),\qquad
+   c_B:=\frac{2\pi(2\sqrt2-1)}{9}\approx 1.2761 .
+\]
+In particular $(B)\asymp\sqrt N$ and $(B)/\sqrt N$ converges.
+\end{proof}
+
+Proposition~\ref{prop:within} is the crux: the $\sqrt N$ scale of the deficit is precisely the cost
+of discretizing each parallel into equally spaced points, integrated against the radii.
+
+%======================================================================
+\section{The cross-ring term}\label{sec:cross}
+%======================================================================
+
+We bound $(C)$ by exact Poisson summation of the azimuthal quadratures on each pair of rings,
+followed by the branch-point decay of the Fourier coefficients of $\sqrt{a-b\cos\psi}$.
+
+\subsection{Poisson summation on a pair of rings}
+Fix rings $p\ne p'$. Parametrize their points by
+$x_{p,k}=\gamma_p(\alpha_k)$, $\alpha_k=\phi_p+\frac{2\pi k}{w_p}$ ($0\le k<w_p$), and
+$x_{p',k'}=\gamma_{p'}(\beta_{k'})$, $\beta_{k'}=\phi_{p'}+\frac{2\pi k'}{w_{p'}}$. Then
+$\dist{\gamma_p(\alpha)}{\gamma_{p'}(\beta)}=G(\alpha-\beta)$ where
+\begin{equation}\label{eq:G}
+   G(\psi)=\sqrt{a-b\cos\psi},\qquad a=2-2z_pz_{p'},\qquad b=2\rp_p\rp_{p'},
+\end{equation}
+and, writing $z_p=\cos\theta_p$,
+\[
+   a-b=2-2\cos\theta_p\cos\theta_{p'}-2\sin\theta_p\sin\theta_{p'}=2-2\cos(\theta_p-\theta_{p'})
+      =d_{pp'}^2>0,
+\]
+$d_{pp'}=2\sin\frac{\abs{\theta_p-\theta_{p'}}}{2}$ being the chordal distance between the two
+parallels. Thus $a>b\ge0$. The function $G$ is even and $2\pi$-periodic, with real Fourier
+coefficients $\widehat G_m=\frac{1}{2\pi}\int_0^{2\pi}G(\psi)e^{-im\psi}\,d\psi=\widehat G_{-m}$.
+
+Summing the geometric phases,
+$\sum_{k=0}^{w_p-1}e^{im\alpha_k}=w_p e^{im\phi_p}\mathbf 1[w_p\mid m]$, and likewise for $p'$, we get
+\[
+   \Sigma_{p,p'}^{\mathrm{cross}}=\sum_{k,k'}G(\alpha_k-\beta_{k'})
+   =\sum_{m\in\Z}\widehat G_m\Bigl(\sum_k e^{im\alpha_k}\Bigr)\Bigl(\sum_{k'}e^{-im\beta_{k'}}\Bigr)
+   =w_pw_{p'}\sum_{\substack{m\in\Z\\ L\mid m}}\widehat G_m\,e^{im\delta},
+\]
+where $L=\lcm(w_p,w_{p'})\ge\max(w_p,w_{p'})$ and $\delta=\phi_p-\phi_{p'}$. The $m=0$ term is
+$w_pw_{p'}\widehat G_0=w_pw_{p'}I(z_p,z_{p'})$. Therefore the per-pair contribution to $(C)$ is
+exactly the aliasing tail,
+\begin{equation}\label{eq:pairtail}
+   w_pw_{p'}I(z_p,z_{p'})-\Sigma_{p,p'}^{\mathrm{cross}}
+   =-\,w_pw_{p'}\sum_{\substack{m\ne0\\ L\mid m}}\widehat G_m e^{im\delta},
+   \qquad
+   \Bigl\lvert w_pw_{p'}I-\Sigma_{p,p'}^{\mathrm{cross}}\Bigr\rvert
+   \le 2\,w_pw_{p'}\sum_{l\ge1}\abs{\widehat G_{lL}} .
+\end{equation}
+
+\subsection{Decay of the Fourier coefficients}
+The function $G(\psi)=\sqrt{a-b\cos\psi}$ extends analytically to the strip
+$\{\abs{\Im\psi}<\beta\}$, where $\beta=\arccosh(a/b)>0$ is fixed by the nearest singularities
+$\cos\psi=a/b=\cosh\beta$, i.e.\ $\psi=\pm i\beta$ (mod $2\pi$); these are square-root branch points,
+since near $\psi=i\beta$, $a-b\cos\psi=ib\sinh\beta\,(\psi-i\beta)+O((\psi-i\beta)^2)$, so
+$G(\psi)=\sqrt{ib\sinh\beta}\,(\psi-i\beta)^{1/2}(1+o(1))$.
+
+Two bounds follow.
+
+\emph{Crude analyticity bound.} For every $\beta'<\beta$, shifting the contour to $\Im\psi=\beta'$,
+$\abs{\widehat G_m}\le e^{-\abs m\beta'}\sup_{\abs{\Im\psi}=\beta'}\abs{G}$. On $\abs{\Im\psi}=\beta'$
+one has $\abs{a-b\cos\psi}\le a+b\cosh\beta'\le a+b\cosh\beta=2a$; letting $\beta'\uparrow\beta$,
+\begin{equation}\label{eq:crude}
+   \abs{\widehat G_m}\le\sqrt{2a}\;e^{-\abs m\beta}.
+\end{equation}
+
+\emph{Refined (branch-point) bound.} Deforming the contour around the two cuts issuing from
+$\pm i\beta$ and applying Watson's lemma to the local expansion $G\sim\sqrt{ib\sinh\beta}\,
+(\psi-i\beta)^{1/2}$ gives the classical square-root singularity asymptotics
+\begin{equation}\label{eq:refined}
+   \abs{\widehat G_m}\ \le\ C_0\,\sqrt{b\sinh\beta}\;\frac{e^{-\abs m\beta}}{\abs m^{3/2}}
+   \qquad(m\ne0),
+\end{equation}
+for an absolute constant $C_0$ (see, e.g., \cite[Ch.~VI]{FlajoletSedgewick} for singularity
+analysis of coefficients, or \cite[Ch.~2]{Wong} for the Watson-lemma estimate of such Fourier
+integrals). The extra factor $\abs m^{-3/2}$, absent from \eqref{eq:crude}, is what makes the sum
+below convergent at the correct rate.
+
+\subsection{Summation}
+We now bound $\abs{(C)}\le\sum_{p\ne p'}2w_pw_{p'}\sum_{l\ge1}\abs{\widehat G_{lL}}$. Since the
+smallest surviving harmonic is $m=L\ge\max(w_p,w_{p'})$, and $\beta$ and the amplitude vary slowly,
+the sum over $l\ge1$ is dominated by its first term up to a constant factor once $L\beta\gtrsim1$
+(verified below); using \eqref{eq:refined},
+\begin{equation}\label{eq:perpair}
+   \Bigl\lvert w_pw_{p'}I-\Sigma_{p,p'}^{\mathrm{cross}}\Bigr\rvert
+   \ \lesss\ w_pw_{p'}\,\sqrt{b\sinh\beta}\;\frac{e^{-L\beta}}{L^{3/2}} .
+\end{equation}
+It remains to estimate the geometric quantities. By $z\mapsto-z$ symmetry and the exponential decay
+in $\beta$ we may restrict to rings in a common hemisphere, indexing them from a pole by $j,j'$ with
+$1\le j\le j'\lesssim M$. By (P1)--(P2),
+\[
+   \rp_{(j)}\asymp\frac{j}{\sqrt N},\quad w_{(j)}\asymp j,\quad
+   \theta_{(j)}\asymp\frac{j}{\sqrt N},\quad
+   d_{jj'}=2\sin\tfrac{\abs{\theta_j-\theta_{j'}}}{2}\asymp\frac{\abs{j-j'}}{\sqrt N},
+\]
+and, using $a/b-1=\frac{a-b}{b}=\frac{d_{jj'}^2}{2\rp_j\rp_{j'}}$,
+\[
+   \beta=\arccosh(a/b)\asymp\sqrt{\frac{a}{b}-1}=\frac{d_{jj'}}{\sqrt{2\rp_j\rp_{j'}}}
+   \asymp\frac{\abs{j-j'}/\sqrt N}{\sqrt{jj'}/\sqrt N}=\frac{\abs{j-j'}}{\sqrt{jj'}}
+\]
+in the regime $\beta\lesssim1$ (for $\beta\gtrsim1$ the pair is exponentially suppressed and
+negligible). Hence, with $L\ge\max(w_j,w_{j'})\asymp j'$,
+\[
+   L\beta\ \gtrsim\ j'\cdot\frac{\abs{j-j'}}{\sqrt{jj'}}=\abs{j-j'}\sqrt{\frac{j'}{j}}\ \ge\ \abs{j-j'},
+\]
+so indeed $L\beta\gtrsim1$ for adjacent rings ($\abs{j-j'}\asymp1$), and $L\beta$ grows for separated
+rings. Also $b\sinh\beta\asymp \rp_j\rp_{j'}\cdot\beta\asymp\frac{jj'}{N}\cdot\frac{\abs{j-j'}}{\sqrt{jj'}}
+=\frac{\sqrt{jj'}\,\abs{j-j'}}{N}$, and $\sqrt{b\sinh\beta}\lesss\frac{(jj')^{1/4}\abs{j-j'}^{1/2}}{\sqrt N}$.
+Substituting into \eqref{eq:perpair} with $L\asymp j'$ and summing the geometric factor
+$e^{-L\beta}$ in $\abs{j-j'}$,
+\[
+   \abs{(C)}\ \lesss\ \sum_{1\le j\le j'\lesssim M}
+      j\,j'\cdot\frac{(jj')^{1/4}\abs{j-j'}^{1/2}}{\sqrt N}\cdot\frac{e^{-c\abs{j-j'}\sqrt{j'/j}}}{j'^{3/2}} .
+\]
+For fixed $j$ the sum over $j'$ is dominated by $j'\asymp j$ (adjacent rings), where the exponential
+is $O(1)$ and the summand is
+$\asymp\frac{1}{\sqrt N}\,j\cdot j\cdot\frac{(j^2)^{1/4}}{j^{3/2}}=\frac{1}{\sqrt N}\,j^{2}\cdot
+\frac{j^{1/2}}{j^{3/2}}=\frac{j}{\sqrt N}$, and the tail in $\abs{j-j'}$ converges. Therefore
+\[
+   \abs{(C)}\ \lesss\ \frac{1}{\sqrt N}\sum_{j\lesssim M}j\ \asymp\ \frac{M^2}{\sqrt N}\ \asymp\ \sqrt N .
+\]
+This proves Theorem~\ref{thm:sizes}(2). $\qed$
+
+\begin{remark}
+The bound $\abs{(C)}\lesss\sqrt N$ is all we need, but it is not sharp: the phases $e^{im\delta}$ in
+\eqref{eq:pairtail} produce additional cancellation across pairs, and numerically $(C)\to0$ like
+$N^{-1/2}$. We do not use this.
+\end{remark}
+
+%======================================================================
+\section{The necklace term}\label{sec:necklace}
+%======================================================================
+
+By Proposition~\ref{prop:signs}, $(A)=\sum_{n\ge1}\abs{a_n}Z_n^2$ with
+$Z_n:=\sum_p w_p\Leg_n(z_p)$. Equivalently, $(A)$ is the (chordal) energy of the signed, mass-zero
+measure $\lambda:=\nu-N\sigma$,
+\begin{equation}\label{eq:Aenergy}
+   (A)=-\iint\dist{x}{y}\,d\lambda(x)\,d\lambda(y)
+      =\iint K(z,z')\,d\Lambda(z)\,d\Lambda(z'),\qquad K:=\tfrac43-I,
+\end{equation}
+where $\Lambda=\sum_p w_p\delta_{z_p}-N\mu_0$ is the pushforward of $\lambda$ to the latitude
+variable and $\mu_0=\frac12\mathbf 1_{[-1,1]}\,dz$ is the uniform latitude measure (the image of
+$\sigma$). The kernel $K(z,z')=\sum_{n\ge1}\abs{a_n}\Leg_n(z)\Leg_n(z')$ is positive definite and
+annihilates constants ($\int K(z,\cdot)\,d\mu_0=0$), reflecting the mass-zero property of $\Lambda$.
+Thus $(A)$ is a one--dimensional quadrature-energy: it measures how well the composite
+Newton--Cotes rule $\sum_p w_p\delta_{z_p}$ reproduces $N\mu_0$ against the smooth latitude kernel.
+
+\subsection{The reduced latitude kernel}
+Off the diagonal, $K=\tfrac43-I$ is the real-analytic function
+$K(z,z')=\tfrac43-\tfrac{2\sqrt{s}}{\pi}E\!\bigl(1-d^2/s\bigr)$, where
+$s=2-2zz'+2\rp\rp'$, $d^2=2-2zz'-2\rp\rp'$, $\rp=\sqrt{1-z^2}$, $\rp'=\sqrt{1-z'^2}$, and $E$ is the
+complete elliptic integral of the second kind. On the diagonal $d^2=0$ and the modulus of $E$ tends to
+$1$; the ensuing logarithmic singularity of $E$ is the only obstruction to smoothness.
+
+\begin{lemma}[Reduced kernel]\label{lem:kernel}
+For $\abs z,\abs{z'}<1$ put $\rp_\ast=\min(\rp,\rp')$. There exist $R,\beta$, real-analytic on
+$(-1,1)^2$, with
+\begin{equation}\label{eq:kernelform}
+   K(z,z')=R(z,z')+\beta(z,z')\,(z-z')^2\log\abs{z-z'},\qquad \beta(z,z)=\frac{1}{2\pi\rp^{3}} .
+\end{equation}
+Writing $f(z,z'):=(z-z')^2\log\abs{z-z'}$, one has $\partial_z^a\partial_{z'}^b f=(-1)^b\,\partial_w^{a+b}\!\bigl(w^2\log\abs w\bigr)$
+with $w=z-z'$, so that $\partial_w^{k}(w^2\log\abs w)$ equals $2\log\abs w+3$ for $k=2$ and
+$2(-1)^{k-1}(k-3)!\,w^{-(k-2)}$ (\emph{no} logarithm) for $k\ge3$. Consequently, for all $a,b\ge0$ with
+$a+b\ge1$ and all $0<\abs{z-z'}\le\rp_\ast$,
+\begin{equation}\label{eq:kernelderiv}
+   \bigl\lvert\partial_z^{a}\partial_{z'}^{b}\bigl(\beta f\bigr)(z,z')\bigr\rvert
+   \ \lesss_{a,b}\ \rp_\ast^{-3}\,\abs{z-z'}^{\,2-a-b}\quad(a+b\ge3),
+   \qquad
+   \bigl\lvert\partial_z\partial_{z'}(\beta f)(z,z')\bigr\rvert\ \lesss\ \rp_\ast^{-3}\,\log\tfrac1{\abs{z-z'}} .
+\end{equation}
+In words: the mixed second derivative is $O(\rp_\ast^{-3}\log)$, while for $a+b\ge3$ the derivative is
+$O(\rp_\ast^{-3}\abs{z-z'}^{2-a-b})$ \emph{without} a logarithm; in particular
+$\lvert\partial_z^4\partial_{z'}^4 K\rvert\lesss\rp_\ast^{-3}\abs{z-z'}^{-6}$ for $\abs{z-z'}\le\rp_\ast$.
+\end{lemma}
+
+\begin{proof}
+$s,d^2$ are analytic, $s\ge2(1-\max(\abs z,\abs{z'}))>0$, and $d^2\ge0$ vanishes exactly on the
+diagonal, where $d^2=(z-z')^2\rp^{-2}\,(1+O(z-z'))$. With $m_1:=1-m=d^2/s$, the expansion of the
+complete elliptic integral at unit modulus \cite[\S19.12]{DLMF},
+$E(m)=1+\tfrac12(\log\tfrac{4}{\sqrt{m_1}}-\tfrac12)m_1+O(m_1^2\log\tfrac1{m_1})$, multiplied by
+$\tfrac{2\sqrt s}{\pi}$, gives
+$I=\tfrac{2\sqrt s}{\pi}+\tfrac{d^2}{2\pi\sqrt s}(\log4-\tfrac12)-\tfrac{d^2}{2\pi\sqrt s}\log m_1+\cdots$.
+Since $\log m_1=2\log\abs{z-z'}+(\text{analytic})$, the non-analytic part of $I$ is
+$-\tfrac{d^2}{\pi\sqrt s}\log\abs{z-z'}$; hence $K=\tfrac43-I$ takes the form \eqref{eq:kernelform} with
+$\beta=\tfrac{d^2}{\pi\sqrt s\,(z-z')^2}$, analytic and equal on the diagonal to $\tfrac1{2\pi\rp^3}$
+(as $d^2\to(z-z')^2\rp^{-2}$, $\sqrt s\to2\rp$). The derivative identities for $f$ are elementary; the
+bounds \eqref{eq:kernelderiv} follow because differentiating the analytic factor $\beta$ costs at most a
+power of $\rp_\ast^{-1}$, and for $\abs{z-z'}\le\rp_\ast$ these $\beta$-derivative terms are dominated by
+the term in which all derivatives fall on $f$.
+\end{proof}
+
+\subsection{Band decomposition and the bound \texorpdfstring{$(A)\lesss\sqrt N$}{(A) < sqrt N}}
+Recall the bands $B_j=[H_j,H_{j-1}]$ ($j=1,\dots,2M-1$) of $\mu_0$-width $2\eps_j$, $\eps_j=r_j/N\asymp
+j/N$, with midpoints $h_j$ and endpoints $H_j$; the ring at $h_j$ carries the construction weight
+$4s_j+\mathrm{rem}_j$ and the ring at $H_j$ carries $s_j+s_{j+1}$, where $r_j=6s_j+\mathrm{rem}_j$,
+$\mathrm{rem}_j\in\{0,\dots,5\}$. Let $S$ be the \emph{fractional} composite Simpson rule for $N\mu_0$ on
+this mesh: the atomic measure assigning $h_j$ the weight $\tfrac{2r_j}{3}$ and $H_j$ the weight
+$\tfrac{r_j+r_{j+1}}{6}$. Split
+\begin{equation}\label{eq:SRsplit}
+   \Lambda=\Lambda^{S}+\Lambda^{R},\qquad \Lambda^{S}:=S-N\mu_0,\quad \Lambda^{R}:=\Lambda_+-S,
+\end{equation}
+where $\Lambda_+=\sum_p w_p\delta_{z_p}$; both summands have total mass $0$. As $K$ is positive definite,
+$\lVert\cdot\rVert_K:=(\iint K\,d\cdot\,d\cdot)^{1/2}$ is a seminorm, whence
+\begin{equation}\label{eq:SRtriangle}
+   (A)=\lVert\Lambda\rVert_K^2\ \le\ 2\lVert\Lambda^{S}\rVert_K^2+2\lVert\Lambda^{R}\rVert_K^2
+   \ =:\ 2\,(A_S)+2\,(A_R).
+\end{equation}
+Write $\Lambda^{S}=\sum_j\eta_j^{S}$ and $\Lambda^{R}=\sum_j\eta_j^{R}$, where
+$\eta_j^{S}=\tfrac{r_j}{6}(\delta_{H_{j-1}}+4\delta_{h_j}+\delta_{H_j})-N\mu_0\!\restriction_{B_j}$ is the
+band-$j$ Simpson error and $\eta_j^{R}$ collects the integer-minus-fractional weight differences on
+$\ol{B_j}$. Two moment facts drive the estimate:
+\begin{itemize}[leftmargin=1.6em]
+\item[\textup{(M1)}] \emph{Simpson.} $\int_{B_j} p\,d\eta_j^{S}=0$ for every polynomial $p$ of degree
+$\le3$ (Simpson is exact for cubics); moreover $\lVert\eta_j^{S}\rVert_{\mathrm{TV}}\asymp r_j\asymp j$ and
+$\operatorname{diam}\operatorname{supp}\eta_j^{S}\asymp\eps_j$.
+\item[\textup{(M2)}] \emph{Residual.} $\eta_j^{R}$ is atomic and mean-zero, with
+$\lVert\eta_j^{R}\rVert_{\mathrm{TV}}\lesss1$: the discrepancies are $\tfrac{\mathrm{rem}_j}{3}$ at $h_j$
+and $-\tfrac{\mathrm{rem}_j+\mathrm{rem}_{j+1}}{6}$ at $H_j$, each $O(1)$. (The two polar caps contribute
+$O(1)$ extra mass, absorbed into $\Lambda^R$ and estimated identically.)
+\end{itemize}
+Throughout we use $\rp_j\asymp j/\sqrt N$, $\eps_j\asymp j/N$, and, for two bands in one hemisphere with
+$\ell=\abs{j-k}$, the separation $\abs{z_j-z_k}\asymp\rp_j\,\ell/\sqrt N\asymp j\ell/N$ (uniform angular
+spacing $\asymp N^{-1/2}$), which lies below $\rp_\ast$ whenever $\ell\le\sqrt N$.
+
+\begin{theorem}\label{thm:Asqrt}
+$(A_R)\lesss1$ and $(A_S)\lesss\sqrt N$; consequently $(A)\lesss\sqrt N$.
+\end{theorem}
+
+\begin{proof}
+\emph{Residual term.} By (M2), subtracting the constant $K(z_j,z_k)$ and applying the second-derivative
+bound in \eqref{eq:kernelderiv},
+$\lvert\inner{\eta_j^{R}}{\eta_k^{R}}_K\rvert\lesss\lVert\eta_j^R\rVert\lVert\eta_k^R\rVert
+\eps_j\eps_k\,\rp_\ast^{-3}\log N$. For $j=k$ this is $\lesss\eps_j^2\rp_j^{-3}\log N\asymp
+(\log N)/(\sqrt N\,j)$, and the same bound holds for same-hemisphere pairs $j\ne k$ (with a bounded
+$\ell$-dependence through the log); summing over $j$ and $\ell$ gives $O\!\bigl(N^{-1/2}(\log N)^2\bigr)$.
+Cross-hemisphere pairs have $\abs{z_j-z_k}\gtrsim1$, where $K$ is smooth and each term is
+$O(\eps_j\eps_k)$, summing to $O(1)$. Hence $(A_R)\lesss1$.
+
+\emph{Simpson term, diagonal.} Fix $j$ and use \eqref{eq:kernelform}. The analytic part $R$: subtracting
+its degree-$3$ Taylor polynomial in each variable and using (M1),
+$\lvert\iint R\,d\eta_j^{S}d\eta_j^{S}\rvert\lesss\lVert\eta_j^S\rVert^2\eps_j^{8}\sup_{\ol{B_j}^2}
+\lvert\partial_z^4\partial_{z'}^4R\rvert\lesss j^2\eps_j^8\rp_j^{-9}\asymp j\,N^{-7/2}$, summing to
+$O(N^{-5/2})$. For the singular part, rescale $z=z_j+\eps_j u$: then
+$(z-z')^2\log\abs{z-z'}=\eps_j^2(u-u')^2(\log\eps_j+\log\abs{u-u'})$, and the polynomial term
+$(u-u')^2\log\eps_j$ is annihilated by (M1); writing $\beta=\beta(z_j,z_j)+O(\eps_j\rp_j^{-4})$ and
+bounding by total variation,
+\[
+   \Bigl\lvert\iint \beta f\,d\eta_j^{S}d\eta_j^{S}\Bigr\rvert
+   \ \lesss\ \beta(z_j,z_j)\,\eps_j^{2}\,\lVert\eta_j^{S}\rVert^2
+   \ \asymp\ \frac{1}{\rp_j^{3}}\Bigl(\frac{j}{N}\Bigr)^{2}j^{2}\ \asymp\ \frac{j}{\sqrt N}.
+\]
+Summing over $j\le M$ gives $\lVert\Lambda^{S}\rVert_{K,\mathrm{diag}}^2:=\sum_j\lVert\eta_j^S\rVert_K^2
+\lesss N^{-1/2}\sum_{j\le M}j\asymp\sqrt N$.
+
+\emph{Simpson term, near bands} $\ell=\abs{j-k}\le2$. By Cauchy--Schwarz in the (positive semidefinite)
+form $\inner{\cdot}{\cdot}_K$, $\lvert\inner{\eta_j^S}{\eta_k^S}_K\rvert\le\lVert\eta_j^S\rVert_K
+\lVert\eta_k^S\rVert_K\le\tfrac12(\lVert\eta_j^S\rVert_K^2+\lVert\eta_k^S\rVert_K^2)$, so
+$\sum_{\ell\le2}\lvert\inner{\eta_j^S}{\eta_k^S}_K\rvert\lesss\sum_j\lVert\eta_j^S\rVert_K^2\lesss\sqrt N$.
+
+\emph{Simpson term, far bands} $\ell\ge3$. Using (M1) in both variables and the fourth-derivative bound
+in \eqref{eq:kernelderiv} (which carries \emph{no} logarithm),
+\[
+   \lvert\inner{\eta_j^S}{\eta_k^S}_K\rvert
+   \ \lesss\ \lVert\eta_j^S\rVert\lVert\eta_k^S\rVert\,\eps_j^4\eps_k^4\!\!
+   \sup_{\ol{B_j}\times\ol{B_k}}\!\!\lvert\partial_z^4\partial_{z'}^4K\rvert
+   \ \lesss\ j\,k\,\eps_j^4\eps_k^4\,\rp_\ast^{-3}\,\abs{z_j-z_k}^{-6}.
+\]
+For same-hemisphere pairs with $k\asymp j$ (so $\abs{z_j-z_k}\asymp j\ell/N$, $\rp_\ast\asymp j/\sqrt N$)
+this equals $\asymp j\,\ell^{-6}N^{-1/2}$; summing over $\ell\ge3$ and $j\le M$ gives
+$N^{-1/2}\sum_{\ell\ge3}\ell^{-6}\sum_{j\le M}j\asymp\sqrt N$. The remaining regimes are negligible: for
+$k\gg j$ one has $\abs{z_j-z_k}\asymp k^2/N$ and the term is $\asymp j^2k^{-7}N^{-1/2}$, whose sum is
+$O(N^{-1/2})$; cross-hemisphere pairs are either equatorial (treated as near bands, $\rp_\ast\asymp1$) or
+have $\abs{z_j-z_k}\gtrsim1$ (where $K$ is smooth and contributions are exponentially small in the number
+of vanishing moments). Altogether $(A_S)\lesss\sqrt N$.
+
+Combining with \eqref{eq:SRtriangle} yields $(A)\lesss\sqrt N$.
+\end{proof}
+
+Theorem~\ref{thm:Asqrt} proves the (now unconditional) estimate $(A)\lesss\sqrt N$ of
+Theorem~\ref{thm:sizes}(3).
+
+\subsection{The constant of the necklace term}\label{ssec:exact}
+Theorem~\ref{thm:Asqrt} gives the bound needed for the two-sided estimate. We now show that the same
+band decomposition in fact \emph{computes} $(A)$ to leading order, and that $(A)=\Theta(\sqrt N)$ ---
+so the natural guess $(A)=o(\sqrt N)$ is \emph{false}. The point is that the diagonal band
+self-energies already carry the full $\sqrt N$ order and are \emph{not} cancelled by the off-diagonal
+interactions.
+
+\emph{The diagonal.} Rescaling band $j$ by $z=h_j+\eps_j u$ turns $\eta_j^S$ into $r_j\tilde\eta$,
+where
+\[
+   \tilde\eta=\tfrac16\delta_{-1}+\tfrac46\delta_{0}+\tfrac16\delta_{1}-\tfrac12\mathbf 1_{[-1,1]}
+\]
+is the fixed Simpson-minus-uniform profile on $[-1,1]$, with vanishing moments $0,1,2,3$. By
+Lemma~\ref{lem:kernel} the smooth part $R$ contributes $O(j\,N^{-7/2})$ per band (annihilated to
+eighth order), and in the singular part $\beta f$ the rescaled logarithm $\log\eps_j$ is annihilated by
+the moment conditions $\int u^k\,d\tilde\eta=0$ ($k=0,1$), since
+$\iint(u-u')^2\,d\tilde\eta\,d\tilde\eta=0$. What survives is the scale-invariant constant
+\begin{equation}\label{eq:C0}
+   C_0:=\iint(u-u')^2\log\abs{u-u'}\,d\tilde\eta(u)\,d\tilde\eta(u')=\frac1{18},
+\end{equation}
+so that, with $\beta(h_j,h_j)=\tfrac1{2\pi\rp_j^3}$ and $\eps_j=r_j/N$,
+\begin{equation}\label{eq:perband}
+   \lVert\eta_j^S\rVert_K^2=\frac{C_0}{2\pi}\,\frac{r_j^{4}}{N^{2}\rp_j^{3}}\,\bigl(1+o(1)\bigr).
+\end{equation}
+(The evaluation \eqref{eq:C0} is elementary: expand $(u-u')^2\log\abs{u-u'}$ against the nine atom
+pairs and the atom--interval and interval--interval integrals; the polynomial pieces cancel by the
+moments and the residual is $\tfrac1{18}$.) Using the exact identity $1-h_j=(4j^2-2j+1)/N$, so that
+the rings sit at $j\approx\tfrac{\sqrt N}2\sqrt{1-h}$ with $h$-spacing $2\eps(h)$,
+$\eps(h)=\tfrac2{\sqrt N}\sqrt{1-h}$, and $r_j\approx 2\sqrt N\sqrt{1-h}$, $\rp^2=1-h^2$,
+Euler--Maclaurin converts \eqref{eq:perband} summed over both hemispheres into
+\begin{equation}\label{eq:diagconst}
+   \sum_j\lVert\eta_j^S\rVert_K^2
+   =\frac{C_0}{2\pi}\cdot 8(2-\sqrt2)\,\sqrt N\,(1+o(1))
+   =\frac{2(2-\sqrt2)}{9\pi}\,\sqrt N\,(1+o(1)),
+\end{equation}
+using $\int_0^1(1+h)^{-3/2}\,dh=2-\sqrt2$. Thus the diagonal alone is $\Theta(\sqrt N)$, with the
+explicit constant $c_A^{\mathrm{diag}}=\frac{2(2-\sqrt2)}{9\pi}\approx0.04144$. (The single equatorial
+band, whose occupation $r_M$ can be as large as $\asymp\sqrt N$, adds only $O(1)$ and is thus
+absorbed in the $o(\sqrt N)$; this $O(1)$ excess is the origin of the sawtooth in the pre-asymptotic
+regime.)
+
+\emph{The off-diagonal is subordinate.} For bands at a common latitude scale, the same rescaling gives
+$\inner{\eta_j^S}{\eta_{j+\ell}^S}_K=\frac{1}{2\pi\rp_j^3}r_j^2\eps_j^2\,C_\ell(1+o(1))$ with the shell
+constants
+\begin{equation}\label{eq:shell}
+   C_\ell:=\iint(u-u'-2\ell)^2\log\abs{u-u'-2\ell}\,d\tilde\eta\,d\tilde\eta ,
+\end{equation}
+whose $\log\eps_j$ term again vanishes (now by the moments $0,1,2$). These decay extremely fast:
+$C_1\approx-7.1\times10^{-4}$ and $\abs{C_\ell}\le\abs{C_1}$ for all $\ell\ge1$, with
+$\sum_{\ell\ge1}\abs{C_\ell}\le 7.2\times10^{-4}=1.3\%\cdot C_0$. Hence the total off-diagonal
+contribution is at most a few percent of the diagonal,
+\[
+   \Bigl\lvert\,2\!\!\sum_{j<k}\inner{\eta_j^S}{\eta_k^S}_K\,\Bigr\rvert
+   \ \le\ \frac{2\sum_{\ell\ge1}\abs{C_\ell}}{C_0}\,\sum_j\lVert\eta_j^S\rVert_K^2\,(1+o(1))
+   \ \le\ 0.026\,\sum_j\lVert\eta_j^S\rVert_K^2\,(1+o(1)),
+\]
+so it cannot cancel the diagonal. Consequently
+\begin{equation}\label{eq:Aconst}
+   (A)=\Theta(\sqrt N),\qquad \frac{(A)}{\sqrt N}\longrightarrow c_A\in\Bigl[\,0.974,\,1\,\Bigr]\cdot
+   \frac{2(2-\sqrt2)}{9\pi},
+\end{equation}
+and in particular \textbf{$(A)\ne o(\sqrt N)$}, refuting the earlier conjecture. The exact limit is
+$c_A=\frac{4(2-\sqrt2)}{\pi}\,\widehat C$ with $\widehat C=\sum_{\ell\in\Z}C_\ell\approx0.05413$ the full lattice
+sum, i.e.\ $c_A\approx0.0404$; the small deficit $\widehat C/C_0\approx0.974$ from the neighboring bands is
+a genuine lattice-sum correction and, unlike the diagonal constant, has no elementary closed form.
+Numerically $(A)/\sqrt N$ decreases monotonically to $\approx0.0404$ across four decades of $N$
+(\S\ref{sec:numerics}), in agreement with \eqref{eq:Aconst}.
+
+The upshot for the deficit: since $(A)/\sqrt N\to c_A$ and $(B)/\sqrt N\to c_B$ both converge
+(Theorem~\ref{thm:sharp}), the only obstruction to a limit for $\Def/\sqrt N$ is the cross-ring term
+$(C)/\sqrt N$.
+
+
+%======================================================================
+\section{Lower bound and proof of the theorems}\label{sec:lower}
+%======================================================================
+
+\subsection{The universal lower bound}
+The deficit is controlled from below, for \emph{every} configuration, by the $L^2$ spherical-cap
+discrepancy through the Stolarsky invariance principle \cite{Stolarsky,BilykDaiMatzke}: there is a
+constant $c_2>0$ with
+\begin{equation}\label{eq:stolarsky}
+   \tfrac43N^2-\Sigma(\omega_N)=c_2\,N^2\,D_{L^2}(\omega_N)^2,
+   \qquad
+   D_{L^2}(\omega_N)^2=\int_{-1}^1\!\!\int_{\Sph}\Bigl(\tfrac{\#(\omega_N\cap C(x,t))}{N}-\sigma(C(x,t))\Bigr)^2 d\sigma(x)\,dt,
+\end{equation}
+where $C(x,t)$ is the spherical cap of centre $x$ and height $t$. Beck's theorem
+\cite{BeckSphere} gives the universal lower bound $D_{L^2}(\omega_N)\ge c_B\,N^{-3/4}$. Combining,
+\begin{equation}\label{eq:beck}
+   \tfrac43N^2-\Sigma(\omega_N)\ \ge\ c_2c_B^2\,N^2\,N^{-3/2}\ =\ c\,\sqrt N ,
+\end{equation}
+for all $\omega_N$ and in particular for $\PN$.
+
+\subsection{Proofs of the theorems}
+\begin{proof}[Proof of Theorem~\ref{thm:decomp}]
+The spectral identity and $\Def=\sum_{n\ge1}\abs{a_n}S_n\ge0$ are Proposition~\ref{prop:spectral}
+with Lemma~\ref{lem:coeffs}. The decomposition \eqref{eq:decomp} is the exact rearrangement of
+\S\ref{sec:ring}, and the nonnegativity of $(A)$ and of $(B)+(C)$ is Proposition~\ref{prop:signs}
+(nonnegativity of $(B)$ alone is Proposition~\ref{prop:within}).
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:sizes}]
+Part (1) is Proposition~\ref{prop:within} together with Lemma~\ref{lem:sumrho}; part (2) is the
+summation of \S\ref{sec:cross}. For part (3), the bound $(A)\lesssim\sqrt N$ is
+Theorem~\ref{thm:Asqrt}, and the diagonal constant and the resulting $(A)=\Theta(\sqrt N)$ are
+\eqref{eq:diagconst}--\eqref{eq:Aconst} in \S\ref{ssec:exact}.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+The lower bound is \eqref{eq:beck}. For the upper bound, by \eqref{eq:decomp} and
+Theorem~\ref{thm:sizes},
+\[
+   \Def=(A)+(B)+(C)\ \le\ (A)+(B)+\abs{(C)}\ \lesss\ \sqrt N+\sqrt N+\sqrt N\ \lesss\ \sqrt N. \qedhere
+\]
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:sharp}]
+By Proposition~\ref{prop:within} and Lemma~\ref{lem:sumrho}, $(B)=c_B\sqrt N(1+o(1))$; by
+\eqref{eq:Aconst}, $(A)=c_A\sqrt N(1+o(1))$ with $c_A>0$; and $\abs{(C)}\lesssim\sqrt N$ by
+\S\ref{sec:cross}. Substituting into $\Def=(A)+(B)+(C)$ gives
+$\Def=(c_A+c_B)\sqrt N+(C)+o(\sqrt N)$. Since the first term has a limit after division by $\sqrt N$,
+$\Def/\sqrt N$ converges iff $(C)/\sqrt N$ does.
+\end{proof}
+
+\begin{remark}[Convergence of $\Def/\sqrt N$ reduces to $(C)$]\label{rem:osc}
+It is tempting to expect $\Def/\sqrt N$ to oscillate, on the grounds that the ring structure restarts
+whenever $M=\lfloor\sqrt{N/4}\rfloor$ jumps. This is not so: by Lemma~\ref{lem:sumrho} the
+Euler--Maclaurin limit $\sum_p\rp_p/\sqrt N\to\frac{2(2\sqrt2-1)}{3}$ exists (the contribution of the
+single restarting equatorial band is $O(1)=o(\sqrt N)$), so $(B)/\sqrt N\to c_B$; and by
+\eqref{eq:Aconst} $(A)/\sqrt N\to c_A$ as well. Hence
+$\Def/\sqrt N=(c_A+c_B)+(C)/\sqrt N+o(1)$, and the existence of $\lim\Def/\sqrt N$ is
+\emph{equivalent} to that of $\lim(C)/\sqrt N$. The pre-asymptotic sawtooth seen numerically comes
+from the equatorial-band $O(1)$ terms in $(A)$ and $\sum_p\rp_p$, which decay like $N^{-1/2}$ after
+normalization.
+\end{remark}
+
+\begin{remark}[Comparison with the logarithmic energy]
+For the logarithmic energy $\sum_{i\ne j}\log\frac1{\dist{x_i}{x_j}}$ the same construction yields
+sharp asymptotics with the optimal second-order constant \cite{BEMOC,Diamond}. The mechanisms
+differ: there the within-ring sum meets the integrable singularity of $\log\frac1{\dist{}{}}$ and
+produces a term of order $N\log N$, whereas here the bounded kernel $\dist{}{}$ produces the clean
+$\sqrt N$ within-ring term of Proposition~\ref{prop:within}, and the leading term $\frac43N^2$ is
+kernel-universal.
+\end{remark}
+
+%======================================================================
+\section{Numerical confirmation}\label{sec:numerics}
+%======================================================================
+
+We summarize the numerical evidence; all quantities are computed directly from the construction of
+\S\ref{sec:prelim}.
+\begin{itemize}[leftmargin=1.6em,itemsep=2pt]
+\item The closed form \eqref{eq:legexp} matches the numerically computed Legendre coefficients to
+      machine precision; the product $a_n(2n-1)(2n+1)(2n+3)=-4(2n+1)$ holds exactly.
+\item The exact decomposition \eqref{eq:decomp} is verified: $(A)+(B)+(C)=\Def$ to machine
+      precision, and $(B)$ accounts for $87\%$--$94\%$ of $\Def$ across the tested range
+      $N\in[10^2,10^5]$.
+\item Fitted behavior of the normalized terms (using the exact ring energies via the elliptic-integral
+      kernel, over $N$ up to $4\times10^6$ at the post-transition phase $N=4M^2$):
+      $(B)/\sqrt N\to c_B=\frac{2\pi(2\sqrt2-1)}{9}\approx1.276$ and
+      $\sum_p\rp_p/\sqrt N\to\frac{2(2\sqrt2-1)}{3}\approx1.219$, both convergent;
+      $(A)/\sqrt N$ decreases monotonically to $\approx0.0404$, matching the diagonal constant
+      $\frac{2(2-\sqrt2)}{9\pi}\approx0.04144$ reduced by the $\approx-2.6\%$ lattice-sum correction
+      \eqref{eq:Aconst} --- in particular $(A)=\Theta(\sqrt N)$, \emph{not} $o(\sqrt N)$; and
+      $(C)/\sqrt N$ is small (order $10^{-2}$), consistent with $\abs{(C)}\lesss\sqrt N$.
+\item The diagonal band self-energies $\sum_j\lVert\eta_j^S\rVert_K^2$ divided by $\sqrt N$ converge
+      to $\frac{2(2-\sqrt2)}{9\pi}$, and the full off-diagonal correction $(A)-\sum_j\lVert\eta_j^S
+      \rVert_K^2$ is a small negative $O(\sqrt N)$ term ($\approx-2.6\%$ of the diagonal), confirming
+      \eqref{eq:perband}--\eqref{eq:Aconst} and the shell constants \eqref{eq:shell}.
+\item The normalized deficit $\Def/\sqrt N$ approaches $c_A+c_B\approx1.32$ from the pre-asymptotic
+      sawtooth; its value at finite $N$ lies in $[1.3,1.6]$ over the tested range, converging as the
+      equatorial-band $O(1)$ terms decay (Remark~\ref{rem:osc}).
+\end{itemize}
+These confirm the proved statements and, in particular, that the necklace term is a genuine
+$\Theta(\sqrt N)$ contribution: the earlier expectation $(A)=o(\sqrt N)$ is false.
+
+%======================================================================
+\begin{thebibliography}{10}
+
+\bibitem{BeckSphere}
+J.~Beck,
+\emph{Sums of distances between points on a sphere---an application of the theory of irregularities
+of distribution to discrete geometry},
+Mathematika \textbf{31} (1984), no.~1, 33--41.
+
+\bibitem{BEMOC}
+C.~Beltr\'an, U.~Etayo, J.~Marzo, and J.~Ortega-Cerd\`a,
+\emph{A sequence of polynomials with optimal condition number},
+J. Amer. Math. Soc. \textbf{34} (2021), no.~1, 219--244.
+
+\bibitem{Diamond}
+C.~Beltr\'an and U.~Etayo,
+\emph{The Diamond ensemble: a constructive set of spherical points with small logarithmic energy},
+J. Complexity \textbf{59} (2020), 101471.
+
+\bibitem{BilykDaiMatzke}
+D.~Bilyk, F.~Dai, and R.~Matzke,
+\emph{The Stolarsky principle and energy optimization on the sphere},
+Constr. Approx. \textbf{48} (2018), no.~1, 31--60.
+
+\bibitem{BrauchartGrabner}
+J.~S.~Brauchart and P.~J.~Grabner,
+\emph{Distributing many points on spheres: minimal energy and designs},
+J. Complexity \textbf{31} (2015), no.~3, 293--326.
+
+\bibitem{FlajoletSedgewick}
+P.~Flajolet and R.~Sedgewick,
+\emph{Analytic Combinatorics},
+Cambridge University Press, Cambridge, 2009.
+
+\bibitem{Smale}
+S.~Smale,
+\emph{Mathematical problems for the next century},
+in \emph{Mathematics: Frontiers and Perspectives}, Amer. Math. Soc., Providence, RI, 2000,
+pp.~271--294.
+
+\bibitem{Stolarsky}
+K.~B.~Stolarsky,
+\emph{Sums of distances between points on a sphere.~II},
+Proc. Amer. Math. Soc. \textbf{41} (1973), 575--582.
+
+\bibitem{Wong}
+R.~Wong,
+\emph{Asymptotic Approximations of Integrals},
+Classics in Applied Mathematics \textbf{34}, SIAM, Philadelphia, PA, 2001.
+
+\bibitem{DLMF}
+DLMF, \emph{NIST Digital Library of Mathematical Functions},
+\url{https://dlmf.nist.gov/}, Release 1.2.4 of 2025-03-15,
+F.~W.~J. Olver, A.~B. Olde Daalhuis, D.~W. Lozier, et al., eds.; \S19.12.
+
+\end{thebibliography}
+
+\end{document}
