@@ -47,6 +47,7 @@ import BEMOCFormalization.ReducedCuspResonant
 import BEMOCFormalization.ReducedCuspQuadratic
 import BEMOCFormalization.RealBinomialSeries
 import BEMOCFormalization.MixedTaylorRemainder
+import BEMOCFormalization.MainTheorem
 import BEMOCFormalization.TwoMomentPeano
 import BEMOCFormalization.WithinRingLimit
 
