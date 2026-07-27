@@ -265,8 +265,8 @@ theorem comparableSame_rectangle_normalizedGap_quadratic_lower
     normalizedLatitudeGap_quadratic_lower_of_radius_ceiling
       hsInterior htInterior hR hceil.1 hceil.2 hgap0 hgap
 
-/-- All six graded normalized-gap derivative bounds are now discharged on
-literal comparable rectangles once the unit-chart inequality is known. -/
+/-- All six graded normalized-gap derivative bounds are discharged on
+literal comparable rectangles inside the fixed chart `q ≤ 3200`. -/
 theorem comparableSame_rectangle_gradedGapBound
     {N : ℕ} (hM : 1 ≤ bandCount N)
     {j k : Fin (bandTailCount N + 1)}
@@ -276,7 +276,7 @@ theorem comparableSame_rectangle_gradedGapBound
       (bandBoundaryHeight N j))
     (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
       (bandBoundaryHeight N k))
-    (hgap : normalizedLatitudeGap s t ≤ 1) :
+    (hgap : normalizedLatitudeGap s t ≤ 3200) :
     LatitudeComparableGradedGapBound s t
       ((latitudeBandScale N j : ℝ) /
         (10 * (bandCount N : ℝ))) 3200 := by
@@ -377,5 +377,23 @@ theorem comparableSame_rectangle_normalizedLatitudeGap_le
           (normalizedLatitudeGap s t + 2) ≤ 3200 ^ 2 := by
     exact (mul_le_mul_left hprodPos).mp (by simpa only [mul_assoc] using hmul)
   nlinarith
+
+/-- The concrete fixed chart `q ≤ 3200` discharges the complete graded gap
+jet on every literal comparable rectangle.  This is the unconditional
+replacement for the earlier unit-chart interface. -/
+theorem comparableSame_rectangle_gradedGapBound_fixedChart
+    {N : ℕ} (hM : 1 ≤ bandCount N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : ComparableSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    LatitudeComparableGradedGapBound s t
+      ((latitudeBandScale N j : ℝ) /
+        (10 * (bandCount N : ℝ))) 3200 := by
+  exact comparableSame_rectangle_gradedGapBound hM hjk hs ht
+    (comparableSame_rectangle_normalizedLatitudeGap_le hM hjk hs ht)
 
 end BEMOC

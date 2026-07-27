@@ -7,7 +7,8 @@ The common radius envelope is deliberately coarse.  The power derivative
 estimate (5.5) instead needs the grading that is visible in the explicit
 normalized-gap formulas.  This file proves that grading under the local
 comparable-rectangle assumptions: both radii lie in `[R,40R]`, the height
-separation is at most `R²`, and the normalized gap is at most one.
+separation is at most a fixed multiple of `R²`, and the normalized gap is in
+the concrete fixed chart `q ≤ 3200`.
 -/
 
 open Set
@@ -20,11 +21,11 @@ set_option maxHeartbeats 800000
 mixed-derivative chain. -/
 def LatitudeComparableGradedGapBound (s t R K : ℝ) : Prop :=
   |normalizedLatitudeGapDs s t| ≤ |s - t| * R⁻¹ ^ 4 ∧
-  |normalizedLatitudeGapDst s t| ≤ 3200 * R⁻¹ ^ 4 ∧
+  |normalizedLatitudeGapDst s t| ≤ 5121600 * R⁻¹ ^ 4 ∧
   |normalizedLatitudeGapDss s t| ≤ (1600 + 3 * K) * R⁻¹ ^ 4 ∧
-  |normalizedLatitudeGapDsst s t| ≤ 9601 * R⁻¹ ^ 6 ∧
-  |normalizedLatitudeGapDstt s t| ≤ 9601 * R⁻¹ ^ 6 ∧
-  |normalizedLatitudeGapDsstt s t| ≤ 28807 * R⁻¹ ^ 8
+  |normalizedLatitudeGapDsst s t| ≤ 15364801 * R⁻¹ ^ 6 ∧
+  |normalizedLatitudeGapDstt s t| ≤ 15364801 * R⁻¹ ^ 6 ∧
+  |normalizedLatitudeGapDsstt s t| ≤ 46094407 * R⁻¹ ^ 8
 
 private theorem radius_product_upper
     {s t R : ℝ} (hR : 0 < R)
@@ -46,14 +47,14 @@ private theorem one_sub_mul_le_radius_product
     {s t R : ℝ} (hR : 0 < R)
     (hsfloor : R ≤ heightRadius s)
     (htfloor : R ≤ heightRadius t)
-    (hgap : normalizedLatitudeGap s t ≤ 1) :
-    1 - s * t ≤ 2 * (heightRadius s * heightRadius t) := by
+    (hgap : normalizedLatitudeGap s t ≤ 3200) :
+    1 - s * t ≤ 3201 * (heightRadius s * heightRadius t) := by
   have hrs : 0 < heightRadius s := hR.trans_le hsfloor
   have hrt : 0 < heightRadius t := hR.trans_le htfloor
   have hp : 0 < heightRadius s * heightRadius t := mul_pos hrs hrt
   unfold normalizedLatitudeGap at hgap
-  have hmul := (div_le_iff₀ hp).mp (by linarith : 
-    (1 - s * t) / (heightRadius s * heightRadius t) ≤ 2)
+  have hmul := (div_le_iff₀ hp).mp (by linarith :
+    (1 - s * t) / (heightRadius s * heightRadius t) ≤ 3201)
   nlinarith
 
 /-- Direct proof of the graded comparable-rectangle normalized-gap jet. -/
@@ -66,7 +67,7 @@ theorem latitudeComparableGradedGapBound
     (hsupper : heightRadius s ≤ 40 * R)
     (htupper : heightRadius t ≤ 40 * R)
     (hsep : |s - t| ≤ K * R ^ 2)
-    (hgap : normalizedLatitudeGap s t ≤ 1) :
+    (hgap : normalizedLatitudeGap s t ≤ 3200) :
     LatitudeComparableGradedGapBound s t R K := by
   have hsabs : |s| ≤ 1 := abs_le.mpr hs
   have htabs : |t| ≤ 1 := abs_le.mpr ht
@@ -85,11 +86,11 @@ theorem latitudeComparableGradedGapBound
     exact (le_abs_self (s * t)).trans habs
   have hone0 : 0 ≤ 1 - s * t := sub_nonneg.mpr hstle
   have honeAbs :
-      |1 - s * t| ≤ 3200 * R ^ 2 := by
+      |1 - s * t| ≤ 5121600 * R ^ 2 := by
     rw [abs_of_nonneg hone0]
     nlinarith
   have honeAbs' :
-      |s * t - 1| ≤ 3200 * R ^ 2 := by
+      |s * t - 1| ≤ 5121600 * R ^ 2 := by
     rw [abs_sub_comm]
     exact honeAbs
   have hDs0 := abs_div_pow_mul_pow_le (m := 3) (n := 1)
@@ -101,17 +102,17 @@ theorem latitudeComparableGradedGapBound
     unfold normalizedLatitudeGapDs
     simpa using hDs0
   have hDst0 := abs_div_pow_mul_pow_le (m := 3) (n := 3)
-    (z := s * t - 1) (C := 3200 * R ^ 2)
+    (z := s * t - 1) (C := 5121600 * R ^ 2)
     (x := heightRadius s) (y := heightRadius t) (R := R)
     (by positivity) honeAbs' hR hsfloor htfloor
   have hDst :
-      |normalizedLatitudeGapDst s t| ≤ 3200 * R⁻¹ ^ 4 := by
+      |normalizedLatitudeGapDst s t| ≤ 5121600 * R⁻¹ ^ 4 := by
     unfold normalizedLatitudeGapDst
     calc
       |(s * t - 1) /
           (heightRadius s ^ 3 * heightRadius t ^ 3)| ≤
-          (3200 * R ^ 2) * R⁻¹ ^ 6 := hDst0
-      _ = 3200 * R⁻¹ ^ 4 := by
+          (5121600 * R ^ 2) * R⁻¹ ^ 6 := hDst0
+      _ = 5121600 * R⁻¹ ^ 4 := by
         field_simp [hR.ne']
         ring
   have hrsSq : heightRadius s ^ 2 ≤ 1600 * R ^ 2 := by
@@ -159,32 +160,32 @@ theorem latitudeComparableGradedGapBound
     (x := heightRadius s) (y := heightRadius t) (R := R)
     (by norm_num) htNum hR hsfloor htfloor
   have hnumSst :
-      |3 * s * (1 - s * t)| ≤ 9600 * R ^ 2 := by
+      |3 * s * (1 - s * t)| ≤ 15364800 * R ^ 2 := by
     rw [abs_mul, abs_mul, abs_of_nonneg hone0]
     norm_num
     calc
       3 * |s| * (1 - s * t) ≤
-          3 * 1 * (2 * (heightRadius s * heightRadius t)) := by gcongr
-      _ ≤ 9600 * R ^ 2 := by nlinarith
+          3 * 1 * (3201 * (heightRadius s * heightRadius t)) := by gcongr
+      _ ≤ 15364800 * R ^ 2 := by nlinarith
   have hsecondSst := abs_div_pow_mul_pow_le (m := 5) (n := 3)
-    (z := 3 * s * (1 - s * t)) (C := 9600 * R ^ 2)
+    (z := 3 * s * (1 - s * t)) (C := 15364800 * R ^ 2)
     (x := heightRadius s) (y := heightRadius t) (R := R)
     (by positivity) hnumSst hR hsfloor htfloor
   have hDsst :
-      |normalizedLatitudeGapDsst s t| ≤ 9601 * R⁻¹ ^ 6 := by
+      |normalizedLatitudeGapDsst s t| ≤ 15364801 * R⁻¹ ^ 6 := by
     unfold normalizedLatitudeGapDsst
     calc
       |_ - _| ≤
           |t / (heightRadius s ^ 3 * heightRadius t ^ 3)| +
           |3 * s * (1 - s * t) /
             (heightRadius s ^ 5 * heightRadius t ^ 3)| := abs_sub _ _
-      _ ≤ R⁻¹ ^ 6 + (9600 * R ^ 2) * R⁻¹ ^ 8 :=
+      _ ≤ R⁻¹ ^ 6 + (15364800 * R ^ 2) * R⁻¹ ^ 8 :=
         add_le_add (by simpa using hfirstSst) (by simpa using hsecondSst)
-      _ = 9601 * R⁻¹ ^ 6 := by
+      _ = 15364801 * R⁻¹ ^ 6 := by
         field_simp [hR.ne']
         ring
   have hDsstSwap :
-      |normalizedLatitudeGapDsst t s| ≤ 9601 * R⁻¹ ^ 6 := by
+      |normalizedLatitudeGapDsst t s| ≤ 15364801 * R⁻¹ ^ 6 := by
     -- The preceding argument is symmetric; repeat it through the existing
     -- explicit `(2,1)` estimate with swapped variables.
     have hsNum : |s| ≤ 1 := hsabs
@@ -194,15 +195,15 @@ theorem latitudeComparableGradedGapBound
       (by norm_num) hsNum hR htfloor hsfloor
     have honeComm : 1 - t * s = 1 - s * t := by ring
     have hnum :
-        |3 * t * (1 - t * s)| ≤ 9600 * R ^ 2 := by
+        |3 * t * (1 - t * s)| ≤ 15364800 * R ^ 2 := by
       rw [honeComm, abs_mul, abs_mul, abs_of_nonneg hone0]
       norm_num
       calc
         3 * |t| * (1 - s * t) ≤
-            3 * 1 * (2 * (heightRadius s * heightRadius t)) := by gcongr
-        _ ≤ 9600 * R ^ 2 := by nlinarith
+            3 * 1 * (3201 * (heightRadius s * heightRadius t)) := by gcongr
+        _ ≤ 15364800 * R ^ 2 := by nlinarith
     have hsecond := abs_div_pow_mul_pow_le (m := 5) (n := 3)
-      (z := 3 * t * (1 - t * s)) (C := 9600 * R ^ 2)
+      (z := 3 * t * (1 - t * s)) (C := 15364800 * R ^ 2)
       (x := heightRadius t) (y := heightRadius s) (R := R)
       (by positivity) hnum hR htfloor hsfloor
     unfold normalizedLatitudeGapDsst
@@ -211,13 +212,13 @@ theorem latitudeComparableGradedGapBound
           |s / (heightRadius t ^ 3 * heightRadius s ^ 3)| +
           |3 * t * (1 - t * s) /
             (heightRadius t ^ 5 * heightRadius s ^ 3)| := abs_sub _ _
-      _ ≤ R⁻¹ ^ 6 + (9600 * R ^ 2) * R⁻¹ ^ 8 :=
+      _ ≤ R⁻¹ ^ 6 + (15364800 * R ^ 2) * R⁻¹ ^ 8 :=
         add_le_add (by simpa using hfirst) (by simpa using hsecond)
-      _ = 9601 * R⁻¹ ^ 6 := by
+      _ = 15364801 * R⁻¹ ^ 6 := by
         field_simp [hR.ne']
         ring
   have hDstt :
-      |normalizedLatitudeGapDstt s t| ≤ 9601 * R⁻¹ ^ 6 := by
+      |normalizedLatitudeGapDstt s t| ≤ 15364801 * R⁻¹ ^ 6 := by
     unfold normalizedLatitudeGapDstt
     exact hDsstSwap
   have htRadiusSq := heightRadius_sq ht
@@ -231,14 +232,14 @@ theorem latitudeComparableGradedGapBound
       3 * |s| ^ 2 ≤ 3 * 1 ^ 2 := by gcongr
       _ = 3 := by norm_num
   have hnum3 :
-      |9 * s * t * (1 - s * t)| ≤ 28800 * R ^ 2 := by
+      |9 * s * t * (1 - s * t)| ≤ 46094400 * R ^ 2 := by
     rw [abs_mul, abs_mul, abs_mul, abs_of_nonneg hone0]
     norm_num
     calc
       9 * |s| * |t| * (1 - s * t) ≤
-          9 * 1 * 1 * (2 * (heightRadius s * heightRadius t)) := by
+          9 * 1 * 1 * (3201 * (heightRadius s * heightRadius t)) := by
             gcongr
-      _ ≤ 28800 * R ^ 2 := by nlinarith
+      _ ≤ 46094400 * R ^ 2 := by nlinarith
   have hh1 := abs_div_pow_mul_pow_le (m := 3) (n := 5)
     (z := heightRadius t ^ 2 + 3 * t ^ 2) (C := 4)
     (x := heightRadius s) (y := heightRadius t) (R := R)
@@ -248,11 +249,11 @@ theorem latitudeComparableGradedGapBound
     (x := heightRadius s) (y := heightRadius t) (R := R)
     (by norm_num) hnum2 hR hsfloor htfloor
   have hh3 := abs_div_pow_mul_pow_le (m := 5) (n := 5)
-    (z := 9 * s * t * (1 - s * t)) (C := 28800 * R ^ 2)
+    (z := 9 * s * t * (1 - s * t)) (C := 46094400 * R ^ 2)
     (x := heightRadius s) (y := heightRadius t) (R := R)
     (by positivity) hnum3 hR hsfloor htfloor
   have hDsstt :
-      |normalizedLatitudeGapDsstt s t| ≤ 28807 * R⁻¹ ^ 8 := by
+      |normalizedLatitudeGapDsstt s t| ≤ 46094407 * R⁻¹ ^ 8 := by
     unfold normalizedLatitudeGapDsstt
     calc
       |_ + _ - _| ≤
@@ -265,8 +266,8 @@ theorem latitudeComparableGradedGapBound
               exact (abs_sub _ _).trans
                 (add_le_add_right (abs_add _ _) _)
       _ ≤ 4 * R⁻¹ ^ 8 + 3 * R⁻¹ ^ 8 +
-          (28800 * R ^ 2) * R⁻¹ ^ 10 := by gcongr
-      _ = 28807 * R⁻¹ ^ 8 := by
+          (46094400 * R ^ 2) * R⁻¹ ^ 10 := by gcongr
+      _ = 46094407 * R⁻¹ ^ 8 := by
         field_simp [hR.ne']
         ring
   exact ⟨hDs, hDst, hDss, hDsst, hDstt, hDsstt⟩
