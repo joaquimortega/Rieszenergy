@@ -34,6 +34,7 @@ import BEMOCFormalization.LatitudePairClassification
 import BEMOCFormalization.LatitudePairSymmetry
 import BEMOCFormalization.LatitudeOppositeGeometry
 import BEMOCFormalization.LatitudePointwiseAssembly
+import BEMOCFormalization.LatitudeTransitionNeighboring
 import BEMOCFormalization.LatitudePolarBlocks
 import BEMOCFormalization.LatitudePowerJetBounds
 import BEMOCFormalization.LatitudeRowArithmetic
