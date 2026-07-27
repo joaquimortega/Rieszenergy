@@ -12,6 +12,135 @@ open MeasureTheory Set
 
 namespace BEMOC
 
+/-- The fixed chart gives the quadratic normalized-gap lower bound with
+constant `3202` in place of the unavailable unit-chart constant `3`. -/
+theorem normalizedLatitudeGap_quadratic_lower_fixedChart
+    {s t R : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
+    (ht : t ∈ Ioo (-1 : ℝ) 1) (hR : 0 < R)
+    (hsupper : heightRadius s ≤ 40 * R)
+    (htupper : heightRadius t ≤ 40 * R)
+    (hgap0 : 0 ≤ normalizedLatitudeGap s t)
+    (hgap : normalizedLatitudeGap s t ≤ 3200) :
+    (((3202 : ℝ) * 40 ^ 4)⁻¹) * (s - t) ^ 2 *
+        (R ^ 4)⁻¹ ≤ normalizedLatitudeGap s t := by
+  have hrs0 : 0 ≤ heightRadius s := by unfold heightRadius; positivity
+  have hrt0 : 0 ≤ heightRadius t := by unfold heightRadius; positivity
+  have hprod :
+      (heightRadius s * heightRadius t) ^ 2 ≤
+        (40 * R) ^ 4 := by
+    have hmul :
+        heightRadius s * heightRadius t ≤ (40 * R) ^ 2 := by
+      calc
+        heightRadius s * heightRadius t ≤ (40 * R) * (40 * R) := by
+          gcongr
+        _ = (40 * R) ^ 2 := by ring
+    have hleft : 0 ≤ heightRadius s * heightRadius t := by positivity
+    have hright : 0 ≤ (40 * R) ^ 2 := by positivity
+    nlinarith
+  have hid := normalizedLatitudeGap_mul_add_two hs ht
+  have hx2 : normalizedLatitudeGap s t + 2 ≤ 3202 := by linarith
+  have hmain :
+      (s - t) ^ 2 ≤
+        ((3202 : ℝ) * 40 ^ 4) * R ^ 4 *
+          normalizedLatitudeGap s t := by
+    rw [← hid]
+    calc
+      (heightRadius s * heightRadius t) ^ 2 *
+          (normalizedLatitudeGap s t *
+            (normalizedLatitudeGap s t + 2)) ≤
+        (heightRadius s * heightRadius t) ^ 2 *
+          (normalizedLatitudeGap s t * 3202) := by gcongr
+      _ ≤ (40 * R) ^ 4 *
+          (normalizedLatitudeGap s t * 3202) := by gcongr
+      _ = ((3202 : ℝ) * 40 ^ 4) * R ^ 4 *
+          normalizedLatitudeGap s t := by ring
+  have hc : (0 : ℝ) < 3202 * 40 ^ 4 := by norm_num
+  have hR4 : 0 < R ^ 4 := by positivity
+  apply (mul_inv_le_iff₀ hR4).2
+  apply (inv_mul_le_iff₀ hc).2
+  nlinarith
+
+/-- Literal separated comparable rectangles satisfy the preceding
+quadratic lower bound without a chart premise. -/
+theorem separatedComparableSame_rectangle_normalizedGap_quadratic_lower
+    {N : ℕ} (hM : 1 ≤ bandCount N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : SeparatedComparableSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    (((3202 : ℝ) * 40 ^ 4)⁻¹) * (s - t) ^ 2 *
+        ((comparableLatitudeRadiusFloor N j) ^ 4)⁻¹ ≤
+      normalizedLatitudeGap s t := by
+  have hrect :=
+    separatedComparableSame_rectangle_interior_offDiagonal hM hjk hs ht
+  have hR : 0 < comparableLatitudeRadiusFloor N j := by
+    unfold comparableLatitudeRadiusFloor
+    have hMr : (0 : ℝ) < bandCount N := by exact_mod_cast hM
+    have hdr : (0 : ℝ) < latitudeBandScale N j := by
+      exact_mod_cast latitudeBandScale_pos N j
+    positivity
+  have hupper :=
+    comparableSame_rectangle_common_radius_ceiling hM hjk.1 hs ht
+  have hq0 :
+      0 ≤ normalizedLatitudeGap s t :=
+    (normalizedLatitudeGap_pos hrect.1 hrect.2.1 hrect.2.2).le
+  exact normalizedLatitudeGap_quadratic_lower_fixedChart
+    hrect.1 hrect.2.1 hR hupper.1 hupper.2 hq0
+      (comparableSame_rectangle_normalizedLatitudeGap_le hM hjk.1 hs ht)
+
+/-- Every nonpositive normalized-gap power converts to the precise
+separation/radius grading on a separated comparable rectangle. -/
+theorem separatedComparableSame_rectangle_normalizedGap_rpow_le
+    {e : ℝ} (he : e ≤ 0)
+    {N : ℕ} (hM : 1 ≤ bandCount N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : SeparatedComparableSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    normalizedLatitudeGap s t ^ e ≤
+      (((3202 : ℝ) * 40 ^ 4)⁻¹) ^ e *
+        |s - t| ^ (2 * e) *
+        (comparableLatitudeRadiusFloor N j) ^ ((-4) * e) := by
+  have hrect :=
+    separatedComparableSame_rectangle_interior_offDiagonal hM hjk hs ht
+  have hq :
+      0 < normalizedLatitudeGap s t :=
+    normalizedLatitudeGap_pos hrect.1 hrect.2.1 hrect.2.2
+  have hR : 0 < comparableLatitudeRadiusFloor N j := by
+    unfold comparableLatitudeRadiusFloor
+    have hMr : (0 : ℝ) < bandCount N := by exact_mod_cast hM
+    have hdr : (0 : ℝ) < latitudeBandScale N j := by
+      exact_mod_cast latitudeBandScale_pos N j
+    positivity
+  have hd : 0 < |s - t| :=
+    abs_pos.mpr (sub_ne_zero.mpr hrect.2.2)
+  have hlower :=
+    separatedComparableSame_rectangle_normalizedGap_quadratic_lower
+      hM hjk hs ht
+  have hlower' :
+      (((3202 : ℝ) * 40 ^ 4)⁻¹) *
+          |s - t| ^ (2 : ℝ) *
+          (comparableLatitudeRadiusFloor N j) ^ (-4 : ℝ) ≤
+        normalizedLatitudeGap s t := by
+    have habs : |s - t| ^ (2 : ℝ) = (s - t) ^ 2 := by
+      rw [Real.rpow_two]
+      exact sq_abs (s - t)
+    have hRpow :
+        (comparableLatitudeRadiusFloor N j) ^ (-4 : ℝ) =
+          ((comparableLatitudeRadiusFloor N j) ^ 4)⁻¹ := by
+      rw [Real.rpow_neg hR.le]
+      exact congrArg Inv.inv (Real.rpow_natCast _ 4)
+    rw [habs, hRpow]
+    exact hlower
+  exact rpow_le_of_comparable_quadratic_gap hq
+    (by positivity) hd hR he hlower'
+
 theorem abs_reducedLatitudeCusp_le_fixedChart
     {α x : ℝ} (hα0 : 0 < α) (hx0 : 0 ≤ x) (hx : x ≤ 3200) :
     |reducedLatitudeCusp α x| ≤ (3202 : ℝ) ^ (α / 2) := by
