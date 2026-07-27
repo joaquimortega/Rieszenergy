@@ -5,6 +5,7 @@ import BEMOCFormalization.LatitudeAxialBridge
 import BEMOCFormalization.LatitudeAngularExpansion
 import BEMOCFormalization.LatitudeAngularJetBounds
 import BEMOCFormalization.LatitudeBands
+import BEMOCFormalization.LatitudeCaseAssembly
 import BEMOCFormalization.LatitudeCentralGeometry
 import BEMOCFormalization.LatitudeCentralOppositeBlocks
 import BEMOCFormalization.LatitudeCentralNeighboringGapScale
