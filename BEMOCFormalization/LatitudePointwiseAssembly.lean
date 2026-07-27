@@ -29,6 +29,60 @@ noncomputable def unequalLatitudeBlockMajorant
     (bandCount N : ℝ) ^ (-α) *
     (latitudeBandScale N k : ℝ) ^ (α - 5)
 
+/-- Increasing the numerical constant increases the comparable pointwise
+majorant.  This small bookkeeping lemma lets the final case assembly use one
+constant even when the individual analytic arguments produce different
+ones. -/
+theorem comparableLatitudeBlockMajorant_mono
+    {α C D : ℝ} {N : ℕ}
+    {j k : Fin (bandTailCount N + 1)}
+    (hCD : C ≤ D) :
+    comparableLatitudeBlockMajorant α C N j k ≤
+      comparableLatitudeBlockMajorant α D N j k := by
+  unfold comparableLatitudeBlockMajorant
+  have hscale :
+      0 ≤ (latitudeBandScale N j : ℝ) *
+          (bandCount N : ℝ) ^ (-α) *
+          (1 + Nat.dist (j : ℕ) (k : ℕ) : ℝ) ^ (α - 3) := by
+    positivity
+  nlinarith
+
+/-- Increasing the numerical constant also increases the ordered
+unequal-scale majorant. -/
+theorem unequalLatitudeBlockMajorant_mono
+    {α C D : ℝ} {N : ℕ}
+    {j k : Fin (bandTailCount N + 1)}
+    (hCD : C ≤ D) :
+    unequalLatitudeBlockMajorant α C N j k ≤
+      unequalLatitudeBlockMajorant α D N j k := by
+  unfold unequalLatitudeBlockMajorant
+  have hscale :
+      0 ≤ (latitudeBandScale N j : ℝ) ^ (3 : ℕ) *
+          (bandCount N : ℝ) ^ (-α) *
+          (latitudeBandScale N k : ℝ) ^ (α - 5) := by
+    positivity
+  nlinarith
+
+/-- Monotonicity of the broad comparable block interface. -/
+theorem HasComparableLatitudeBlockBound.mono
+    {α C D : ℝ} {N : ℕ}
+    (h : HasComparableLatitudeBlockBound α N C)
+    (hCD : C ≤ D) :
+    HasComparableLatitudeBlockBound α N D := by
+  intro j k hjk
+  exact (h j k hjk).trans
+    (comparableLatitudeBlockMajorant_mono hCD)
+
+/-- Monotonicity of the ordered unequal-scale block interface. -/
+theorem HasUnequalLatitudeBlockBound.mono
+    {α C D : ℝ} {N : ℕ}
+    (h : HasUnequalLatitudeBlockBound α N C)
+    (hCD : C ≤ D) :
+    HasUnequalLatitudeBlockBound α N D := by
+  intro j k hjk
+  exact (h j k hjk).trans
+    (unequalLatitudeBlockMajorant_mono hCD)
+
 /-- Assemble the broad comparable-scale interface from the four geometric
 cases which can actually occur under factor-two comparability. -/
 theorem hasComparableLatitudeBlockBound_of_geometric_cases
