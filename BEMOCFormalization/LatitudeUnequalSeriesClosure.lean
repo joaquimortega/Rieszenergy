@@ -686,6 +686,50 @@ private theorem rpow_sub_nat_mul_pow
   push_cast
   ring
 
+/-- Abstract closed-rectangle geometry needed by the four-pass even-series
+argument.  Separating this from the band classification lets the same
+normal-convergence proof handle unequal same-hemisphere rectangles and the
+fixed-gap central/opposite exceptional rectangles. -/
+structure LatitudeEvenPowerSeriesRectangleGeometry
+    (N : ℕ) (j k : Fin (bandTailCount N + 1)) (L : ℝ) : Prop where
+  base_pos : 0 < L
+  base_le : ∀ s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j),
+    ∀ t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k),
+      L ≤ angularKernelA s t
+  ratio_le : ∀ s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j),
+    ∀ t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k),
+      unequalAngularRatio s t ≤ (15 : ℝ) / 16
+  interior_offDiagonal : ∀ s ∈ Icc
+      (bandBoundaryHeight N (j + 1)) (bandBoundaryHeight N j),
+    ∀ t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k),
+      s ∈ Ioo (-1 : ℝ) 1 ∧ t ∈ Ioo (-1 : ℝ) 1 ∧ s ≠ t
+
+/-- The original unequal same-hemisphere geometry supplies the abstract
+series rectangle with its sharp large-radius base. -/
+theorem leftSmallSame_evenPowerSeriesRectangleGeometry
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k) :
+    LatitudeEvenPowerSeriesRectangleGeometry N j k
+      (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) where
+  base_pos := by
+    have hd : (0 : ℝ) < latitudeBandScale N k := by
+      exact_mod_cast latitudeBandScale_pos N k
+    have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+    positivity
+  base_le s hs t ht :=
+    (leftSmallSame_rectangle_angularKernelA_bounds
+      hN j k hjk hs ht).2.1
+  ratio_le s hs t ht :=
+    leftSmallSame_rectangle_unequalAngularRatio_le hN j k hjk hs ht
+  interior_offDiagonal s hs t ht :=
+    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs ht
+
 /-- Explicit mode-by-mode `(2,2)` estimate on a left-small rectangle.
 The deliberately generous constant absorbs the nine finite Leibniz
 contributions, while preserving the sharp fourth-degree mode loss and the
@@ -693,8 +737,8 @@ uniform geometric ratio `15/16`. -/
 theorem abs_latitudeEvenPowerSummandDSSTT_le_on_leftSmall_rectangle
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -716,9 +760,8 @@ theorem abs_latitudeEvenPowerSummandDSSTT_le_on_leftSmall_rectangle
   have htSphere : t ∈ Icc (-1 : ℝ) 1 :=
     ⟨(bandBoundaryHeight_mem hN (k + 1)).1.trans ht.1,
       ht.2.trans (bandBoundaryHeight_mem hN k).2⟩
-  have hAbounds :=
-    leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht
-  have hA : 0 < A := hAbounds.1
+  have hA : 0 < A :=
+    hgeo.base_pos.trans_le (hgeo.base_le s hs t ht)
   have hu0 : 0 ≤ u := by
     dsimp [u]
     nlinarith [hsSphere.1, hsSphere.2]
@@ -993,8 +1036,7 @@ theorem abs_latitudeEvenPowerSummandDSSTT_le_on_leftSmall_rectangle
   have hcommon :=
     latitude_common_factor_eq (α := α) (A := A) (u := u) (v := v)
       hA m hm
-  have hQ :=
-    leftSmallSame_rectangle_unequalAngularRatio_le hN j k hjk hs ht
+  have hQ := hgeo.ratio_le s hs t ht
   have hQ0 := unequalAngularRatio_nonneg hsSphere htSphere
   have hpow :
       unequalAngularRatio s t ^ (m - 2) ≤
@@ -1033,8 +1075,8 @@ theorem as a finite prefix. -/
 theorem summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1042,8 +1084,7 @@ theorem summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
       (bandBoundaryHeight N k)) :
     Summable (fun r : ℕ ↦
       latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t) := by
-  have hA :=
-    (leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht).1
+  have hA := hgeo.base_pos.trans_le (hgeo.base_le s hs t ht)
   have hcoef :=
     summable_shifted_evenAngularDerivativeCoefficient_mul_pow
       α (q := (15 : ℝ) / 16) (by norm_num) (by norm_num)
@@ -1053,7 +1094,7 @@ theorem summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
   intro r
   have hterm :=
     abs_latitudeEvenPowerSummandDSSTT_le_on_leftSmall_rectangle
-      hα0 hα2 hN hjk hs ht (m := r + 2) (by omega)
+      hα0 hα2 hN hgeo hs ht (m := r + 2) (by omega)
   rw [show r + 2 - 2 = r by omega] at hterm
   unfold latitudeEvenPowerDSSTTSeriesTerm
   change |(Ring.choose (α / 2) (2 * (r + 2)) *
@@ -1083,8 +1124,8 @@ derivative series; modes `0` and `1` form a finite prefix. -/
 theorem summable_latitudeEvenPowerDSSTTSeriesTerm
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1095,7 +1136,7 @@ theorem summable_latitudeEvenPowerDSSTTSeriesTerm
   rw [← summable_nat_add_iff 2]
   simpa [Nat.add_comm] using
     summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
-      hα0 hα2 hN hjk hs ht
+      hα0 hα2 hN hgeo hs ht
 
 /-! ## Lower derivative stages needed by the termwise transfer -/
 
@@ -1105,8 +1146,8 @@ successive applications of the uniform derivative theorem transparent. -/
 theorem abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1131,7 +1172,7 @@ theorem abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
     ⟨(bandBoundaryHeight_mem hN (k + 1)).1.trans ht.1,
       ht.2.trans (bandBoundaryHeight_mem hN k).2⟩
   have hA : 0 < A :=
-    (leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht).1
+    hgeo.base_pos.trans_le (hgeo.base_le s hs t ht)
   have hu0 : 0 ≤ u := by
     dsimp [u]
     nlinarith [hsSphere.1, hsSphere.2]
@@ -1307,8 +1348,7 @@ theorem abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
   have hcommon :=
     latitude_common_factor_eq (α := α) (A := A) (u := u) (v := v)
       hA m hm
-  have hQ :=
-    leftSmallSame_rectangle_unequalAngularRatio_le hN j k hjk hs ht
+  have hQ := hgeo.ratio_le s hs t ht
   have hQ0 := unequalAngularRatio_nonneg hsSphere htSphere
   have hqpow : unequalAngularRatio s t ^ (m - 2) ≤
       ((15 : ℝ) / 16) ^ (m - 2) :=
@@ -1474,8 +1514,8 @@ the final `(2,2)` series. -/
 theorem summable_shifted_latitudeEvenPower_lowerSeriesTerms
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1523,7 +1563,7 @@ theorem summable_shifted_latitudeEvenPower_lowerSeriesTerms
         ring
   have hlower (r : ℕ) :=
     abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
-      hα0 hα2 hN hjk hs ht (m := r + 2) (by omega)
+      hα0 hα2 hN hgeo hs ht (m := r + 2) (by omega)
   have hDS : Summable (fun r : ℕ ↦
       c (r + 2) * latitudeEvenPowerSummandDS α (r + 2) s t) := by
     apply hbound
@@ -1549,8 +1589,8 @@ The smaller constant here reflects the four powers of `A` still present
 before any height derivatives are taken. -/
 theorem abs_latitudeEvenPowerSummand_le_on_leftSmall_rectangle
     {α : ℝ} {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1570,9 +1610,8 @@ theorem abs_latitudeEvenPowerSummand_le_on_leftSmall_rectangle
   have htSphere : t ∈ Icc (-1 : ℝ) 1 :=
     ⟨(bandBoundaryHeight_mem hN (k + 1)).1.trans ht.1,
       ht.2.trans (bandBoundaryHeight_mem hN k).2⟩
-  have hgeom :=
-    leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht
-  have hA : 0 < A := hgeom.1
+  have hA : 0 < A :=
+    hgeo.base_pos.trans_le (hgeo.base_le s hs t ht)
   have hu0 : 0 ≤ u := by
     dsimp [u]
     nlinarith [hsSphere.1, hsSphere.2]
@@ -1592,8 +1631,7 @@ theorem abs_latitudeEvenPowerSummand_le_on_leftSmall_rectangle
   have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hsSphere htSphere
   have hcommon := latitude_common_factor_eq
     (α := α) (A := A) (u := u) (v := v) hA m hm
-  have hQ := leftSmallSame_rectangle_unequalAngularRatio_le
-    hN j k hjk hs ht
+  have hQ := hgeo.ratio_le s hs t ht
   have hQ0 : 0 ≤ unequalAngularRatio s t :=
     unequalAngularRatio_nonneg hsSphere htSphere
   have hqpow :
@@ -1660,8 +1698,8 @@ noncomputable def latitudeEvenPowerSeriesTerm
 
 theorem summable_shifted_latitudeEvenPowerSeriesTerm
     {α : ℝ} {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1670,8 +1708,7 @@ theorem summable_shifted_latitudeEvenPowerSeriesTerm
     Summable (fun r : ℕ ↦
       latitudeEvenPowerSeriesTerm α (r + 2) s t) := by
   have hA : 0 < angularKernelA s t :=
-    (leftSmallSame_rectangle_angularKernelA_bounds
-      hN j k hjk hs ht).1
+    hgeo.base_pos.trans_le (hgeo.base_le s hs t ht)
   have hcoef :=
     summable_shifted_evenAngularDerivativeCoefficient_mul_pow
       α (q := (15 : ℝ) / 16) (by norm_num) (by norm_num)
@@ -1681,7 +1718,7 @@ theorem summable_shifted_latitudeEvenPowerSeriesTerm
   intro r
   have hterm :=
     abs_latitudeEvenPowerSummand_le_on_leftSmall_rectangle
-      (α := α) hN hjk hs ht (m := r + 2) (by omega)
+      (α := α) hN hgeo hs ht (m := r + 2) (by omega)
   rw [show r + 2 - 2 = r by omega] at hterm
   unfold latitudeEvenPowerSeriesTerm
   rw [Real.norm_eq_abs, abs_mul]
@@ -1729,22 +1766,18 @@ theorem summable_shifted_latitudeEvenPowerSeriesTerm
               ((15 : ℝ) / 16) ^ r) := by ring
 
 private noncomputable def leftSmallLatitudeTailMajorant
-    (α : ℝ) (N : ℕ) (k : Fin (bandTailCount N + 1))
-    (r : ℕ) : ℝ :=
-  4194304 *
-      (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4) *
+    (α L : ℝ) (r : ℕ) : ℝ :=
+  4194304 * L ^ (α / 2 - 4) *
     (evenAngularDerivativeCoefficient α (r + 2) *
       ((15 : ℝ) / 16) ^ r)
 
 private theorem summable_leftSmallLatitudeTailMajorant
-    (α : ℝ) {N : ℕ} (hN : 0 < N)
-    (k : Fin (bandTailCount N + 1)) :
-    Summable (leftSmallLatitudeTailMajorant α N k) := by
+    (α L : ℝ) :
+    Summable (leftSmallLatitudeTailMajorant α L) := by
   exact
     (summable_shifted_evenAngularDerivativeCoefficient_mul_pow
       α (q := (15 : ℝ) / 16) (by norm_num) (by norm_num)).mul_left
-        (4194304 *
-          (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4))
+        (4194304 * L ^ (α / 2 - 4))
 
 /-- Uniform normal majorants for all four differentiated stages.  Unlike
 the pointwise estimates above, this bound is independent of `s,t` inside
@@ -1753,8 +1786,8 @@ theorem. -/
 private theorem norm_latitudeEvenPower_tailStages_le_majorant
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1762,33 +1795,24 @@ private theorem norm_latitudeEvenPower_tailStages_le_majorant
       (bandBoundaryHeight N k))
     (r : ℕ) :
     ‖latitudeEvenPowerDSSeriesTerm α (r + 2) s t‖ ≤
-        leftSmallLatitudeTailMajorant α N k r ∧
+        leftSmallLatitudeTailMajorant α L r ∧
     ‖latitudeEvenPowerDSSSeriesTerm α (r + 2) s t‖ ≤
-        leftSmallLatitudeTailMajorant α N k r ∧
+        leftSmallLatitudeTailMajorant α L r ∧
     ‖latitudeEvenPowerDSSTSeriesTerm α (r + 2) s t‖ ≤
-        leftSmallLatitudeTailMajorant α N k r ∧
+        leftSmallLatitudeTailMajorant α L r ∧
     ‖latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t‖ ≤
-        leftSmallLatitudeTailMajorant α N k r := by
-  let L : ℝ := 2 * (latitudeBandScale N k : ℝ) ^ 2 / N
-  have hL : 0 < L := by
-    dsimp [L]
-    have hd : (0 : ℝ) < latitudeBandScale N k := by
-      exact_mod_cast latitudeBandScale_pos N k
-    have hNr : (0 : ℝ) < N := by exact_mod_cast hN
-    positivity
-  have hLA : L ≤ angularKernelA s t :=
-    (leftSmallSame_rectangle_angularKernelA_bounds
-      hN j k hjk hs ht).2.1
+        leftSmallLatitudeTailMajorant α L r := by
+  have hLA : L ≤ angularKernelA s t := hgeo.base_le s hs t ht
   have hγ : α / 2 - 4 ≤ 0 := by linarith
   have hpow :
       angularKernelA s t ^ (α / 2 - 4) ≤ L ^ (α / 2 - 4) :=
-    Real.rpow_le_rpow_of_nonpos hL hLA hγ
+    Real.rpow_le_rpow_of_nonpos hgeo.base_pos hLA hγ
   have hlower :=
     abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
-      hα0 hα2 hN hjk hs ht (m := r + 2) (by omega)
+      hα0 hα2 hN hgeo hs ht (m := r + 2) (by omega)
   have hfourth :=
     abs_latitudeEvenPowerSummandDSSTT_le_on_leftSmall_rectangle
-      hα0 hα2 hN hjk hs ht (m := r + 2) (by omega)
+      hα0 hα2 hN hgeo hs ht (m := r + 2) (by omega)
   rw [show r + 2 - 2 = r by omega] at hlower hfourth
   let c : ℝ :=
     Ring.choose (α / 2) (2 * (r + 2)) *
@@ -1798,7 +1822,7 @@ private theorem norm_latitudeEvenPower_tailStages_le_majorant
         4194304 * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
           angularKernelA s t ^ (α / 2 - 4) *
           ((15 : ℝ) / 16) ^ r) :
-      ‖c * F‖ ≤ leftSmallLatitudeTailMajorant α N k r := by
+      ‖c * F‖ ≤ leftSmallLatitudeTailMajorant α L r := by
     rw [Real.norm_eq_abs, abs_mul]
     calc
       |c| * |F| ≤
@@ -1812,8 +1836,8 @@ private theorem norm_latitudeEvenPower_tailStages_le_majorant
               L ^ (α / 2 - 4) *
               ((15 : ℝ) / 16) ^ r) := by
         gcongr
-      _ = leftSmallLatitudeTailMajorant α N k r := by
-        dsimp [c, L, leftSmallLatitudeTailMajorant,
+      _ = leftSmallLatitudeTailMajorant α L r := by
+        dsimp [c, leftSmallLatitudeTailMajorant,
           evenAngularDerivativeCoefficient]
         rw [abs_mul]
         ring
@@ -1832,8 +1856,8 @@ series once in the left height variable on the open band interior. -/
 theorem hasDerivAt_shifted_latitudeEvenPowerSeries_left
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1845,21 +1869,20 @@ theorem hasDerivAt_shifted_latitudeEvenPowerSeries_left
       (∑' r : ℕ,
         latitudeEvenPowerDSSeriesTerm α (r + 2) s t) s := by
   apply hasDerivAt_tsum_of_isPreconnected
-    (u := leftSmallLatitudeTailMajorant α N k)
+    (u := leftSmallLatitudeTailMajorant α L)
     (t := Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
     (g := fun r y ↦ latitudeEvenPowerSeriesTerm α (r + 2) y t)
     (g' := fun r y ↦ latitudeEvenPowerDSSeriesTerm α (r + 2) y t)
     (y₀ := s)
-  · exact summable_leftSmallLatitudeTailMajorant α hN k
+  · exact summable_leftSmallLatitudeTailMajorant α L
   · exact isOpen_Ioo
   · exact isPreconnected_Ioo
   · intro r y hy
     have hy' : y ∈ Icc (bandBoundaryHeight N (j + 1))
         (bandBoundaryHeight N j) := ⟨hy.1.le, hy.2.le⟩
     have hA : 0 < angularKernelA y t :=
-      (leftSmallSame_rectangle_angularKernelA_bounds
-        hN j k hjk hy' ht).1
+      hgeo.base_pos.trans_le (hgeo.base_le y hy' t ht)
     simpa [latitudeEvenPowerSeriesTerm,
       latitudeEvenPowerDSSeriesTerm] using
       (hasDerivAt_latitudeEvenPowerSummand_left
@@ -1869,18 +1892,18 @@ theorem hasDerivAt_shifted_latitudeEvenPowerSeries_left
   · intro r y hy
     exact
       (norm_latitudeEvenPower_tailStages_le_majorant
-        hα0 hα2 hN hjk ⟨hy.1.le, hy.2.le⟩ ht r).1
+        hα0 hα2 hN hgeo ⟨hy.1.le, hy.2.le⟩ ht r).1
   · exact hs
   · exact summable_shifted_latitudeEvenPowerSeriesTerm
-      hN hjk ⟨hs.1.le, hs.2.le⟩ ht
+      hN hgeo ⟨hs.1.le, hs.2.le⟩ ht
   · exact hs
 
 /-- Second left-height pass. -/
 theorem hasDerivAt_shifted_latitudeEvenPowerDSSeries_left
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1892,21 +1915,20 @@ theorem hasDerivAt_shifted_latitudeEvenPowerDSSeries_left
       (∑' r : ℕ,
         latitudeEvenPowerDSSSeriesTerm α (r + 2) s t) s := by
   apply hasDerivAt_tsum_of_isPreconnected
-    (u := leftSmallLatitudeTailMajorant α N k)
+    (u := leftSmallLatitudeTailMajorant α L)
     (t := Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
     (g := fun r y ↦ latitudeEvenPowerDSSeriesTerm α (r + 2) y t)
     (g' := fun r y ↦ latitudeEvenPowerDSSSeriesTerm α (r + 2) y t)
     (y₀ := s)
-  · exact summable_leftSmallLatitudeTailMajorant α hN k
+  · exact summable_leftSmallLatitudeTailMajorant α L
   · exact isOpen_Ioo
   · exact isPreconnected_Ioo
   · intro r y hy
     have hy' : y ∈ Icc (bandBoundaryHeight N (j + 1))
         (bandBoundaryHeight N j) := ⟨hy.1.le, hy.2.le⟩
     have hA : 0 < angularKernelA y t :=
-      (leftSmallSame_rectangle_angularKernelA_bounds
-        hN j k hjk hy' ht).1
+      hgeo.base_pos.trans_le (hgeo.base_le y hy' t ht)
     simpa [latitudeEvenPowerDSSeriesTerm,
       latitudeEvenPowerDSSSeriesTerm] using
       (hasDerivAt_latitudeEvenPowerSummandDS_left
@@ -1916,19 +1938,19 @@ theorem hasDerivAt_shifted_latitudeEvenPowerDSSeries_left
   · intro r y hy
     exact
       (norm_latitudeEvenPower_tailStages_le_majorant
-        hα0 hα2 hN hjk ⟨hy.1.le, hy.2.le⟩ ht r).2.1
+        hα0 hα2 hN hgeo ⟨hy.1.le, hy.2.le⟩ ht r).2.1
   · exact hs
   · exact
       (summable_shifted_latitudeEvenPower_lowerSeriesTerms
-        hα0 hα2 hN hjk ⟨hs.1.le, hs.2.le⟩ ht).1
+        hα0 hα2 hN hgeo ⟨hs.1.le, hs.2.le⟩ ht).1
   · exact hs
 
 /-- First right-height pass after the two left derivatives. -/
 theorem hasDerivAt_shifted_latitudeEvenPowerDSSSeries_right
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1940,21 +1962,20 @@ theorem hasDerivAt_shifted_latitudeEvenPowerDSSSeries_right
       (∑' r : ℕ,
         latitudeEvenPowerDSSTSeriesTerm α (r + 2) s t) t := by
   apply hasDerivAt_tsum_of_isPreconnected
-    (u := leftSmallLatitudeTailMajorant α N k)
+    (u := leftSmallLatitudeTailMajorant α L)
     (t := Ioo (bandBoundaryHeight N (k + 1))
       (bandBoundaryHeight N k))
     (g := fun r y ↦ latitudeEvenPowerDSSSeriesTerm α (r + 2) s y)
     (g' := fun r y ↦ latitudeEvenPowerDSSTSeriesTerm α (r + 2) s y)
     (y₀ := t)
-  · exact summable_leftSmallLatitudeTailMajorant α hN k
+  · exact summable_leftSmallLatitudeTailMajorant α L
   · exact isOpen_Ioo
   · exact isPreconnected_Ioo
   · intro r y hy
     have hy' : y ∈ Icc (bandBoundaryHeight N (k + 1))
         (bandBoundaryHeight N k) := ⟨hy.1.le, hy.2.le⟩
     have hA : 0 < angularKernelA s y :=
-      (leftSmallSame_rectangle_angularKernelA_bounds
-        hN j k hjk hs hy').1
+      hgeo.base_pos.trans_le (hgeo.base_le s hs y hy')
     simpa [latitudeEvenPowerDSSSeriesTerm,
       latitudeEvenPowerDSSTSeriesTerm] using
       (hasDerivAt_latitudeEvenPowerSummandDSS_right
@@ -1964,19 +1985,19 @@ theorem hasDerivAt_shifted_latitudeEvenPowerDSSSeries_right
   · intro r y hy
     exact
       (norm_latitudeEvenPower_tailStages_le_majorant
-        hα0 hα2 hN hjk hs ⟨hy.1.le, hy.2.le⟩ r).2.2.1
+        hα0 hα2 hN hgeo hs ⟨hy.1.le, hy.2.le⟩ r).2.2.1
   · exact ht
   · exact
       (summable_shifted_latitudeEvenPower_lowerSeriesTerms
-        hα0 hα2 hN hjk hs ⟨ht.1.le, ht.2.le⟩).2.1
+        hα0 hα2 hN hgeo hs ⟨ht.1.le, ht.2.le⟩).2.1
   · exact ht
 
 /-- Final right-height pass, producing the shifted `(2,2)` series. -/
 theorem hasDerivAt_shifted_latitudeEvenPowerDSSTSeries_right
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -1988,21 +2009,20 @@ theorem hasDerivAt_shifted_latitudeEvenPowerDSSTSeries_right
       (∑' r : ℕ,
         latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t) t := by
   apply hasDerivAt_tsum_of_isPreconnected
-    (u := leftSmallLatitudeTailMajorant α N k)
+    (u := leftSmallLatitudeTailMajorant α L)
     (t := Ioo (bandBoundaryHeight N (k + 1))
       (bandBoundaryHeight N k))
     (g := fun r y ↦ latitudeEvenPowerDSSTSeriesTerm α (r + 2) s y)
     (g' := fun r y ↦ latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s y)
     (y₀ := t)
-  · exact summable_leftSmallLatitudeTailMajorant α hN k
+  · exact summable_leftSmallLatitudeTailMajorant α L
   · exact isOpen_Ioo
   · exact isPreconnected_Ioo
   · intro r y hy
     have hy' : y ∈ Icc (bandBoundaryHeight N (k + 1))
         (bandBoundaryHeight N k) := ⟨hy.1.le, hy.2.le⟩
     have hA : 0 < angularKernelA s y :=
-      (leftSmallSame_rectangle_angularKernelA_bounds
-        hN j k hjk hs hy').1
+      hgeo.base_pos.trans_le (hgeo.base_le s hs y hy')
     simpa [latitudeEvenPowerDSSTSeriesTerm,
       latitudeEvenPowerDSSTTSeriesTerm] using
       (hasDerivAt_latitudeEvenPowerSummandDSST_right
@@ -2012,11 +2032,11 @@ theorem hasDerivAt_shifted_latitudeEvenPowerDSSTSeries_right
   · intro r y hy
     exact
       (norm_latitudeEvenPower_tailStages_le_majorant
-        hα0 hα2 hN hjk hs ⟨hy.1.le, hy.2.le⟩ r).2.2.2
+        hα0 hα2 hN hgeo hs ⟨hy.1.le, hy.2.le⟩ r).2.2.2
   · exact ht
   · exact
       (summable_shifted_latitudeEvenPower_lowerSeriesTerms
-        hα0 hα2 hN hjk hs ⟨ht.1.le, ht.2.le⟩).2.2
+        hα0 hα2 hN hgeo hs ⟨ht.1.le, ht.2.le⟩).2.2
   · exact ht
 
 noncomputable def latitudeEvenPowerSeriesSum
@@ -2052,8 +2072,8 @@ noncomputable def latitudeEvenPowerDSSTTSeriesSum
 theorem hasDerivAt_latitudeEvenPowerSeriesSum_left
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2062,8 +2082,8 @@ theorem hasDerivAt_latitudeEvenPowerSeriesSum_left
     HasDerivAt (fun y ↦ latitudeEvenPowerSeriesSum α y t)
       (latitudeEvenPowerDSSeriesSum α s t) s := by
   have hA : 0 < angularKernelA s t :=
-    (leftSmallSame_rectangle_angularKernelA_bounds
-      hN j k hjk ⟨hs.1.le, hs.2.le⟩ ht).1
+    hgeo.base_pos.trans_le
+      (hgeo.base_le s ⟨hs.1.le, hs.2.le⟩ t ht)
   have h0 :=
     (hasDerivAt_latitudeEvenPowerSummand_left
       (α := α) (m := 0) hA).const_mul
@@ -2074,7 +2094,7 @@ theorem hasDerivAt_latitudeEvenPowerSeriesSum_left
         (Ring.choose (α / 2) 2 * normalizedCosineMoment 2)
   have htail :=
     hasDerivAt_shifted_latitudeEvenPowerSeries_left
-      hα0 hα2 hN hjk hs ht
+      hα0 hα2 hN hgeo hs ht
   simpa [latitudeEvenPowerSeriesSum, latitudeEvenPowerDSSeriesSum,
     latitudeEvenPowerSeriesTerm, latitudeEvenPowerDSSeriesTerm] using
       (h0.add h1).add htail
@@ -2082,8 +2102,8 @@ theorem hasDerivAt_latitudeEvenPowerSeriesSum_left
 theorem hasDerivAt_latitudeEvenPowerDSSeriesSum_left
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2092,8 +2112,8 @@ theorem hasDerivAt_latitudeEvenPowerDSSeriesSum_left
     HasDerivAt (fun y ↦ latitudeEvenPowerDSSeriesSum α y t)
       (latitudeEvenPowerDSSSeriesSum α s t) s := by
   have hA : 0 < angularKernelA s t :=
-    (leftSmallSame_rectangle_angularKernelA_bounds
-      hN j k hjk ⟨hs.1.le, hs.2.le⟩ ht).1
+    hgeo.base_pos.trans_le
+      (hgeo.base_le s ⟨hs.1.le, hs.2.le⟩ t ht)
   have h0 :=
     (hasDerivAt_latitudeEvenPowerSummandDS_left
       (α := α) (m := 0) hA).const_mul
@@ -2104,7 +2124,7 @@ theorem hasDerivAt_latitudeEvenPowerDSSeriesSum_left
         (Ring.choose (α / 2) 2 * normalizedCosineMoment 2)
   have htail :=
     hasDerivAt_shifted_latitudeEvenPowerDSSeries_left
-      hα0 hα2 hN hjk hs ht
+      hα0 hα2 hN hgeo hs ht
   simpa [latitudeEvenPowerDSSeriesSum, latitudeEvenPowerDSSSeriesSum,
     latitudeEvenPowerDSSeriesTerm, latitudeEvenPowerDSSSeriesTerm] using
       (h0.add h1).add htail
@@ -2112,8 +2132,8 @@ theorem hasDerivAt_latitudeEvenPowerDSSeriesSum_left
 theorem hasDerivAt_latitudeEvenPowerDSSSeriesSum_right
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2122,8 +2142,8 @@ theorem hasDerivAt_latitudeEvenPowerDSSSeriesSum_right
     HasDerivAt (fun y ↦ latitudeEvenPowerDSSSeriesSum α s y)
       (latitudeEvenPowerDSSTSeriesSum α s t) t := by
   have hA : 0 < angularKernelA s t :=
-    (leftSmallSame_rectangle_angularKernelA_bounds
-      hN j k hjk hs ⟨ht.1.le, ht.2.le⟩).1
+    hgeo.base_pos.trans_le
+      (hgeo.base_le s hs t ⟨ht.1.le, ht.2.le⟩)
   have h0 :=
     (hasDerivAt_latitudeEvenPowerSummandDSS_right
       (α := α) (m := 0) hA).const_mul
@@ -2134,7 +2154,7 @@ theorem hasDerivAt_latitudeEvenPowerDSSSeriesSum_right
         (Ring.choose (α / 2) 2 * normalizedCosineMoment 2)
   have htail :=
     hasDerivAt_shifted_latitudeEvenPowerDSSSeries_right
-      hα0 hα2 hN hjk hs ht
+      hα0 hα2 hN hgeo hs ht
   simpa [latitudeEvenPowerDSSSeriesSum, latitudeEvenPowerDSSTSeriesSum,
     latitudeEvenPowerDSSSeriesTerm, latitudeEvenPowerDSSTSeriesTerm] using
       (h0.add h1).add htail
@@ -2142,8 +2162,8 @@ theorem hasDerivAt_latitudeEvenPowerDSSSeriesSum_right
 theorem hasDerivAt_latitudeEvenPowerDSSTSeriesSum_right
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2152,8 +2172,8 @@ theorem hasDerivAt_latitudeEvenPowerDSSTSeriesSum_right
     HasDerivAt (fun y ↦ latitudeEvenPowerDSSTSeriesSum α s y)
       (latitudeEvenPowerDSSTTSeriesSum α s t) t := by
   have hA : 0 < angularKernelA s t :=
-    (leftSmallSame_rectangle_angularKernelA_bounds
-      hN j k hjk hs ⟨ht.1.le, ht.2.le⟩).1
+    hgeo.base_pos.trans_le
+      (hgeo.base_le s hs t ⟨ht.1.le, ht.2.le⟩)
   have h0 :=
     (hasDerivAt_latitudeEvenPowerSummandDSST_right
       (α := α) (m := 0) hA).const_mul
@@ -2164,7 +2184,7 @@ theorem hasDerivAt_latitudeEvenPowerDSSTSeriesSum_right
         (Ring.choose (α / 2) 2 * normalizedCosineMoment 2)
   have htail :=
     hasDerivAt_shifted_latitudeEvenPowerDSSTSeries_right
-      hα0 hα2 hN hjk hs ht
+      hα0 hα2 hN hgeo hs ht
   simpa [latitudeEvenPowerDSSTSeriesSum, latitudeEvenPowerDSSTTSeriesSum,
     latitudeEvenPowerDSSTSeriesTerm, latitudeEvenPowerDSSTTSeriesTerm] using
       (h0.add h1).add htail
@@ -2173,8 +2193,8 @@ theorem hasDerivAt_latitudeEvenPowerDSSTSeriesSum_right
 series is exactly the angular latitude kernel. -/
 theorem latitudeKernel_eq_latitudeEvenPowerSeriesSum
     {α : ℝ} {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2188,11 +2208,8 @@ theorem latitudeKernel_eq_latitudeEvenPowerSeriesSum
     ⟨(bandBoundaryHeight_mem hN (k + 1)).1.trans ht.1,
       ht.2.trans (bandBoundaryHeight_mem hN k).2⟩
   have hA : 0 < angularKernelA s t :=
-    (leftSmallSame_rectangle_angularKernelA_bounds
-      hN j k hjk hs ht).1
-  have hQ :=
-    leftSmallSame_rectangle_unequalAngularRatio_le
-      hN j k hjk hs ht
+    hgeo.base_pos.trans_le (hgeo.base_le s hs t ht)
+  have hQ := hgeo.ratio_le s hs t ht
   have hratioSq :
       (angularKernelB s t / angularKernelA s t) ^ 2 =
         unequalAngularRatio s t := by
@@ -2218,7 +2235,7 @@ theorem latitudeKernel_eq_latitudeEvenPowerSeriesSum
   have hsum : Summable (fun m : ℕ ↦
       latitudeEvenPowerSeriesTerm α m s t) := by
     rw [← summable_nat_add_iff 2]
-    exact summable_shifted_latitudeEvenPowerSeriesTerm hN hjk hs ht
+    exact summable_shifted_latitudeEvenPowerSeriesTerm hN hgeo hs ht
   have hsplit := hsum.sum_add_tsum_nat_add 2
   calc
     latitudeKernel α s t =
@@ -2235,8 +2252,8 @@ theorem latitudeKernel_eq_latitudeEvenPowerSeriesSum
 theorem latitudeEvenPowerDSSeriesSum_eq_variableReducedLatitudeKernelDs
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2246,40 +2263,38 @@ theorem latitudeEvenPowerDSSeriesSum_eq_variableReducedLatitudeKernelDs
       variableReducedLatitudeKernelDs α s t := by
   have hs' : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j) := ⟨hs.1.le, hs.2.le⟩
-  have hgeo :=
-    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs' ht
+  have hrect := hgeo.interior_offDiagonal s hs' t ht
   have heq :
       (fun y ↦ latitudeEvenPowerSeriesSum α y t) =ᶠ[nhds s]
         (fun y ↦ variableReducedLatitudeKernel α y t) := by
     filter_upwards [isOpen_Ioo.mem_nhds hs] with y hy
     have hy' : y ∈ Icc (bandBoundaryHeight N (j + 1))
         (bandBoundaryHeight N j) := ⟨hy.1.le, hy.2.le⟩
-    have hygeo :=
-      leftSmallSame_rectangle_interior_offDiagonal hN hjk hy' ht
+    have hygeo := hgeo.interior_offDiagonal y hy' t ht
     calc
       latitudeEvenPowerSeriesSum α y t = latitudeKernel α y t :=
         (latitudeKernel_eq_latitudeEvenPowerSeriesSum
-          (α := α) hN hjk hy' ht).symm
+          (α := α) hN hgeo hy' ht).symm
       _ = variableReducedLatitudeKernel α y t :=
         latitudeKernel_eq_variableReducedLatitudeKernel
           hygeo.1 hygeo.2.1
   have hseries :=
     hasDerivAt_latitudeEvenPowerSeriesSum_left
-      hα0 hα2 hN hjk hs ht
+      hα0 hα2 hN hgeo hs ht
   have hseries' :
       HasDerivAt (fun y ↦ variableReducedLatitudeKernel α y t)
         (latitudeEvenPowerDSSeriesSum α s t) s :=
     heq.hasDerivAt_iff.mp hseries
   exact hseries'.unique
     (hasDerivAt_variableReducedLatitudeKernel_left
-      hgeo.1 hgeo.2.1 hgeo.2.2)
+      hrect.1 hrect.2.1 hrect.2.2)
 
 /-- Uniqueness after the second left derivative. -/
 theorem latitudeEvenPowerDSSSeriesSum_eq_variableReducedLatitudeKernelDss
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2289,31 +2304,30 @@ theorem latitudeEvenPowerDSSSeriesSum_eq_variableReducedLatitudeKernelDss
       variableReducedLatitudeKernelDss α s t := by
   have hs' : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j) := ⟨hs.1.le, hs.2.le⟩
-  have hgeo :=
-    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs' ht
+  have hrect := hgeo.interior_offDiagonal s hs' t ht
   have heq :
       (fun y ↦ latitudeEvenPowerDSSeriesSum α y t) =ᶠ[nhds s]
         (fun y ↦ variableReducedLatitudeKernelDs α y t) := by
     filter_upwards [isOpen_Ioo.mem_nhds hs] with y hy
     exact latitudeEvenPowerDSSeriesSum_eq_variableReducedLatitudeKernelDs
-      hα0 hα2 hN hjk hy ht
+      hα0 hα2 hN hgeo hy ht
   have hseries :=
     hasDerivAt_latitudeEvenPowerDSSeriesSum_left
-      hα0 hα2 hN hjk hs ht
+      hα0 hα2 hN hgeo hs ht
   have hseries' :
       HasDerivAt (fun y ↦ variableReducedLatitudeKernelDs α y t)
         (latitudeEvenPowerDSSSeriesSum α s t) s :=
     heq.hasDerivAt_iff.mp hseries
   exact hseries'.unique
     (hasDerivAt_variableReducedLatitudeKernelDs_left
-      hgeo.1 hgeo.2.1 hgeo.2.2)
+      hrect.1 hrect.2.1 hrect.2.2)
 
 /-- Uniqueness after the first right derivative. -/
 theorem latitudeEvenPowerDSSTSeriesSum_eq_variableReducedLatitudeKernelDsst
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2325,32 +2339,31 @@ theorem latitudeEvenPowerDSSTSeriesSum_eq_variableReducedLatitudeKernelDsst
       (bandBoundaryHeight N j) := ⟨hs.1.le, hs.2.le⟩
   have ht' : t ∈ Icc (bandBoundaryHeight N (k + 1))
       (bandBoundaryHeight N k) := ⟨ht.1.le, ht.2.le⟩
-  have hgeo :=
-    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs' ht'
+  have hrect := hgeo.interior_offDiagonal s hs' t ht'
   have heq :
       (fun y ↦ latitudeEvenPowerDSSSeriesSum α s y) =ᶠ[nhds t]
         (fun y ↦ variableReducedLatitudeKernelDss α s y) := by
     filter_upwards [isOpen_Ioo.mem_nhds ht] with y hy
     exact latitudeEvenPowerDSSSeriesSum_eq_variableReducedLatitudeKernelDss
-      hα0 hα2 hN hjk hs ⟨hy.1.le, hy.2.le⟩
+      hα0 hα2 hN hgeo hs ⟨hy.1.le, hy.2.le⟩
   have hseries :=
     hasDerivAt_latitudeEvenPowerDSSSeriesSum_right
-      hα0 hα2 hN hjk hs' ht
+      hα0 hα2 hN hgeo hs' ht
   have hseries' :
       HasDerivAt (fun y ↦ variableReducedLatitudeKernelDss α s y)
         (latitudeEvenPowerDSSTSeriesSum α s t) t :=
     heq.hasDerivAt_iff.mp hseries
   exact hseries'.unique
     (hasDerivAt_variableReducedLatitudeKernelDss_right
-      hgeo.1 hgeo.2.1 hgeo.2.2)
+      hrect.1 hrect.2.1 hrect.2.2)
 
 /-- Interior identification of the genuine mixed `(2,2)` derivative with
 the coefficient-weighted DSSTT series. -/
 theorem latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
@@ -2362,24 +2375,23 @@ theorem latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt
       (bandBoundaryHeight N j) := ⟨hs.1.le, hs.2.le⟩
   have ht' : t ∈ Icc (bandBoundaryHeight N (k + 1))
       (bandBoundaryHeight N k) := ⟨ht.1.le, ht.2.le⟩
-  have hgeo :=
-    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs' ht'
+  have hrect := hgeo.interior_offDiagonal s hs' t ht'
   have heq :
       (fun y ↦ latitudeEvenPowerDSSTSeriesSum α s y) =ᶠ[nhds t]
         (fun y ↦ variableReducedLatitudeKernelDsst α s y) := by
     filter_upwards [isOpen_Ioo.mem_nhds ht] with y hy
     exact latitudeEvenPowerDSSTSeriesSum_eq_variableReducedLatitudeKernelDsst
-      hα0 hα2 hN hjk hs hy
+      hα0 hα2 hN hgeo hs hy
   have hseries :=
     hasDerivAt_latitudeEvenPowerDSSTSeriesSum_right
-      hα0 hα2 hN hjk hs' ht
+      hα0 hα2 hN hgeo hs' ht
   have hseries' :
       HasDerivAt (fun y ↦ variableReducedLatitudeKernelDsst α s y)
         (latitudeEvenPowerDSSTTSeriesSum α s t) t :=
     heq.hasDerivAt_iff.mp hseries
   exact hseries'.unique
     (hasDerivAt_variableReducedLatitudeKernelDsst_right
-      hgeo.1 hgeo.2.1 hgeo.2.2)
+      hrect.1 hrect.2.1 hrect.2.2)
 
 private theorem abs_latitudeEvenPowerDSSTTSeriesTerm_zero_le
     {α s t : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
@@ -2715,8 +2727,8 @@ private theorem continuousAt_latitudeEvenPowerDSSTTSeriesTerm_uncurry
 private theorem continuousOn_latitudeEvenPowerDSSTTSeriesSum_uncurry
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k) :
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L) :
     ContinuousOn
       (fun p : ℝ × ℝ ↦
         latitudeEvenPowerDSSTTSeriesSum α p.1 p.2)
@@ -2733,8 +2745,7 @@ private theorem continuousOn_latitudeEvenPowerDSSTTSeriesSum_uncurry
           latitudeEvenPowerDSSTTSeriesTerm α m p.1 p.2) S := by
     intro p hp
     have hA :=
-      (leftSmallSame_rectangle_angularKernelA_bounds
-        hN j k hjk hp.1 hp.2).1
+      hgeo.base_pos.trans_le (hgeo.base_le p.1 hp.1 p.2 hp.2)
     exact
       (continuousAt_latitudeEvenPowerDSSTTSeriesTerm_uncurry
         α m hA).continuousWithinAt
@@ -2744,11 +2755,11 @@ private theorem continuousOn_latitudeEvenPowerDSSTTSeriesSum_uncurry
           latitudeEvenPowerDSSTTSeriesTerm α (r + 2) p.1 p.2) S := by
     apply continuousOn_tsum
       (fun r ↦ hterm (r + 2))
-      (summable_leftSmallLatitudeTailMajorant α hN k)
+      (summable_leftSmallLatitudeTailMajorant α L)
     intro r p hp
     exact
       (norm_latitudeEvenPower_tailStages_le_majorant
-        hα0 hα2 hN hjk hp.1 hp.2 r).2.2.2
+        hα0 hα2 hN hgeo hp.1 hp.2 r).2.2.2
   dsimp [S] at hterm htail ⊢
   unfold latitudeEvenPowerDSSTTSeriesSum
   exact ((hterm 0).add (hterm 1)).add htail
@@ -2860,8 +2871,8 @@ left-small rectangle.  This is the endpoint form needed by the Peano bridge. -/
 theorem latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt_on_rectangle
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N) (hM : 3 ≤ bandCount N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k) :
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L) :
     Set.EqOn
       (fun p : ℝ × ℝ ↦
         latitudeEvenPowerDSSTTSeriesSum α p.1 p.2)
@@ -2914,24 +2925,23 @@ theorem latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt_on
     intro p hp
     exact
       latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt
-        hα0 hα2 hN hjk hp.1 hp.2
+        hα0 hα2 hN hgeo hp.1 hp.2
   have hseries :
       ContinuousOn
         (fun p : ℝ × ℝ ↦
           latitudeEvenPowerDSSTTSeriesSum α p.1 p.2) T := by
     simpa [T] using
       continuousOn_latitudeEvenPowerDSSTTSeriesSum_uncurry
-        hα0 hα2 hN hjk
+        hα0 hα2 hN hgeo
   have hkernel :
       ContinuousOn
         (fun p : ℝ × ℝ ↦
           variableReducedLatitudeKernelDsstt α p.1 p.2) T := by
     intro p hp
-    have hgeo :=
-      leftSmallSame_rectangle_interior_offDiagonal hN hjk hp.1 hp.2
+    have hrect := hgeo.interior_offDiagonal p.1 hp.1 p.2 hp.2
     exact
       (continuousAt_variableReducedLatitudeKernelDsstt_uncurry
-        α hgeo.1 hgeo.2.1 hgeo.2.2).continuousWithinAt
+        α hrect.1 hrect.2.1 hrect.2.2).continuousWithinAt
   exact hinterior.of_subset_closure hseries hkernel hST hTS
 
 /-- Explicit coefficient constant for the differentiated unequal-latitude
@@ -2958,55 +2968,47 @@ rectangle, including both endpoint modes and the normally convergent tail. -/
 theorem abs_variableReducedLatitudeKernelDsstt_le_series_scale
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N) (hM : 3 ≤ bandCount N)
-    {j k : Fin (bandTailCount N + 1)}
-    (hjk : LeftSmallSameLatitudePair N j k)
+    {j k : Fin (bandTailCount N + 1)} {L : ℝ}
+    (hgeo : LatitudeEvenPowerSeriesRectangleGeometry N j k L)
     {s t : ℝ}
     (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
       (bandBoundaryHeight N j))
     (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
       (bandBoundaryHeight N k)) :
     |variableReducedLatitudeKernelDsstt α s t| ≤
-      unequalLatitudeDssttSeriesConstant α *
-        (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4) := by
-  let L : ℝ := 2 * (latitudeBandScale N k : ℝ) ^ 2 / N
+      unequalLatitudeDssttSeriesConstant α * L ^ (α / 2 - 4) := by
   let f : ℕ → ℝ := fun r ↦
     evenAngularDerivativeCoefficient α (r + 2) *
       ((15 : ℝ) / 16) ^ r
-  have hL : 0 < L := by
-    dsimp [L]
-    have hd : (0 : ℝ) < latitudeBandScale N k := by
-      exact_mod_cast latitudeBandScale_pos N k
-    have hNr : (0 : ℝ) < N := by exact_mod_cast hN
-    positivity
-  have hA :=
-    leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht
-  have hgeo :=
-    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs ht
+  have hA : 0 < angularKernelA s t :=
+    hgeo.base_pos.trans_le (hgeo.base_le s hs t ht)
+  have hrect := hgeo.interior_offDiagonal s hs t ht
   have hγ : α / 2 - 4 ≤ 0 := by linarith
   have hpow :
       angularKernelA s t ^ (α / 2 - 4) ≤ L ^ (α / 2 - 4) :=
-    Real.rpow_le_rpow_of_nonpos hL hA.2.1 hγ
+    Real.rpow_le_rpow_of_nonpos hgeo.base_pos
+      (hgeo.base_le s hs t ht) hγ
   have hzero :
       |latitudeEvenPowerDSSTTSeriesTerm α 0 s t| ≤
         32768 * L ^ (α / 2 - 4) :=
     (abs_latitudeEvenPowerDSSTTSeriesTerm_zero_le
       hα0 hα2
-      ⟨hgeo.1.1.le, hgeo.1.2.le⟩
-      ⟨hgeo.2.1.1.le, hgeo.2.1.2.le⟩
-      hA.1).trans (by gcongr)
+      ⟨hrect.1.1.le, hrect.1.2.le⟩
+      ⟨hrect.2.1.1.le, hrect.2.1.2.le⟩
+      hA).trans (by gcongr)
   have hone :
       |latitudeEvenPowerDSSTTSeriesTerm α 1 s t| ≤
         (8388608 * |Ring.choose (α / 2) 2|) *
           L ^ (α / 2 - 4) :=
     (abs_latitudeEvenPowerDSSTTSeriesTerm_one_le
       hα0 hα2
-      ⟨hgeo.1.1.le, hgeo.1.2.le⟩
-      ⟨hgeo.2.1.1.le, hgeo.2.1.2.le⟩
-      hA.1).trans (by gcongr)
+      ⟨hrect.1.1.le, hrect.1.2.le⟩
+      ⟨hrect.2.1.1.le, hrect.2.1.2.le⟩
+      hA).trans (by gcongr)
   have hterms :=
     summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
-      hα0 hα2 hN hjk hs ht
-  have hmajor := summable_leftSmallLatitudeTailMajorant α hN k
+      hα0 hα2 hN hgeo hs ht
+  have hmajor := summable_leftSmallLatitudeTailMajorant α L
   have htail :
       |∑' r : ℕ,
           latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t| ≤
@@ -3014,25 +3016,25 @@ theorem abs_variableReducedLatitudeKernelDsstt_le_series_scale
     have hnorm :
         ‖∑' r : ℕ,
             latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t‖ ≤
-          ∑' r : ℕ, leftSmallLatitudeTailMajorant α N k r :=
+          ∑' r : ℕ, leftSmallLatitudeTailMajorant α L r :=
       (norm_tsum_le_tsum_norm hterms.norm).trans
         (hterms.norm.tsum_mono hmajor fun r ↦
           (norm_latitudeEvenPower_tailStages_le_majorant
-            hα0 hα2 hN hjk hs ht r).2.2.2)
+            hα0 hα2 hN hgeo hs ht r).2.2.2)
     rw [Real.norm_eq_abs] at hnorm
     calc
       |∑' r : ℕ,
           latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t| ≤
-          ∑' r : ℕ, leftSmallLatitudeTailMajorant α N k r := hnorm
+          ∑' r : ℕ, leftSmallLatitudeTailMajorant α L r := hnorm
       _ = (4194304 * L ^ (α / 2 - 4)) * ∑' r : ℕ, f r := by
-        dsimp [leftSmallLatitudeTailMajorant, L, f]
+        dsimp [leftSmallLatitudeTailMajorant, f]
         rw [tsum_mul_left]
   have heq :
       latitudeEvenPowerDSSTTSeriesSum α s t =
         variableReducedLatitudeKernelDsstt α s t := by
     simpa using
       (latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt_on_rectangle
-        hα0 hα2 hN hM hjk (x := (s, t)) ⟨hs, ht⟩)
+        hα0 hα2 hN hM hgeo (x := (s, t)) ⟨hs, ht⟩)
   rw [← heq]
   unfold latitudeEvenPowerDSSTTSeriesSum
   calc
@@ -3141,9 +3143,11 @@ theorem hasLeftSmallLatitudeDssttBound_series
     have hpos : 0 < 4 * bandCount N ^ 2 := by positivity
     omega
   intro j k hjk s hs t ht
+  have hgeo :=
+    leftSmallSame_evenPowerSeriesRectangleGeometry hN hjk
   have hseries :=
     abs_variableReducedLatitudeKernelDsstt_le_series_scale
-      hα0 hα2 hN hM hjk hs ht
+      hα0 hα2 hN hM hgeo hs ht
   have hscale :=
     leftSmallLatitude_seriesScale_le_manuscriptScale
       hα0 hα2 hN (by omega) k
