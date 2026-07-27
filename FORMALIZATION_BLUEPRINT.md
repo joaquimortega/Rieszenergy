@@ -12,10 +12,11 @@ estimate for the concrete BEMOC configuration:
 
 The exact construction, energy normalization, three-term decomposition,
 conditional-negative-definiteness argument, within-ring estimate, and
-cross-ring angular-aliasing estimate are complete. L1--L3 and the complete
-latitude summation infrastructure are also checked. The only remaining
-analytic input is the closure of the latitude block estimates, followed by
-the short component assembly.
+cross-ring angular-aliasing estimate are complete. L1--L3, the complete
+latitude summation infrastructure, and the unequal-scale same-hemisphere
+block estimate are also checked. The remaining analytic input is the
+comparable/exceptional latitude block closure, followed by the short
+component assembly.
 
 Wagner's lower bound and the paper's matching lower asymptotic are explicitly
 outside the scope of this project.
@@ -443,7 +444,7 @@ Handle separately:
 - reflected south-polar blocks;
 - near-equatorial opposite-hemisphere blocks.
 
-### L6. Unequal-scale and antipodal blocks — series estimate complete
+### L6. Unequal-scale and antipodal blocks — unequal same-hemisphere case complete
 
 Create `BEMOCFormalization/LatitudeSeparatedBlocks.lean`.
 
@@ -459,8 +460,10 @@ Formalize the even-power expansion in equation (5.6):
   the actual kernel;
 - obtain `|∂s²∂t²F| ≤ C R_k^(α-8)`.
 
-The normal-summability statement and explicit modewise estimate are complete.
-The termwise-differentiation identification is the immediate next theorem.
+The normal-summability statement, four termwise derivative passes, closed
+rectangle identification with the actual mixed derivative, explicit
+pointwise constant, conversion to
+`Cα M^(8-α) d_k^(α-8)`, and the mixed-Peano block transfer are complete.
 
 Export:
 
@@ -469,7 +472,8 @@ Export:
   ≤ Cα * d_j^3 / (M^α * d_k^(5-α))
 ```
 
-for unequal scales in one hemisphere, plus:
+for unequal scales in one hemisphere is now exported unconditionally as
+`leftSmallSame_block_bound_series`. The remaining exceptional cases are:
 
 - smooth opposite-hemisphere bound `C d_j³d_k³/M⁸`;
 - central-band versus small-scale bound;
@@ -568,8 +572,8 @@ audit, Git commit, and push.
 
 | Phase | Remaining work | Gate |
 |---|---|---|
-| 1 | Unequal-series termwise `(2,2)` differentiation | Actual kernel derivative equals the summed derivative series |
-| 2 | Unequal pointwise-to-block closure | Unconditional unequal-block estimate |
+| 1 | Unequal-series termwise `(2,2)` differentiation | Complete |
+| 2 | Unequal pointwise-to-block closure | Complete |
 | 3 | Resonant `α = 1` cusp decomposition | All exponent ranges covered |
 | 4 | Sharp comparable estimate | Unconditional comparable-block estimate |
 | 5 | Central/antipodal instantiation and L7 endpoint | `exists_bemocLatitudeDeficit_concrete_bound` |

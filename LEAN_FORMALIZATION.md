@@ -258,6 +258,12 @@ split into checked modules under `BEMOCFormalization/`.
 - the direct left-small Peano bridge: a pointwise derivative bound at scale
   `C M^(8-α)d_k^(α-8)` yields the final unequal block majorant with explicit
   constant `1024 C`;
+- normal convergence of the unequal even-power series through all four
+  derivative stages, equality of the summed `Dsstt` series with the actual
+  latitude-kernel mixed derivative on the full closed band rectangle, an
+  explicit nonnegative coefficient constant, conversion to the manuscript
+  scale `Cα M^(8-α)d_k^(α-8)`, and the unconditional left-small
+  same-hemisphere block estimate;
 - explicit central and opposite-hemisphere gap geometry, including uniform
   `Q≤63/64` and `Q≤15/16` regions, together with a finite fallback which
   reduces all sharp analytic row estimates to `M≥15`;
@@ -296,22 +302,19 @@ edge cases, and verification gates are recorded in
    cusp coefficient.  The recurrence, uniform coefficient decay, smoothing
    domination, alias reindexing, summability, and concrete cross-ring bound
    no longer depend on this closed-form refinement.
-2. The cancellation-enhanced L5--L6 latitude block estimates.  The band
+2. The remaining cancellation-enhanced latitude block estimates.  The band
    algebra, exact L2 decomposition, reduced-cusp derivatives, off-pole
    coefficient derivatives, literal comparable and unequal rectangle
    geometry, neighboring fixed-square cusp transfer, uniform `Q≤15/16`,
    polar estimate, exhaustive geometric partition, pointwise-to-row
-   arithmetic, L7 summation, the actual even-series identity, the complete
-   finite summand derivative, and the concrete mixed Taylor/Peano transfer
-   are checked.  For the unequal-scale series in (5.6), the actual fourth
-   mixed derivative of every even mode now has an explicit
-   `(m+1)^4 (15/16)^(m-2)` majorant on each left-small rectangle, and the
-   complete coefficient-weighted derivative series is proved summable.
-   The remaining closure is concentrated in transferring this normal
-   convergence to the derivative of the summed kernel, completing the
-   resonant local reduced-cusp subtraction in (5.4), retaining the graded
-   powers while bounding (5.5), and applying these bounds to the comparable,
-   unequal, central, and antipodal rectangles.
+   arithmetic, L7 summation, the actual even-series identity, all four
+   termwise derivative passes, the closed-rectangle derivative identity,
+   scale conversion, and the concrete mixed Taylor/Peano transfer are
+   checked.  Thus the unequal-scale same-hemisphere estimate in (5.6) is
+   unconditional.  The remaining closure is concentrated in the resonant
+   local reduced-cusp subtraction in (5.4), retaining the graded powers
+   while bounding (5.5), and applying the resulting bounds to the comparable,
+   central, and antipodal rectangles.
 3. The analytic proof of Wagner's configuration-uniform lower bound for
    optimal negative Riesz energies.  Its exact normalized statement and all
    downstream specializations are now formalized as `HasWagnerLowerBound`.

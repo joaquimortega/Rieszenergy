@@ -1,4 +1,5 @@
 import BEMOCFormalization.LatitudeAngularExpansion
+import BEMOCFormalization.LatitudeUnequalPeanoBridge
 
 /-!
 # Normal convergence of the differentiated unequal-latitude series
@@ -1095,5 +1096,2085 @@ theorem summable_latitudeEvenPowerDSSTTSeriesTerm
   simpa [Nat.add_comm] using
     summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
       hα0 hα2 hN hjk hs ht
+
+/-! ## Lower derivative stages needed by the termwise transfer -/
+
+/-- The first three derivative stages have the same summable envelope as
+the fourth stage.  Using one common (generous) constant makes the four
+successive applications of the uniform derivative theorem transparent. -/
+theorem abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k))
+    {m : ℕ} (hm : 2 ≤ m) :
+    let R := 4194304 * ((m : ℝ) + 1) ^ (4 : ℕ) *
+      angularKernelA s t ^ (α / 2 - 4) *
+      ((15 : ℝ) / 16) ^ (m - 2)
+    |latitudeEvenPowerSummandDS α m s t| ≤ R ∧
+      |latitudeEvenPowerSummandDSS α m s t| ≤ R ∧
+      |latitudeEvenPowerSummandDSST α m s t| ≤ R := by
+  let A := angularKernelA s t
+  let u := 1 - s ^ 2
+  let v := 1 - t ^ 2
+  let e := α / 2 - 2 * (m : ℝ)
+  let w := (m : ℝ) + 1
+  have hsSphere : s ∈ Icc (-1 : ℝ) 1 :=
+    ⟨(bandBoundaryHeight_mem hN (j + 1)).1.trans hs.1,
+      hs.2.trans (bandBoundaryHeight_mem hN j).2⟩
+  have htSphere : t ∈ Icc (-1 : ℝ) 1 :=
+    ⟨(bandBoundaryHeight_mem hN (k + 1)).1.trans ht.1,
+      ht.2.trans (bandBoundaryHeight_mem hN k).2⟩
+  have hA : 0 < A :=
+    (leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht).1
+  have hu0 : 0 ≤ u := by
+    dsimp [u]
+    nlinarith [hsSphere.1, hsSphere.2]
+  have hv0 : 0 ≤ v := by
+    dsimp [v]
+    nlinarith [htSphere.1, htSphere.2]
+  have huA : u ≤ A := by
+    dsimp [u, A]
+    rw [angularKernelA_eq_radiusSq_add]
+    nlinarith [show 0 ≤ 1 - t ^ 2 by
+      nlinarith [htSphere.1, htSphere.2], sq_nonneg (s - t)]
+  have hvA : v ≤ A := by
+    dsimp [v, A]
+    rw [angularKernelA_eq_radiusSq_add]
+    nlinarith [show 0 ≤ 1 - s ^ 2 by
+      nlinarith [hsSphere.1, hsSphere.2], sq_nonneg (s - t)]
+  have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hsSphere htSphere
+  have hw : 1 ≤ w := by
+    dsimp [w]
+    have : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+    linarith
+  have hP0 : |unequalAPow e s t| = A ^ e :=
+    abs_unequalAPow_le hA
+  have hP1 :
+      |unequalAPowS e s t| ≤ 10 * w * A ^ (e - 1) :=
+    abs_unequalAPowS_le hα0 hα2 htSphere hA
+  have hP2 :
+      |unequalAPowSS e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) := by
+    have hb := abs_unequalAPowSS_le
+      (α := α) (m := m) hα0 hα2 htSphere hA
+    simpa [e, w, A] using hb.trans (by
+      have hp : 0 ≤ ((m : ℝ) + 1) ^ 2 *
+          angularKernelA s t ^ (α / 2 - 2 * (m : ℝ) - 2) := by positivity
+      nlinarith)
+  have hP2st :
+      |unequalAPowST e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) :=
+    abs_unequalAPowST_le hα0 hα2 hsSphere htSphere hA
+  have hP3 :
+      |unequalAPowSST e s t| ≤ 2048 * w ^ 3 * A ^ (e - 3) :=
+    abs_unequalAPowSST_le hα0 hα2 hsSphere htSphere hA
+  have hU0 : |unequalRadiusPower m s| ≤ A ^ 2 * u ^ (m - 2) :=
+    abs_unequalRadiusPower_le hm hsSphere huA
+  have hU1 : |unequalRadiusPowerD1 m s| ≤
+      2 * w * A * u ^ (m - 2) :=
+    abs_unequalRadiusPowerD1_le hm hsSphere huA
+  have hU2 : |unequalRadiusPowerD2 m s| ≤
+      16 * w ^ 2 * u ^ (m - 2) :=
+    abs_unequalRadiusPowerD2_le hm hsSphere huA hA4
+  have hV0 : |unequalRadiusPower m t| ≤ A ^ 2 * v ^ (m - 2) :=
+    abs_unequalRadiusPower_le hm htSphere hvA
+  have hV1 : |unequalRadiusPowerD1 m t| ≤
+      2 * w * A * v ^ (m - 2) :=
+    abs_unequalRadiusPowerD1_le hm htSphere hvA
+  have hAe21 : A ^ (e - 2) * A ^ 2 = A ^ e :=
+    rpow_sub_nat_mul_pow hA 2
+  have hAe11 : A ^ (e - 1) * A = A ^ e := by
+    simpa using rpow_sub_nat_mul_pow hA 1
+  have hAe32 : A ^ (e - 3) * A ^ 2 = A ^ (e - 1) := by
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 2
+    rw [show e - 3 = (e - 1) - (2 : ℝ) by ring]
+    exact hh
+  have hAe21' : A ^ (e - 2) * A = A ^ (e - 1) := by
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
+    rw [show e - 2 = (e - 1) - (1 : ℝ) by ring]
+    simpa using hh
+  let X :=
+    unequalAPowSS e s t * unequalRadiusPower m s +
+      2 * unequalAPowS e s t * unequalRadiusPowerD1 m s +
+      unequalAPow e s t * unequalRadiusPowerD2 m s
+  let XT :=
+    unequalAPowSST e s t * unequalRadiusPower m s +
+      2 * unequalAPowST e s t * unequalRadiusPowerD1 m s +
+      unequalAPowT e s t * unequalRadiusPowerD2 m s
+  have hX : |X| ≤ 1024 * w ^ 2 * A ^ e * u ^ (m - 2) := by
+    dsimp only [X]
+    calc
+      |_ + _ + _| ≤
+          |unequalAPowSS e s t| * |unequalRadiusPower m s| +
+          2 * |unequalAPowS e s t| * |unequalRadiusPowerD1 m s| +
+          |unequalAPow e s t| * |unequalRadiusPowerD2 m s| := by
+        simpa [abs_mul] using
+          (abs_add
+            (unequalAPowSS e s t * unequalRadiusPower m s +
+              2 * unequalAPowS e s t * unequalRadiusPowerD1 m s)
+            (unequalAPow e s t * unequalRadiusPowerD2 m s)).trans
+            (add_le_add_right
+              (abs_add
+                (unequalAPowSS e s t * unequalRadiusPower m s)
+                (2 * unequalAPowS e s t * unequalRadiusPowerD1 m s)) _)
+      _ ≤
+          (256 * w ^ 2 * A ^ (e - 2)) * (A ^ 2 * u ^ (m - 2)) +
+          2 * (10 * w * A ^ (e - 1)) *
+            (2 * w * A * u ^ (m - 2)) +
+          A ^ e * (16 * w ^ 2 * u ^ (m - 2)) := by
+        have hP0le : |unequalAPow e s t| ≤ A ^ e := hP0.le
+        gcongr
+      _ = 312 * w ^ 2 * A ^ e * u ^ (m - 2) := by
+        calc
+          _ = (256 * w ^ 2 * (A ^ (e - 2) * A ^ 2) +
+                40 * w ^ 2 * (A ^ (e - 1) * A) +
+                16 * w ^ 2 * A ^ e) * u ^ (m - 2) := by ring
+          _ = _ := by rw [hAe21, hAe11]; ring
+      _ ≤ 1024 * w ^ 2 * A ^ e * u ^ (m - 2) := by
+        have hp : 0 ≤ w ^ 2 * A ^ e * u ^ (m - 2) := by positivity
+        nlinarith
+  have hXT : |XT| ≤ 4096 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by
+    dsimp only [XT]
+    calc
+      |_ + _ + _| ≤
+          |unequalAPowSST e s t| * |unequalRadiusPower m s| +
+          2 * |unequalAPowST e s t| * |unequalRadiusPowerD1 m s| +
+          |unequalAPowT e s t| * |unequalRadiusPowerD2 m s| := by
+        simpa [abs_mul] using
+          (abs_add
+            (unequalAPowSST e s t * unequalRadiusPower m s +
+              2 * unequalAPowST e s t * unequalRadiusPowerD1 m s)
+            (unequalAPowT e s t * unequalRadiusPowerD2 m s)).trans
+            (add_le_add_right
+              (abs_add
+                (unequalAPowSST e s t * unequalRadiusPower m s)
+                (2 * unequalAPowST e s t * unequalRadiusPowerD1 m s)) _)
+      _ ≤
+          (2048 * w ^ 3 * A ^ (e - 3)) * (A ^ 2 * u ^ (m - 2)) +
+          2 * (256 * w ^ 2 * A ^ (e - 2)) *
+            (2 * w * A * u ^ (m - 2)) +
+          (10 * w * A ^ (e - 1)) *
+            (16 * w ^ 2 * u ^ (m - 2)) := by
+        have hPt : |unequalAPowT e s t| ≤
+            10 * w * A ^ (e - 1) := by
+          simpa [e, w, A] using
+            (abs_unequalAPowT_le (α := α) (m := m)
+              hα0 hα2 hsSphere hA)
+        gcongr
+      _ = 3232 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by
+        calc
+          _ = (2048 * w ^ 3 * (A ^ (e - 3) * A ^ 2) +
+                1024 * w ^ 3 * (A ^ (e - 2) * A) +
+                160 * w ^ 3 * A ^ (e - 1)) * u ^ (m - 2) := by ring
+          _ = _ := by rw [hAe32, hAe21']; ring
+      _ ≤ 4096 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by
+        have hp : 0 ≤ w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by positivity
+        nlinarith
+  have hDSCore :
+      |unequalAPowS e s t * unequalRadiusPower m s +
+          unequalAPow e s t * unequalRadiusPowerD1 m s| ≤
+        16 * w * A ^ (e + 1) * u ^ (m - 2) := by
+    calc
+      |_ + _| ≤ |unequalAPowS e s t| * |unequalRadiusPower m s| +
+          |unequalAPow e s t| * |unequalRadiusPowerD1 m s| := by
+        simpa [abs_mul] using abs_add
+          (unequalAPowS e s t * unequalRadiusPower m s)
+          (unequalAPow e s t * unequalRadiusPowerD1 m s)
+      _ ≤ (10 * w * A ^ (e - 1)) * (A ^ 2 * u ^ (m - 2)) +
+          A ^ e * (2 * w * A * u ^ (m - 2)) := by
+        have hP0le : |unequalAPow e s t| ≤ A ^ e := hP0.le
+        gcongr
+      _ = 12 * w * A ^ (e + 1) * u ^ (m - 2) := by
+        have h1 : A ^ (e - 1) * A ^ 2 = A ^ (e + 1) := by
+          have hh := rpow_sub_nat_mul_pow (A := A) (e := e + 1) hA 2
+          rw [show e - 1 = (e + 1) - (2 : ℝ) by ring]
+          exact hh
+        have h2 : A ^ e * A = A ^ (e + 1) := by
+          have hh := Real.rpow_add hA e 1
+          rw [Real.rpow_one] at hh
+          exact hh.symm
+        calc
+          _ = (10 * w * (A ^ (e - 1) * A ^ 2) +
+                2 * w * (A ^ e * A)) * u ^ (m - 2) := by ring
+          _ = _ := by rw [h1, h2]; ring
+      _ ≤ 16 * w * A ^ (e + 1) * u ^ (m - 2) := by
+        have hp : 0 ≤ w * A ^ (e + 1) * u ^ (m - 2) := by positivity
+        nlinarith
+  have hcommon :=
+    latitude_common_factor_eq (α := α) (A := A) (u := u) (v := v)
+      hA m hm
+  have hQ :=
+    leftSmallSame_rectangle_unequalAngularRatio_le hN j k hjk hs ht
+  have hQ0 := unequalAngularRatio_nonneg hsSphere htSphere
+  have hqpow : unequalAngularRatio s t ^ (m - 2) ≤
+      ((15 : ℝ) / 16) ^ (m - 2) :=
+    pow_le_pow_left₀ hQ0 hQ _
+  have hbase :
+      (4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e ≤
+        16 * A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2) := by
+    rw [hcommon]
+    change 16 * A ^ (α / 2 - 4) *
+      unequalAngularRatio s t ^ (m - 2) ≤ _
+    exact mul_le_mul_of_nonneg_left hqpow (by positivity)
+  have hA2 : A ^ 2 ≤ 16 := by
+    convert pow_le_pow_left₀ hA.le hA4 2 using 1 <;> norm_num
+  have hA3 : A ^ 3 ≤ 64 := by
+    convert pow_le_pow_left₀ hA.le hA4 3 using 1 <;> norm_num
+  have hAe1 : A ^ (e + 1) = A ^ e * A := by
+    simpa [Real.rpow_one] using Real.rpow_add hA e 1
+  have hw14 : w ≤ w ^ 4 := by
+    simpa using (pow_le_pow_right₀ hw (show 1 ≤ 4 by omega))
+  have hw24 : w ^ 2 ≤ w ^ 4 := by
+    exact pow_le_pow_right₀ hw (by omega)
+  have hw34 : w ^ 3 ≤ w ^ 4 := by
+    exact pow_le_pow_right₀ hw (by omega)
+  dsimp only
+  refine ⟨?_, ?_, ?_⟩
+  · unfold latitudeEvenPowerSummandDS
+    dsimp only
+    calc
+      |(4 : ℝ) ^ m * _ * unequalRadiusPower m t| ≤
+          (4 : ℝ) ^ m *
+            (16 * w * A ^ (e + 1) * u ^ (m - 2)) *
+            (A ^ 2 * v ^ (m - 2)) := by
+        rw [abs_mul, abs_mul, abs_of_nonneg (pow_nonneg (by norm_num) m)]
+        gcongr
+      _ = 16 * w * A ^ 3 *
+          ((4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e) := by
+        rw [hAe1]
+        ring
+      _ ≤ 16 * w * A ^ 3 *
+          (16 * A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2)) := by
+        gcongr
+      _ ≤ 4194304 * w ^ 4 * A ^ (α / 2 - 4) *
+          ((15 : ℝ) / 16) ^ (m - 2) := by
+        let P := A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2)
+        have hP : 0 ≤ P := by positivity
+        have hcoef : 256 * w * A ^ 3 ≤ 4194304 * w ^ 4 := by
+          calc
+            256 * w * A ^ 3 ≤ 256 * w * 64 := by gcongr
+            _ = 16384 * w := by ring
+            _ ≤ 16384 * w ^ 4 :=
+              mul_le_mul_of_nonneg_left hw14 (by norm_num)
+            _ ≤ 4194304 * w ^ 4 :=
+              mul_le_mul_of_nonneg_right (by norm_num) (by positivity)
+        have hmul := mul_le_mul_of_nonneg_right hcoef hP
+        dsimp [P] at hmul
+        convert hmul using 1 <;> ring
+  · unfold latitudeEvenPowerSummandDSS
+    dsimp only
+    change |(4 : ℝ) ^ m * X * unequalRadiusPower m t| ≤ _
+    calc
+      |(4 : ℝ) ^ m * X * unequalRadiusPower m t| ≤
+          (4 : ℝ) ^ m *
+            (1024 * w ^ 2 * A ^ e * u ^ (m - 2)) *
+            (A ^ 2 * v ^ (m - 2)) := by
+        rw [abs_mul, abs_mul, abs_of_nonneg (pow_nonneg (by norm_num) m)]
+        gcongr
+      _ = 1024 * w ^ 2 * A ^ 2 *
+          ((4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e) := by ring
+      _ ≤ 1024 * w ^ 2 * A ^ 2 *
+          (16 * A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2)) := by
+        gcongr
+      _ ≤ 4194304 * w ^ 4 * A ^ (α / 2 - 4) *
+          ((15 : ℝ) / 16) ^ (m - 2) := by
+        let P := A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2)
+        have hP : 0 ≤ P := by positivity
+        have hcoef : 16384 * w ^ 2 * A ^ 2 ≤ 4194304 * w ^ 4 := by
+          calc
+            16384 * w ^ 2 * A ^ 2 ≤
+                16384 * w ^ 2 * 16 := by gcongr
+            _ = 262144 * w ^ 2 := by ring
+            _ ≤ 262144 * w ^ 4 :=
+              mul_le_mul_of_nonneg_left hw24 (by norm_num)
+            _ ≤ 4194304 * w ^ 4 :=
+              mul_le_mul_of_nonneg_right (by norm_num) (by positivity)
+        have hmul := mul_le_mul_of_nonneg_right hcoef hP
+        dsimp [P] at hmul
+        convert hmul using 1 <;> ring
+  · unfold latitudeEvenPowerSummandDSST
+    dsimp only
+    change |(4 : ℝ) ^ m *
+      (XT * unequalRadiusPower m t + X * unequalRadiusPowerD1 m t)| ≤ _
+    calc
+      |(4 : ℝ) ^ m * (XT * unequalRadiusPower m t +
+          X * unequalRadiusPowerD1 m t)| ≤
+        (4 : ℝ) ^ m *
+          ((4096 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2)) *
+              (A ^ 2 * v ^ (m - 2)) +
+            (1024 * w ^ 2 * A ^ e * u ^ (m - 2)) *
+              (2 * w * A * v ^ (m - 2))) := by
+        rw [abs_mul, abs_of_nonneg (pow_nonneg (by norm_num) m)]
+        calc
+          (4 : ℝ) ^ m * |XT * unequalRadiusPower m t +
+              X * unequalRadiusPowerD1 m t| ≤
+            (4 : ℝ) ^ m *
+              (|XT| * |unequalRadiusPower m t| +
+                |X| * |unequalRadiusPowerD1 m t|) := by
+              gcongr
+              simpa [abs_mul] using abs_add
+                (XT * unequalRadiusPower m t)
+                (X * unequalRadiusPowerD1 m t)
+          _ ≤ _ := by gcongr
+      _ = 6144 * w ^ 3 * A *
+          ((4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e) := by
+        have h13 : A ^ (e - 1) * A ^ 2 = A ^ (e + 1) := by
+          have hh := rpow_sub_nat_mul_pow (A := A) (e := e + 1) hA 2
+          rw [show e - 1 = (e + 1) - (2 : ℝ) by ring]
+          exact hh
+        calc
+          _ = (4096 * w ^ 3 * (A ^ (e - 1) * A ^ 2) +
+                2048 * w ^ 3 * (A ^ e * A)) *
+              (4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) := by ring
+          _ = _ := by rw [h13, hAe1]; ring
+      _ ≤ 6144 * w ^ 3 * A *
+          (16 * A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2)) := by
+        gcongr
+      _ ≤ 4194304 * w ^ 4 * A ^ (α / 2 - 4) *
+          ((15 : ℝ) / 16) ^ (m - 2) := by
+        let P := A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2)
+        have hP : 0 ≤ P := by positivity
+        have hcoef : 98304 * w ^ 3 * A ≤ 4194304 * w ^ 4 := by
+          calc
+            98304 * w ^ 3 * A ≤ 98304 * w ^ 3 * 4 := by gcongr
+            _ = 393216 * w ^ 3 := by ring
+            _ ≤ 393216 * w ^ 4 :=
+              mul_le_mul_of_nonneg_left hw34 (by norm_num)
+            _ ≤ 4194304 * w ^ 4 :=
+              mul_le_mul_of_nonneg_right (by norm_num) (by positivity)
+        have hmul := mul_le_mul_of_nonneg_right hcoef hP
+        dsimp [P] at hmul
+        convert hmul using 1 <;> ring
+
+noncomputable def latitudeEvenPowerDSSeriesTerm
+    (α : ℝ) (m : ℕ) (s t : ℝ) : ℝ :=
+  (Ring.choose (α / 2) (2 * m) *
+    normalizedCosineMoment (2 * m)) *
+    latitudeEvenPowerSummandDS α m s t
+
+noncomputable def latitudeEvenPowerDSSSeriesTerm
+    (α : ℝ) (m : ℕ) (s t : ℝ) : ℝ :=
+  (Ring.choose (α / 2) (2 * m) *
+    normalizedCosineMoment (2 * m)) *
+    latitudeEvenPowerSummandDSS α m s t
+
+noncomputable def latitudeEvenPowerDSSTSeriesTerm
+    (α : ℝ) (m : ℕ) (s t : ℝ) : ℝ :=
+  (Ring.choose (α / 2) (2 * m) *
+    normalizedCosineMoment (2 * m)) *
+    latitudeEvenPowerSummandDSST α m s t
+
+/-- The three lower differentiated tails are normally summable on every
+left-small rectangle, with the same fourth-degree coefficient majorant as
+the final `(2,2)` series. -/
+theorem summable_shifted_latitudeEvenPower_lowerSeriesTerms
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    Summable (fun r : ℕ ↦
+      latitudeEvenPowerDSSeriesTerm α (r + 2) s t) ∧
+    Summable (fun r : ℕ ↦
+      latitudeEvenPowerDSSSeriesTerm α (r + 2) s t) ∧
+    Summable (fun r : ℕ ↦
+      latitudeEvenPowerDSSTSeriesTerm α (r + 2) s t) := by
+  let c : ℕ → ℝ := fun m ↦
+    Ring.choose (α / 2) (2 * m) * normalizedCosineMoment (2 * m)
+  let E : ℕ → ℝ := fun r ↦
+    4194304 * angularKernelA s t ^ (α / 2 - 4) *
+      (evenAngularDerivativeCoefficient α (r + 2) *
+        ((15 : ℝ) / 16) ^ r)
+  have hcoef :=
+    summable_shifted_evenAngularDerivativeCoefficient_mul_pow
+      α (q := (15 : ℝ) / 16) (by norm_num) (by norm_num)
+  have hE : Summable E := by
+    dsimp [E]
+    exact hcoef.mul_left
+      (4194304 * angularKernelA s t ^ (α / 2 - 4))
+  have hbound (F : ℕ → ℝ)
+      (hF : ∀ r : ℕ,
+        |F r| ≤
+          4194304 * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
+            angularKernelA s t ^ (α / 2 - 4) *
+            ((15 : ℝ) / 16) ^ r) :
+      Summable (fun r : ℕ ↦ c (r + 2) * F r) := by
+    apply hE.of_norm_bounded
+    intro r
+    rw [Real.norm_eq_abs, abs_mul]
+    calc
+      |c (r + 2)| * |F r| ≤
+          |c (r + 2)| *
+            (4194304 * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
+              angularKernelA s t ^ (α / 2 - 4) *
+              ((15 : ℝ) / 16) ^ r) := by
+        exact mul_le_mul_of_nonneg_left (hF r) (abs_nonneg _)
+      _ = E r := by
+        dsimp [c, E, evenAngularDerivativeCoefficient]
+        rw [abs_mul]
+        ring
+  have hlower (r : ℕ) :=
+    abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
+      hα0 hα2 hN hjk hs ht (m := r + 2) (by omega)
+  have hDS : Summable (fun r : ℕ ↦
+      c (r + 2) * latitudeEvenPowerSummandDS α (r + 2) s t) := by
+    apply hbound
+    intro r
+    simpa [show r + 2 - 2 = r by omega] using (hlower r).1
+  have hDSS : Summable (fun r : ℕ ↦
+      c (r + 2) * latitudeEvenPowerSummandDSS α (r + 2) s t) := by
+    apply hbound
+    intro r
+    simpa [show r + 2 - 2 = r by omega] using (hlower r).2.1
+  have hDSST : Summable (fun r : ℕ ↦
+      c (r + 2) * latitudeEvenPowerSummandDSST α (r + 2) s t) := by
+    apply hbound
+    intro r
+    simpa [show r + 2 - 2 = r by omega] using (hlower r).2.2
+  exact ⟨by
+    simpa [latitudeEvenPowerDSSeriesTerm, c] using hDS, by
+    simpa [latitudeEvenPowerDSSSeriesTerm, c] using hDSS, by
+    simpa [latitudeEvenPowerDSSTSeriesTerm, c] using hDSST⟩
+
+/-- The undifferentiated tail is controlled by the same geometric ratio.
+The smaller constant here reflects the four powers of `A` still present
+before any height derivatives are taken. -/
+theorem abs_latitudeEvenPowerSummand_le_on_leftSmall_rectangle
+    {α : ℝ} {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k))
+    {m : ℕ} (hm : 2 ≤ m) :
+    |latitudeEvenPowerSummand α m s t| ≤
+      4096 * angularKernelA s t ^ (α / 2 - 4) *
+        ((15 : ℝ) / 16) ^ (m - 2) := by
+  let A := angularKernelA s t
+  let u := 1 - s ^ 2
+  let v := 1 - t ^ 2
+  let e := α / 2 - 2 * (m : ℝ)
+  have hsSphere : s ∈ Icc (-1 : ℝ) 1 :=
+    ⟨(bandBoundaryHeight_mem hN (j + 1)).1.trans hs.1,
+      hs.2.trans (bandBoundaryHeight_mem hN j).2⟩
+  have htSphere : t ∈ Icc (-1 : ℝ) 1 :=
+    ⟨(bandBoundaryHeight_mem hN (k + 1)).1.trans ht.1,
+      ht.2.trans (bandBoundaryHeight_mem hN k).2⟩
+  have hgeom :=
+    leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht
+  have hA : 0 < A := hgeom.1
+  have hu0 : 0 ≤ u := by
+    dsimp [u]
+    nlinarith [hsSphere.1, hsSphere.2]
+  have hv0 : 0 ≤ v := by
+    dsimp [v]
+    nlinarith [htSphere.1, htSphere.2]
+  have huA : u ≤ A := by
+    dsimp [u, A]
+    rw [angularKernelA_eq_radiusSq_add]
+    nlinarith [show 0 ≤ 1 - t ^ 2 by
+      nlinarith [htSphere.1, htSphere.2], sq_nonneg (s - t)]
+  have hvA : v ≤ A := by
+    dsimp [v, A]
+    rw [angularKernelA_eq_radiusSq_add]
+    nlinarith [show 0 ≤ 1 - s ^ 2 by
+      nlinarith [hsSphere.1, hsSphere.2], sq_nonneg (s - t)]
+  have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hsSphere htSphere
+  have hcommon := latitude_common_factor_eq
+    (α := α) (A := A) (u := u) (v := v) hA m hm
+  have hQ := leftSmallSame_rectangle_unequalAngularRatio_le
+    hN j k hjk hs ht
+  have hQ0 : 0 ≤ unequalAngularRatio s t :=
+    unequalAngularRatio_nonneg hsSphere htSphere
+  have hqpow :
+      unequalAngularRatio s t ^ (m - 2) ≤
+        ((15 : ℝ) / 16) ^ (m - 2) :=
+    pow_le_pow_left₀ hQ0 hQ _
+  have hbase :
+      (4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e ≤
+        16 * A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2) := by
+    rw [hcommon]
+    change 16 * A ^ (α / 2 - 4) *
+      unequalAngularRatio s t ^ (m - 2) ≤ _
+    exact mul_le_mul_of_nonneg_left hqpow (by positivity)
+  have hu2 : u ^ 2 ≤ A ^ 2 := pow_le_pow_left₀ hu0 huA 2
+  have hv2 : v ^ 2 ≤ A ^ 2 := pow_le_pow_left₀ hv0 hvA 2
+  have hA4pow : A ^ 4 ≤ 256 := by
+    convert pow_le_pow_left₀ hA.le hA4 4 using 1 <;> norm_num
+  have huv : u ^ 2 * v ^ 2 ≤ A ^ 4 := by
+    calc
+      u ^ 2 * v ^ 2 ≤ A ^ 2 * A ^ 2 := by gcongr
+      _ = A ^ 4 := by ring
+  have hfactor :
+      |latitudeEvenPowerSummand α m s t| =
+        ((4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e) *
+          (u ^ 2 * v ^ 2) := by
+    have hum : u ^ m = u ^ (m - 2) * u ^ 2 := by
+      calc
+        u ^ m = u ^ ((m - 2) + 2) := by congr 1 <;> omega
+        _ = u ^ (m - 2) * u ^ 2 := pow_add _ _ _
+    have hvm : v ^ m = v ^ (m - 2) * v ^ 2 := by
+      calc
+        v ^ m = v ^ ((m - 2) + 2) := by congr 1 <;> omega
+        _ = v ^ (m - 2) * v ^ 2 := pow_add _ _ _
+    have hfourm : (4 : ℝ) ^ m = (4 : ℝ) ^ (m - 2) * 16 := by
+      calc
+        (4 : ℝ) ^ m = 4 ^ ((m - 2) + 2) := by congr 1 <;> omega
+        _ = 4 ^ (m - 2) * 4 ^ 2 := pow_add _ _ _
+        _ = 4 ^ (m - 2) * 16 := by norm_num
+    change |A ^ e * (4 : ℝ) ^ m * u ^ m * v ^ m| = _
+    rw [abs_of_nonneg (by positivity)]
+    rw [hum, hvm, hfourm]
+    ring
+  rw [hfactor]
+  calc
+    ((4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e) *
+        (u ^ 2 * v ^ 2) ≤
+      (16 * A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2)) *
+        A ^ 4 := by
+      exact mul_le_mul hbase huv (by positivity) (by positivity)
+    _ ≤
+      (16 * A ^ (α / 2 - 4) * ((15 : ℝ) / 16) ^ (m - 2)) *
+        256 := by
+      gcongr
+    _ = 4096 * angularKernelA s t ^ (α / 2 - 4) *
+        ((15 : ℝ) / 16) ^ (m - 2) := by
+      dsimp [A]
+      ring
+
+noncomputable def latitudeEvenPowerSeriesTerm
+    (α : ℝ) (m : ℕ) (s t : ℝ) : ℝ :=
+  (Ring.choose (α / 2) (2 * m) *
+    normalizedCosineMoment (2 * m)) *
+    latitudeEvenPowerSummand α m s t
+
+theorem summable_shifted_latitudeEvenPowerSeriesTerm
+    {α : ℝ} {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    Summable (fun r : ℕ ↦
+      latitudeEvenPowerSeriesTerm α (r + 2) s t) := by
+  have hA : 0 < angularKernelA s t :=
+    (leftSmallSame_rectangle_angularKernelA_bounds
+      hN j k hjk hs ht).1
+  have hcoef :=
+    summable_shifted_evenAngularDerivativeCoefficient_mul_pow
+      α (q := (15 : ℝ) / 16) (by norm_num) (by norm_num)
+  have hmaj := hcoef.mul_left
+    (4096 * angularKernelA s t ^ (α / 2 - 4))
+  apply hmaj.of_norm_bounded
+  intro r
+  have hterm :=
+    abs_latitudeEvenPowerSummand_le_on_leftSmall_rectangle
+      (α := α) hN hjk hs ht (m := r + 2) (by omega)
+  rw [show r + 2 - 2 = r by omega] at hterm
+  unfold latitudeEvenPowerSeriesTerm
+  rw [Real.norm_eq_abs, abs_mul]
+  calc
+    |Ring.choose (α / 2) (2 * (r + 2)) *
+        normalizedCosineMoment (2 * (r + 2))| *
+        |latitudeEvenPowerSummand α (r + 2) s t| ≤
+      |Ring.choose (α / 2) (2 * (r + 2)) *
+        normalizedCosineMoment (2 * (r + 2))| *
+        (4096 * angularKernelA s t ^ (α / 2 - 4) *
+          ((15 : ℝ) / 16) ^ r) :=
+      mul_le_mul_of_nonneg_left hterm (abs_nonneg _)
+    _ ≤
+      4096 * angularKernelA s t ^ (α / 2 - 4) *
+        (evenAngularDerivativeCoefficient α (r + 2) *
+          ((15 : ℝ) / 16) ^ r) := by
+      unfold evenAngularDerivativeCoefficient
+      rw [abs_mul]
+      have hw : (1 : ℝ) ≤ (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) := by
+        apply one_le_pow₀
+        have hr0 : (0 : ℝ) ≤ r := Nat.cast_nonneg r
+        norm_num
+        linarith
+      have hc : 0 ≤
+          |Ring.choose (α / 2) (2 * (r + 2))| *
+            |normalizedCosineMoment (2 * (r + 2))| := by positivity
+      have hq : 0 ≤ ((15 : ℝ) / 16) ^ r := by positivity
+      have hpow : 0 ≤ angularKernelA s t ^ (α / 2 - 4) :=
+        Real.rpow_nonneg hA.le _
+      let C := |Ring.choose (α / 2) (2 * (r + 2))| *
+        |normalizedCosineMoment (2 * (r + 2))|
+      let P := 4096 * angularKernelA s t ^ (α / 2 - 4) *
+        ((15 : ℝ) / 16) ^ r
+      have hC : 0 ≤ C := by simpa [C] using hc
+      have hP : 0 ≤ P := by dsimp [P]; positivity
+      have hCw :
+          C ≤ C * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) := by
+        simpa using mul_le_mul_of_nonneg_left hw hC
+      calc
+        C * P ≤
+            (C * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ)) * P := by
+          exact mul_le_mul_of_nonneg_right hCw hP
+        _ = 4096 * angularKernelA s t ^ (α / 2 - 4) *
+            (C * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
+              ((15 : ℝ) / 16) ^ r) := by ring
+
+private noncomputable def leftSmallLatitudeTailMajorant
+    (α : ℝ) (N : ℕ) (k : Fin (bandTailCount N + 1))
+    (r : ℕ) : ℝ :=
+  4194304 *
+      (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4) *
+    (evenAngularDerivativeCoefficient α (r + 2) *
+      ((15 : ℝ) / 16) ^ r)
+
+private theorem summable_leftSmallLatitudeTailMajorant
+    (α : ℝ) {N : ℕ} (hN : 0 < N)
+    (k : Fin (bandTailCount N + 1)) :
+    Summable (leftSmallLatitudeTailMajorant α N k) := by
+  exact
+    (summable_shifted_evenAngularDerivativeCoefficient_mul_pow
+      α (q := (15 : ℝ) / 16) (by norm_num) (by norm_num)).mul_left
+        (4194304 *
+          (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4))
+
+/-- Uniform normal majorants for all four differentiated stages.  Unlike
+the pointwise estimates above, this bound is independent of `s,t` inside
+the fixed rectangle, so it is suitable for the termwise derivative
+theorem. -/
+private theorem norm_latitudeEvenPower_tailStages_le_majorant
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k))
+    (r : ℕ) :
+    ‖latitudeEvenPowerDSSeriesTerm α (r + 2) s t‖ ≤
+        leftSmallLatitudeTailMajorant α N k r ∧
+    ‖latitudeEvenPowerDSSSeriesTerm α (r + 2) s t‖ ≤
+        leftSmallLatitudeTailMajorant α N k r ∧
+    ‖latitudeEvenPowerDSSTSeriesTerm α (r + 2) s t‖ ≤
+        leftSmallLatitudeTailMajorant α N k r ∧
+    ‖latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t‖ ≤
+        leftSmallLatitudeTailMajorant α N k r := by
+  let L : ℝ := 2 * (latitudeBandScale N k : ℝ) ^ 2 / N
+  have hL : 0 < L := by
+    dsimp [L]
+    have hd : (0 : ℝ) < latitudeBandScale N k := by
+      exact_mod_cast latitudeBandScale_pos N k
+    have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+    positivity
+  have hLA : L ≤ angularKernelA s t :=
+    (leftSmallSame_rectangle_angularKernelA_bounds
+      hN j k hjk hs ht).2.1
+  have hγ : α / 2 - 4 ≤ 0 := by linarith
+  have hpow :
+      angularKernelA s t ^ (α / 2 - 4) ≤ L ^ (α / 2 - 4) :=
+    Real.rpow_le_rpow_of_nonpos hL hLA hγ
+  have hlower :=
+    abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
+      hα0 hα2 hN hjk hs ht (m := r + 2) (by omega)
+  have hfourth :=
+    abs_latitudeEvenPowerSummandDSSTT_le_on_leftSmall_rectangle
+      hα0 hα2 hN hjk hs ht (m := r + 2) (by omega)
+  rw [show r + 2 - 2 = r by omega] at hlower hfourth
+  let c : ℝ :=
+    Ring.choose (α / 2) (2 * (r + 2)) *
+      normalizedCosineMoment (2 * (r + 2))
+  have hstage (F : ℝ)
+      (hF : |F| ≤
+        4194304 * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
+          angularKernelA s t ^ (α / 2 - 4) *
+          ((15 : ℝ) / 16) ^ r) :
+      ‖c * F‖ ≤ leftSmallLatitudeTailMajorant α N k r := by
+    rw [Real.norm_eq_abs, abs_mul]
+    calc
+      |c| * |F| ≤
+          |c| *
+            (4194304 * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
+              angularKernelA s t ^ (α / 2 - 4) *
+              ((15 : ℝ) / 16) ^ r) :=
+        mul_le_mul_of_nonneg_left hF (abs_nonneg _)
+      _ ≤ |c| *
+            (4194304 * (((r + 2 : ℕ) : ℝ) + 1) ^ (4 : ℕ) *
+              L ^ (α / 2 - 4) *
+              ((15 : ℝ) / 16) ^ r) := by
+        gcongr
+      _ = leftSmallLatitudeTailMajorant α N k r := by
+        dsimp [c, L, leftSmallLatitudeTailMajorant,
+          evenAngularDerivativeCoefficient]
+        rw [abs_mul]
+        ring
+  exact ⟨by
+    simpa [latitudeEvenPowerDSSeriesTerm, c] using
+      hstage _ hlower.1, by
+    simpa [latitudeEvenPowerDSSSeriesTerm, c] using
+      hstage _ hlower.2.1, by
+    simpa [latitudeEvenPowerDSSTSeriesTerm, c] using
+      hstage _ hlower.2.2, by
+    simpa [latitudeEvenPowerDSSTTSeriesTerm, c] using
+      hstage _ hfourth⟩
+
+/-- First pass of the termwise transfer: differentiate the shifted even
+series once in the left height variable on the open band interior. -/
+theorem hasDerivAt_shifted_latitudeEvenPowerSeries_left
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    HasDerivAt
+      (fun y ↦ ∑' r : ℕ,
+        latitudeEvenPowerSeriesTerm α (r + 2) y t)
+      (∑' r : ℕ,
+        latitudeEvenPowerDSSeriesTerm α (r + 2) s t) s := by
+  apply hasDerivAt_tsum_of_isPreconnected
+    (u := leftSmallLatitudeTailMajorant α N k)
+    (t := Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (g := fun r y ↦ latitudeEvenPowerSeriesTerm α (r + 2) y t)
+    (g' := fun r y ↦ latitudeEvenPowerDSSeriesTerm α (r + 2) y t)
+    (y₀ := s)
+  · exact summable_leftSmallLatitudeTailMajorant α hN k
+  · exact isOpen_Ioo
+  · exact isPreconnected_Ioo
+  · intro r y hy
+    have hy' : y ∈ Icc (bandBoundaryHeight N (j + 1))
+        (bandBoundaryHeight N j) := ⟨hy.1.le, hy.2.le⟩
+    have hA : 0 < angularKernelA y t :=
+      (leftSmallSame_rectangle_angularKernelA_bounds
+        hN j k hjk hy' ht).1
+    simpa [latitudeEvenPowerSeriesTerm,
+      latitudeEvenPowerDSSeriesTerm] using
+      (hasDerivAt_latitudeEvenPowerSummand_left
+        (α := α) (m := r + 2) hA).const_mul
+          (Ring.choose (α / 2) (2 * (r + 2)) *
+            normalizedCosineMoment (2 * (r + 2)))
+  · intro r y hy
+    exact
+      (norm_latitudeEvenPower_tailStages_le_majorant
+        hα0 hα2 hN hjk ⟨hy.1.le, hy.2.le⟩ ht r).1
+  · exact hs
+  · exact summable_shifted_latitudeEvenPowerSeriesTerm
+      hN hjk ⟨hs.1.le, hs.2.le⟩ ht
+  · exact hs
+
+/-- Second left-height pass. -/
+theorem hasDerivAt_shifted_latitudeEvenPowerDSSeries_left
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    HasDerivAt
+      (fun y ↦ ∑' r : ℕ,
+        latitudeEvenPowerDSSeriesTerm α (r + 2) y t)
+      (∑' r : ℕ,
+        latitudeEvenPowerDSSSeriesTerm α (r + 2) s t) s := by
+  apply hasDerivAt_tsum_of_isPreconnected
+    (u := leftSmallLatitudeTailMajorant α N k)
+    (t := Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (g := fun r y ↦ latitudeEvenPowerDSSeriesTerm α (r + 2) y t)
+    (g' := fun r y ↦ latitudeEvenPowerDSSSeriesTerm α (r + 2) y t)
+    (y₀ := s)
+  · exact summable_leftSmallLatitudeTailMajorant α hN k
+  · exact isOpen_Ioo
+  · exact isPreconnected_Ioo
+  · intro r y hy
+    have hy' : y ∈ Icc (bandBoundaryHeight N (j + 1))
+        (bandBoundaryHeight N j) := ⟨hy.1.le, hy.2.le⟩
+    have hA : 0 < angularKernelA y t :=
+      (leftSmallSame_rectangle_angularKernelA_bounds
+        hN j k hjk hy' ht).1
+    simpa [latitudeEvenPowerDSSeriesTerm,
+      latitudeEvenPowerDSSSeriesTerm] using
+      (hasDerivAt_latitudeEvenPowerSummandDS_left
+        (α := α) (m := r + 2) hA).const_mul
+          (Ring.choose (α / 2) (2 * (r + 2)) *
+            normalizedCosineMoment (2 * (r + 2)))
+  · intro r y hy
+    exact
+      (norm_latitudeEvenPower_tailStages_le_majorant
+        hα0 hα2 hN hjk ⟨hy.1.le, hy.2.le⟩ ht r).2.1
+  · exact hs
+  · exact
+      (summable_shifted_latitudeEvenPower_lowerSeriesTerms
+        hα0 hα2 hN hjk ⟨hs.1.le, hs.2.le⟩ ht).1
+  · exact hs
+
+/-- First right-height pass after the two left derivatives. -/
+theorem hasDerivAt_shifted_latitudeEvenPowerDSSSeries_right
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Ioo (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    HasDerivAt
+      (fun y ↦ ∑' r : ℕ,
+        latitudeEvenPowerDSSSeriesTerm α (r + 2) s y)
+      (∑' r : ℕ,
+        latitudeEvenPowerDSSTSeriesTerm α (r + 2) s t) t := by
+  apply hasDerivAt_tsum_of_isPreconnected
+    (u := leftSmallLatitudeTailMajorant α N k)
+    (t := Ioo (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k))
+    (g := fun r y ↦ latitudeEvenPowerDSSSeriesTerm α (r + 2) s y)
+    (g' := fun r y ↦ latitudeEvenPowerDSSTSeriesTerm α (r + 2) s y)
+    (y₀ := t)
+  · exact summable_leftSmallLatitudeTailMajorant α hN k
+  · exact isOpen_Ioo
+  · exact isPreconnected_Ioo
+  · intro r y hy
+    have hy' : y ∈ Icc (bandBoundaryHeight N (k + 1))
+        (bandBoundaryHeight N k) := ⟨hy.1.le, hy.2.le⟩
+    have hA : 0 < angularKernelA s y :=
+      (leftSmallSame_rectangle_angularKernelA_bounds
+        hN j k hjk hs hy').1
+    simpa [latitudeEvenPowerDSSSeriesTerm,
+      latitudeEvenPowerDSSTSeriesTerm] using
+      (hasDerivAt_latitudeEvenPowerSummandDSS_right
+        (α := α) (m := r + 2) hA).const_mul
+          (Ring.choose (α / 2) (2 * (r + 2)) *
+            normalizedCosineMoment (2 * (r + 2)))
+  · intro r y hy
+    exact
+      (norm_latitudeEvenPower_tailStages_le_majorant
+        hα0 hα2 hN hjk hs ⟨hy.1.le, hy.2.le⟩ r).2.2.1
+  · exact ht
+  · exact
+      (summable_shifted_latitudeEvenPower_lowerSeriesTerms
+        hα0 hα2 hN hjk hs ⟨ht.1.le, ht.2.le⟩).2.1
+  · exact ht
+
+/-- Final right-height pass, producing the shifted `(2,2)` series. -/
+theorem hasDerivAt_shifted_latitudeEvenPowerDSSTSeries_right
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Ioo (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    HasDerivAt
+      (fun y ↦ ∑' r : ℕ,
+        latitudeEvenPowerDSSTSeriesTerm α (r + 2) s y)
+      (∑' r : ℕ,
+        latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t) t := by
+  apply hasDerivAt_tsum_of_isPreconnected
+    (u := leftSmallLatitudeTailMajorant α N k)
+    (t := Ioo (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k))
+    (g := fun r y ↦ latitudeEvenPowerDSSTSeriesTerm α (r + 2) s y)
+    (g' := fun r y ↦ latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s y)
+    (y₀ := t)
+  · exact summable_leftSmallLatitudeTailMajorant α hN k
+  · exact isOpen_Ioo
+  · exact isPreconnected_Ioo
+  · intro r y hy
+    have hy' : y ∈ Icc (bandBoundaryHeight N (k + 1))
+        (bandBoundaryHeight N k) := ⟨hy.1.le, hy.2.le⟩
+    have hA : 0 < angularKernelA s y :=
+      (leftSmallSame_rectangle_angularKernelA_bounds
+        hN j k hjk hs hy').1
+    simpa [latitudeEvenPowerDSSTSeriesTerm,
+      latitudeEvenPowerDSSTTSeriesTerm] using
+      (hasDerivAt_latitudeEvenPowerSummandDSST_right
+        (α := α) (m := r + 2) hA).const_mul
+          (Ring.choose (α / 2) (2 * (r + 2)) *
+            normalizedCosineMoment (2 * (r + 2)))
+  · intro r y hy
+    exact
+      (norm_latitudeEvenPower_tailStages_le_majorant
+        hα0 hα2 hN hjk hs ⟨hy.1.le, hy.2.le⟩ r).2.2.2
+  · exact ht
+  · exact
+      (summable_shifted_latitudeEvenPower_lowerSeriesTerms
+        hα0 hα2 hN hjk hs ⟨ht.1.le, ht.2.le⟩).2.2
+  · exact ht
+
+noncomputable def latitudeEvenPowerSeriesSum
+    (α s t : ℝ) : ℝ :=
+  latitudeEvenPowerSeriesTerm α 0 s t +
+    latitudeEvenPowerSeriesTerm α 1 s t +
+    ∑' r : ℕ, latitudeEvenPowerSeriesTerm α (r + 2) s t
+
+noncomputable def latitudeEvenPowerDSSeriesSum
+    (α s t : ℝ) : ℝ :=
+  latitudeEvenPowerDSSeriesTerm α 0 s t +
+    latitudeEvenPowerDSSeriesTerm α 1 s t +
+    ∑' r : ℕ, latitudeEvenPowerDSSeriesTerm α (r + 2) s t
+
+noncomputable def latitudeEvenPowerDSSSeriesSum
+    (α s t : ℝ) : ℝ :=
+  latitudeEvenPowerDSSSeriesTerm α 0 s t +
+    latitudeEvenPowerDSSSeriesTerm α 1 s t +
+    ∑' r : ℕ, latitudeEvenPowerDSSSeriesTerm α (r + 2) s t
+
+noncomputable def latitudeEvenPowerDSSTSeriesSum
+    (α s t : ℝ) : ℝ :=
+  latitudeEvenPowerDSSTSeriesTerm α 0 s t +
+    latitudeEvenPowerDSSTSeriesTerm α 1 s t +
+    ∑' r : ℕ, latitudeEvenPowerDSSTSeriesTerm α (r + 2) s t
+
+noncomputable def latitudeEvenPowerDSSTTSeriesSum
+    (α s t : ℝ) : ℝ :=
+  latitudeEvenPowerDSSTTSeriesTerm α 0 s t +
+    latitudeEvenPowerDSSTTSeriesTerm α 1 s t +
+    ∑' r : ℕ, latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t
+
+theorem hasDerivAt_latitudeEvenPowerSeriesSum_left
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    HasDerivAt (fun y ↦ latitudeEvenPowerSeriesSum α y t)
+      (latitudeEvenPowerDSSeriesSum α s t) s := by
+  have hA : 0 < angularKernelA s t :=
+    (leftSmallSame_rectangle_angularKernelA_bounds
+      hN j k hjk ⟨hs.1.le, hs.2.le⟩ ht).1
+  have h0 :=
+    (hasDerivAt_latitudeEvenPowerSummand_left
+      (α := α) (m := 0) hA).const_mul
+        (Ring.choose (α / 2) 0 * normalizedCosineMoment 0)
+  have h1 :=
+    (hasDerivAt_latitudeEvenPowerSummand_left
+      (α := α) (m := 1) hA).const_mul
+        (Ring.choose (α / 2) 2 * normalizedCosineMoment 2)
+  have htail :=
+    hasDerivAt_shifted_latitudeEvenPowerSeries_left
+      hα0 hα2 hN hjk hs ht
+  simpa [latitudeEvenPowerSeriesSum, latitudeEvenPowerDSSeriesSum,
+    latitudeEvenPowerSeriesTerm, latitudeEvenPowerDSSeriesTerm] using
+      (h0.add h1).add htail
+
+theorem hasDerivAt_latitudeEvenPowerDSSeriesSum_left
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    HasDerivAt (fun y ↦ latitudeEvenPowerDSSeriesSum α y t)
+      (latitudeEvenPowerDSSSeriesSum α s t) s := by
+  have hA : 0 < angularKernelA s t :=
+    (leftSmallSame_rectangle_angularKernelA_bounds
+      hN j k hjk ⟨hs.1.le, hs.2.le⟩ ht).1
+  have h0 :=
+    (hasDerivAt_latitudeEvenPowerSummandDS_left
+      (α := α) (m := 0) hA).const_mul
+        (Ring.choose (α / 2) 0 * normalizedCosineMoment 0)
+  have h1 :=
+    (hasDerivAt_latitudeEvenPowerSummandDS_left
+      (α := α) (m := 1) hA).const_mul
+        (Ring.choose (α / 2) 2 * normalizedCosineMoment 2)
+  have htail :=
+    hasDerivAt_shifted_latitudeEvenPowerDSSeries_left
+      hα0 hα2 hN hjk hs ht
+  simpa [latitudeEvenPowerDSSeriesSum, latitudeEvenPowerDSSSeriesSum,
+    latitudeEvenPowerDSSeriesTerm, latitudeEvenPowerDSSSeriesTerm] using
+      (h0.add h1).add htail
+
+theorem hasDerivAt_latitudeEvenPowerDSSSeriesSum_right
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Ioo (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    HasDerivAt (fun y ↦ latitudeEvenPowerDSSSeriesSum α s y)
+      (latitudeEvenPowerDSSTSeriesSum α s t) t := by
+  have hA : 0 < angularKernelA s t :=
+    (leftSmallSame_rectangle_angularKernelA_bounds
+      hN j k hjk hs ⟨ht.1.le, ht.2.le⟩).1
+  have h0 :=
+    (hasDerivAt_latitudeEvenPowerSummandDSS_right
+      (α := α) (m := 0) hA).const_mul
+        (Ring.choose (α / 2) 0 * normalizedCosineMoment 0)
+  have h1 :=
+    (hasDerivAt_latitudeEvenPowerSummandDSS_right
+      (α := α) (m := 1) hA).const_mul
+        (Ring.choose (α / 2) 2 * normalizedCosineMoment 2)
+  have htail :=
+    hasDerivAt_shifted_latitudeEvenPowerDSSSeries_right
+      hα0 hα2 hN hjk hs ht
+  simpa [latitudeEvenPowerDSSSeriesSum, latitudeEvenPowerDSSTSeriesSum,
+    latitudeEvenPowerDSSSeriesTerm, latitudeEvenPowerDSSTSeriesTerm] using
+      (h0.add h1).add htail
+
+theorem hasDerivAt_latitudeEvenPowerDSSTSeriesSum_right
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Ioo (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    HasDerivAt (fun y ↦ latitudeEvenPowerDSSTSeriesSum α s y)
+      (latitudeEvenPowerDSSTTSeriesSum α s t) t := by
+  have hA : 0 < angularKernelA s t :=
+    (leftSmallSame_rectangle_angularKernelA_bounds
+      hN j k hjk hs ⟨ht.1.le, ht.2.le⟩).1
+  have h0 :=
+    (hasDerivAt_latitudeEvenPowerSummandDSST_right
+      (α := α) (m := 0) hA).const_mul
+        (Ring.choose (α / 2) 0 * normalizedCosineMoment 0)
+  have h1 :=
+    (hasDerivAt_latitudeEvenPowerSummandDSST_right
+      (α := α) (m := 1) hA).const_mul
+        (Ring.choose (α / 2) 2 * normalizedCosineMoment 2)
+  have htail :=
+    hasDerivAt_shifted_latitudeEvenPowerDSSTSeries_right
+      hα0 hα2 hN hjk hs ht
+  simpa [latitudeEvenPowerDSSTSeriesSum, latitudeEvenPowerDSSTTSeriesSum,
+    latitudeEvenPowerDSSTSeriesTerm, latitudeEvenPowerDSSTTSeriesTerm] using
+      (h0.add h1).add htail
+
+/-- On the complete closed left-small rectangle, the finite-prefix-plus-tail
+series is exactly the angular latitude kernel. -/
+theorem latitudeKernel_eq_latitudeEvenPowerSeriesSum
+    {α : ℝ} {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    latitudeKernel α s t = latitudeEvenPowerSeriesSum α s t := by
+  have hsSphere : s ∈ Icc (-1 : ℝ) 1 :=
+    ⟨(bandBoundaryHeight_mem hN (j + 1)).1.trans hs.1,
+      hs.2.trans (bandBoundaryHeight_mem hN j).2⟩
+  have htSphere : t ∈ Icc (-1 : ℝ) 1 :=
+    ⟨(bandBoundaryHeight_mem hN (k + 1)).1.trans ht.1,
+      ht.2.trans (bandBoundaryHeight_mem hN k).2⟩
+  have hA : 0 < angularKernelA s t :=
+    (leftSmallSame_rectangle_angularKernelA_bounds
+      hN j k hjk hs ht).1
+  have hQ :=
+    leftSmallSame_rectangle_unequalAngularRatio_le
+      hN j k hjk hs ht
+  have hratioSq :
+      (angularKernelB s t / angularKernelA s t) ^ 2 =
+        unequalAngularRatio s t := by
+    calc
+      (angularKernelB s t / angularKernelA s t) ^ 2 =
+          angularKernelB s t ^ 2 / angularKernelA s t ^ 2 :=
+        div_pow _ _ _
+      _ = unequalAngularRatio s t :=
+        (unequalAngularRatio_eq_sq_div hsSphere htSphere).symm
+  have habsSq :
+      |angularKernelB s t / angularKernelA s t| ^ 2 =
+        unequalAngularRatio s t := by
+    rw [sq_abs]
+    exact hratioSq
+  have hq :
+      |angularKernelB s t / angularKernelA s t| < 1 := by
+    have habs0 :
+        0 ≤ |angularKernelB s t / angularKernelA s t| := abs_nonneg _
+    nlinarith
+  have hkernel :=
+    latitudeKernel_eq_evenPowerSeries
+      (α := α) hsSphere htSphere hA hq
+  have hsum : Summable (fun m : ℕ ↦
+      latitudeEvenPowerSeriesTerm α m s t) := by
+    rw [← summable_nat_add_iff 2]
+    exact summable_shifted_latitudeEvenPowerSeriesTerm hN hjk hs ht
+  have hsplit := hsum.sum_add_tsum_nat_add 2
+  calc
+    latitudeKernel α s t =
+        ∑' m : ℕ, latitudeEvenPowerSeriesTerm α m s t := by
+      simpa [latitudeEvenPowerSeriesTerm] using hkernel
+    _ = (∑ m ∈ Finset.range 2,
+          latitudeEvenPowerSeriesTerm α m s t) +
+        ∑' r : ℕ, latitudeEvenPowerSeriesTerm α (r + 2) s t :=
+      hsplit.symm
+    _ = latitudeEvenPowerSeriesSum α s t := by
+      simp [latitudeEvenPowerSeriesSum, Finset.sum_range_succ]
+
+/-- Uniqueness after the first left derivative. -/
+theorem latitudeEvenPowerDSSeriesSum_eq_variableReducedLatitudeKernelDs
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    latitudeEvenPowerDSSeriesSum α s t =
+      variableReducedLatitudeKernelDs α s t := by
+  have hs' : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j) := ⟨hs.1.le, hs.2.le⟩
+  have hgeo :=
+    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs' ht
+  have heq :
+      (fun y ↦ latitudeEvenPowerSeriesSum α y t) =ᶠ[nhds s]
+        (fun y ↦ variableReducedLatitudeKernel α y t) := by
+    filter_upwards [isOpen_Ioo.mem_nhds hs] with y hy
+    have hy' : y ∈ Icc (bandBoundaryHeight N (j + 1))
+        (bandBoundaryHeight N j) := ⟨hy.1.le, hy.2.le⟩
+    have hygeo :=
+      leftSmallSame_rectangle_interior_offDiagonal hN hjk hy' ht
+    calc
+      latitudeEvenPowerSeriesSum α y t = latitudeKernel α y t :=
+        (latitudeKernel_eq_latitudeEvenPowerSeriesSum
+          (α := α) hN hjk hy' ht).symm
+      _ = variableReducedLatitudeKernel α y t :=
+        latitudeKernel_eq_variableReducedLatitudeKernel
+          hygeo.1 hygeo.2.1
+  have hseries :=
+    hasDerivAt_latitudeEvenPowerSeriesSum_left
+      hα0 hα2 hN hjk hs ht
+  have hseries' :
+      HasDerivAt (fun y ↦ variableReducedLatitudeKernel α y t)
+        (latitudeEvenPowerDSSeriesSum α s t) s :=
+    heq.hasDerivAt_iff.mp hseries
+  exact hseries'.unique
+    (hasDerivAt_variableReducedLatitudeKernel_left
+      hgeo.1 hgeo.2.1 hgeo.2.2)
+
+/-- Uniqueness after the second left derivative. -/
+theorem latitudeEvenPowerDSSSeriesSum_eq_variableReducedLatitudeKernelDss
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    latitudeEvenPowerDSSSeriesSum α s t =
+      variableReducedLatitudeKernelDss α s t := by
+  have hs' : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j) := ⟨hs.1.le, hs.2.le⟩
+  have hgeo :=
+    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs' ht
+  have heq :
+      (fun y ↦ latitudeEvenPowerDSSeriesSum α y t) =ᶠ[nhds s]
+        (fun y ↦ variableReducedLatitudeKernelDs α y t) := by
+    filter_upwards [isOpen_Ioo.mem_nhds hs] with y hy
+    exact latitudeEvenPowerDSSeriesSum_eq_variableReducedLatitudeKernelDs
+      hα0 hα2 hN hjk hy ht
+  have hseries :=
+    hasDerivAt_latitudeEvenPowerDSSeriesSum_left
+      hα0 hα2 hN hjk hs ht
+  have hseries' :
+      HasDerivAt (fun y ↦ variableReducedLatitudeKernelDs α y t)
+        (latitudeEvenPowerDSSSeriesSum α s t) s :=
+    heq.hasDerivAt_iff.mp hseries
+  exact hseries'.unique
+    (hasDerivAt_variableReducedLatitudeKernelDs_left
+      hgeo.1 hgeo.2.1 hgeo.2.2)
+
+/-- Uniqueness after the first right derivative. -/
+theorem latitudeEvenPowerDSSTSeriesSum_eq_variableReducedLatitudeKernelDsst
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Ioo (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    latitudeEvenPowerDSSTSeriesSum α s t =
+      variableReducedLatitudeKernelDsst α s t := by
+  have hs' : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j) := ⟨hs.1.le, hs.2.le⟩
+  have ht' : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k) := ⟨ht.1.le, ht.2.le⟩
+  have hgeo :=
+    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs' ht'
+  have heq :
+      (fun y ↦ latitudeEvenPowerDSSSeriesSum α s y) =ᶠ[nhds t]
+        (fun y ↦ variableReducedLatitudeKernelDss α s y) := by
+    filter_upwards [isOpen_Ioo.mem_nhds ht] with y hy
+    exact latitudeEvenPowerDSSSeriesSum_eq_variableReducedLatitudeKernelDss
+      hα0 hα2 hN hjk hs ⟨hy.1.le, hy.2.le⟩
+  have hseries :=
+    hasDerivAt_latitudeEvenPowerDSSSeriesSum_right
+      hα0 hα2 hN hjk hs' ht
+  have hseries' :
+      HasDerivAt (fun y ↦ variableReducedLatitudeKernelDss α s y)
+        (latitudeEvenPowerDSSTSeriesSum α s t) t :=
+    heq.hasDerivAt_iff.mp hseries
+  exact hseries'.unique
+    (hasDerivAt_variableReducedLatitudeKernelDss_right
+      hgeo.1 hgeo.2.1 hgeo.2.2)
+
+/-- Interior identification of the genuine mixed `(2,2)` derivative with
+the coefficient-weighted DSSTT series. -/
+theorem latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Ioo (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Ioo (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    latitudeEvenPowerDSSTTSeriesSum α s t =
+      variableReducedLatitudeKernelDsstt α s t := by
+  have hs' : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j) := ⟨hs.1.le, hs.2.le⟩
+  have ht' : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k) := ⟨ht.1.le, ht.2.le⟩
+  have hgeo :=
+    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs' ht'
+  have heq :
+      (fun y ↦ latitudeEvenPowerDSSTSeriesSum α s y) =ᶠ[nhds t]
+        (fun y ↦ variableReducedLatitudeKernelDsst α s y) := by
+    filter_upwards [isOpen_Ioo.mem_nhds ht] with y hy
+    exact latitudeEvenPowerDSSTSeriesSum_eq_variableReducedLatitudeKernelDsst
+      hα0 hα2 hN hjk hs hy
+  have hseries :=
+    hasDerivAt_latitudeEvenPowerDSSTSeriesSum_right
+      hα0 hα2 hN hjk hs' ht
+  have hseries' :
+      HasDerivAt (fun y ↦ variableReducedLatitudeKernelDsst α s y)
+        (latitudeEvenPowerDSSTTSeriesSum α s t) t :=
+    heq.hasDerivAt_iff.mp hseries
+  exact hseries'.unique
+    (hasDerivAt_variableReducedLatitudeKernelDsst_right
+      hgeo.1 hgeo.2.1 hgeo.2.2)
+
+private theorem abs_latitudeEvenPowerDSSTTSeriesTerm_zero_le
+    {α s t : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |latitudeEvenPowerDSSTTSeriesTerm α 0 s t| ≤
+      32768 * angularKernelA s t ^ (α / 2 - 4) := by
+  have h :=
+    abs_unequalAPowSSTT_le
+      (α := α) (m := 0) hα0 hα2 hs ht hA
+  unfold latitudeEvenPowerDSSTTSeriesTerm
+    latitudeEvenPowerSummandDSSTT
+  dsimp only
+  norm_num [unequalRadiusPower, unequalRadiusPowerD1,
+    unequalRadiusPowerD2]
+  change
+    |normalizedCosineMoment 0 * unequalAPowSSTT (α / 2) s t| ≤ _
+  rw [abs_mul]
+  calc
+    |normalizedCosineMoment 0| * |unequalAPowSSTT (α / 2) s t| ≤
+        1 * |unequalAPowSSTT (α / 2) s t| := by
+      gcongr
+      exact abs_normalizedCosineMoment_le_one 0
+    _ ≤ 1 * (32768 * angularKernelA s t ^ (α / 2 - 4)) := by
+      simpa using h
+    _ = _ := by ring
+
+private theorem abs_latitudeEvenPowerSummandDSSTT_one_le
+    {α s t : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |latitudeEvenPowerSummandDSSTT α 1 s t| ≤
+      8388608 * angularKernelA s t ^ (α / 2 - 4) := by
+  let A := angularKernelA s t
+  let e := α / 2 - 2
+  let U := unequalRadiusPower 1 s
+  let U1 := unequalRadiusPowerD1 1 s
+  let U2 := unequalRadiusPowerD2 1 s
+  let V := unequalRadiusPower 1 t
+  let V1 := unequalRadiusPowerD1 1 t
+  let V2 := unequalRadiusPowerD2 1 t
+  have hu0 : 0 ≤ 1 - s ^ 2 := by nlinarith [hs.1, hs.2]
+  have hv0 : 0 ≤ 1 - t ^ 2 := by nlinarith [ht.1, ht.2]
+  have huA : 1 - s ^ 2 ≤ A := by
+    dsimp [A]
+    rw [angularKernelA_eq_radiusSq_add]
+    nlinarith [hv0, sq_nonneg (s - t)]
+  have hvA : 1 - t ^ 2 ≤ A := by
+    dsimp [A]
+    rw [angularKernelA_eq_radiusSq_add]
+    nlinarith [hu0, sq_nonneg (s - t)]
+  have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hs ht
+  have hsabs : |s| ≤ 1 := abs_le.2 hs
+  have htabs : |t| ≤ 1 := abs_le.2 ht
+  have hU : |U| ≤ A := by
+    dsimp [U, unequalRadiusPower]
+    simp only [pow_one]
+    rw [abs_of_nonneg hu0]
+    simpa using huA
+  have hV : |V| ≤ A := by
+    dsimp [V, unequalRadiusPower]
+    simp only [pow_one]
+    rw [abs_of_nonneg hv0]
+    simpa using hvA
+  have hU1 : |U1| ≤ 2 := by
+    dsimp [U1, unequalRadiusPowerD1]
+    norm_num
+    change |(2 : ℝ) * s| ≤ 2
+    rw [abs_mul]
+    norm_num
+    exact hsabs
+  have hV1 : |V1| ≤ 2 := by
+    dsimp [V1, unequalRadiusPowerD1]
+    norm_num
+    change |(2 : ℝ) * t| ≤ 2
+    rw [abs_mul]
+    norm_num
+    exact htabs
+  have hU2 : |U2| ≤ 2 := by
+    dsimp [U2, unequalRadiusPowerD2]
+    norm_num
+  have hV2 : |V2| ≤ 2 := by
+    dsimp [V2, unequalRadiusPowerD2]
+    norm_num
+  have hP0 : |unequalAPow e s t| = A ^ e := abs_unequalAPow_le hA
+  have hP1s :
+      |unequalAPowS e s t| ≤ 20 * A ^ (e - 1) := by
+    convert
+      (abs_unequalAPowS_le (α := α) (m := 1)
+        hα0 hα2 ht hA) using 1 <;> norm_num [e, A] <;> ring
+  have hP1t :
+      |unequalAPowT e s t| ≤ 20 * A ^ (e - 1) := by
+    convert
+      (abs_unequalAPowT_le (α := α) (m := 1)
+        hα0 hα2 hs hA) using 1 <;> norm_num [e, A] <;> ring
+  have hP2ss :
+      |unequalAPowSS e s t| ≤ 1024 * A ^ (e - 2) := by
+    have hh := abs_unequalAPowSS_le
+      (α := α) (m := 1) hα0 hα2 ht hA
+    simpa [e, A] using hh.trans (by
+      have hp : 0 ≤ A ^ (e - 2) := by positivity
+      nlinarith)
+  have hP2st :
+      |unequalAPowST e s t| ≤ 1024 * A ^ (e - 2) := by
+    convert
+      (abs_unequalAPowST_le (α := α) (m := 1)
+        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A] <;> ring
+  have hP2tt :
+      |unequalAPowTT e s t| ≤ 1024 * A ^ (e - 2) := by
+    have hh := abs_unequalAPowTT_le
+      (α := α) (m := 1) hα0 hα2 hs hA
+    simpa [e, A] using hh.trans (by
+      have hp : 0 ≤ A ^ (e - 2) := by positivity
+      nlinarith)
+  have hP3sst :
+      |unequalAPowSST e s t| ≤ 16384 * A ^ (e - 3) := by
+    convert
+      (abs_unequalAPowSST_le (α := α) (m := 1)
+        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A] <;> ring
+  have hP3stt :
+      |unequalAPowSTT e s t| ≤ 16384 * A ^ (e - 3) := by
+    convert
+      (abs_unequalAPowSTT_le (α := α) (m := 1)
+        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A] <;> ring
+  have hP4 :
+      |unequalAPowSSTT e s t| ≤ 524288 * A ^ (e - 4) := by
+    convert
+      (abs_unequalAPowSSTT_le (α := α) (m := 1)
+        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A] <;> ring
+  have h43 : A ^ (e - 4) * A = A ^ (e - 3) := by
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 3) hA 1
+    norm_num at hh
+    rw [show e - 4 = (e - 3) - (1 : ℝ) by ring]
+    exact hh
+  have h32 : A ^ (e - 3) * A = A ^ (e - 2) := by
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 1
+    norm_num at hh
+    rw [show e - 3 = (e - 2) - (1 : ℝ) by ring]
+    exact hh
+  have h21 : A ^ (e - 2) * A = A ^ (e - 1) := by
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
+    norm_num at hh
+    rw [show e - 2 = (e - 1) - (1 : ℝ) by ring]
+    exact hh
+  have h10 : A ^ (e - 1) * A = A ^ e := by
+    simpa using rpow_sub_nat_mul_pow (A := A) (e := e) hA 1
+  have he1 : A ^ (e - 1) ≤ 4 * A ^ (e - 2) := by
+    rw [← h21]
+    calc
+      A ^ (e - 2) * A ≤ A ^ (e - 2) * 4 :=
+        mul_le_mul_of_nonneg_left hA4 (by positivity)
+      _ = 4 * A ^ (e - 2) := by ring
+  have he0 : A ^ e ≤ 16 * A ^ (e - 2) := by
+    rw [← h10, ← h21]
+    have hA2 : A ^ 2 ≤ 16 := by
+      convert pow_le_pow_left₀ hA.le hA4 2 using 1 <;> norm_num
+    nlinarith [hA2, show 0 ≤ A ^ (e - 2) by positivity]
+  let X :=
+    unequalAPowSS e s t * U + 2 * unequalAPowS e s t * U1 +
+      unequalAPow e s t * U2
+  let XT :=
+    unequalAPowSST e s t * U + 2 * unequalAPowST e s t * U1 +
+      unequalAPowT e s t * U2
+  let XTT :=
+    unequalAPowSSTT e s t * U + 2 * unequalAPowSTT e s t * U1 +
+      unequalAPowTT e s t * U2
+  have hX : |X| ≤ 2048 * A ^ (e - 1) := by
+    dsimp [X]
+    calc
+      |_ + _ + _| ≤
+          |unequalAPowSS e s t| * |U| +
+          2 * |unequalAPowS e s t| * |U1| +
+          |unequalAPow e s t| * |U2| := by
+        simpa [abs_mul] using
+          (abs_add
+            (unequalAPowSS e s t * U +
+              2 * unequalAPowS e s t * U1)
+            (unequalAPow e s t * U2)).trans
+            (add_le_add_right
+              (abs_add (unequalAPowSS e s t * U)
+                (2 * unequalAPowS e s t * U1)) _)
+      _ ≤ 1024 * A ^ (e - 2) * A +
+          2 * (20 * A ^ (e - 1)) * 2 + A ^ e * 2 := by
+        rw [hP0]
+        gcongr
+      _ ≤ 2048 * A ^ (e - 1) := by
+        have hfirst :
+            1024 * A ^ (e - 2) * A = 1024 * A ^ (e - 1) := by
+          calc
+            1024 * A ^ (e - 2) * A =
+                1024 * (A ^ (e - 2) * A) := by ring
+            _ = 1024 * A ^ (e - 1) := by rw [h21]
+        rw [hfirst]
+        have hp : 0 ≤ A ^ (e - 1) := by positivity
+        nlinarith [he0]
+  have hXT : |XT| ≤ 32768 * A ^ (e - 2) := by
+    dsimp [XT]
+    calc
+      |_ + _ + _| ≤
+          |unequalAPowSST e s t| * |U| +
+          2 * |unequalAPowST e s t| * |U1| +
+          |unequalAPowT e s t| * |U2| := by
+        simpa [abs_mul] using
+          (abs_add
+            (unequalAPowSST e s t * U +
+              2 * unequalAPowST e s t * U1)
+            (unequalAPowT e s t * U2)).trans
+            (add_le_add_right
+              (abs_add (unequalAPowSST e s t * U)
+                (2 * unequalAPowST e s t * U1)) _)
+      _ ≤ 16384 * A ^ (e - 3) * A +
+          2 * (1024 * A ^ (e - 2)) * 2 +
+          20 * A ^ (e - 1) * 2 := by gcongr
+      _ ≤ 32768 * A ^ (e - 2) := by
+        have hfirst :
+            16384 * A ^ (e - 3) * A = 16384 * A ^ (e - 2) := by
+          calc
+            16384 * A ^ (e - 3) * A =
+                16384 * (A ^ (e - 3) * A) := by ring
+            _ = 16384 * A ^ (e - 2) := by rw [h32]
+        rw [hfirst]
+        have hp : 0 ≤ A ^ (e - 2) := by positivity
+        nlinarith [he1]
+  have hXTT : |XTT| ≤ 1048576 * A ^ (e - 3) := by
+    dsimp [XTT]
+    calc
+      |_ + _ + _| ≤
+          |unequalAPowSSTT e s t| * |U| +
+          2 * |unequalAPowSTT e s t| * |U1| +
+          |unequalAPowTT e s t| * |U2| := by
+        simpa [abs_mul] using
+          (abs_add
+            (unequalAPowSSTT e s t * U +
+              2 * unequalAPowSTT e s t * U1)
+            (unequalAPowTT e s t * U2)).trans
+            (add_le_add_right
+              (abs_add (unequalAPowSSTT e s t * U)
+                (2 * unequalAPowSTT e s t * U1)) _)
+      _ ≤ 524288 * A ^ (e - 4) * A +
+          2 * (16384 * A ^ (e - 3)) * 2 +
+          1024 * A ^ (e - 2) * 2 := by gcongr
+      _ ≤ 1048576 * A ^ (e - 3) := by
+        have hfirst :
+            524288 * A ^ (e - 4) * A =
+              524288 * A ^ (e - 3) := by
+          calc
+            524288 * A ^ (e - 4) * A =
+                524288 * (A ^ (e - 4) * A) := by ring
+            _ = 524288 * A ^ (e - 3) := by rw [h43]
+        rw [hfirst]
+        have hp : 0 ≤ A ^ (e - 3) := by positivity
+        have hh : A ^ (e - 2) ≤ 4 * A ^ (e - 3) := by
+          rw [← h32]
+          calc
+            A ^ (e - 3) * A ≤ A ^ (e - 3) * 4 :=
+              mul_le_mul_of_nonneg_left hA4 (by positivity)
+            _ = 4 * A ^ (e - 3) := by ring
+        nlinarith
+  have hfinal :
+      |4 * (XTT * V + 2 * XT * V1 + X * V2)| ≤
+        8388608 * A ^ (e - 2) := by
+    calc
+    |4 * (XTT * V + 2 * XT * V1 + X * V2)| ≤
+        4 * (|XTT| * |V| + 2 * |XT| * |V1| + |X| * |V2|) := by
+      rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 4)]
+      gcongr
+      simpa [abs_mul] using
+        (abs_add (XTT * V + 2 * XT * V1) (X * V2)).trans
+          (add_le_add_right (abs_add (XTT * V) (2 * XT * V1)) _)
+    _ ≤ 4 * (1048576 * A ^ (e - 3) * A +
+        2 * (32768 * A ^ (e - 2)) * 2 +
+        2048 * A ^ (e - 1) * 2) := by gcongr
+    _ ≤ 8388608 * A ^ (e - 2) := by
+      have hfirst :
+          1048576 * A ^ (e - 3) * A =
+            1048576 * A ^ (e - 2) := by
+        calc
+          1048576 * A ^ (e - 3) * A =
+              1048576 * (A ^ (e - 3) * A) := by ring
+          _ = 1048576 * A ^ (e - 2) := by rw [h32]
+      rw [hfirst]
+      have hp : 0 ≤ A ^ (e - 2) := by positivity
+      nlinarith [he1]
+  convert hfinal using 1
+  · simp [latitudeEvenPowerSummandDSSTT, X, XT, XTT,
+      U, U1, U2, V, V1, V2, e]
+  · dsimp [A, e]
+    ring
+
+private theorem abs_latitudeEvenPowerDSSTTSeriesTerm_one_le
+    {α s t : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hA : 0 < angularKernelA s t) :
+    |latitudeEvenPowerDSSTTSeriesTerm α 1 s t| ≤
+      (8388608 * |Ring.choose (α / 2) 2|) *
+        angularKernelA s t ^ (α / 2 - 4) := by
+  have h :=
+    abs_latitudeEvenPowerSummandDSSTT_one_le
+      hα0 hα2 hs ht hA
+  unfold latitudeEvenPowerDSSTTSeriesTerm
+  rw [abs_mul, abs_mul]
+  calc
+    |Ring.choose (α / 2) 2| * |normalizedCosineMoment 2| *
+        |latitudeEvenPowerSummandDSSTT α 1 s t| ≤
+      |Ring.choose (α / 2) 2| * 1 *
+        (8388608 * angularKernelA s t ^ (α / 2 - 4)) := by
+      gcongr
+      exact abs_normalizedCosineMoment_le_one 2
+    _ = _ := by ring
+
+private theorem continuousAt_latitudeEvenPowerDSSTTSeriesTerm_uncurry
+    (α : ℝ) (m : ℕ) {p : ℝ × ℝ}
+    (hA : 0 < angularKernelA p.1 p.2) :
+    ContinuousAt
+      (fun q : ℝ × ℝ ↦
+        latitudeEvenPowerDSSTTSeriesTerm α m q.1 q.2) p := by
+  have hAc :
+      ContinuousAt (fun q : ℝ × ℝ ↦ angularKernelA q.1 q.2) p := by
+    unfold angularKernelA
+    fun_prop
+  have hpow (z : ℝ) :
+      ContinuousAt (fun q : ℝ × ℝ ↦ angularKernelA q.1 q.2 ^ z) p :=
+    hAc.rpow_const (Or.inl hA.ne')
+  unfold latitudeEvenPowerDSSTTSeriesTerm
+    latitudeEvenPowerSummandDSSTT
+    unequalAPow unequalAPowS unequalAPowT unequalAPowSS
+    unequalAPowST unequalAPowTT unequalAPowSST
+    unequalAPowSTT unequalAPowSSTT
+    unequalRadiusPower unequalRadiusPowerD1 unequalRadiusPowerD2
+  dsimp only
+  fun_prop
+
+private theorem continuousOn_latitudeEvenPowerDSSTTSeriesSum_uncurry
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k) :
+    ContinuousOn
+      (fun p : ℝ × ℝ ↦
+        latitudeEvenPowerDSSTTSeriesSum α p.1 p.2)
+      (Icc (bandBoundaryHeight N (j + 1))
+          (bandBoundaryHeight N j) ×ˢ
+        Icc (bandBoundaryHeight N (k + 1))
+          (bandBoundaryHeight N k)) := by
+  let S :=
+    Icc (bandBoundaryHeight N (j + 1)) (bandBoundaryHeight N j) ×ˢ
+      Icc (bandBoundaryHeight N (k + 1)) (bandBoundaryHeight N k)
+  have hterm (m : ℕ) :
+      ContinuousOn
+        (fun p : ℝ × ℝ ↦
+          latitudeEvenPowerDSSTTSeriesTerm α m p.1 p.2) S := by
+    intro p hp
+    have hA :=
+      (leftSmallSame_rectangle_angularKernelA_bounds
+        hN j k hjk hp.1 hp.2).1
+    exact
+      (continuousAt_latitudeEvenPowerDSSTTSeriesTerm_uncurry
+        α m hA).continuousWithinAt
+  have htail :
+      ContinuousOn
+        (fun p : ℝ × ℝ ↦ ∑' r : ℕ,
+          latitudeEvenPowerDSSTTSeriesTerm α (r + 2) p.1 p.2) S := by
+    apply continuousOn_tsum
+      (fun r ↦ hterm (r + 2))
+      (summable_leftSmallLatitudeTailMajorant α hN k)
+    intro r p hp
+    exact
+      (norm_latitudeEvenPower_tailStages_le_majorant
+        hα0 hα2 hN hjk hp.1 hp.2 r).2.2.2
+  dsimp [S] at hterm htail ⊢
+  unfold latitudeEvenPowerDSSTTSeriesSum
+  exact ((hterm 0).add (hterm 1)).add htail
+
+private theorem continuousAt_variableReducedLatitudeKernelDsstt_uncurry
+    (α : ℝ) {p : ℝ × ℝ}
+    (hs : p.1 ∈ Ioo (-1 : ℝ) 1)
+    (ht : p.2 ∈ Ioo (-1 : ℝ) 1) (hst : p.1 ≠ p.2) :
+    ContinuousAt
+      (fun q : ℝ × ℝ ↦
+        variableReducedLatitudeKernelDsstt α q.1 q.2) p := by
+  have hscale : 0 < latitudeAngularScale p.1 p.2 := by
+    unfold latitudeAngularScale
+    exact mul_pos
+      (mul_pos (by norm_num) (heightRadius_pos hs))
+      (heightRadius_pos ht)
+  have hgap : 0 < normalizedLatitudeGap p.1 p.2 :=
+    normalizedLatitudeGap_pos hs ht hst
+  have hrs : heightRadius p.1 ≠ 0 := (heightRadius_pos hs).ne'
+  have hrt : heightRadius p.2 ≠ 0 := (heightRadius_pos ht).ne'
+  have hRs :
+      ContinuousAt (fun q : ℝ × ℝ ↦ heightRadius q.1) p := by
+    unfold heightRadius
+    fun_prop
+  have hRt :
+      ContinuousAt (fun q : ℝ × ℝ ↦ heightRadius q.2) p := by
+    unfold heightRadius
+    fun_prop
+  have hSc :
+      ContinuousAt
+        (fun q : ℝ × ℝ ↦ latitudeAngularScale q.1 q.2) p := by
+    unfold latitudeAngularScale
+    fun_prop
+  have hSpow (z : ℝ) :
+      ContinuousAt
+        (fun q : ℝ × ℝ ↦ latitudeAngularScale q.1 q.2 ^ z) p :=
+    hSc.rpow_const (Or.inl hscale.ne')
+  have hGc :
+      ContinuousAt
+        (fun q : ℝ × ℝ ↦ normalizedLatitudeGap q.1 q.2) p := by
+    unfold normalizedLatitudeGap
+    exact
+      (((by fun_prop :
+          ContinuousAt (fun q : ℝ × ℝ ↦ 1 - q.1 * q.2) p).div
+        (hRs.mul hRt) (mul_ne_zero hrs hrt)).sub continuousAt_const)
+  have hC0 :
+      ContinuousAt
+        (fun q : ℝ × ℝ ↦
+          reducedLatitudeCusp α (normalizedLatitudeGap q.1 q.2)) p :=
+    (hasDerivAt_reducedLatitudeCusp
+      (α := α) hgap).continuousAt.tendsto.comp hGc
+  have hC1 :
+      ContinuousAt
+        (fun q : ℝ × ℝ ↦
+          reducedLatitudeCuspD1Value α
+            (normalizedLatitudeGap q.1 q.2)) p :=
+    (hasDerivAt_reducedLatitudeCuspD1Value
+      (α := α) hgap).continuousAt.tendsto.comp hGc
+  have hC2 :
+      ContinuousAt
+        (fun q : ℝ × ℝ ↦
+          reducedLatitudeCuspD2Value α
+            (normalizedLatitudeGap q.1 q.2)) p :=
+    (hasDerivAt_reducedLatitudeCuspD2Value
+      (α := α) hgap).continuousAt.tendsto.comp hGc
+  have hC3 :
+      ContinuousAt
+        (fun q : ℝ × ℝ ↦
+          reducedLatitudeCuspD3Value α
+            (normalizedLatitudeGap q.1 q.2)) p :=
+    (hasDerivAt_reducedLatitudeCuspD3Value
+      (α := α) hgap).continuousAt.tendsto.comp hGc
+  have hC4outer :
+      ContinuousAt (reducedLatitudeCuspD4Value α)
+        (normalizedLatitudeGap p.1 p.2) := by
+    have hm :=
+      (hasDerivAt_reducedCuspMoment
+        (β := α / 2 - 4) hgap).continuousAt
+    simpa [reducedLatitudeCuspD4Value] using
+      hm.const_mul
+        ((α / 2) * (α / 2 - 1) * (α / 2 - 2) * (α / 2 - 3))
+  have hC4 :
+      ContinuousAt
+        (fun q : ℝ × ℝ ↦
+          reducedLatitudeCuspD4Value α
+            (normalizedLatitudeGap q.1 q.2)) p :=
+    hC4outer.tendsto.comp hGc
+  unfold variableReducedLatitudeKernelDsstt
+    latitudeJetMulD2 latitudeJetMul3D2
+    latitudePower latitudePowerDt latitudePowerDtt
+    latitudePowerDs latitudePowerDst latitudePowerDstt
+    latitudePowerDss latitudePowerDsst latitudePowerDsstt
+    latitudeCusp0 latitudeCusp0Dt latitudeCusp0Dtt
+    latitudeCusp1 latitudeCusp1Dt latitudeCusp1Dtt
+    latitudeCusp2 latitudeCusp2Dt latitudeCusp2Dtt
+    latitudeAngularScaleDt latitudeAngularScaleDtt
+    latitudeAngularScaleDstt latitudeAngularScaleDs
+    latitudeAngularScaleDss latitudeAngularScaleDst
+    latitudeAngularScaleDsst latitudeAngularScaleDsstt
+    normalizedLatitudeGapDt normalizedLatitudeGapDtt
+    normalizedLatitudeGapDst normalizedLatitudeGapDstt
+    normalizedLatitudeGapDs normalizedLatitudeGapDss
+    normalizedLatitudeGapDsst normalizedLatitudeGapDsstt
+    heightRadiusD1 heightRadiusD2
+  fun_prop (disch := aesop)
+
+/-- The interior series identification extends to the four sides of every
+left-small rectangle.  This is the endpoint form needed by the Peano bridge. -/
+theorem latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt_on_rectangle
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N) (hM : 3 ≤ bandCount N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k) :
+    Set.EqOn
+      (fun p : ℝ × ℝ ↦
+        latitudeEvenPowerDSSTTSeriesSum α p.1 p.2)
+      (fun p : ℝ × ℝ ↦
+        variableReducedLatitudeKernelDsstt α p.1 p.2)
+      (Icc (bandBoundaryHeight N (j + 1))
+          (bandBoundaryHeight N j) ×ˢ
+        Icc (bandBoundaryHeight N (k + 1))
+          (bandBoundaryHeight N k)) := by
+  let S :=
+    Ioo (bandBoundaryHeight N (j + 1)) (bandBoundaryHeight N j) ×ˢ
+      Ioo (bandBoundaryHeight N (k + 1)) (bandBoundaryHeight N k)
+  let T :=
+    Icc (bandBoundaryHeight N (j + 1)) (bandBoundaryHeight N j) ×ˢ
+      Icc (bandBoundaryHeight N (k + 1)) (bandBoundaryHeight N k)
+  have hjpop : 0 < finiteBandPopulation N j := by
+    have hjthree := concrete_finiteBandPopulation_three_le hM j
+    omega
+  have hkpop : 0 < finiteBandPopulation N k := by
+    have hkthree := concrete_finiteBandPopulation_three_le hM k
+    omega
+  have hjlt :
+      bandBoundaryHeight N (j + 1) < bandBoundaryHeight N j := by
+    rw [← sub_pos, bandBoundaryHeight_sub_succ]
+    have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+    have hjr : (0 : ℝ) < finiteBandPopulation N j := by
+      exact_mod_cast hjpop
+    positivity
+  have hklt :
+      bandBoundaryHeight N (k + 1) < bandBoundaryHeight N k := by
+    rw [← sub_pos, bandBoundaryHeight_sub_succ]
+    have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+    have hkr : (0 : ℝ) < finiteBandPopulation N k := by
+      exact_mod_cast hkpop
+    positivity
+  have hST : S ⊆ T := by
+    intro p hp
+    exact ⟨⟨hp.1.1.le, hp.1.2.le⟩, ⟨hp.2.1.le, hp.2.2.le⟩⟩
+  have hTS : T ⊆ closure S := by
+    have hclosure : closure S = T := by
+      dsimp [S, T]
+      rw [closure_prod_eq, closure_Ioo hjlt.ne, closure_Ioo hklt.ne]
+    rw [hclosure]
+  have hinterior :
+      Set.EqOn
+        (fun p : ℝ × ℝ ↦
+          latitudeEvenPowerDSSTTSeriesSum α p.1 p.2)
+        (fun p : ℝ × ℝ ↦
+          variableReducedLatitudeKernelDsstt α p.1 p.2) S := by
+    intro p hp
+    exact
+      latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt
+        hα0 hα2 hN hjk hp.1 hp.2
+  have hseries :
+      ContinuousOn
+        (fun p : ℝ × ℝ ↦
+          latitudeEvenPowerDSSTTSeriesSum α p.1 p.2) T := by
+    simpa [T] using
+      continuousOn_latitudeEvenPowerDSSTTSeriesSum_uncurry
+        hα0 hα2 hN hjk
+  have hkernel :
+      ContinuousOn
+        (fun p : ℝ × ℝ ↦
+          variableReducedLatitudeKernelDsstt α p.1 p.2) T := by
+    intro p hp
+    have hgeo :=
+      leftSmallSame_rectangle_interior_offDiagonal hN hjk hp.1 hp.2
+    exact
+      (continuousAt_variableReducedLatitudeKernelDsstt_uncurry
+        α hgeo.1 hgeo.2.1 hgeo.2.2).continuousWithinAt
+  exact hinterior.of_subset_closure hseries hkernel hST hTS
+
+/-- Explicit coefficient constant for the differentiated unequal-latitude
+series.  Its only infinite component is an absolutely convergent,
+one-dimensional numerical series. -/
+noncomputable def unequalLatitudeDssttSeriesConstant (α : ℝ) : ℝ :=
+  32768 + 8388608 * |Ring.choose (α / 2) 2| +
+    4194304 * ∑' r : ℕ,
+      evenAngularDerivativeCoefficient α (r + 2) *
+        ((15 : ℝ) / 16) ^ r
+
+theorem unequalLatitudeDssttSeriesConstant_nonneg (α : ℝ) :
+    0 ≤ unequalLatitudeDssttSeriesConstant α := by
+  unfold unequalLatitudeDssttSeriesConstant
+  have hsum : 0 ≤ ∑' r : ℕ,
+      evenAngularDerivativeCoefficient α (r + 2) *
+        ((15 : ℝ) / 16) ^ r :=
+    tsum_nonneg fun r ↦ mul_nonneg
+      (evenAngularDerivativeCoefficient_nonneg α (r + 2)) (by positivity)
+  positivity
+
+/-- Absolute DSSTT series estimate on the full closed left-small
+rectangle, including both endpoint modes and the normally convergent tail. -/
+theorem abs_variableReducedLatitudeKernelDsstt_le_series_scale
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N) (hM : 3 ≤ bandCount N)
+    {j k : Fin (bandTailCount N + 1)}
+    (hjk : LeftSmallSameLatitudePair N j k)
+    {s t : ℝ}
+    (hs : s ∈ Icc (bandBoundaryHeight N (j + 1))
+      (bandBoundaryHeight N j))
+    (ht : t ∈ Icc (bandBoundaryHeight N (k + 1))
+      (bandBoundaryHeight N k)) :
+    |variableReducedLatitudeKernelDsstt α s t| ≤
+      unequalLatitudeDssttSeriesConstant α *
+        (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4) := by
+  let L : ℝ := 2 * (latitudeBandScale N k : ℝ) ^ 2 / N
+  let f : ℕ → ℝ := fun r ↦
+    evenAngularDerivativeCoefficient α (r + 2) *
+      ((15 : ℝ) / 16) ^ r
+  have hL : 0 < L := by
+    dsimp [L]
+    have hd : (0 : ℝ) < latitudeBandScale N k := by
+      exact_mod_cast latitudeBandScale_pos N k
+    have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+    positivity
+  have hA :=
+    leftSmallSame_rectangle_angularKernelA_bounds hN j k hjk hs ht
+  have hgeo :=
+    leftSmallSame_rectangle_interior_offDiagonal hN hjk hs ht
+  have hγ : α / 2 - 4 ≤ 0 := by linarith
+  have hpow :
+      angularKernelA s t ^ (α / 2 - 4) ≤ L ^ (α / 2 - 4) :=
+    Real.rpow_le_rpow_of_nonpos hL hA.2.1 hγ
+  have hzero :
+      |latitudeEvenPowerDSSTTSeriesTerm α 0 s t| ≤
+        32768 * L ^ (α / 2 - 4) :=
+    (abs_latitudeEvenPowerDSSTTSeriesTerm_zero_le
+      hα0 hα2
+      ⟨hgeo.1.1.le, hgeo.1.2.le⟩
+      ⟨hgeo.2.1.1.le, hgeo.2.1.2.le⟩
+      hA.1).trans (by gcongr)
+  have hone :
+      |latitudeEvenPowerDSSTTSeriesTerm α 1 s t| ≤
+        (8388608 * |Ring.choose (α / 2) 2|) *
+          L ^ (α / 2 - 4) :=
+    (abs_latitudeEvenPowerDSSTTSeriesTerm_one_le
+      hα0 hα2
+      ⟨hgeo.1.1.le, hgeo.1.2.le⟩
+      ⟨hgeo.2.1.1.le, hgeo.2.1.2.le⟩
+      hA.1).trans (by gcongr)
+  have hterms :=
+    summable_shifted_latitudeEvenPowerDSSTTSeriesTerm
+      hα0 hα2 hN hjk hs ht
+  have hmajor := summable_leftSmallLatitudeTailMajorant α hN k
+  have htail :
+      |∑' r : ℕ,
+          latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t| ≤
+        (4194304 * L ^ (α / 2 - 4)) * ∑' r : ℕ, f r := by
+    have hnorm :
+        ‖∑' r : ℕ,
+            latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t‖ ≤
+          ∑' r : ℕ, leftSmallLatitudeTailMajorant α N k r :=
+      (norm_tsum_le_tsum_norm hterms.norm).trans
+        (hterms.norm.tsum_mono hmajor fun r ↦
+          (norm_latitudeEvenPower_tailStages_le_majorant
+            hα0 hα2 hN hjk hs ht r).2.2.2)
+    rw [Real.norm_eq_abs] at hnorm
+    calc
+      |∑' r : ℕ,
+          latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t| ≤
+          ∑' r : ℕ, leftSmallLatitudeTailMajorant α N k r := hnorm
+      _ = (4194304 * L ^ (α / 2 - 4)) * ∑' r : ℕ, f r := by
+        dsimp [leftSmallLatitudeTailMajorant, L, f]
+        rw [tsum_mul_left]
+  have heq :
+      latitudeEvenPowerDSSTTSeriesSum α s t =
+        variableReducedLatitudeKernelDsstt α s t := by
+    simpa using
+      (latitudeEvenPowerDSSTTSeriesSum_eq_variableReducedLatitudeKernelDsstt_on_rectangle
+        hα0 hα2 hN hM hjk (x := (s, t)) ⟨hs, ht⟩)
+  rw [← heq]
+  unfold latitudeEvenPowerDSSTTSeriesSum
+  calc
+    |_ + _ + _| ≤
+        |latitudeEvenPowerDSSTTSeriesTerm α 0 s t| +
+          |latitudeEvenPowerDSSTTSeriesTerm α 1 s t| +
+          |∑' r : ℕ,
+            latitudeEvenPowerDSSTTSeriesTerm α (r + 2) s t| := by
+      exact (abs_add _ _).trans (add_le_add_right (abs_add _ _) _)
+    _ ≤ 32768 * L ^ (α / 2 - 4) +
+        (8388608 * |Ring.choose (α / 2) 2|) * L ^ (α / 2 - 4) +
+        (4194304 * L ^ (α / 2 - 4)) * ∑' r : ℕ, f r := by
+      gcongr
+    _ = unequalLatitudeDssttSeriesConstant α * L ^ (α / 2 - 4) := by
+      dsimp [unequalLatitudeDssttSeriesConstant, f]
+      ring
+    _ = _ := by rfl
+
+/-- The final α-dependent constant after converting
+`(2 d_k²/N)^(α/2-4)` to the manuscript scale. -/
+noncomputable def unequalLatitudeDssttConstant (α : ℝ) : ℝ :=
+  unequalLatitudeDssttSeriesConstant α * 10 ^ (4 - α / 2)
+
+theorem unequalLatitudeDssttConstant_nonneg (α : ℝ) :
+    0 ≤ unequalLatitudeDssttConstant α := by
+  unfold unequalLatitudeDssttConstant
+  exact mul_nonneg (unequalLatitudeDssttSeriesConstant_nonneg α)
+    (Real.rpow_nonneg (by norm_num) _)
+
+private theorem leftSmallLatitude_seriesScale_le_manuscriptScale
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hN : 0 < N) (hM : 1 ≤ bandCount N)
+    (k : Fin (bandTailCount N + 1)) :
+    (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4) ≤
+      10 ^ (4 - α / 2) *
+        (bandCount N : ℝ) ^ (8 - α) *
+        (latitudeBandScale N k : ℝ) ^ (α - 8) := by
+  let M : ℝ := bandCount N
+  let d : ℝ := latitudeBandScale N k
+  let L : ℝ := 2 * d ^ 2 / N
+  let p : ℝ := 4 - α / 2
+  have hMpos : 0 < M := by
+    dsimp [M]
+    exact_mod_cast (lt_of_lt_of_le Nat.zero_lt_one hM)
+  have hdpos : 0 < d := by
+    dsimp [d]
+    exact_mod_cast latitudeBandScale_pos N k
+  have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+  have hL : 0 < L := by
+    dsimp [L]
+    positivity
+  have hp : 0 ≤ p := by
+    dsimp [p]
+    linarith
+  have hNupper : (N : ℝ) ≤ 20 * M ^ 2 := by
+    dsimp [M]
+    exact_mod_cast bemoc_N_le_twenty_bandCount_sq hM
+  have hLinv : L⁻¹ = (N : ℝ) / (2 * d ^ 2) := by
+    dsimp [L]
+    field_simp
+  have hbase : L⁻¹ ≤ 10 * M ^ 2 / d ^ 2 := by
+    rw [hLinv]
+    calc
+      (N : ℝ) / (2 * d ^ 2) ≤
+          (20 * M ^ 2) / (2 * d ^ 2) := by
+        exact div_le_div_of_nonneg_right hNupper (by positivity)
+      _ = 10 * M ^ 2 / d ^ 2 := by ring
+  have hrpow :
+      L⁻¹ ^ p ≤ (10 * M ^ 2 / d ^ 2) ^ p :=
+    Real.rpow_le_rpow (inv_nonneg.2 hL.le) hbase hp
+  calc
+    (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4) =
+        L ^ (-p) := by
+      dsimp [L, d, p]
+      congr 1
+      ring
+    _ = L⁻¹ ^ p := by
+      rw [Real.rpow_neg hL.le, Real.inv_rpow hL.le]
+    _ ≤ (10 * M ^ 2 / d ^ 2) ^ p := hrpow
+    _ = 10 ^ p * M ^ (2 * p) * d ^ (-2 * p) := by
+      rw [Real.div_rpow (mul_nonneg (by norm_num) (sq_nonneg M))
+          (sq_nonneg d),
+        Real.mul_rpow (by norm_num : (0 : ℝ) ≤ 10) (sq_nonneg M)]
+      rw [show M ^ 2 = M ^ (2 : ℝ) by
+          exact (Real.rpow_natCast M 2).symm,
+        show d ^ 2 = d ^ (2 : ℝ) by
+          exact (Real.rpow_natCast d 2).symm,
+        ← Real.rpow_mul hMpos.le, ← Real.rpow_mul hdpos.le,
+        div_eq_mul_inv, ← Real.rpow_neg hdpos.le]
+      ring
+    _ = 10 ^ (4 - α / 2) *
+        (bandCount N : ℝ) ^ (8 - α) *
+        (latitudeBandScale N k : ℝ) ^ (α - 8) := by
+      dsimp [M, d, p]
+      congr 1 <;> ring
+
+/-- The analytic series proof supplies the exact pointwise hypothesis used
+by the left-small mixed-Peano bridge. -/
+theorem hasLeftSmallLatitudeDssttBound_series
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hM : 3 ≤ bandCount N) :
+    HasLeftSmallLatitudeDssttBound α N
+      (unequalLatitudeDssttConstant α) := by
+  have hN : 0 < N := by
+    have hfour := four_mul_bandCount_sq_le N
+    have hpos : 0 < 4 * bandCount N ^ 2 := by positivity
+    omega
+  intro j k hjk s hs t ht
+  have hseries :=
+    abs_variableReducedLatitudeKernelDsstt_le_series_scale
+      hα0 hα2 hN hM hjk hs ht
+  have hscale :=
+    leftSmallLatitude_seriesScale_le_manuscriptScale
+      hα0 hα2 hN (by omega) k
+  calc
+    |variableReducedLatitudeKernelDsstt α s t| ≤
+        unequalLatitudeDssttSeriesConstant α *
+          (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^
+            (α / 2 - 4) := hseries
+    _ ≤ unequalLatitudeDssttSeriesConstant α *
+        (10 ^ (4 - α / 2) *
+          (bandCount N : ℝ) ^ (8 - α) *
+          (latitudeBandScale N k : ℝ) ^ (α - 8)) := by
+      exact mul_le_mul_of_nonneg_left hscale
+        (unequalLatitudeDssttSeriesConstant_nonneg α)
+    _ = unequalLatitudeDssttConstant α *
+        (bandCount N : ℝ) ^ (8 - α) *
+        (latitudeBandScale N k : ℝ) ^ (α - 8) := by
+      unfold unequalLatitudeDssttConstant
+      ring
+
+/-- Unconditional left-small same-hemisphere block estimate obtained by
+feeding the completed analytic DSSTT bound into the Peano bridge. -/
+theorem leftSmallSame_block_bound_series
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} (hM : 3 ≤ bandCount N) :
+    ∀ j k, LeftSmallSameLatitudePair N j k →
+      |bandPairError N j k (latitudeKernel α)| ≤
+        unequalLatitudeBlockMajorant α
+          (1024 * unequalLatitudeDssttConstant α) N j k := by
+  exact leftSmallSame_block_bound_of_Dsstt
+    (by omega) hα0 (unequalLatitudeDssttConstant_nonneg α)
+    (hasLeftSmallLatitudeDssttBound_series hα0 hα2 hM)
 
 end BEMOC
