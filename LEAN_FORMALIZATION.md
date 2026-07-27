@@ -238,9 +238,29 @@ split into checked modules under `BEMOCFormalization/`.
 - the endpoint-safe algebraic core of the unequal-scale even-power series:
   `Q=(B/A)²`, degree-four polynomial/geometric normal summability, and the
   monomial bound `16 A^(β-4) Q^(m-2)` even when a squared radius vanishes;
+- the real generalized-binomial theorem on `|q|<1`, sum--integral exchange
+  for the angular average, exact cancellation of all odd cosine moments,
+  and the resulting identity of the actual latitude kernel with the even
+  series in equation (5.6);
+- the complete derivative chain for every even-series summand through
+  `Dsstt`, including its identification with Lean's iterated mixed `(2,2)`
+  derivative;
 - the literal unequal-scale rectangle geometry, including
   `2d_j<d_k ⇒ 5(1-s²)≤3(1-t²)`, two-sided control
   `A ≍ d_k²/N`, and the uniform endpoint-safe ratio `Q≤15/16`;
+- a generic tensor Taylor theorem requiring only pointwise derivative
+  chains, and its fully concrete specialization converting a bound on the
+  actual `variableReducedLatitudeKernelDsstt` over a literal off-diagonal
+  band rectangle into the sharp
+  `64 C r_j³ r_k³/N⁴` band-pair estimate; all continuity, localization,
+  derivative commutation, and interval-integrability obligations are
+  discharged internally;
+- the direct left-small Peano bridge: a pointwise derivative bound at scale
+  `C M^(8-α)d_k^(α-8)` yields the final unequal block majorant with explicit
+  constant `1024 C`;
+- explicit central and opposite-hemisphere gap geometry, including uniform
+  `Q≤63/64` and `Q≤15/16` regions, together with a finite fallback which
+  reduces all sharp analytic row estimates to `M≥15`;
 - direct neighboring-band rescaling on the actual BEMOC rectangles,
   including the fixed-square power-cusp bound and the resonant
   `w² log |w|` bound with exact cancellation of the scale logarithm and no
@@ -281,13 +301,14 @@ edge cases, and verification gates are recorded in
    coefficient derivatives, literal comparable and unequal rectangle
    geometry, neighboring fixed-square cusp transfer, uniform `Q≤15/16`,
    polar estimate, exhaustive geometric partition, pointwise-to-row
-   arithmetic, and L7 summation are checked.  The remaining closure is now
-   concentrated in the analytic core of equations (5.5)--(5.6): retain the
-   graded radius/gap powers while simplifying the explicit mixed `(2,2)`
-   formula to (5.5), identify the actual angular integral with its normally
-   convergent even binomial series and finish the finite mixed Leibniz bound
-   in (5.6), then apply the generic mixed Taylor/Peano transfer to the
-   separated comparable, unequal, central, and antipodal rectangles.
+   arithmetic, L7 summation, the actual even-series identity, the complete
+   finite summand derivative, and the concrete mixed Taylor/Peano transfer
+   are checked.  The remaining closure is concentrated in two analytic
+   estimates: complete the local reduced-cusp subtraction (5.4), including
+   the lower and resonant exponent ranges, and retain the graded powers while
+   bounding (5.5); then normally sum the already differentiated terms in
+   (5.6) and apply those two bounds to the comparable, unequal, central, and
+   antipodal rectangles.
 3. The analytic proof of Wagner's configuration-uniform lower bound for
    optimal negative Riesz energies.  Its exact normalized statement and all
    downstream specializations are now formalized as `HasWagnerLowerBound`.
