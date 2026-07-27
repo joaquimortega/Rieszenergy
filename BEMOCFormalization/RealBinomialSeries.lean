@@ -83,12 +83,15 @@ theorem summable_nat_add_one_pow_mul_real_choose_mul_pow
     abs_pow, abs_of_pos (by positivity : 0 < (n : ℝ) + 1),
     abs_of_pos (by positivity : 0 < (n : ℝ) + 2)]
   have hn1 : (n : ℝ) + 1 ≠ 0 := by positivity
+  have hnonneg :
+      0 ≤ ((n : ℝ) + 1) ^ degree *
+        |Ring.choose β n| * |x ^ n| := by positivity
   convert mul_le_mul_of_nonneg_right hn
-    (((n : ℝ) + 1) ^ degree *
-      |Ring.choose β n| * |x ^ n| |>.nonneg) using 1
+    hnonneg using 1
   · field_simp [hn1]
+    rw [abs_of_pos (by positivity : (0 : ℝ) < n + 1 + 1)]
     ring
-  · ring
+  · rw [abs_pow]
 
 theorem real_succ_mul_choose (β : ℝ) (n : ℕ) :
     (n + 1 : ℝ) * Ring.choose β (n + 1) =
@@ -199,15 +202,16 @@ theorem tsum_realBinomialTerm_pascal (β x : ℝ) (hx : |x| < 1) :
   let L := ∑' n, realBinomialTerm (β - 1) n x
   have hL : Summable (fun n ↦ realBinomialTerm (β - 1) n x) := by
     simpa [realBinomialTerm] using summable_real_choose_mul_pow (β - 1) x hx
-  have hA :
-      HasSum (fun n ↦ x * realBinomialTerm (β - 1) n x) (x * L) :=
-    hL.hasSum.mul_left x
+  have hβ : Summable (fun n ↦ realBinomialTerm β n x) := by
+    simpa [realBinomialTerm] using summable_real_choose_mul_pow β x hx
   have hB :
       HasSum (fun n ↦ realBinomialTerm (β - 1) (n + 1) x) (L - 1) := by
     have h := (hasSum_nat_add_iff' 1).2 hL.hasSum
     simpa only [Finset.sum_range_one, realBinomialTerm, Ring.choose_zero_right, pow_zero,
       mul_one] using h
-  have htail := hA.add hB
+  have hTail :
+      Summable (fun n ↦ realBinomialTerm (β - 1) (n + 1) x) :=
+    hB.summable
   have hterm (n : ℕ) :
       realBinomialTerm β (n + 1) x =
         x * realBinomialTerm (β - 1) n x +
@@ -215,15 +219,12 @@ theorem tsum_realBinomialTerm_pascal (β x : ℝ) (hx : |x| < 1) :
     unfold realBinomialTerm
     rw [real_choose_succ_pascal β n, pow_succ]
     ring
-  have htail' :
-      HasSum (fun n ↦ realBinomialTerm β (n + 1) x) (x * L + (L - 1)) :=
-    htail.congr (fun n ↦ (hterm n).symm)
-  have hfull :
-      HasSum (fun n ↦ realBinomialTerm β n x)
-        (x * L + (L - 1) + realBinomialTerm β 0 x) :=
-    (hasSum_nat_add_iff 1).1 htail'
-  rw [hfull.tsum_eq]
-  simp only [realBinomialTerm, Ring.choose_zero_right, pow_zero, mul_one]
+  rw [hβ.tsum_eq_zero_add]
+  rw [tsum_congr hterm]
+  rw [(hL.mul_left x).tsum_add hTail]
+  rw [hL.tsum_mul_left, hB.tsum_eq]
+  rw [show realBinomialTerm β 0 x = 1 by
+    simp [realBinomialTerm, Ring.choose_zero_right]]
   ring
 
 def realBinomialSum (β x : ℝ) : ℝ :=
@@ -236,11 +237,11 @@ theorem hasDerivAt_realBinomialSum_ode (β x : ℝ) (hx : |x| < 1) :
     have := (abs_lt.mp hx).1
     linarith
   have hderiv := hasDerivAt_tsum_realBinomialTerm_eq β x hx
-  rw [tsum_realBinomialTerm_pascal β x hx] at hderiv
+  unfold realBinomialSum
   convert hderiv using 1
-  · rfl
-  · simp only [realBinomialSum]
-    field_simp
+  rw [tsum_realBinomialTerm_pascal β x hx]
+  field_simp
+  ring
 
 theorem realBinomialSum_zero (β : ℝ) : realBinomialSum β 0 = 1 := by
   unfold realBinomialSum
@@ -261,9 +262,9 @@ private theorem hasDerivAt_realBinomialSum_mul_negRpow (β x : ℝ) (hx : |x| < 
   have hp :
       HasDerivAt (fun y : ℝ ↦ (1 + y) ^ (-β))
         ((-β) * (1 + x) ^ (-β - 1)) x := by
-    simpa using
+    convert
       ((hasDerivAt_const x 1).add (hasDerivAt_id x)).rpow_const
-        (Or.inl hbase.ne')
+        (Or.inl hbase.ne') using 1 <;> simp only [id_eq] <;> ring
   convert hF.mul hp using 1
   rw [Real.rpow_sub_one hbase.ne' (-β)]
   field_simp
@@ -283,7 +284,7 @@ theorem tsum_real_choose_mul_pow_eq_rpow (β x : ℝ) (hx : |x| < 1) :
   have hconst :
       H x = H 0 :=
     isOpen_Ioo.is_const_of_deriv_eq_zero isPreconnected_Ioo hdiff hzero
-      (abs_lt.2 hx) (by norm_num)
+      (abs_lt.mp hx) (by norm_num)
   have hHx : H x = 1 := by
     rw [hconst]
     simp [H, realBinomialSum_zero]

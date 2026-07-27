@@ -9,7 +9,8 @@ summands in (5.6).  It also records the required smoothness of each
 individual summand on the open region `A>0`.
 -/
 
-open Set
+open Filter Set
+open scoped Topology
 
 namespace BEMOC
 
@@ -186,6 +187,382 @@ noncomputable def latitudeEvenPowerSummandDSSTT
     (XTT * unequalRadiusPower m t +
       2 * XT * unequalRadiusPowerD1 m t +
       X * unequalRadiusPowerD2 m t)
+
+/-! ## Verification of the explicit derivative -/
+
+noncomputable def latitudeEvenPowerSummandDS
+    (α : ℝ) (m : ℕ) (s t : ℝ) : ℝ :=
+  let e := α / 2 - 2 * (m : ℝ)
+  (4 : ℝ) ^ m *
+    (unequalAPowS e s t * unequalRadiusPower m s +
+      unequalAPow e s t * unequalRadiusPowerD1 m s) *
+    unequalRadiusPower m t
+
+theorem hasDerivAt_unequalRadiusPower (m : ℕ) (s : ℝ) :
+    HasDerivAt (unequalRadiusPower m) (unequalRadiusPowerD1 m s) s := by
+  unfold unequalRadiusPower unequalRadiusPowerD1
+  convert
+    (((hasDerivAt_const s 1).sub (hasDerivAt_pow 2 s)).pow m) using 1 <;>
+    ring
+
+theorem hasDerivAt_unequalRadiusPowerD1 (m : ℕ) (s : ℝ) :
+    HasDerivAt (unequalRadiusPowerD1 m) (unequalRadiusPowerD2 m s) s := by
+  cases m with
+  | zero =>
+      have hfun : unequalRadiusPowerD1 0 = fun _ : ℝ ↦ 0 := by
+        funext y
+        simp [unequalRadiusPowerD1]
+      have hval : unequalRadiusPowerD2 0 s = 0 := by
+        simp [unequalRadiusPowerD2]
+      rw [hfun, hval]
+      exact hasDerivAt_const s 0
+  | succ m =>
+      have hbase :
+          HasDerivAt (fun y : ℝ ↦ 1 - y ^ 2) (-2 * s) s := by
+        convert (hasDerivAt_const s 1).sub (hasDerivAt_pow 2 s) using 1 <;> ring
+      have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) s := by
+        convert (hasDerivAt_const s (-2)).mul (hasDerivAt_id s) using 1 <;> ring
+      unfold unequalRadiusPowerD1 unequalRadiusPowerD2
+      have hm : m + 1 - 2 = m - 1 := by omega
+      convert
+        ((hbase.pow m).const_mul ((m + 1 : ℕ) : ℝ)).mul hlin using 1 <;>
+        norm_num [Nat.cast_add]
+      rw [hm]
+      ring
+
+private theorem hasDerivAt_angularKernelA_left (s t : ℝ) :
+    HasDerivAt (fun y ↦ angularKernelA y t) (-2 * t) s := by
+  unfold angularKernelA
+  convert (hasDerivAt_const s 2).sub
+    ((hasDerivAt_id s).mul_const (2 * t)) using 1
+  · funext y
+    simp only [id_eq]
+    ring
+  · ring
+
+private theorem hasDerivAt_angularKernelA_right (s t : ℝ) :
+    HasDerivAt (fun y ↦ angularKernelA s y) (-2 * s) t := by
+  unfold angularKernelA
+  convert (hasDerivAt_const t 2).sub
+    ((hasDerivAt_id t).mul_const (2 * s)) using 1
+  · funext y
+    simp only [id_eq]
+    ring
+  · ring
+
+theorem hasDerivAt_unequalAPow_left
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ unequalAPow e y t) (unequalAPowS e s t) s := by
+  unfold unequalAPow unequalAPowS
+  convert
+    (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e) (Or.inl hA.ne')).comp s
+        (hasDerivAt_angularKernelA_left s t) using 1 <;>
+    simp only [Function.comp_apply] <;> ring
+
+theorem hasDerivAt_unequalAPowS_left
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ unequalAPowS e y t) (unequalAPowSS e s t) s := by
+  unfold unequalAPowS unequalAPowSS
+  convert
+    ((Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e - 1) (Or.inl hA.ne')).comp s
+        (hasDerivAt_angularKernelA_left s t)).const_mul (e * (-2 * t))
+      using 1
+  · funext y
+    simp only [Function.comp_apply]
+    ring
+  · ring
+
+theorem hasDerivAt_unequalAPow_right
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ unequalAPow e s y) (unequalAPowT e s t) t := by
+  unfold unequalAPow unequalAPowT
+  convert
+    (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e) (Or.inl hA.ne')).comp t
+        (hasDerivAt_angularKernelA_right s t) using 1 <;>
+    simp only [Function.comp_apply] <;> ring
+
+theorem hasDerivAt_unequalAPowT_right
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ unequalAPowT e s y) (unequalAPowTT e s t) t := by
+  unfold unequalAPowT unequalAPowTT
+  convert
+    ((Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e - 1) (Or.inl hA.ne')).comp t
+        (hasDerivAt_angularKernelA_right s t)).const_mul (e * (-2 * s))
+      using 1
+  · funext y
+    simp only [Function.comp_apply]
+    ring
+  · ring
+
+theorem hasDerivAt_unequalAPowS_right
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ unequalAPowS e s y) (unequalAPowST e s t) t := by
+  unfold unequalAPowS unequalAPowST
+  have hp :=
+    (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e - 1) (Or.inl hA.ne')).comp t
+        (hasDerivAt_angularKernelA_right s t)
+  have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) t := by
+    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 <;> ring
+  convert (hp.mul hlin).const_mul e using 1
+  · funext y
+    simp only [Function.comp_apply, id_eq]
+    ring
+  · simp only [Function.comp_apply]
+    ring
+
+theorem hasDerivAt_unequalAPowSS_right
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ unequalAPowSS e s y) (unequalAPowSST e s t) t := by
+  unfold unequalAPowSS unequalAPowSST
+  have hp :=
+    (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e - 2) (Or.inl hA.ne')).comp t
+        (hasDerivAt_angularKernelA_right s t)
+  have hsq : HasDerivAt (fun y : ℝ ↦ (-2 * y) ^ 2)
+      (2 * (-2 * t) * (-2)) t := by
+    convert
+      (((hasDerivAt_const t (-2)).mul (hasDerivAt_id t)).pow 2) using 1 <;>
+      simp only [id_eq] <;> ring
+  convert (hp.mul hsq).const_mul (e * (e - 1)) using 1
+  · funext y
+    simp only [Function.comp_apply, id_eq]
+    ring
+  · simp only [Function.comp_apply]
+    ring
+
+theorem hasDerivAt_unequalAPowST_right
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ unequalAPowST e s y) (unequalAPowSTT e s t) t := by
+  unfold unequalAPowST unequalAPowSTT
+  have hp2 :=
+    (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e - 2) (Or.inl hA.ne')).comp t
+        (hasDerivAt_angularKernelA_right s t)
+  have hp1 :=
+    (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e - 1) (Or.inl hA.ne')).comp t
+        (hasDerivAt_angularKernelA_right s t)
+  have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) t := by
+    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 <;> ring
+  convert
+    (((hp2.mul hlin).const_mul (e * (e - 1) * (-2 * s))).add
+      (hp1.const_mul (e * (-2)))) using 1
+  · funext y
+    simp only [Function.comp_apply, id_eq]
+    ring
+  · simp only [Function.comp_apply]
+    ring
+
+theorem hasDerivAt_unequalAPowSST_right
+    {e s t : ℝ} (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ unequalAPowSST e s y)
+      (unequalAPowSSTT e s t) t := by
+  unfold unequalAPowSST unequalAPowSSTT
+  have hp3 :=
+    (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e - 3) (Or.inl hA.ne')).comp t
+        (hasDerivAt_angularKernelA_right s t)
+  have hp2 :=
+    (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
+      (p := e - 2) (Or.inl hA.ne')).comp t
+        (hasDerivAt_angularKernelA_right s t)
+  have hsq : HasDerivAt (fun y : ℝ ↦ (-2 * y) ^ 2)
+      (2 * (-2 * t) * (-2)) t := by
+    convert
+      (((hasDerivAt_const t (-2)).mul (hasDerivAt_id t)).pow 2) using 1 <;>
+      simp only [id_eq] <;> ring
+  have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) t := by
+    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 <;> ring
+  convert
+    (((hp3.mul hsq).const_mul
+        (e * (e - 1) * (e - 2) * (-2 * s))).add
+      ((hp2.mul hlin).const_mul
+        (2 * e * (e - 1) * (-2)))) using 1
+  · funext y
+    simp only [Function.comp_apply, id_eq]
+    ring
+  · simp only [Function.comp_apply]
+    ring
+
+theorem hasDerivAt_latitudeEvenPowerSummand_left
+    {α : ℝ} {m : ℕ} {s t : ℝ}
+    (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ latitudeEvenPowerSummand α m y t)
+      (latitudeEvenPowerSummandDS α m s t) s := by
+  let e := α / 2 - 2 * (m : ℝ)
+  have hp := hasDerivAt_unequalAPow_left (e := e) hA
+  have hu := hasDerivAt_unequalRadiusPower m s
+  unfold latitudeEvenPowerSummand latitudeEvenPowerSummandDS
+  dsimp only
+  convert ((hp.mul hu).const_mul ((4 : ℝ) ^ m)).mul_const
+    (unequalRadiusPower m t) using 1
+  · funext y
+    dsimp [e, unequalAPow, unequalRadiusPower]
+    ring
+
+theorem hasDerivAt_latitudeEvenPowerSummandDS_left
+    {α : ℝ} {m : ℕ} {s t : ℝ}
+    (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ latitudeEvenPowerSummandDS α m y t)
+      (latitudeEvenPowerSummandDSS α m s t) s := by
+  let e := α / 2 - 2 * (m : ℝ)
+  have hp := hasDerivAt_unequalAPow_left (e := e) hA
+  have hps := hasDerivAt_unequalAPowS_left (e := e) hA
+  have hu := hasDerivAt_unequalRadiusPower m s
+  have hu1 := hasDerivAt_unequalRadiusPowerD1 m s
+  unfold latitudeEvenPowerSummandDS latitudeEvenPowerSummandDSS
+  dsimp only
+  convert
+    ((((hps.mul hu).add (hp.mul hu1)).const_mul ((4 : ℝ) ^ m)).mul_const
+      (unequalRadiusPower m t)) using 1
+  dsimp [e]
+  ring
+
+theorem hasDerivAt_latitudeEvenPowerSummandDSS_right
+    {α : ℝ} {m : ℕ} {s t : ℝ}
+    (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ latitudeEvenPowerSummandDSS α m s y)
+      (latitudeEvenPowerSummandDSST α m s t) t := by
+  let e := α / 2 - 2 * (m : ℝ)
+  have hss := hasDerivAt_unequalAPowSS_right (e := e) hA
+  have hs := hasDerivAt_unequalAPowS_right (e := e) hA
+  have h0 := hasDerivAt_unequalAPow_right (e := e) hA
+  have hv := hasDerivAt_unequalRadiusPower m t
+  let U := unequalRadiusPower m s
+  let U1 := unequalRadiusPowerD1 m s
+  let U2 := unequalRadiusPowerD2 m s
+  have hX :
+      HasDerivAt
+        (fun y ↦ unequalAPowSS e s y * U +
+          2 * unequalAPowS e s y * U1 +
+          unequalAPow e s y * U2)
+        (unequalAPowSST e s t * U +
+          2 * unequalAPowST e s t * U1 +
+          unequalAPowT e s t * U2) t := by
+    convert
+      (((hss.mul_const U).add ((hs.mul_const U1).const_mul 2)).add
+        (h0.mul_const U2)) using 1
+    · funext y
+      ring
+    · ring
+  unfold latitudeEvenPowerSummandDSS latitudeEvenPowerSummandDSST
+  dsimp only
+  convert (hX.mul hv).const_mul ((4 : ℝ) ^ m) using 1
+  · funext y
+    ring
+
+theorem hasDerivAt_latitudeEvenPowerSummandDSST_right
+    {α : ℝ} {m : ℕ} {s t : ℝ}
+    (hA : 0 < angularKernelA s t) :
+    HasDerivAt (fun y ↦ latitudeEvenPowerSummandDSST α m s y)
+      (latitudeEvenPowerSummandDSSTT α m s t) t := by
+  let e := α / 2 - 2 * (m : ℝ)
+  have hsst := hasDerivAt_unequalAPowSST_right (e := e) hA
+  have hst := hasDerivAt_unequalAPowST_right (e := e) hA
+  have ht := hasDerivAt_unequalAPowT_right (e := e) hA
+  have hss := hasDerivAt_unequalAPowSS_right (e := e) hA
+  have hs := hasDerivAt_unequalAPowS_right (e := e) hA
+  have h0 := hasDerivAt_unequalAPow_right (e := e) hA
+  have hv := hasDerivAt_unequalRadiusPower m t
+  have hv1 := hasDerivAt_unequalRadiusPowerD1 m t
+  let U := unequalRadiusPower m s
+  let U1 := unequalRadiusPowerD1 m s
+  let U2 := unequalRadiusPowerD2 m s
+  have hXT :
+      HasDerivAt
+        (fun y ↦ unequalAPowSST e s y * U +
+          2 * unequalAPowST e s y * U1 +
+          unequalAPowT e s y * U2)
+        (unequalAPowSSTT e s t * U +
+          2 * unequalAPowSTT e s t * U1 +
+          unequalAPowTT e s t * U2) t := by
+    convert
+      (((hsst.mul_const U).add ((hst.mul_const U1).const_mul 2)).add
+        (ht.mul_const U2)) using 1
+    · funext y
+      ring
+    · ring
+  have hX :
+      HasDerivAt
+        (fun y ↦ unequalAPowSS e s y * U +
+          2 * unequalAPowS e s y * U1 +
+          unequalAPow e s y * U2)
+        (unequalAPowSST e s t * U +
+          2 * unequalAPowST e s t * U1 +
+          unequalAPowT e s t * U2) t := by
+    convert
+      (((hss.mul_const U).add ((hs.mul_const U1).const_mul 2)).add
+        (h0.mul_const U2)) using 1
+    · funext y
+      ring
+    · ring
+  unfold latitudeEvenPowerSummandDSST latitudeEvenPowerSummandDSSTT
+  dsimp only
+  convert
+    ((hXT.mul hv).add (hX.mul hv1)).const_mul ((4 : ℝ) ^ m) using 1
+  dsimp [e, U, U1, U2]
+  ring
+
+theorem iteratedDeriv_two_latitudeEvenPowerSummand_left
+    {α : ℝ} {m : ℕ} {s t : ℝ}
+    (hA : 0 < angularKernelA s t) :
+    iteratedDeriv 2 (fun y ↦ latitudeEvenPowerSummand α m y t) s =
+      latitudeEvenPowerSummandDSS α m s t := by
+  have hcont : ContinuousAt (fun y : ℝ ↦ angularKernelA y t) s := by
+    unfold angularKernelA
+    fun_prop
+  have hpos : ∀ᶠ y in 𝓝 s, 0 < angularKernelA y t :=
+    hcont.eventually (Ioi_mem_nhds hA)
+  have heq :
+      deriv (fun y ↦ latitudeEvenPowerSummand α m y t) =ᶠ[𝓝 s]
+        fun y ↦ latitudeEvenPowerSummandDS α m y t := by
+    filter_upwards [hpos] with y hy
+    exact (hasDerivAt_latitudeEvenPowerSummand_left hy).deriv
+  rw [show 2 = 1 + 1 by norm_num, iteratedDeriv_succ]
+  rw [show iteratedDeriv 1
+      (fun y ↦ latitudeEvenPowerSummand α m y t) =
+        deriv (fun y ↦ latitudeEvenPowerSummand α m y t) by
+      rw [show 1 = 0 + 1 by norm_num, iteratedDeriv_succ,
+        iteratedDeriv_zero]]
+  rw [heq.deriv_eq]
+  exact (hasDerivAt_latitudeEvenPowerSummandDS_left hA).deriv
+
+/-- The finite Leibniz formula above is exactly mathlib's mixed `(2,2)`
+iterated derivative, not merely a formal expression. -/
+theorem latitudeEvenPowerSummandMixed22_eq_DSSTT
+    {α : ℝ} {m : ℕ} {s t : ℝ}
+    (hA : 0 < angularKernelA s t) :
+    latitudeEvenPowerSummandMixed22 α m s t =
+      latitudeEvenPowerSummandDSSTT α m s t := by
+  let G : ℝ → ℝ := fun y ↦
+    iteratedDeriv 2 (fun x ↦ latitudeEvenPowerSummand α m x y) s
+  have hcont : ContinuousAt (fun y : ℝ ↦ angularKernelA s y) t := by
+    unfold angularKernelA
+    fun_prop
+  have hpos : ∀ᶠ y in 𝓝 t, 0 < angularKernelA s y :=
+    hcont.eventually (Ioi_mem_nhds hA)
+  have hG :
+      G =ᶠ[𝓝 t] fun y ↦ latitudeEvenPowerSummandDSS α m s y := by
+    filter_upwards [hpos] with y hy
+    exact iteratedDeriv_two_latitudeEvenPowerSummand_left hy
+  have hDSS :
+      deriv (fun y ↦ latitudeEvenPowerSummandDSS α m s y) =ᶠ[𝓝 t]
+        fun y ↦ latitudeEvenPowerSummandDSST α m s y := by
+    filter_upwards [hpos] with y hy
+    exact (hasDerivAt_latitudeEvenPowerSummandDSS_right hy).deriv
+  unfold latitudeEvenPowerSummandMixed22
+  change iteratedDeriv 2 G t = _
+  rw [show 2 = 1 + 1 by norm_num, iteratedDeriv_succ]
+  rw [show iteratedDeriv 1 G = deriv G by
+      rw [show 1 = 0 + 1 by norm_num, iteratedDeriv_succ,
+        iteratedDeriv_zero]]
+  rw [hG.deriv.deriv_eq, hDSS.deriv_eq]
+  exact (hasDerivAt_latitudeEvenPowerSummandDSST_right hA).deriv
 
 /-- The endpoint-safe monomial bound specialized to an actual unequal
 latitude rectangle.  It is valid when the smaller squared radius is zero. -/
