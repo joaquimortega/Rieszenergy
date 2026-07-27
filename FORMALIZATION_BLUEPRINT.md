@@ -1,52 +1,46 @@
-# Blueprint for completing `BEMOCRieszEnergies.tex`
+# Blueprint for the BEMOC upper bound
 
 ## Objective
 
-Prove unconditionally in Lean, for every fixed `0 < α < 2`, the paper's
-two-sided estimate for the concrete BEMOC configuration:
+Prove unconditionally in Lean, for every fixed `0 < α < 2`, the upper
+estimate for the concrete BEMOC configuration:
 
 ```text
-cα N^(1 - α/2)
-  ≤ continuousEnergy α * N² - bemocFiniteEnergy α N
+0 ≤ continuousEnergy α * N² - bemocFiniteEnergy α N
   ≤ Cα N^(1 - α/2).
 ```
 
 The exact construction, energy normalization, three-term decomposition,
-conditional-negative-definiteness argument, and within-ring estimate are
-already complete. The remaining required inputs are:
+conditional-negative-definiteness argument, within-ring estimate, and
+cross-ring angular-aliasing estimate are complete. L1--L3 and the complete
+latitude summation infrastructure are also checked. The only remaining
+analytic input is the closure of the latitude block estimates, followed by
+the short component assembly.
 
-1. the cross-ring angular-aliasing bound;
-2. the latitude-quadrature bound;
-3. Wagner's configuration-uniform lower bound;
-4. final construction of the existing assembly interfaces.
+Wagner's lower bound and the paper's matching lower asymptotic are explicitly
+outside the scope of this project.
 
 The optional Fourier proof of the circle Euler--Maclaurin theorem is not on
 the critical path: the direct endpoint proof is already unconditional.
 
 ## Current endpoint
 
-The final proof should instantiate the existing structures and theorems:
+The final proof should instantiate the existing upper-bound structures and
+theorems:
 
 - `BemocComponentBounds α` in `BEMOCFormalization/Core.lean`;
-- `HasWagnerLowerBound α` in `BEMOCFormalization/Core.lean`;
-- `bemoc_upper_bound_of_component_bounds`;
-- `negative_riesz_main_theorem_of_wagner`.
+- `bemoc_upper_bound_of_component_bounds`.
 
-The within-ring field is already supplied by:
+The within-ring and cross-ring fields are already supplied by:
 
 ```lean
 exists_bemocWithinRingDeficit_concrete_bound
+exists_bemocCrossRingDeficit_concrete_bound
 ```
 
-The remaining upper-bound targets should have the same shape:
+The remaining component target is:
 
 ```lean
-theorem exists_bemocCrossRingDeficit_concrete_bound
-    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
-    ∃ C : ℝ, 0 < C ∧ ∃ N₀ : ℕ, ∀ N ≥ N₀,
-      |bemocCrossRingDeficit α N| ≤
-        C * (N : ℝ) ^ (1 - α / 2)
-
 theorem exists_bemocLatitudeDeficit_concrete_bound
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
     ∃ C : ℝ, 0 < C ∧ ∃ N₀ : ℕ, ∀ N ≥ N₀,
@@ -54,27 +48,25 @@ theorem exists_bemocLatitudeDeficit_concrete_bound
         C * (N : ℝ) ^ (1 - α / 2)
 ```
 
-## Dependency order
+## Current dependency order
 
 ```text
-Cross-ring Fourier kernel ──┐
-                            ├─ Cross-ring concrete bound ──┐
-gcd/lcm combinatorics ──────┘                              │
-                                                           │
-Band functionals ── Kernel block estimates ── Latitude bound├─ Component bounds
-                                                           │
-Completed within-ring bound ───────────────────────────────┘
-
-Wagner lower bound ─────────────────────────────────────────── Main theorem
+Completed within-ring bound ───────────────────────────────┐
+Completed cross-ring bound ────────────────────────────────┼─ Component bounds
+Latitude analytic closure ── Latitude concrete bound ──────┘
+                                                             │
+                                                             └─ Upper theorem
 ```
 
-Cross-ring analysis, latitude analysis, and Wagner can be developed in
-parallel. The final assembly should be attempted only after all three tracks
-export their public endpoint theorems.
+Only the latitude analytic closure is on the critical path.
 
 ---
 
-## Track C: cross-ring angular aliasing
+## Track C: cross-ring angular aliasing — complete
+
+This track is retained below as a record of the proved architecture.
+`exists_bemocCrossRingDeficit_concrete_bound` is compiled and imported by the
+canonical root.
 
 ### C1. Common angular kernel
 
@@ -271,7 +263,40 @@ Do not optimize constants.
 
 ---
 
-## Track L: latitude quadrature
+## Track L: latitude quadrature — active
+
+### Current latitude checkpoint
+
+Verified Git checkpoint: `7c21167` (`Formalize unequal latitude derivative
+series bounds`).
+
+Completed and imported:
+
+- L1 exact band algebra and affine exactness;
+- L2 exact identity
+  `bemocLatitudeDeficit = -∑ j, ∑ k, bandPairError`;
+- L3 mixed Taylor/Peano transfer;
+- literal comparable, unequal, central, polar, reflected, and antipodal
+  rectangle geometry;
+- exact pair classification and all pointwise-to-row and L7 summation
+  arithmetic;
+- actual even-power identity (5.6);
+- the complete finite `(2,2)` derivative chain for each even mode;
+- the explicit left-small mode estimate
+  `4194304 (m+1)^4 A^(α/2-4) (15/16)^(m-2)` for `m ≥ 2`;
+- normal summability of the coefficient-weighted fourth-derivative series;
+- nonresonant local reduced-cusp decompositions for both `0 < α < 1` and
+  `1 < α < 2`.
+
+Remaining, in dependency order:
+
+1. identify the normally convergent differentiated series with
+   `variableReducedLatitudeKernelDsstt`;
+2. export the resulting unconditional unequal-block bound;
+3. complete the resonant `α = 1` local cusp decomposition;
+4. retain the graded gap powers in the sharp comparable-block estimate;
+5. instantiate the central and antipodal cases and export the unconditional
+   latitude endpoint.
 
 ### Design choice: use error functionals
 
@@ -293,7 +318,7 @@ noncomputable def bandPairError
 This represents `μ_j(f)` and `(μ_j ⊗ μ_k)(K)` while keeping all operations
 finite sums and interval integrals.
 
-### L1. Exact band algebra
+### L1. Exact band algebra — complete
 
 Create `BEMOCFormalization/LatitudeBands.lean`.
 
@@ -319,7 +344,7 @@ bandError N j (fun t => t) = 0
 Use explicit constants and enlarge them freely to absorb the finitely many
 exceptional bands.
 
-### L2. Latitude-energy decomposition
+### L2. Latitude-energy decomposition — complete
 
 Create `BEMOCFormalization/LatitudeDecomposition.lean`.
 
@@ -338,7 +363,7 @@ Required bridges:
 - constant spherical potential kills the two linear terms;
 - finite band integrals concatenate to `[-1,1]`.
 
-### L3. Generic two-moment Peano lemmas
+### L3. Generic two-moment Peano lemmas — complete
 
 Create `BEMOCFormalization/TwoMomentPeano.lean`.
 
@@ -363,7 +388,7 @@ is not integrable on the diagonal.
 
 This module should not mention BEMOC.
 
-### L4. Local kernel expansion
+### L4. Local kernel expansion — nonresonant cases complete
 
 Create `BEMOCFormalization/LatitudeKernelLocal.lean`.
 
@@ -388,17 +413,16 @@ H₁(x) + x log(1/x) B₁(x),         α = 1;
   ≤ Cα R^(-2-α) |s-t|^(α-3).
 ```
 
-Recommended split:
+Current split:
 
-- first prove the nonresonant case `α ≠ 1`;
+- the nonresonant ranges `0 < α < 1` and `1 < α < 2` are proved;
 - formalize `α = 1` in a separate namespace/file section;
 - combine only at the exported theorem.
 
-This is the highest-risk package. Before committing to a hypergeometric
-formalization, test whether the required expansion can be derived directly by
-subtracting a local singular model from the defining angular integral.
+The remaining risk is the logarithmic resonant normalization, not the
+nonresonant branch decomposition.
 
-### L5. Comparable and polar blocks
+### L5. Comparable and polar blocks — analytic closure pending
 
 Create `BEMOCFormalization/LatitudeComparableBlocks.lean`.
 
@@ -419,7 +443,7 @@ Handle separately:
 - reflected south-polar blocks;
 - near-equatorial opposite-hemisphere blocks.
 
-### L6. Unequal-scale and antipodal blocks
+### L6. Unequal-scale and antipodal blocks — series estimate complete
 
 Create `BEMOCFormalization/LatitudeSeparatedBlocks.lean`.
 
@@ -431,7 +455,12 @@ Formalize the even-power expansion in equation (5.6):
 - rewrite `B^(2m)` polynomially as
   `4^m(1-s²)^m(1-t²)^m`;
 - prove normal convergence after up to two derivatives in each variable;
+- identify the sum of the fourth derivatives with the fourth derivative of
+  the actual kernel;
 - obtain `|∂s²∂t²F| ≤ C R_k^(α-8)`.
+
+The normal-summability statement and explicit modewise estimate are complete.
+The termwise-differentiation identification is the immediate next theorem.
 
 Export:
 
@@ -446,7 +475,7 @@ for unequal scales in one hemisphere, plus:
 - central-band versus small-scale bound;
 - symmetry lemmas exchanging `j` and `k`.
 
-### L7. Summation
+### L7. Summation — infrastructure complete
 
 Create `BEMOCFormalization/LatitudeEstimate.lean`.
 
@@ -458,50 +487,14 @@ Partition all ordered band pairs into the cases exported by L5 and L6. Prove:
 - the opposite-hemisphere smooth sum is `O(1)`;
 - finite exceptional cases are absorbed.
 
-Public endpoint:
+The row partition, convolution estimates, unequal-orientation sums, finite
+fallback, and implication from uniform large-row bounds are compiled. The
+public endpoint becomes unconditional as soon as L5--L6 supply the remaining
+pointwise bounds:
 
 ```lean
 theorem exists_bemocLatitudeDeficit_concrete_bound ...
 ```
-
----
-
-## Track W: Wagner lower bound
-
-### W1. Source and normalization audit
-
-Create `BEMOCFormalization/WagnerLowerBound.lean`, but do not begin proving
-until the cited result has been reconstructed in the exact normalization used
-by the paper.
-
-Document:
-
-- whether the cited theorem uses ordered or unordered pairs;
-- whether it minimizes `-|x-y|^α` or maximizes `|x-y|^α`;
-- normalization of surface measure;
-- the exact range `0 < α < 2`;
-- whether the estimate holds for every `N` or only sufficiently large `N`;
-- conversion between its exponent and `1-α/2`.
-
-### W2. Formal theorem
-
-The public target is:
-
-```lean
-theorem hasWagnerLowerBound
-    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
-    HasWagnerLowerBound α
-```
-
-The proof may live in several internal modules if it requires spherical-cap
-discrepancy, harmonic analysis, or a general energy lower-bound theorem.
-
-No custom axiom is permitted. If the result is imported from a future
-external Lean package, that package must itself provide a checked proof.
-
-Because the manuscript cites Wagner rather than reproving it, this track is
-logically independent of the BEMOC-specific upper bound and should be kept
-in its own module.
 
 ---
 
@@ -542,24 +535,10 @@ theorem bemocEnergyDeficit_upper
 ```
 
 This should be a short application of
-`bemoc_deficit_bound_of_component_bounds`.
+`bemoc_upper_bound_of_component_bounds`.
 
-### A3. Unconditional main theorem
-
-Combine A1 with W2 and the existing configuration relabeling theorem:
-
-```lean
-theorem bemoc_negative_riesz_main_theorem
-    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
-    HasRieszScale
-      bemocRingConstructionSequence.toConfigurationSequence.energy α
-```
-
-Then add a theorem stated directly with `bemocFiniteEnergy` so that it
-matches Theorem 1.1 without unfolding project interfaces.
-
-Finally import `BEMOCFormalization.MainTheorem` from
-`BEMOCFormalization.lean`.
+Finally expose a theorem stated directly with `bemocFiniteEnergy` and import
+it from `BEMOCFormalization.lean`.
 
 ---
 
@@ -583,35 +562,33 @@ Keep this out of the critical path unless C2 naturally discharges it.
 
 ## Recommended execution schedule
 
-| Phase | Work packages | Can run in parallel? | Gate |
-|---|---|---:|---|
-| 1 | C1, L1, W1 | Yes | Stable kernel, bands, and lower-bound statement |
-| 2 | C2--C3, L2--L3, W2 | Yes | Reusable analytic foundations |
-| 3 | C4--C5, L4 | Mostly | Pairwise cross estimate and local latitude expansion |
-| 4 | C6, L5--L6 | Yes | Both concrete upper components |
-| 5 | L7, A1--A2 | Sequential | Unconditional BEMOC upper bound |
-| 6 | A3 | After W2 | Unconditional paper theorem |
-| 7 | Optional F | Any time after C2 | Independent second proof |
+Use one proof track at a time to minimize duplicated exploration and quota
+cost. Each phase ends with a direct module build, canonical build, placeholder
+audit, Git commit, and push.
+
+| Phase | Remaining work | Gate |
+|---|---|---|
+| 1 | Unequal-series termwise `(2,2)` differentiation | Actual kernel derivative equals the summed derivative series |
+| 2 | Unequal pointwise-to-block closure | Unconditional unequal-block estimate |
+| 3 | Resonant `α = 1` cusp decomposition | All exponent ranges covered |
+| 4 | Sharp comparable estimate | Unconditional comparable-block estimate |
+| 5 | Central/antipodal instantiation and L7 endpoint | `exists_bemocLatitudeDeficit_concrete_bound` |
+| 6 | Component assembly and final audit | Unconditional BEMOC upper theorem |
 
 ## Rough effort and risk
 
-These are focused Lean-development estimates, not calendar commitments.
+These are token estimates for the remaining upper-bound work, not guarantees.
 
-| Package | Relative size | Rough effort | Main risk |
-|---|---:|---:|---|
-| C1 kernel bridges | M | 2--4 days | normalization/coercions |
-| C2 exact cusp coefficients | L | 5--10 days | singular beta integral and Gamma algebra |
-| C3 smoothing domination | L | 5--10 days | Fubini and Bessel/Laplace infrastructure |
-| C4--C6 cross bound | XL | 8--16 days | phase aliasing and population reindexing |
-| L1--L3 band infrastructure | L | 6--12 days | interval and finite-measure bookkeeping |
-| L4 local expansion | XXL | 12--30 days | weak singularity and `α=1` resonance |
-| L5--L7 latitude bound | XXL | 12--25 days | exhaustive geometric case split |
-| W Wagner theorem | XXL/unknown | 10--30+ days | theorem not proved in the manuscript |
-| A final assembly | S | 1--3 days | only interface alignment |
+| Package | Estimated tokens | Main risk |
+|---|---:|---|
+| Unequal-series differentiation and block closure | 30k--55k | termwise multivariable differentiation interface |
+| Resonant `α = 1` cusp decomposition | 20k--35k | logarithmic normalization |
+| Sharp comparable-block estimate | 45k--80k | preserving graded gap powers |
+| Central/antipodal closure | 15k--30k | matching existing geometric interfaces |
+| Final assembly, repairs, audit, and documentation | 20k--30k | interface alignment |
 
-The cross-ring and latitude tracks should be broken into compile-checked
-modules at the boundaries above. Large monolithic files would make error
-localization and parallel work substantially harder.
+Estimated total: `130k--230k` tokens, with approximately `175k` the current
+best estimate. The comparable-block proof is the largest uncertainty.
 
 ## Invariants to preserve
 
@@ -643,24 +620,24 @@ localization and parallel work substantially harder.
 5. Audit project sources:
 
    ```bash
-   rg -n '\b(sorry|admit|axiom)\b' \
+   rg -n '\b(sorry|admit|axiom|opaque)\b' \
      BEMOCFormalization.lean BEMOCFormalization --glob '*.lean'
    ```
 
-6. Update `LEAN_FORMALIZATION.md` only after the public endpoint theorem is
-   unconditional and imported by the canonical root module.
+6. Update `LEAN_FORMALIZATION.md` after each material compiled checkpoint,
+   keeping all remaining hypotheses explicit.
+7. Commit and push each clean checkpoint to the private GitHub repository.
 
 ## Definition of completion
 
-The paper is fully formalized when all of the following hold:
+The upper-bound project is complete when all of the following hold:
 
 - `bemocComponentBounds hα0 hα2` is unconditional;
-- `hasWagnerLowerBound hα0 hα2` is unconditional;
-- `bemoc_negative_riesz_main_theorem hα0 hα2` has no analytic hypotheses;
-- its conclusion is connected to the literal `bemocFiniteEnergy`;
+- the concrete upper theorem has no analytic hypotheses;
+- its conclusion is stated for the literal `bemocFiniteEnergy`;
 - `BEMOCFormalization.lean` imports the final theorem;
 - `lake build` succeeds;
 - the project-owned Lean sources contain no `sorry`, `admit`, or custom
   axioms;
-- `LEAN_FORMALIZATION.md` has no remaining required obligations, apart from
-  explicitly optional alternative proofs.
+- `LEAN_FORMALIZATION.md` has no remaining upper-bound obligations, apart
+  from explicitly optional alternative proofs.
