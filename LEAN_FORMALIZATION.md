@@ -8,6 +8,24 @@ Build it with:
 lake build
 ```
 
+## Verification snapshot
+
+The upper-bound proof was completed at Git checkpoint `1287c26` on
+28 July 2026.  A clean full build completed all 6,767 targets.  A forced
+`latexmk` rebuild produced `BEMOCRieszEnergies.pdf` with 10 pages and no
+TeX errors, undefined references, or bad boxes.
+
+The strict source audit
+
+```bash
+rg -n '^\s*(axiom|opaque)\b|\b(sorry|admit)\b' \
+  BEMOCFormalization.lean BEMOCFormalization --glob '*.lean'
+```
+
+returns no matches, and `git diff --check` is clean.  A `#print axioms`
+audit of the final theorem reports only Lean/mathlib's standard foundational
+dependencies (`propext`, `Classical.choice`, and `Quot.sound`).
+
 The sole paper target is `BEMOCRieszEnergies.tex`.  Its canonical root module
 is `BEMOCFormalization.lean`; the core development and analytic support are
 split into checked modules under `BEMOCFormalization/`.
