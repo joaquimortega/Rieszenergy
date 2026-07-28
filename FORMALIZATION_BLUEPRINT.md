@@ -13,10 +13,10 @@ estimate for the concrete BEMOC configuration:
 The exact construction, energy normalization, three-term decomposition,
 conditional-negative-definiteness argument, within-ring estimate, and
 cross-ring angular-aliasing estimate are complete. L1--L3, the complete
-latitude summation infrastructure, and the unequal-scale same-hemisphere
-block estimate are also checked. The remaining analytic input is the
-comparable/exceptional latitude block closure, followed by the short
-component assembly.
+latitude summation infrastructure, the full oriented unequal-scale
+interface, and the separated regular comparable block estimate are also
+checked. The remaining analytic input is the neighboring/central/opposite
+comparable block closure, followed by the short component assembly.
 
 Wagner's lower bound and the paper's matching lower asymptotic are explicitly
 outside the scope of this project.
@@ -292,10 +292,10 @@ Completed and imported:
 
 Remaining, in dependency order:
 
-1. complete the resonant `α = 1` neighboring-block cancellation estimate;
-2. retain the graded gap powers in the sharp comparable-block estimate;
-3. instantiate the central and antipodal cases and export the unconditional
-   latitude endpoint.
+1. insert the completed nonresonant and resonant local decompositions into
+   the neighboring-block estimate;
+2. instantiate the central and opposite-hemisphere comparable cases;
+3. export the unconditional latitude endpoint.
 
 ### Design choice: use error functionals
 
@@ -418,10 +418,12 @@ Current split:
 - at `α = 1`, the exact principal coefficient has been isolated directly
   from the angular integral and Lean proves
   `h₁(x)=C₀+A₁x+c₁x log x+x^(3/2)B(x)` with `B` uniformly bounded;
-- the remaining work is to combine these decompositions in the exported
-  neighboring/comparable block theorems.
+- the sharp four-term derivative estimate and its separated comparable
+  block transfer are complete;
+- the remaining work is to combine the local decompositions in the
+  neighboring comparable theorem.
 
-### L5. Comparable and polar blocks — analytic closure pending
+### L5. Comparable and polar blocks — neighboring/exceptional closure pending
 
 Create `BEMOCFormalization/LatitudeComparableBlocks.lean`.
 
@@ -471,11 +473,9 @@ Export:
 ```
 
 for unequal scales in one hemisphere is now exported unconditionally as
-`leftSmallSame_block_bound_series`. The remaining exceptional cases are:
-
-- smooth opposite-hemisphere bound `C d_j³d_k³/M⁸`;
-- central-band versus small-scale bound;
-- symmetry lemmas exchanging `j` and `k`.
+`leftSmallSame_block_bound_series`.  The polar, central, and smooth-opposite
+oriented unequal cases are also complete, and all four cases are exported
+as `hasUnequalLatitudeBlockBound_series`.
 
 ### L7. Summation — infrastructure complete
 
@@ -573,7 +573,7 @@ audit, Git commit, and push.
 | 1 | Unequal-series termwise `(2,2)` differentiation | Complete |
 | 2 | Unequal pointwise-to-block closure | Complete |
 | 3 | Resonant `α = 1` cusp decomposition | Complete |
-| 4 | Sharp comparable estimate | Unconditional comparable-block estimate |
+| 4 | Sharp separated comparable estimate | Complete |
 | 5 | Central/antipodal instantiation and L7 endpoint | `exists_bemocLatitudeDeficit_concrete_bound` |
 | 6 | Component assembly and final audit | Unconditional BEMOC upper theorem |
 

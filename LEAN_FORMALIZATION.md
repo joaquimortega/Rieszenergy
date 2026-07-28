@@ -277,6 +277,15 @@ split into checked modules under `BEMOCFormalization/`.
   including the fixed-square power-cusp bound and the resonant
   `w² log |w|` bound with exact cancellation of the scale logarithm and no
   remaining integrability premise;
+- unconditional polar, central, smooth-opposite, and regular
+  same-hemisphere oriented unequal-scale block estimates, enlarged to one
+  common positive constant and exported as the complete
+  `HasUnequalLatitudeBlockBound` interface;
+- the full four-term Leibniz expansion for the sharp off-diagonal
+  comparable mixed derivative, with explicit graded power, cusp, and
+  normalized-gap jets; its conversion to the manuscript
+  `R^(-2-α)|s-t|^(α-3)` scale; and the unconditional separated regular
+  comparable block estimate;
 - exact logical assembly of the polar, central, opposite, comparable-same,
   and oriented unequal geometric cases into the two broad pointwise
   interfaces consumed by the row arithmetic;
@@ -288,27 +297,23 @@ split into checked modules under `BEMOCFormalization/`.
   `|A_{α,N}| = O(N^(1-α/2))`;
 - an explicit three-term interface for latitude, within-ring, and cross-ring
   contributions;
-- Wagner's lower bound stated at its natural configuration-uniform strength,
-  together with its specialization to arbitrary configuration sequences and
-  the concrete BEMOC sequence;
-- the complete deduction of the asymptotic theorem from those three upper
-  estimates and Wagner's universal lower estimate.
+- an auxiliary interface for Wagner's lower bound, together with its
+  specialization to arbitrary configuration sequences and the concrete
+  BEMOC sequence; this lower-bound direction is outside the project scope;
+- the conditional deduction of the full asymptotic theorem from the three
+  upper estimates and Wagner's universal lower estimate.
 
 The file contains no `sorry` and introduces no `axiom`.
 
-## Remaining mathematical obligations
+## Remaining upper-bound obligation
 
-The following mathematical results are still required:
+The following mathematical result is still required:
 
 A detailed implementation order, proposed module split, theorem targets,
 edge cases, and verification gates are recorded in
 [`FORMALIZATION_BLUEPRINT.md`](FORMALIZATION_BLUEPRINT.md).
 
-1. The optional closed Gamma-form normalization of every positive-frequency
-   cusp coefficient.  The recurrence, uniform coefficient decay, smoothing
-   domination, alias reindexing, summability, and concrete cross-ring bound
-   no longer depend on this closed-form refinement.
-2. The remaining cancellation-enhanced latitude block estimates.  The band
+1. The remaining cancellation-enhanced latitude block estimates.  The band
    algebra, exact L2 decomposition, reduced-cusp derivatives, off-pole
    coefficient derivatives, literal comparable and unequal rectangle
    geometry, neighboring fixed-square cusp transfer, uniform `Q≤15/16`,
@@ -318,15 +323,24 @@ edge cases, and verification gates are recorded in
    derivative identity, scale conversion, and the concrete mixed
    Taylor/Peano transfer are checked.  Thus the unequal-scale
    same-hemisphere estimate in (5.6), including polar bands, is
-   unconditional.  The resonant local reduced-cusp subtraction in (5.4)
-   is also complete.  The remaining closure is concentrated in inserting
-   the local decompositions into neighboring blocks, retaining the graded
-   powers while bounding (5.5), and applying the resulting bounds to the
-   comparable, central, and antipodal rectangles.
-3. The analytic proof of Wagner's configuration-uniform lower bound for
-   optimal negative Riesz energies.  Its exact normalized statement and all
-   downstream specializations are now formalized as `HasWagnerLowerBound`.
+   unconditional, and the four graded terms in (5.5) now give the
+   unconditional separated regular comparable estimate.  The resonant
+   local reduced-cusp subtraction in (5.4) is also complete.  The remaining
+   closure is concentrated in inserting the local decompositions into
+   neighboring blocks and applying comparable-scale bounds to the central
+   and opposite-hemisphere rectangles.
 
-These are substantial additions to mathlib rather than short
-translations.  The present interface is designed so that each can be proved
-independently and then inserted without changing the final assembly theorem.
+This is a substantial addition to mathlib rather than a short translation.
+The present interface is designed so that it can be inserted without
+changing the final assembly theorem.
+
+## Optional and out-of-scope refinements
+
+- The closed Gamma-form normalization of every positive-frequency cusp
+  coefficient is optional.  The recurrence, uniform coefficient decay,
+  smoothing domination, alias reindexing, summability, and concrete
+  cross-ring bound no longer depend on it.
+- Wagner's configuration-uniform lower bound and the matching lower
+  asymptotic are outside the formalization scope.  Their interfaces remain
+  available for possible future work, but they are not completion criteria
+  for this project.

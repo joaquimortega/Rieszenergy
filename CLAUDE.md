@@ -2,13 +2,18 @@
 
 ## Scope
 
-The sole formalization target is `BEMOCRieszEnergies.tex`, whose main theorem
-concerns negative Riesz energies of the BEMOC point set for `0 < α < 2`:
+The sole formalization target is the upper-bound half of the main theorem in
+`BEMOCRieszEnergies.tex`, for negative Riesz energies of the BEMOC point set
+and `0 < α < 2`:
 
 ```text
-Σ_{x ≠ y in P_N} |x-y|^α
-  = 2^(α+1)/(α+2) * N^2 - Θ_α(N^(1-α/2)).
+0 ≤ 2^(α+1)/(α+2) * N^2
+      - Σ_{x ≠ y in P_N} |x-y|^α
+  ≤ C_α N^(1-α/2).
 ```
+
+Wagner's configuration-uniform lower bound and the matching lower asymptotic
+are explicitly outside the formalization scope.
 
 The Lean root is `BEMOCFormalization.lean`, with analytic helper modules in
 `BEMOCFormalization/`. Other TeX papers in the directory are out of scope
@@ -43,8 +48,9 @@ Lean and mathlib are pinned by `lean-toolchain` and `lake-manifest.json`.
 - The corrected general-`α` within-ring coefficient in the TeX retains the
   distinct asymptotic populations `8mx/3` and `4mx/3`; the former simpler
   radius-sum coefficient is valid only at `α = 1`.
-- Other active missing analytic components are uniform Fourier/Bessel
-  aliasing, gcd/Jordan summation, latitude block estimates, and Wagner's
-  universal lower bound.
+- The within-ring and cross-ring estimates are complete.  The full oriented
+  unequal-scale latitude interface and the separated regular comparable
+  estimate are also unconditional.  The only active upper-bound obligation
+  is the neighboring/central/opposite comparable latitude closure.
 - Rebuild with `lake build` and update `LEAN_FORMALIZATION.md` after material
   progress.
