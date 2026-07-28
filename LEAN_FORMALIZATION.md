@@ -312,16 +312,17 @@ edge cases, and verification gates are recorded in
    algebra, exact L2 decomposition, reduced-cusp derivatives, off-pole
    coefficient derivatives, literal comparable and unequal rectangle
    geometry, neighboring fixed-square cusp transfer, uniform `Q≤15/16`,
-   polar estimate, exhaustive geometric partition, pointwise-to-row
-   arithmetic, L7 summation, the actual even-series identity, all four
-   termwise derivative passes, the closed-rectangle derivative identity,
-   scale conversion, and the concrete mixed Taylor/Peano transfer are
-   checked.  Thus the unequal-scale same-hemisphere estimate in (5.6) is
-   unconditional.  The resonant local reduced-cusp subtraction in (5.4) is
-   also complete.  The remaining closure is concentrated in inserting the
-   local decompositions into neighboring blocks, retaining the graded powers
-   while bounding (5.5), and applying the resulting bounds to the comparable,
-   central, and antipodal rectangles.
+   polar endpoint transfer, exhaustive geometric partition,
+   pointwise-to-row arithmetic, L7 summation, the actual even-series
+   identity, all four termwise derivative passes, the closed-rectangle
+   derivative identity, scale conversion, and the concrete mixed
+   Taylor/Peano transfer are checked.  Thus the unequal-scale
+   same-hemisphere estimate in (5.6), including polar bands, is
+   unconditional.  The resonant local reduced-cusp subtraction in (5.4)
+   is also complete.  The remaining closure is concentrated in inserting
+   the local decompositions into neighboring blocks, retaining the graded
+   powers while bounding (5.5), and applying the resulting bounds to the
+   comparable, central, and antipodal rectangles.
 3. The analytic proof of Wagner's configuration-uniform lower bound for
    optimal negative Riesz energies.  Its exact normalized statement and all
    downstream specializations are now formalized as `HasWagnerLowerBound`.

@@ -268,8 +268,7 @@ Do not optimize constants.
 
 ### Current latitude checkpoint
 
-Verified Git checkpoint: `7c21167` (`Formalize unequal latitude derivative
-series bounds`).
+Verified Git checkpoint: `7813c98` (`Close polar latitude pointwise cases`).
 
 Completed and imported:
 
@@ -288,15 +287,14 @@ Completed and imported:
 - normal summability of the coefficient-weighted fourth-derivative series;
 - nonresonant local reduced-cusp decompositions for both `0 < α < 1` and
   `1 < α < 2`.
+- endpoint-safe even-series transfer on polar rectangles;
+- unconditional polar comparable and oriented unequal-scale block bounds.
 
 Remaining, in dependency order:
 
-1. identify the normally convergent differentiated series with
-   `variableReducedLatitudeKernelDsstt`;
-2. export the resulting unconditional unequal-block bound;
-3. complete the resonant `α = 1` local cusp decomposition;
-4. retain the graded gap powers in the sharp comparable-block estimate;
-5. instantiate the central and antipodal cases and export the unconditional
+1. complete the resonant `α = 1` neighboring-block cancellation estimate;
+2. retain the graded gap powers in the sharp comparable-block estimate;
+3. instantiate the central and antipodal cases and export the unconditional
    latitude endpoint.
 
 ### Design choice: use error functionals

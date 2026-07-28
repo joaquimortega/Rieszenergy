@@ -14,7 +14,7 @@ hypertexnames=false]{hyperref}
 \title{Negative Riesz energies of the BEMOC point set\\
 and the sum of mutual distances}
 \author{}
-\date{13 July 2026}
+\date{28 July 2026}
 
 \begin{document}
 \begin{abstract}
@@ -282,9 +282,10 @@ neighborhood, and write
  f(x)=(2\pi)^\alpha\{\chi(x)x^\alpha+
  \chi(1-x)(1-x)^\alpha\}+g(x).
 \]
-The function $g$ has enough ordinary derivatives for Euler--Maclaurin; if
-needed, subtract the next endpoint term, of order $x^{\alpha+2}$, before
-applying the formula.  For the singular model, the power-sum expansion is
+After subtracting also the next endpoint term, of order
+$x^{\alpha+2}$, the residual has the ordinary endpoint regularity needed
+for the composite Euler--Maclaurin formula.  For the singular model, the
+finite-part power-sum expansion is
 \[
  \sum_{k=1}^{w-1}k^\alpha
  =\frac{w^{\alpha+1}}{\alpha+1}-\frac12w^\alpha
@@ -568,21 +569,23 @@ $Cd_j^3d_k^3/M^8$.
 \end{lemma}
 
 \begin{proof}
-We first dispose of the polar endpoint rectangles, on which the ratio $q/p$
-used below need not be bounded.  If either index is within a fixed distance
-of a pole and the two scales are comparable, both indices range over a fixed
-finite set.  In north-polar coordinates
+We first dispose of comparable polar endpoint rectangles, on which the ratio
+$q/p$ used below need not be bounded.  If either index is within a fixed
+distance of a pole and the two scales are comparable, both indices range
+over a fixed finite set.  In north-polar coordinates
 \[
  s=1-\frac{x}{M^2},\qquad t=1-\frac{y}{M^2},
 \]
-the variables $x,y$ range over fixed compact intervals and the chordal
-distance is $M^{-1}$ times a uniformly bounded function of $x,y,\theta$
-(with the harmless $O(M^{-2})$ correction absorbed uniformly).  Hence
-$F_\alpha=M^{-\alpha}K_{\alpha,M}(x,y)$ with
-$K_{\alpha,M}$ uniformly bounded.  Since these block measures have bounded
-total variation, every such block is $O_\alpha(M^{-\alpha})$, which is
-\eqref{eq:comparableblock} for this finite set.  The south pole is identical.
-We can therefore assume below that the comparable rectangles are nonpolar.
+the variables $x,y$ range over fixed compact intervals.  The exact chordal
+distance formula, after multiplication by $M$, is uniformly bounded there.
+Hence $F_\alpha=M^{-\alpha}K_{\alpha,M}(x,y)$ with $K_{\alpha,M}$ uniformly
+bounded.  Since these block measures have bounded total variation, every
+such block is $O_\alpha(M^{-\alpha})$, which is
+\eqref{eq:comparableblock} for this finite set.  Reflection gives the south
+pole.  We can therefore assume below that the comparable rectangles are
+nonpolar.  Unequal polar rectangles are included directly in the
+endpoint-safe even-power argument below, because every even power of the
+smaller radius is polynomial in the height.
 
 In the exact half-angle representation, set
 \[
@@ -601,14 +604,33 @@ for the corresponding hypergeometric function, gives, for $0<x<c<1$,
  h_\alpha(x)=H_\alpha(x)+
  \begin{cases}
  x^\nu B_\alpha(x),&\alpha\ne1,\\
- x\log(1/x)B_1(x),&\alpha=1,
-\end{cases}                                         \tag{5.4}
+ c_1x\log x+x^{3/2}B_1(x),&\alpha=1,
+ \end{cases}                                         \tag{5.4}
 \end{equation}
-where $H_\alpha$ and $B_\alpha$ are analytic for $|x|<c$ and their
-derivatives through order four are bounded on every smaller fixed interval;
-$B_\alpha(0)\ne0$.  This formulation retains all analytic powers of $x$.
-At the resonant value $\alpha=1$ it also retains the subsequent
-$x^m\log x$ terms through the analytic factor $B_1$.
+Here $H_\alpha$ is analytic for $|x|<c$.  In the nonresonant case
+$B_\alpha$ is analytic there, its derivatives through order four are
+bounded on every smaller fixed interval, and $B_\alpha(0)\ne0$.  At
+$\alpha=1$ the factor $B_1$ is uniformly bounded for $0<x\le c$, while
+$c_1\ne0$; the constant and linear terms have been absorbed into $H_1$.
+This is the only resonant logarithm needed in the block estimate, and the
+remaining branch has the strictly higher order $x^{3/2}$.
+
+There is a useful exact simplification of the resonant term.  With
+$x=q/p$ as above,
+\[
+ 4p^2x(1+x)=(s-t)^2.
+\]
+Thus, if $c(s,t)=[4p^2(1+x)]^{-1}$, then
+$x=c(s,t)(s-t)^2$ and
+\begin{equation}\label{eq:resonantextraction}
+ x\log x
+ =2c(s,t)(s-t)^2\log|s-t|
+  +c(s,t)\log c(s,t)\,(s-t)^2.                       \tag{5.5}
+\end{equation}
+On a comparable nonpolar rectangle $c$ is positive and smooth.  Freezing
+its coefficients leaves the standard fixed-square cusp
+$(u-v)^2\log|u-v|$; the constant quadratic part is killed by the two moment
+conditions, and the coefficient variations are ordinary Peano remainders.
 
 On comparable latitude rectangles, $p\asymp R^2$ and
 $q/p\asymp |s-t|^2/R^4$.  Thus the nonanalytic height term in
@@ -616,11 +638,12 @@ $q/p\asymp |s-t|^2/R^4$.  Thus the nonanalytic height term in
 $c_\alpha R^{-2-\alpha}|s-t|^{1+\alpha}$, with the logarithmic modification
 at $\alpha=1$.  The analytic part has mixed fourth derivative at most
 $C_\alpha R^{\alpha-8}$; since $|s-t|\le cR^2$, this is dominated by the
-right side below.  The branch remainder obeys the same bound by direct
-differentiation of \eqref{eq:hexpalpha}.  Thus, off the diagonal,
+right side below.  Off the diagonal the branch remainder obeys the same
+bound by direct differentiation of \eqref{eq:hexpalpha}; for the resonant
+higher-order branch only this separated-region estimate is used.  Thus
 \begin{equation}\label{eq:powerder}
  |\partial_s^2\partial_t^2F_\alpha(s,t)|
- \le C_\alpha R^{-2-\alpha}|s-t|^{\alpha-3}.         \tag{5.5}
+ \le C_\alpha R^{-2-\alpha}|s-t|^{\alpha-3}.         \tag{5.6}
 \end{equation}
 For neighboring blocks, rescale both height variables by $a_j$.  The tensor
 Taylor polynomial of the analytic part of degree at most one in each
@@ -671,7 +694,7 @@ for $m\ge2$ and $0\le i,j\le2$, that
  \left|\partial_s^i\partial_t^j
  \{A^{\alpha/2-2m}4^mu^mv^m\}\right|
  \le C_\alpha(1+m)^4
- A^{\alpha/2-i-j}\bigl(Q^{m-2}+Q^m\bigr).           \tag{5.6}
+ A^{\alpha/2-i-j}\bigl(Q^{m-2}+Q^m\bigr).           \tag{5.7}
 \end{equation}
 Indeed, differentiating $A$ produces $A^{-1}$, while removing one factor
 of $u$ or $v$ is accompanied by the complementary factor $v/A^2$ or
@@ -680,8 +703,9 @@ rectangle.  Removing two factors from both $u^m$ and $v^m$ leaves
 $A^{-4}Q^{m-2}$.  This also proves
 \eqref{eq:polyseriesderivative} at $u=0$ or $v=0$ by
 continuity.  The terms $m=0,1$ are finite analytic expressions and satisfy
-the same bound separately.  Since the polynomial factor in $m$ is summable
-against $Q^m$ uniformly for $Q\le(1-\delta)^2$, taking $i=j=2$ gives
+the same bound separately.  The concrete band geometry gives the uniform
+numerical bound $Q\le15/16$.  Since the polynomial factor in $m$ is summable
+against $Q^m$ uniformly on this range, taking $i=j=2$ gives
 $|\partial_s^2\partial_t^2F_\alpha|\le C_\alpha R_k^{\alpha-8}$.
 Peano and the band scales give, explicitly,
 \[
