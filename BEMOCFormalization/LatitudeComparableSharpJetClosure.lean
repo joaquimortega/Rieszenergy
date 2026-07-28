@@ -225,6 +225,51 @@ theorem latitudeComparablePowerRpowGradedBound
       _ ≤ A * R ^ (2 * (α / 2 - 4)) := by gcongr
       _ = A * R ^ (α - 8) := by ring
 
+/-- The same graded angular-power estimate when the exponent is merely
+bounded above by two.  For a nonpositive exponent even the zeroth power is
+controlled by the lower angular-radius bound. -/
+theorem latitudeComparablePowerRpowGradedBound_of_lt_two
+    {α s t R : ℝ} (hα2 : α < 2) (hR : 0 < R)
+    (hjet : LatitudeComparableAngularJetBound s t R) :
+    LatitudeComparablePowerRpowGradedBound α s t R
+      (latitudeComparablePowerRpowConstant α) := by
+  by_cases hα0 : 0 < α
+  · exact latitudeComparablePowerRpowGradedBound hα0 hα2 hR hjet
+  rcases hjet with ⟨hpLower, _hpUpper, _⟩
+  let A := latitudeComparablePowerRpowConstant α
+  have hA : 0 ≤ A := by
+    dsimp [A, latitudeComparablePowerRpowConstant]
+    positivity
+  have hAone : (1 : ℝ) ≤ A := by
+    dsimp [A, latitudeComparablePowerRpowConstant]
+    have h0 : 0 ≤ (3200 : ℝ) ^ (α / 2) := by positivity
+    have h1 : 0 ≤ (2 : ℝ) ^ (α / 2 - 1) := by positivity
+    have h2 : 0 ≤ (2 : ℝ) ^ (α / 2 - 2) := by positivity
+    have h3 : 0 ≤ (2 : ℝ) ^ (α / 2 - 3) := by positivity
+    have h4 : 0 ≤ (2 : ℝ) ^ (α / 2 - 4) := by positivity
+    linarith
+  have hcoef (e : ℝ) (he : e ≤ 0) : (2 : ℝ) ^ e ≤ A :=
+    (Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) he).trans hAone
+  have hstep (e target : ℝ) (he : e ≤ 0)
+      (hcoef : (2 : ℝ) ^ e ≤ A) (htarget : 2 * e = target) :
+      |latitudeAngularScale s t ^ e| ≤ A * R ^ target := by
+    have h := abs_rpow_le_lower_radiusScale hR he hpLower
+    calc
+      |latitudeAngularScale s t ^ e| ≤
+          (2 : ℝ) ^ e * R ^ (2 * e) := h
+      _ ≤ A * R ^ (2 * e) := by gcongr
+      _ = A * R ^ target := by rw [htarget]
+  refine ⟨hA, ?_, ?_, ?_, ?_, ?_⟩
+  · exact hstep (α / 2) α (by linarith) (hcoef _ (by linarith)) (by ring)
+  · exact hstep (α / 2 - 1) (α - 2) (by linarith)
+      (hcoef _ (by linarith)) (by ring)
+  · exact hstep (α / 2 - 2) (α - 4) (by linarith)
+      (hcoef _ (by linarith)) (by ring)
+  · exact hstep (α / 2 - 3) (α - 6) (by linarith)
+      (hcoef _ (by linarith)) (by ring)
+  · exact hstep (α / 2 - 4) (α - 8) (by linarith)
+      (hcoef _ (by linarith)) (by ring)
+
 theorem comparableSame_rectangle_powerRpowGradedBound
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hM : 1 ≤ bandCount N)

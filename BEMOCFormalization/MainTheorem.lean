@@ -1,6 +1,6 @@
 import BEMOCFormalization.ConcreteWithinRing
 import BEMOCFormalization.CrossRingEstimate
-import BEMOCFormalization.LatitudeEstimate
+import BEMOCFormalization.LatitudeUnconditionalComparableClosure
 
 /-!
 # Assembly of the concrete BEMOC upper bound
@@ -80,5 +80,42 @@ theorem bemoc_deficit_bound_of_latitude
     exists_bemocComponentBounds_of_latitude hα0 hα2 hlatitude
   simpa [bemocEnergyDeficit] using
     bemoc_deficit_bound_of_component_bounds hα0 hα2 hcomponents
+
+/-- The complete BEMOC upper estimate reduced only to the uniform
+very-large comparable-scale latitude package.  Unequal scales, finite
+fallback, within-ring energy, cross-ring energy, and nonnegativity are all
+discharged internally. -/
+theorem bemoc_deficit_bound_of_comparable
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hcomp : HasVeryLargeComparableLatitudeBlockBound α) :
+    ∃ C : ℝ, 0 < C ∧ ∃ N₀ : ℕ, ∀ N ≥ N₀,
+      0 ≤ continuousEnergy α * (N : ℝ) ^ 2 -
+          bemocFiniteEnergy α N ∧
+        continuousEnergy α * (N : ℝ) ^ 2 -
+          bemocFiniteEnergy α N ≤
+            C * (N : ℝ) ^ (1 - α / 2) :=
+  bemoc_deficit_bound_of_latitude hα0 hα2
+    (exists_bemocLatitudeDeficit_concrete_bound_of_comparable
+      hα0 hα2 hcomp)
+
+/-- All three analytic component bounds are unconditional in the full open
+Riesz range. -/
+theorem exists_bemocComponentBounds
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
+    Nonempty (BemocComponentBounds α) :=
+  exists_bemocComponentBounds_of_latitude hα0 hα2
+    (exists_bemocLatitudeDeficit_concrete_bound hα0 hα2)
+
+/-- Unconditional formalization of the BEMOC upper energy bound. -/
+theorem bemoc_deficit_bound
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
+    ∃ C : ℝ, 0 < C ∧ ∃ N₀ : ℕ, ∀ N ≥ N₀,
+      0 ≤ continuousEnergy α * (N : ℝ) ^ 2 -
+          bemocFiniteEnergy α N ∧
+        continuousEnergy α * (N : ℝ) ^ 2 -
+          bemocFiniteEnergy α N ≤
+            C * (N : ℝ) ^ (1 - α / 2) :=
+  bemoc_deficit_bound_of_latitude hα0 hα2
+    (exists_bemocLatitudeDeficit_concrete_bound hα0 hα2)
 
 end BEMOC

@@ -95,7 +95,7 @@ private theorem scaled_angular_zero
   simpa using hx
 
 theorem latitudeComparablePowerJetGradedBound
-    {α s t R : ℝ} (hα0 : 0 < α) (hα2 : α < 2) (hR : 0 < R)
+    {α s t R : ℝ} (hα2 : α < 2) (hR : 0 < R)
     (hang : LatitudeComparableAngularJetBound s t R) :
     LatitudeComparablePowerJetGradedBound α s t R
       (latitudeComparablePowerJetConstant α) := by
@@ -108,7 +108,7 @@ theorem latitudeComparablePowerJetGradedBound
     dsimp [B, latitudePowerCoefficientEnvelope]
     positivity
   have hB1' : 1 ≤ B := by simpa [B] using hB1
-  rcases latitudeComparablePowerRpowGradedBound hα0 hα2 hR hang with
+  rcases latitudeComparablePowerRpowGradedBound_of_lt_two hα2 hR hang with
     ⟨hA0, hu0, hu1, hu2, hu3, hu4⟩
   rcases hang with
     ⟨_, _, hps, hpt, hpss, hptt, hpst, hpsst, hpstt, hpsstt⟩
@@ -327,7 +327,7 @@ theorem comparableSame_rectangle_powerJetGradedBound
     have hdr : (0 : ℝ) < latitudeBandScale N j := by
       exact_mod_cast latitudeBandScale_pos N j
     positivity
-  exact latitudeComparablePowerJetGradedBound hα0 hα2 hR
+  exact latitudeComparablePowerJetGradedBound hα2 hR
     (comparableSame_rectangle_angularJetBound hM hjk hs ht)
 
 /-- Moving `n` powers from the separation variable into two radius powers

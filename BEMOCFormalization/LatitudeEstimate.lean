@@ -312,8 +312,8 @@ theorem HasClassifiedLatitudeScaleRows.toComplete
   exact h.toScaleRowBound.toPopulation hM
     (add_nonneg (add_nonneg hcomp hlarger) hsmaller)
 
-/-- The sole uniform analytic statement still required for the latitude
-endpoint after the unconditional axial/L2 bridge. -/
+/-- A reusable abstraction of the uniform analytic row bound.  The concrete
+latitude closure constructs the required rows unconditionally. -/
 def HasUniformLatitudeBlockRowBound (α : ℝ) : Prop :=
   ∃ C : ℝ, 0 < C ∧ ∀ N ≥ 36, HasLatitudeBlockRowBound α N C
 
@@ -415,8 +415,8 @@ theorem abs_bemocLatitudeDeficit_le_bandCount_of_completeBlockEstimate
       dsimp [M]
       ring
 
-/-- Conditional public endpoint in the `M` normalization.  Its sole
-remaining premise is exactly the uniform L5--L6 analytic block package. -/
+/-- Compositional endpoint in the `M` normalization, conditional on a
+uniform L5--L6 analytic block package. -/
 theorem exists_bemocLatitudeDeficit_bandCount_bound_of_blocks
     {α : ℝ} (hα0 : 0 < α)
     (hblocks : ∃ C : ℝ, 0 < C ∧ ∀ N ≥ 36,
@@ -432,8 +432,8 @@ theorem exists_bemocLatitudeDeficit_bandCount_bound_of_blocks
   · exact (three_le_bandCount_of_36_le hN).trans' (by omega)
   · exact hblocks N hN
 
-/-- Conditional concrete L7 endpoint.  Once the explicit L5--L6 block
-package is supplied, no further latitude arithmetic remains. -/
+/-- Compositional concrete L7 endpoint.  Given an explicit L5--L6 block
+package, no further latitude arithmetic remains. -/
 theorem exists_bemocLatitudeDeficit_concrete_bound_of_blocks
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     (hblocks : ∃ C : ℝ, 0 < C ∧ ∀ N ≥ 36,
@@ -449,9 +449,8 @@ theorem exists_bemocLatitudeDeficit_concrete_bound_of_blocks
     mul_le_mul_of_nonneg_left
       (bandCount_rpow_two_sub_le (N := N) hα2) hC.le
 
-/-- Endpoint stated from the exact remaining analytic assumption alone.
-There is no longer any Fubini, disintegration, or normalization hypothesis
-in this interface. -/
+/-- Endpoint stated from a uniform analytic row assumption.  There is no
+Fubini, disintegration, or normalization hypothesis in this interface. -/
 theorem exists_bemocLatitudeDeficit_concrete_bound_of_uniformRows
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     (hrows : HasUniformLatitudeBlockRowBound α) :

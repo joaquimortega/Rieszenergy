@@ -122,17 +122,17 @@ theorem bandAtomicPairValue_eq_bemoc_sum {N : ℕ} (hN : 0 < N)
   intro q hq
   ring
 
-/-- The precise geometric/Fubini bridge still required to turn the local
-band algebra into the latitude-deficit identity.  It is a proposition, not
-an axiom: later geometry may supply a proof of it. -/
+/-- The precise geometric/Fubini proposition connecting the local band
+algebra to the latitude-deficit identity.  `LatitudeAxialBridge` proves it
+for the concrete BEMOC geometry. -/
 def HasExactLatitudePairQuadrature (α : ℝ) (N : ℕ) : Prop :=
   (∑ j : Fin (bandTailCount N + 1),
     ∑ k : Fin (bandTailCount N + 1),
       bandPairError N j k (latitudeKernel α)) =
     bandAtomicPairValue N (latitudeKernel α) - continuousEnergy α * (N : ℝ) ^ 2
 
-/-- Once the geometric constant-potential/Fubini bridge is established, the
-desired L2 equation follows by exact scalar bookkeeping. -/
+/-- Given the geometric constant-potential/Fubini bridge, the desired L2
+equation follows by exact scalar bookkeeping. -/
 theorem bemocLatitudeDeficit_eq_neg_sum_bandPairError_of_exactLatitudePairQuadrature
     {N : ℕ} {α : ℝ} (hN : 0 < N) (hα : 0 < α)
     (hquad : HasExactLatitudePairQuadrature α N) :

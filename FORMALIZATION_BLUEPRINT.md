@@ -1,5 +1,22 @@
 # Blueprint for the BEMOC upper bound
 
+## Status
+
+The upper-bound formalization is complete as of July 2026.  The unconditional
+exports are:
+
+```lean
+exists_bemocLatitudeDeficit_concrete_bound
+exists_bemocComponentBounds
+bemoc_deficit_bound
+```
+
+They cover every `0 < α < 2`, including the resonant endpoint `α = 1`, with
+no analytic premise left to the caller.  The implementation schedules and
+“remaining input” descriptions below are retained as a historical record of
+the route used to close the proof; they are not a statement of current gaps.
+See `LEAN_FORMALIZATION.md` for the current verified status.
+
 ## Objective
 
 Prove unconditionally in Lean, for every fixed `0 < α < 2`, the upper
@@ -11,12 +28,9 @@ estimate for the concrete BEMOC configuration:
 ```
 
 The exact construction, energy normalization, three-term decomposition,
-conditional-negative-definiteness argument, within-ring estimate, and
-cross-ring angular-aliasing estimate are complete. L1--L3, the complete
-latitude summation infrastructure, the full oriented unequal-scale
-interface, and the separated regular comparable block estimate are also
-checked. The remaining analytic input is the neighboring/central/opposite
-comparable block closure, followed by the short component assembly.
+conditional-negative-definiteness argument, within-ring estimate,
+cross-ring angular-aliasing estimate, all latitude cases, and the final
+component assembly are checked.
 
 Wagner's lower bound and the paper's matching lower asymptotic are explicitly
 outside the scope of this project.
@@ -24,9 +38,9 @@ outside the scope of this project.
 The optional Fourier proof of the circle Euler--Maclaurin theorem is not on
 the critical path: the direct endpoint proof is already unconditional.
 
-## Current endpoint
+## Historical endpoint target
 
-The final proof should instantiate the existing upper-bound structures and
+The final proof was organized around the existing upper-bound structures and
 theorems:
 
 - `BemocComponentBounds α` in `BEMOCFormalization/Core.lean`;
@@ -39,7 +53,7 @@ exists_bemocWithinRingDeficit_concrete_bound
 exists_bemocCrossRingDeficit_concrete_bound
 ```
 
-The remaining component target is:
+The latitude component target was:
 
 ```lean
 theorem exists_bemocLatitudeDeficit_concrete_bound

@@ -78,6 +78,7 @@ import BEMOCFormalization.WithinRingLimit
 /-!
 # BEMOC negative Riesz energies
 
-Public entry point for the core formalization, the concrete within-ring
-and cross-ring estimates, and the sharp square-subsequence within-ring limit.
+Public entry point for the core formalization, the unconditional latitude,
+within-ring, and cross-ring estimates, the assembled BEMOC upper energy
+bound for `0 < α < 2`, and the sharp square-subsequence within-ring limit.
 -/

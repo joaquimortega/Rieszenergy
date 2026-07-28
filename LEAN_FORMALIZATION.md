@@ -1,4 +1,4 @@
-# Lean formalization status
+# Lean formalization status: upper bound complete
 
 The development is pinned to Lean 4.19.0 and mathlib 4.19.0.
 
@@ -277,15 +277,52 @@ split into checked modules under `BEMOCFormalization/`.
   including the fixed-square power-cusp bound and the resonant
   `w² log |w|` bound with exact cancellation of the scale logarithm and no
   remaining integrability premise;
-- unconditional polar, central, smooth-opposite, and regular
-  same-hemisphere oriented unequal-scale block estimates, enlarged to one
-  common positive constant and exported as the complete
+- Hölder continuity of `reducedLatitudeCusp` at zero, identification of the
+  upper and lower integral-defined subtraction constants with the literal
+  cusp value there, and endpoint-complete nonresonant local decompositions;
+  these identities cover the atomic diagonal samples rather than only the
+  positive-gap part of the rectangle;
+- unconditional upper- and lower-nonresonant neighboring central-comparable
+  block bounds, including Tietze extension and all pair-error linearity and
+  integrability obligations, exported respectively as
+  `centralComparable_neighboring_upper_block_bound` and
+  `centralComparable_neighboring_lower_block_bound`;
+- a classifier-free comparable radius chart and sharp four-term derivative
+  estimate on the exceptional separated rectangles; in particular,
+  `hasCentralComparableSeparatedDssttBound_generic` makes the separated
+  central predicate unconditional, while
+  `hasSmoothOppositeComparableLatitudeBlockBound_generic` closes the complete
+  smooth-opposite comparable field;
+- unconditional polar and regular same-hemisphere oriented unequal-scale
+  block estimates, enlarged to one common positive constant and exported as
+  the complete
   `HasUnequalLatitudeBlockBound` interface;
 - the full four-term Leibniz expansion for the sharp off-diagonal
   comparable mixed derivative, with explicit graded power, cusp, and
   normalized-gap jets; its conversion to the manuscript
   `R^(-2-α)|s-t|^(α-3)` scale; and the unconditional separated regular
   comparable block estimate;
+- endpoint completion of the resonant reduced cusp, exported as
+  `reducedLatitudeCusp_one_zero_eq_resonantConstantCoefficient` and
+  `latitudeKernel_one_eq_neighboringResonantModel_add_branch_on_unitChart`,
+  so the `α = 1` decomposition includes the literal diagonal atoms;
+- quantitative normalized-radius, quadratic-coefficient,
+  angular-coefficient, amplitude, and logarithmic-amplitude oscillation
+  bounds for the resonant principal term, together with exact cancellation
+  of its frozen quadratic part and physical quadratic control of the
+  freezing remainder;
+- the full resonant neighboring comparable estimate, with fixed nonnegative
+  constants `neighboringResonantPrincipalBlockConstant`,
+  `neighboringResonantHigherBranchBlockConstant`, and
+  `neighboringResonantFullBlockConstant`, exported at the predicate level as
+  `hasLargeDepthNeighboringComparableLatitudeBlockBound_one` and
+  `hasNeighboringComparableLatitudeBlockBound_one`;
+- the central resonant closure at the fixed normalized radius `1/5`,
+  including the principal, higher-branch, and model block bounds; the final
+  nonnegative constant `centralResonantComparableBlockConstant`; and the
+  all-distance export
+  `hasCentralComparableLatitudeBlockBound_resonant`, which combines the
+  neighboring estimate with the generic separated central theorem;
 - exact logical assembly of the polar, central, opposite, comparable-same,
   and oriented unequal geometric cases into the two broad pointwise
   interfaces consumed by the row arithmetic;
@@ -297,42 +334,41 @@ split into checked modules under `BEMOCFormalization/`.
   `|A_{α,N}| = O(N^(1-α/2))`;
 - an explicit three-term interface for latitude, within-ring, and cross-ring
   contributions;
+- unconditional assembly of all neighboring, central, opposite, unequal,
+  and finite-depth latitude cases throughout `0 < α < 2`, including the
+  resonant branch, exported as
+  `veryLargeRemainingComparableLatitudeBounds`,
+  `hasVeryLargeComparableLatitudeBlockBound`, and
+  `exists_bemocLatitudeDeficit_concrete_bound`;
+- unconditional construction of the three concrete component bounds
+  (`exists_bemocComponentBounds`) and the final upper energy theorem
+  `bemoc_deficit_bound`: for every `0 < α < 2`, the concrete BEMOC deficit is
+  nonnegative and is at most `C N^(1-α/2)` for all sufficiently large `N`;
 - an auxiliary interface for Wagner's lower bound, together with its
   specialization to arbitrary configuration sequences and the concrete
   BEMOC sequence; this lower-bound direction is outside the project scope;
 - the conditional deduction of the full asymptotic theorem from the three
   upper estimates and Wagner's universal lower estimate.
 
-The file contains no `sorry` and introduces no `axiom`.
+The development contains no `sorry` and introduces no `axiom`.
 
-## Remaining upper-bound obligation
+## Completed upper-bound endpoint
 
-The following mathematical result is still required:
+The root module imports the unconditional comparable closure and
+`BEMOCFormalization.MainTheorem`.  The final checked statement is
+`BEMOC.bemoc_deficit_bound`:
 
-A detailed implementation order, proposed module split, theorem targets,
-edge cases, and verification gates are recorded in
-[`FORMALIZATION_BLUEPRINT.md`](FORMALIZATION_BLUEPRINT.md).
+```text
+0 < α → α < 2 →
+∃ C > 0, ∃ N₀, ∀ N ≥ N₀,
+  0 ≤ continuousEnergy α * N^2 - bemocFiniteEnergy α N
+    ∧ continuousEnergy α * N^2 - bemocFiniteEnergy α N
+        ≤ C * N^(1 - α/2).
+```
 
-1. The remaining cancellation-enhanced latitude block estimates.  The band
-   algebra, exact L2 decomposition, reduced-cusp derivatives, off-pole
-   coefficient derivatives, literal comparable and unequal rectangle
-   geometry, neighboring fixed-square cusp transfer, uniform `Q≤15/16`,
-   polar endpoint transfer, exhaustive geometric partition,
-   pointwise-to-row arithmetic, L7 summation, the actual even-series
-   identity, all four termwise derivative passes, the closed-rectangle
-   derivative identity, scale conversion, and the concrete mixed
-   Taylor/Peano transfer are checked.  Thus the unequal-scale
-   same-hemisphere estimate in (5.6), including polar bands, is
-   unconditional, and the four graded terms in (5.5) now give the
-   unconditional separated regular comparable estimate.  The resonant
-   local reduced-cusp subtraction in (5.4) is also complete.  The remaining
-   closure is concentrated in inserting the local decompositions into
-   neighboring blocks and applying comparable-scale bounds to the central
-   and opposite-hemisphere rectangles.
-
-This is a substantial addition to mathlib rather than a short translation.
-The present interface is designed so that it can be inserted without
-changing the final assembly theorem.
+Thus no upper-bound analytic premise remains, including at the resonant
+exponent `α = 1`.  `FORMALIZATION_BLUEPRINT.md` is retained as a historical
+implementation plan rather than a list of outstanding completion gates.
 
 ## Optional and out-of-scope refinements
 
