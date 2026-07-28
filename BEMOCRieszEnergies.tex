@@ -30,19 +30,9 @@ for all negative Riesz parameters $-2<s<0$.  In particular, at $\alpha=1$,
 \[
  \sum_{x\ne y}|x-y|=\frac43N^2-\Theta(\sqrt N),
 \]
-which settles the sum-of-distances problem for this configuration.  We also
-compute the
-within-ring contribution: along $N=4m^2$, its normalized limit is
-\[
- -\kappa_\alpha(4\pi)^\alpha\zeta(-\alpha),\qquad
- \kappa_\alpha=
- \left[\left(\frac83\right)^{1-\alpha}
-       +\left(\frac43\right)^{1-\alpha}\right]
- \frac{2^{1+\alpha/2}-1}{\alpha+2},
-\]
-where $\zeta$ is the Riemann zeta function.  The latitude and cross-ring
-terms generally occur on the same scale, so this is not asserted to be the
-coefficient of the full energy.
+which settles the sum-of-distances problem for this configuration.  The
+upper bound is uniform under independent rotations of the polygons on the
+occupied parallels.
 \end{abstract}
 \maketitle
 
@@ -142,8 +132,27 @@ two half-contributions at the boundary atoms have total weight
  \frac{4\widetilde r_j}{6}+\operatorname{rem}_j
  +2\frac{\widetilde r_j}{6}=r_j.
 \]
-After shared boundary atoms are combined, the total number of points is
-$\sum_{j=1}^{2M-1}r_j=N$ by the definition of $r_M$ and the symmetry.
+For later use, the elementary population arithmetic is
+\begin{align*}
+ \sum_{j=1}^{M-1}(4j-1)
+ &=4\frac{(M-1)M}{2}-(M-1)
+   =(M-1)(2M-1),\\
+ r_M&=N-2(M-1)(2M-1).
+\end{align*}
+Since $M=\lfloor\sqrt{N/4}\rfloor$,
+\[
+ 4M^2\le N<4(M+1)^2,
+\]
+and hence
+\[
+ 6M-2\le r_M\le14M+1.
+\]
+Thus the central population is positive and of order $M$.  After shared
+boundary atoms are combined, symmetry gives the exact cardinality
+\[
+ \sum_{j=1}^{2M-1}r_j
+ =2(M-1)(2M-1)+r_M=N.
+\]
 
 \begin{figure}[t]
 \centering
@@ -181,9 +190,21 @@ The population--radius comparison holds for all occupied rings, after a
 fixed enlargement of its constants.  The exceptional equatorial population
 will nevertheless be separated in the arithmetic sum because it need not
 belong to the affine population families used there.
-It follows from $H_j=1-2N^{-1}\sum_{k\le j}r_k$ and $r_j\asymp j$: near a
-pole, $1-H_j\asymp j^2/M^2$, so
-$\rho_j=\sqrt{1-H_j^2}\asymp j/M$ and $w_j\asymp j$.
+For $j<M$ the sums can be evaluated explicitly:
+\[
+ \sum_{k=1}^jr_k=j(2j+1),\qquad
+ H_j=1-\frac{2j(2j+1)}N,\qquad
+ h_j=1-\frac{4j^2-2j+1}{N}.
+\]
+Consequently $1-H_j\asymp j^2/M^2$.  Since
+$1+H_j$ stays between two positive constants in a northern polar block,
+\[
+ \rho_j^2=1-H_j^2=(1-H_j)(1+H_j)\asymp\frac{j^2}{M^2},
+\]
+so $\rho_j\asymp j/M$ and $w_j\asymp j$.  Reflection gives the same
+estimates in the southern hemisphere; the preceding bounds on $r_M$ absorb
+the central exceptions.  Summing the resulting radius profile yields
+$\sum_p\rho_p\asymp M$, proving \eqref{eq:geometry}.
 
 \begin{theorem}\label{thm:main}
 For each fixed $0<\alpha<2$ there are constants
@@ -246,6 +267,25 @@ one ring from those belonging to two different rings.  On ring $p$, the
 continuous angular self-energy is $w_p^2\rho_p^\alpha J_\alpha$; for
 $p\ne q$ it is $w_pw_qF_\alpha(z_p,z_q)$.  Adding and subtracting precisely
 these quantities produces the three displayed terms, without an error term.
+More explicitly,
+\begin{align*}
+ E_\alpha(\cP_N)
+ &=\sum_p\Sigma_{\alpha,p}^{\rm self}
+   +\sum_{p\ne q}\Sigma_{\alpha,pq}^{\rm cross},\\
+ E_\alpha[\nu]
+ &=\sum_pw_p^2\rho_p^\alpha J_\alpha
+   +\sum_{p\ne q}w_pw_qF_\alpha(z_p,z_q),
+\end{align*}
+where both sums use ordered pairs.  Therefore
+\begin{align*}
+ I_\alpha N^2-E_\alpha(\cP_N)
+={}&I_\alpha N^2-E_\alpha[\nu]\\
+ &+\sum_p\left(w_p^2\rho_p^\alpha J_\alpha
+                    -\Sigma_{\alpha,p}^{\rm self}\right)\\
+ &+\sum_{p\ne q}\left(w_pw_qF_\alpha(z_p,z_q)
+                    -\Sigma_{\alpha,pq}^{\rm cross}\right),
+\end{align*}
+which is exactly \eqref{eq:decomp}.
 
 For completeness, Schoenberg's theorem says that $|x-y|^\alpha$ is
 conditionally negative definite for $0<\alpha<2$.  Thus, for every signed
@@ -255,7 +295,15 @@ measure $\eta$ of total mass zero,
 \]
 Apply this with $\eta=\nu-N\sigma$ and with the point measure minus
 $N\sigma$.  Since the potential of $\sigma$ is constant, the cross terms
-vanish and we obtain $A_{\alpha,N}\ge0$ and $D_{\alpha,N}\ge0$.
+vanish.  For example,
+\[
+ \iint |x-y|^\alpha\,d(\nu-N\sigma)(x)d(\nu-N\sigma)(y)
+ =E_\alpha[\nu]-I_\alpha N^2,
+\]
+because $\nu(\Sph)=N$ and
+$\int|x-y|^\alpha d\sigma(y)=I_\alpha$.  Conditional negative
+definiteness therefore gives $A_{\alpha,N}\ge0$; the identical computation
+with the atomic point measure gives $D_{\alpha,N}\ge0$.
 
 \section{The explicit within-ring term}
 
@@ -335,28 +383,74 @@ On a ring of radius $\rho$ with $w$ points,
  =\rho^\alpha w\sum_{k=1}^{w-1}
  \left(2\sin\frac{\pi k}{w}\right)^\alpha.
 \]
-Lemma~\ref{lem:circle} shows that its continuous-minus-discrete deficit is
+Indeed, after fixing the first vertex, the other vertex has each nonzero
+cyclic difference $k=1,\ldots,w-1$ exactly once, and there are $w$ choices
+of the first vertex.  The continuous angular self-energy on the same ring is
+$\rho^\alpha w^2J_\alpha$.  Hence
+\begin{align*}
+ &\rho^\alpha w^2J_\alpha-\Sigma_{\alpha}^{\rm self}\\
+ &\quad=\rho^\alpha w\left[
+ wJ_\alpha-\sum_{k=1}^{w-1}
+ \left(2\sin\frac{\pi k}{w}\right)^\alpha\right].
+\end{align*}
+Lemma~\ref{lem:circle} now shows that this deficit is
 \begin{equation}\label{eq:ringdef}
  -2(2\pi)^\alpha\zeta(-\alpha)
  \rho^\alpha w^{1-\alpha}+o_\alpha
  (\rho^\alpha w^{1-\alpha}).                         \tag{3.2}
 \end{equation}
-It is nonnegative because $\zeta(-\alpha)<0$ for $0<\alpha<2$; alternatively
-this follows directly from conditional negative definiteness on the circle.
-Using $w_p\asymp M\rho_p$ in \eqref{eq:geometry}, the main sum is
-$O(M^{1-\alpha}\sum_p\rho_p)=O(M^{2-\alpha})$.
-The dominated remainder has the same bound and is little-oh after division
-by $M^{2-\alpha}$.  Along $N=4m^2$,
-write $M=m$ and $x=j/m$.  Away from the finitely many endpoint and central
-exceptions, the midpoint and shared-boundary populations satisfy,
-respectively,
+The leading coefficient is positive because $\zeta(-\alpha)<0$ for
+$0<\alpha<2$.  Exact nonnegativity for every population follows from
+conditional negative definiteness on the circle.
+The uniform part of Lemma~\ref{lem:circle} bounds the absolute ring deficit
+by $C_\alpha\rho^\alpha w^{1-\alpha}$.  The two-sided comparison
+$cM\rho_p\le w_p\le CM\rho_p$ implies, for either sign of $1-\alpha$,
+\[
+ \rho_p^\alpha w_p^{1-\alpha}
+ =\rho_p\left(\frac{w_p}{\rho_p}\right)^{1-\alpha}
+ \le C_\alpha M^{1-\alpha}\rho_p.
+\]
+Using \eqref{eq:geometry} and adding the already separated $w_p=1$ rings,
+\[
+ 0\le B_{\alpha,N}
+ \le C_\alpha M^{1-\alpha}\sum_p\rho_p
+ =O_\alpha(M^{2-\alpha})
+ =O_\alpha(N^{1-\alpha/2}).
+\]
+
+We now compute the square-subsequence coefficient.  Along $N=4m^2$ one has
+$M=m$.  For a northern ordinary band,
+\[
+ r_j=4j-1,\qquad
+ h_j=1-\frac{4j^2-2j+1}{4m^2}.
+\]
+Because $\widetilde r_j=r_j+O(1)$ and
+$\operatorname{rem}_j=O(1)$, its midpoint population is
+\[
+ w_j^{\rm mid}
+ =\frac{4\widetilde r_j}{6}+\operatorname{rem}_j
+ =\frac23r_j+O(1)=\frac83j+O(1).
+\]
+The shared boundary between bands $j$ and $j+1$ has population
+\[
+ w_j^{\rm bdry}
+ =\frac{\widetilde r_j+\widetilde r_{j+1}}6
+ =\frac{r_j+r_{j+1}}6+O(1)
+ =\frac43j+O(1).
+\]
+Thus, with $x=j/m$, the midpoint and shared-boundary populations satisfy
 \[
  \frac{w_j^{\rm mid}}m\longrightarrow\frac{8x}{3},
  \qquad
  \frac{w_j^{\rm bdry}}m\longrightarrow\frac{4x}{3},
 \]
-while the limiting height profile in either hemisphere is $z=1-x^2$ and
-therefore $\rho\to x\sqrt{2-x^2}$.  The bounded remainder in
+while
+\[
+ h_j\longrightarrow1-x^2,\qquad
+ \rho_j=\sqrt{1-h_j^2}\longrightarrow
+ \sqrt{1-(1-x^2)^2}=x\sqrt{2-x^2}.
+\]
+The bounded remainder in
 Lemma~\ref{lem:circle}, followed by the usual small polar-tail split, permits
 dominated Riemann summation.  Hence
 \[
@@ -367,14 +461,29 @@ dominated Riemann summation.  Hence
         +\left(\frac43\right)^{1-\alpha}\right]
  \int_0^1x(2-x^2)^{\alpha/2}\,dx,
 \]
-and
+For the last integral, $u=2-x^2$ gives
 \[
  \int_0^1x(2-x^2)^{\alpha/2}\,dx
+ =\frac12\int_1^2u^{\alpha/2}\,du
  =\frac{2^{1+\alpha/2}-1}{\alpha+2}.
 \]
-Since $N^{1-\alpha/2}=2^{2-\alpha}m^{2-\alpha}$, substitution in
-\eqref{eq:ringdef} gives
-$-\kappa_\alpha(4\pi)^\alpha\zeta(-\alpha)$.
+Write the product of the bracket and this integral as $K_\alpha$.  The
+Riemann sum says
+$m^{\alpha-2}\sum_p\rho_p^\alpha w_p^{1-\alpha}\to2K_\alpha$.
+Combining it with \eqref{eq:ringdef} and
+\[
+ N^{1-\alpha/2}
+ =(4m^2)^{1-\alpha/2}=2^{2-\alpha}m^{2-\alpha}
+\]
+gives
+\[
+ \frac{B_{\alpha,4m^2}}{(4m^2)^{1-\alpha/2}}
+ \longrightarrow
+ -\frac{4(2\pi)^\alpha}{2^{2-\alpha}}
+ K_\alpha\zeta(-\alpha)
+ =-K_\alpha(4\pi)^\alpha\zeta(-\alpha).
+\]
+Thus $K_\alpha=\kappa_\alpha$ in the statement.
 For $\alpha=1$ one has
 $\kappa_1=2(2\sqrt2-1)/3$, recovering the simpler radius-sum constant.
 
@@ -469,14 +578,27 @@ $|C_{\alpha,N}|\le C_\alpha M^{2-\alpha}$, uniformly in all phases.
 
 \begin{proof}
 For two populations $q,r$, let $d=(q,r)$ and $L=[q,r]=qr/d$.  Each angle on
-the $L$-grid occurs $d$ times among the $qr=dL$ ordered pairs.  Multiplying
-the normalized trapezoidal error by $qr$ and using
+the $L$-grid occurs $d$ times among the $qr=dL$ ordered pairs.  To see the
+multiplicity, write $q=dq'$, $r=dr'$ with $(q',r')=1$.  The difference map
+\[
+ (\ell,k)\longmapsto \frac{\ell}{q}-\frac{k}{r}\pmod1
+\]
+has image the grid $L^{-1}\mathbb Z/\mathbb Z$; its domain has $dL$
+elements and every fiber has the same cardinality, hence cardinality $d$.
+Thus the discrete pair average is exactly a shifted $L$-point trapezoidal
+average.  Multiplying its normalized error by $qr$ and using
 $B=2\rho_q\rho_r$ gives
 \[
  |\mathcal E_\alpha(q,r)|
  \le C_\alpha qr(\rho_q\rho_r)^{\alpha/2}L^{-1-\alpha}
  =C_\alpha(\rho_q\rho_r)^{\alpha/2}
  \frac{d^{1+\alpha}}{(qr)^\alpha}.
+\]
+The last equality is the explicit calculation
+\[
+ qrL^{-1-\alpha}
+ =qr\left(\frac{d}{qr}\right)^{1+\alpha}
+ =\frac{d^{1+\alpha}}{(qr)^\alpha}.
 \]
 Since $q\asymp M\rho_q$ and the BEMOC populations have bounded
 multiplicity, it remains to bound
@@ -490,7 +612,22 @@ With the generalized Jordan function defined by
  n^\beta=\sum_{a\mid n}J_\beta(a),
 \]
 we have $J_{1+\alpha}(a)\le a^{1+\alpha}$, and the double sum before the
-factor $M^{-\alpha}$ is at most
+factor $M^{-\alpha}$ can be expanded as
+\begin{align*}
+ &\sum_{q,r\le CM}
+ \frac{(q,r)^{1+\alpha}}{(qr)^{\alpha/2}}\\
+ &\quad=\sum_{a\le CM}J_{1+\alpha}(a)
+ \sum_{\substack{q,r\le CM\\a\mid q,\ a\mid r}}
+ (qr)^{-\alpha/2}\\
+ &\quad=\sum_{a\le CM}J_{1+\alpha}(a)a^{-\alpha}
+ \left(\sum_{u\le CM/a}u^{-\alpha/2}\right)^2.
+\end{align*}
+Because $0<\alpha/2<1$,
+\[
+ \sum_{u\le X}u^{-\alpha/2}\le C_\alpha X^{1-\alpha/2}.
+\]
+Using this and $J_{1+\alpha}(a)\le a^{1+\alpha}$, the last display is at
+most
 \begin{align*}
  \sum_{a\le CM}a^{1+\alpha}a^{-\alpha}
  \left(\sum_{u\le CM/a}u^{-\alpha/2}\right)^2
@@ -498,6 +635,10 @@ factor $M^{-\alpha}$ is at most
  \sum_{a\le CM}a^{\alpha-1}\\
  &\le C_\alpha M^2.
 \end{align*}
+Here the final step is
+$\sum_{a\le CM}a^{\alpha-1}\le C_\alpha M^\alpha$.
+Restoring the prefactor $M^{-\alpha}$ gives
+$C_\alpha M^{2-\alpha}$.
 For an exceptional equatorial population $q_*\asymp M$ with radius
 comparable to one, use $(q_*,r)\le r$ and $\rho_r\asymp r/M$ to obtain
 \[
@@ -505,6 +646,12 @@ comparable to one, use $(q_*,r)\le r$ and $\rho_r\asymp r/M$ to obtain
  \le C_\alpha M^{-3\alpha/2}
  \sum_{r\le CM}r^{1+\alpha/2}
  \le C_\alpha M^{2-\alpha}.
+\]
+Indeed, the summand before summation is
+\[
+ \left(\frac rM\right)^{\alpha/2}
+ \frac{r^{1+\alpha}}{(Mr)^\alpha}
+ =M^{-3\alpha/2}r^{1+\alpha/2}.
 \]
 There are only $O(1)$ such populations.  Thus
 $|C_{\alpha,N}|\le C_\alpha M^{2-\alpha}$.
@@ -535,9 +682,39 @@ populations in the construction, and therefore
  \|\mu_j\|_{\rm TV}\le Cd_j.
 \]
 The two cancellations can also be checked directly: the band has length
-$2r_j/N$, so $\lambda_j(B_j)=r_j=\nu_j(B_j)$; symmetry about $h_j$ then
-gives equality of the first moments.  Thus the weights resemble Simpson
-quadrature, but only exactness on constants and linear functions is used.
+$H_{j-1}-H_j=2r_j/N$, so
+\[
+ \lambda_j(B_j)=\frac N2(H_{j-1}-H_j)=r_j
+\]
+and
+\[
+ \nu_j(B_j)
+ =\frac{\widetilde r_j}{6}(1+4+1)
+   +\operatorname{rem}_j
+ =\widetilde r_j+\operatorname{rem}_j=r_j.
+\]
+For the first moment,
+\begin{align*}
+ \int_{B_j}t\,d\lambda_j(t)
+ &=\frac N4(H_{j-1}^2-H_j^2)\\
+ &=\frac N4(H_{j-1}-H_j)(H_{j-1}+H_j)
+ =r_jh_j,
+\end{align*}
+whereas
+\begin{align*}
+ \int t\,d\nu_j(t)
+ &=\frac{\widetilde r_j}{6}
+   (H_{j-1}+4h_j+H_j)
+   +\operatorname{rem}_jh_j\\
+ &=(\widetilde r_j+\operatorname{rem}_j)h_j=r_jh_j.
+\end{align*}
+Thus the weights resemble Simpson quadrature, but only exactness on
+constants and linear functions is used.  Moreover, both $\nu_j$ and
+$\lambda_j$ are positive of mass $r_j$, so
+\[
+ \|\mu_j\|_{\rm TV}\le
+ \|\nu_j\|_{\rm TV}+\|\lambda_j\|_{\rm TV}=2r_j\le Cd_j.
+\]
 Here $d_j=\min(j,2M-j)$, a band has height width
 $a_j\asymp d_j/M^2$, and its radius scale is $R_j\asymp d_j/M$.
 
@@ -548,21 +725,53 @@ Rotational invariance and constancy of the spherical potential give
                          d(\nu_z-\lambda)(t)
  =-\sum_{j,k}(\mu_j\otimes\mu_k)(F_\alpha).          \tag{5.1}
 \]
-Indeed, the terms linear in $\nu_z-\lambda$ vanish because
-$\int F_\alpha(s,t)d\lambda(t)=NI_\alpha$ is independent of $s$.
+Indeed, put $\mu=\nu_z-\lambda=\sum_j\mu_j$.  Since both $\nu_z$ and
+$\lambda$ have mass $N$,
+\begin{align*}
+ E_\alpha[\nu]
+ &=\iint F_\alpha\,d(\lambda+\mu)d(\lambda+\mu)\\
+ &=\iint F_\alpha\,d\lambda d\lambda
+   +2\iint F_\alpha\,d\lambda d\mu
+   +\iint F_\alpha\,d\mu d\mu.
+\end{align*}
+The first term is $I_\alpha N^2$.  In the second,
+$\int F_\alpha(s,t)d\lambda(t)=NI_\alpha$ is independent of $s$, so it is
+$NI_\alpha\mu([-1,1])=0$.  This proves
+$A_{\alpha,N}=-\iint F_\alpha\,d\mu d\mu$ and, after inserting
+$\mu=\sum_j\mu_j$, the displayed band identity.
+
+We shall repeatedly use the following elementary form of the two-moment
+Peano estimate.  If a signed measure $\mu$ is supported on an interval of
+length $a$ and annihilates $1$ and $t$, then Taylor's formula at any point
+$c$ of that interval gives
+\[
+ \left|\int f\,d\mu\right|
+ \le\frac12\|\mu\|_{\rm TV}a^2
+ \sup|f''|.
+\]
+Applying this first in $s$ and then in $t$ yields
+\begin{equation}\label{eq:tenslopeano}
+ |(\mu_j\otimes\mu_k)(F)|
+ \le\frac14\|\mu_j\|_{\rm TV}\|\mu_k\|_{\rm TV}
+ a_j^2a_k^2
+ \sup_{B_j\times B_k}|\partial_s^2\partial_t^2F|.    \tag{5.2}
+\end{equation}
+On rectangles meeting the diagonal, the proof instead applies this
+identity after rescaling the integrable power or quadratic-log model to a
+fixed square.
 
 \begin{lemma}[power-kernel blocks]\label{lem:blocks}
 For comparable scales $d_j/2\le d_k\le2d_j$,
 \begin{equation}\label{eq:comparableblock}
  |(\mu_j\otimes\mu_k)(F_\alpha)|
  \le C_\alpha\frac{d_j}{M^\alpha}
- (1+|j-k|)^{\alpha-3}.                               \tag{5.2}
+ (1+|j-k|)^{\alpha-3}.                               \tag{5.3}
 \end{equation}
 If $d_k>2d_j$ and the bands are in the same hemisphere,
 \begin{equation}\label{eq:farblock}
  |(\mu_j\otimes\mu_k)(F_\alpha)|
  \le C_\alpha\frac{d_j^3}
- {M^\alpha d_k^{5-\alpha}}.                          \tag{5.3}
+ {M^\alpha d_k^{5-\alpha}}.                          \tag{5.4}
 \end{equation}
 Opposite-hemisphere pairs away from the equator have the smooth Peano bound
 $Cd_j^3d_k^3/M^8$.
@@ -605,7 +814,7 @@ for the corresponding hypergeometric function, gives, for $0<x<c<1$,
  \begin{cases}
  x^\nu B_\alpha(x),&\alpha\ne1,\\
  c_1x\log x+x^{3/2}B_1(x),&\alpha=1,
- \end{cases}                                         \tag{5.4}
+ \end{cases}                                         \tag{5.5}
 \end{equation}
 Here $H_\alpha$ is analytic for $|x|<c$.  In the nonresonant case
 $B_\alpha$ is analytic there, its derivatives through order four are
@@ -629,7 +838,7 @@ $x=c(s,t)(s-t)^2$ and
 \begin{equation}\label{eq:resonantextraction}
  x\log x
  =2c(s,t)(s-t)^2\log|s-t|
-  +c(s,t)\log c(s,t)\,(s-t)^2.                       \tag{5.5}
+  +c(s,t)\log c(s,t)\,(s-t)^2.                       \tag{5.6}
 \end{equation}
 On a comparable nonpolar rectangle $c$ is positive and smooth.  Freezing
 its coefficients leaves the standard fixed-square cusp
@@ -647,7 +856,7 @@ bound by direct differentiation of \eqref{eq:hexpalpha}; for the resonant
 higher-order branch only this separated-region estimate is used.  Thus
 \begin{equation}\label{eq:powerder}
  |\partial_s^2\partial_t^2F_\alpha(s,t)|
- \le C_\alpha R^{-2-\alpha}|s-t|^{\alpha-3}.         \tag{5.6}
+ \le C_\alpha R^{-2-\alpha}|s-t|^{\alpha-3}.         \tag{5.7}
 \end{equation}
 For neighboring blocks, rescale both height variables by $a_j$.  The tensor
 Taylor polynomial of the analytic part of degree at most one in each
@@ -698,7 +907,7 @@ for $m\ge2$ and $0\le i,j\le2$, that
  \left|\partial_s^i\partial_t^j
  \{A^{\alpha/2-2m}4^mu^mv^m\}\right|
  \le C_\alpha(1+m)^4
- A^{\alpha/2-i-j}\bigl(Q^{m-2}+Q^m\bigr).           \tag{5.7}
+ A^{\alpha/2-i-j}\bigl(Q^{m-2}+Q^m\bigr).           \tag{5.8}
 \end{equation}
 Indeed, differentiating $A$ produces $A^{-1}$, while removing one factor
 of $u$ or $v$ is accompanied by the complementary factor $v/A^2$ or
@@ -754,9 +963,30 @@ For unequal scales, \eqref{eq:farblock} gives
  \le\frac{C_\alpha}{M^\alpha}
  \sum_{d_k\le M}d_k^{\alpha-1}\le C_\alpha.
 \]
+Here
+\[
+ \sum_{d_j<d_k/2}d_j^3\le C d_k^4,
+\]
+and, for every $\alpha>0$,
+\[
+ \sum_{d\le M}d^{\alpha-1}\le C_\alpha M^\alpha.
+\]
+The reverse orientation gives the same estimate by symmetry.  The
+comparable calculation also uses the explicit bounds
+\[
+ \sum_jd_j\le CM^2,\qquad
+ \sum_{\ell\in\mathbb Z}(1+|\ell|)^{\alpha-3}<\infty,
+\]
+the latter being finite precisely because $\alpha<2$.
 The smooth opposite-hemisphere double sum is also $O(1)$.
 More explicitly, summing $d_j^3d_k^3/M^8$ over the two hemispheres gives
-$M^{-8}(\sum_{d\le M}d^3)^2=O(1)$.
+\[
+ \frac1{M^8}
+ \left(\sum_{d\le M}d^3\right)^2
+ =\frac1{M^8}
+ \left(\frac{M^2(M+1)^2}{4}\right)^2
+ =O(1).
+\]
 \end{proof}
 
 \section{Completion}
@@ -768,6 +998,19 @@ with \eqref{eq:decomp}, give
  0\le D_{\alpha,N}\le C_\alpha M^{2-\alpha}
  \asymp C_\alpha N^{1-\alpha/2}.
 \]
+For completeness, put $\beta=1-\alpha/2\in(0,1)$.  From
+\[
+ 4M^2\le N<4(M+1)^2\le16M^2\qquad(M\ge1)
+\]
+we obtain
+\[
+ 2^{2\beta}M^{2-\alpha}
+ \le N^\beta
+ <2^{4\beta}M^{2-\alpha}.
+\]
+Thus the two scales are comparable with constants depending only on
+$\alpha$.  Absorbing the finitely many values with $M=0$ into the constant
+proves the upper estimate for all sufficiently large $N$.
 The matching lower bound for every configuration is \eqref{eq:optimalorder}.
 \end{proof}
 

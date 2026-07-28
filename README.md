@@ -28,8 +28,8 @@ lake build
 latexmk -pdf BEMOCRieszEnergies.tex
 ```
 
-The proof-completion checkpoint is Git commit `1287c26`.  At that checkpoint
-the full Lean build passes, the paper builds to a 10-page PDF, and the
+The proof-completion checkpoint is Git commit `1287c26`.  The full Lean
+build passes, the expanded paper builds to a 13-page PDF, and the
 project-owned Lean sources contain no `sorry`, `admit`, custom `axiom`, or
 `opaque` declarations.
 

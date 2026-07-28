@@ -258,7 +258,7 @@ checks the complete dependency graph.
 The completion checkpoint satisfies all project gates:
 
 - `lake build` completes all 6,767 targets;
-- a forced `latexmk` build produces the 10-page paper without TeX errors,
+- a forced `latexmk` build produces the 13-page paper without TeX errors,
   undefined references, or bad boxes;
 - every newly added module is transitively reachable from
   `BEMOCFormalization.lean`;

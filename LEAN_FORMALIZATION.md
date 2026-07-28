@@ -12,8 +12,9 @@ lake build
 
 The upper-bound proof was completed at Git checkpoint `1287c26` on
 28 July 2026.  A clean full build completed all 6,767 targets.  A forced
-`latexmk` rebuild produced `BEMOCRieszEnergies.pdf` with 10 pages and no
-TeX errors, undefined references, or bad boxes.
+`latexmk` rebuild of the expanded manuscript produced
+`BEMOCRieszEnergies.pdf` with 13 pages and no TeX errors, undefined
+references, or bad boxes.
 
 The strict source audit
 
@@ -226,7 +227,8 @@ split into checked modules under `BEMOCFormalization/`.
   premise-free pointwise `4PH+36PHQ` bound for the full displayed formula;
 - literal comparable same-hemisphere rectangle geometry: a common radius
   floor, a matching radius ceiling, an angular-scale floor, and the
-  index-distance height separation used in equation (5.5);
+  index-distance height separation used in the separated comparable-block
+  calculation;
 - differentiation of the defining reduced-cusp angular integral through
   order four, together with a quadratic-cosine comparison and the sharp
   half-power moment bound
@@ -264,8 +266,8 @@ split into checked modules under `BEMOCFormalization/`.
   monomial bound `16 A^(β-4) Q^(m-2)` even when a squared radius vanishes;
 - the real generalized-binomial theorem on `|q|<1`, sum--integral exchange
   for the angular average, exact cancellation of all odd cosine moments,
-  and the resulting identity of the actual latitude kernel with the even
-  series in equation (5.6);
+  and the resulting identity of the actual latitude kernel with the
+  unequal-scale even series;
 - the complete derivative chain for every even-series summand through
   `Dsstt`, including its identification with Lean's iterated mixed `(2,2)`
   derivative;
