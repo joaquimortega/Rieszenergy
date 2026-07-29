@@ -131,7 +131,6 @@ theorem fourierCoeff_smoothedCuspCircle_neg
       fourierCoeff (smoothedCuspCircle p δ hp hδ) n := by
   rw [fourierCoeff_smoothedCuspCircle_eq_cosCoeff hp hδ,
     fourierCoeff_smoothedCuspCircle_eq_cosCoeff hp hδ]
-  push_cast
   rw [smoothedCuspCosCoeff_neg]
 
 theorem summable_fourierCoeff_smoothedCuspCircle
@@ -167,7 +166,7 @@ theorem summable_fourierCoeff_smoothedCuspCircle
   exact Summable.of_nat_of_neg_add_one hpos hneg
 
 theorem fourierCoeff_smoothedCuspCircle_int_bound
-    {α δ : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {α δ : ℝ} (hα0 : 0 < α) (_hα2 : α < 2)
     (hδ : 0 ≤ δ) {C : ℝ}
     (hbound : ∀ n : ℕ, 1 ≤ n →
       ‖fourierCoeff
@@ -358,7 +357,7 @@ theorem circleCos_one_coe (x : ℝ) :
       ((2 * Real.pi * x : ℝ) : ℂ) * Complex.I by
         push_cast
         ring]
-  convert Complex.exp_ofReal_mul_I_re (2 * Real.pi * x) using 1 <;> ring
+  convert Complex.exp_ofReal_mul_I_re (2 * Real.pi * x) using 1 ; ring_nf
 
 theorem smoothedCuspCircle_coe
     {p δ : ℝ} (hp : 0 < p) (hδ : 0 ≤ δ) (x : ℝ) :
@@ -382,7 +381,7 @@ theorem smoothedCuspCircle_shiftedRootPoint
   congr 3
   have hpi : 2 * Real.pi ≠ 0 := by positivity
   field_simp
-  ring
+  ring_nf
 
 theorem sum_zmod_val_eq_sum_range
     (L : ℕ) [NeZero L] (F : ℕ → ℝ) :
@@ -460,7 +459,7 @@ theorem fourierCoeff_smoothedCuspCircle_zero_eq_interval
 /-- Scaling from a general nonnegative affine cosine profile to the
 normalised smoothed cusp. -/
 theorem affineCosine_rpow_eq_scaledCusp
-    {p A B : ℝ} (hp : 0 < p) (hB : 0 < B) (hAB : B ≤ A)
+    {p A B : ℝ} (_hp : 0 < p) (hB : 0 < B) (hAB : B ≤ A)
     (θ : ℝ) :
     (A - B * Real.cos θ) ^ p =
       B ^ p *

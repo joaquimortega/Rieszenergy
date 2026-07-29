@@ -216,9 +216,6 @@ theorem summable_normalized_angular_moment_series
     (fun n : ℕ ↦ ‖Ring.choose β n * |q| ^ n‖) hbase
   intro n
   simp only [norm_mul, norm_pow, norm_neg, Real.norm_eq_abs, abs_abs]
-  change
-    |Ring.choose β n| * |q| ^ n * |normalizedCosineMoment n| ≤
-      |Ring.choose β n| * |q| ^ n
   calc
     |Ring.choose β n| * |q| ^ n * |normalizedCosineMoment n| ≤
         |Ring.choose β n| * |q| ^ n * 1 := by

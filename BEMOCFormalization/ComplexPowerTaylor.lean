@@ -114,8 +114,7 @@ theorem taylorWithinEval_powerFun_two (p : ℂ) {m : ℕ} (hm : 1 ≤ m) (x : �
   rw [h1', h2]
   rw [hf2]
   norm_num [fallingCoeff, powerFun]
-  push_cast
-  ring
+  ring_nf
   simp
 
 theorem powerFun_taylor_two_bound {p : ℂ} (hp : p.re < 2)
@@ -252,7 +251,6 @@ theorem intervalIntegral_taylorPolyTwo (p : ℂ) (m : ℕ) :
     intervalIntegral.integral_mul_const, intervalIntegral.integral_div]
   rw [hlin, hsq]
   dsimp [A, B, C]
-  push_cast
   ring
 
 noncomputable def taylorRemainderTwo (p : ℂ) (m : ℕ) (x : ℝ) : ℂ :=
@@ -340,7 +338,7 @@ theorem derivativeRemainderOne_bound {p : ℂ} (hp : p.re < 2)
               ((p - 1) * (m : ℂ) ^ ((p - 1) - 1)))) := by
     unfold powerFun
     push_cast
-    ring
+    ring_nf
   rw [heq, norm_mul]
   have hres :
       ‖powerFun (p - 1) (m + 1) -

@@ -67,14 +67,14 @@ theorem hasDerivAt_trapezoidKernel (a b x : ℝ) :
     HasDerivAt (trapezoidKernel a b) (trapezoidKernel' a b x) x := by
   unfold trapezoidKernel trapezoidKernel'
   convert (((hasDerivAt_id x).sub_const a).mul
-    ((hasDerivAt_const x b).sub (hasDerivAt_id x))).div_const 2 using 1 <;>
-    (try simp only [id_eq]) <;> ring
+    ((hasDerivAt_const x b).sub (hasDerivAt_id x))).div_const 2 using 1 ;
+    (try simp only [id_eq]) ; ring
 
 theorem hasDerivAt_trapezoidKernel' (a b x : ℝ) :
     HasDerivAt (trapezoidKernel' a b) (-1) x := by
   unfold trapezoidKernel'
-  convert (hasDerivAt_const x ((a + b) / 2)).sub (hasDerivAt_id x) using 1 <;>
-    (try simp only [id_eq]) <;> ring
+  convert (hasDerivAt_const x ((a + b) / 2)).sub (hasDerivAt_id x) using 1 ;
+    ring
 
 @[simp] theorem trapezoidKernel_left (a b : ℝ) : trapezoidKernel a b a = 0 := by
   simp [trapezoidKernel]
@@ -118,8 +118,8 @@ theorem hasDerivAt_peanoKernel (a b x : ℝ) :
     (((hasDerivAt_const x (b - a)).mul (((hasDerivAt_id x).sub_const a).pow 2)).div_const 4)
     |>.add
       (((hasDerivAt_const x ((b - a) ^ 2)).mul
-        ((hasDerivAt_id x).sub_const a)).div_const 12) using 1 <;>
-    (try simp only [id_eq]) <;> ring
+        ((hasDerivAt_id x).sub_const a)).div_const 12) using 1 ;
+    (try simp only [id_eq]) ; ring
 
 /-- A deliberately simple uniform bound for the cubic Peano kernel.  The
 constant `1/2` is not optimized; its scale `(b-a)³` is what is needed. -/
@@ -425,12 +425,12 @@ theorem composite_trapezoid_corrected
     convert intervalIntegral.sum_integral_adjacent_intervals
       (a := fun k : ℕ ↦ (k : ℝ) / (w : ℝ))
       (f := g) (μ := volume)
-      (fun _ _ ↦ hcont.intervalIntegrable _ _) using 1 <;> simp [hw0]
+      (fun _ _ ↦ hcont.intervalIntegrable _ _) using 1 ; simp [hw0]
   have htel :
       (∑ k ∈ Finset.range w,
         (g' (((k + 1 : ℕ) : ℝ) / (w : ℝ)) - g' ((k : ℝ) / (w : ℝ)))) =
         g' 1 - g' 0 := by
-    convert Finset.sum_range_sub (fun k : ℕ ↦ g' ((k : ℝ) / (w : ℝ))) w using 1 <;>
+    convert Finset.sum_range_sub (fun k : ℕ ↦ g' ((k : ℝ) / (w : ℝ))) w using 1 ;
       simp [hw0]
   rw [← hsum]
   simp_rw [hstep]
@@ -512,12 +512,12 @@ theorem composite_trapezoid_corrected_of_integrable
     convert intervalIntegral.sum_integral_adjacent_intervals
       (a := fun k : ℕ ↦ (k : ℝ) / (w : ℝ))
       (f := g) (μ := volume)
-      (fun _ _ ↦ hcont.intervalIntegrable _ _) using 1 <;> simp [hw0]
+      (fun _ _ ↦ hcont.intervalIntegrable _ _) using 1 ; simp [hw0]
   have htel :
       (∑ k ∈ Finset.range w,
         (g' (((k + 1 : ℕ) : ℝ) / (w : ℝ)) - g' ((k : ℝ) / (w : ℝ)))) =
         g' 1 - g' 0 := by
-    convert Finset.sum_range_sub (fun k : ℕ ↦ g' ((k : ℝ) / (w : ℝ))) w using 1 <;>
+    convert Finset.sum_range_sub (fun k : ℕ ↦ g' ((k : ℝ) / (w : ℝ))) w using 1 ;
       simp [hw0]
   rw [← hsum]
   simp_rw [hstep]
@@ -590,7 +590,7 @@ theorem abs_composite_trapezoid_corrected_le_integral_abs
     convert intervalIntegral.sum_integral_adjacent_intervals
       (a := fun k : ℕ ↦ (k : ℝ) / (w : ℝ))
       (f := fun x ↦ |g''' x|) (μ := volume)
-      (fun k hk ↦ (hcellInt k hk).abs) using 1 <;> simp [hwR.ne']
+      (fun k hk ↦ (hcellInt k hk).abs) using 1 ; simp [hwR.ne']
   calc
     |∑ k ∈ Finset.range w,
         ∫ x in ((k : ℝ) / (w : ℝ))..(((k + 1 : ℕ) : ℝ) / (w : ℝ)),

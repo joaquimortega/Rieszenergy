@@ -85,7 +85,7 @@ theorem iteratedDeriv_one_add_rpow (p : ℝ) :
             (fallingCoeff p n)
       rw [hd.deriv, fallingCoeff_succ]
       push_cast
-      ring
+      ring_nf
 
 theorem iteratedDerivWithin_Ioi_neg_one_at_zero (p : ℝ) (n : ℕ) :
     iteratedDerivWithin n (fun y : ℝ => (1 + y) ^ p) (Ioi (-1)) 0 =
@@ -356,7 +356,7 @@ theorem tendsto_renormalizedPowerSum {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) 
   · funext N
     ring
   · unfold powerSumConstant
-    ring
+    ring_nf
 
 /-- Membership-form wrapper for the paper's parameter range. -/
 theorem tendsto_renormalizedPowerSum_of_mem_Ioo {α : ℝ} (hα : α ∈ Ioo 0 2) :
@@ -380,7 +380,6 @@ theorem renormalizedPowerSum_one (N : ℕ) :
     renormalizedPowerSum 1 N = -1 / 12 := by
   rw [renormalizedPowerSum, powerSum_one, Real.rpow_one]
   norm_num
-  push_cast
   by_cases hN : N = 0
   · simp [hN]
   ring

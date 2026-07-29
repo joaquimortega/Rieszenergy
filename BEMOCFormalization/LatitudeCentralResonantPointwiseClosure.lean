@@ -338,7 +338,7 @@ private theorem abs_central_sqrtProductParameter_sub_le
       |p - q| * (p + q) = |(p - q) * (p + q)| := by
         rw [abs_mul, abs_of_nonneg (by linarith : 0 ≤ p + q)]
       _ = |p ^ 2 - q ^ 2| := by ring_nf
-      _ = |2 * (a * b - c * d)| := by rw [hp, hq]; ring
+      _ = |2 * (a * b - c * d)| := by rw [hp, hq]; ring_nf
       _ = 2 * |a * b - c * d| := by rw [abs_mul]; norm_num
   have hmul : 2 * |p - q| ≤ 160 * δ := by
     calc
@@ -1123,7 +1123,7 @@ theorem central_neighboring_resonantPrincipal_block_bound_raw
       |bandPairError N j k neighboringResonantPrincipalKernel| =
           |bandPairError N j k F - bandPairError N j k Rem| := by
         rw [hsplit]
-        ring
+        ring_nf
       _ ≤ |bandPairError N j k F| + |bandPairError N j k Rem| :=
         abs_sub _ _
   calc
@@ -1220,7 +1220,7 @@ theorem central_neighboring_resonantPrincipal_block_bound
       centralResonantPrincipalRawConstant_nonneg
       hM hcentral hcomp hneigh
       (by
-        convert hraw using 1 <;> norm_num)
+        convert hraw using 1 ; norm_num)
   simpa [centralResonantPrincipalBlockConstant] using hmajor
 
 theorem central_neighboring_resonantModel_block_bound
@@ -1367,7 +1367,7 @@ theorem central_neighboring_resonantHigherBranch_block_bound
       centralResonantHigherBranchRawConstant_nonneg
       hM hcentral hcomp hneigh
       (by
-        convert hraw using 1 <;> norm_num)
+        convert hraw using 1 ; norm_num)
   simpa [centralResonantHigherBranchBlockConstant] using hmajor
 
 /-- Complete central neighboring estimate at the resonant exponent. -/

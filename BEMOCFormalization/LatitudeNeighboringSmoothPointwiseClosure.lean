@@ -553,7 +553,7 @@ theorem neighboringAffineSmoothBlockConstant_nonneg
 /-- The neighboring affine Peano remainder is at the exact comparable
 majorant scale. -/
 theorem abs_bandPairError_neighboringAffineSmoothKernel_le_majorant
-    {α H L : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {α H L : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hM : 3 ≤ bandCount N)
     {j k : Fin (bandTailCount N + 1)}
     (hjk : NeighboringComparableLatitudePair N j k)

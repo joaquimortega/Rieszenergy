@@ -39,15 +39,15 @@ private theorem hasDerivAt_resonantQuadraticMomentPrimitive
   have hqD : HasDerivAt q θ θ := by
     dsimp [q]
     convert (hasDerivAt_const θ x).add
-      ((hasDerivAt_pow 2 θ).div_const 2) using 1 <;> ring
+      ((hasDerivAt_pow 2 θ).div_const 2) using 1 ; ring
   have hsqrt :
       HasDerivAt (fun u ↦ Real.sqrt (q u))
         (θ / (2 * Real.sqrt (q θ))) θ := by
-    convert (Real.hasDerivAt_sqrt hq.ne').comp θ hqD using 1 <;> ring
+    convert (Real.hasDerivAt_sqrt hq.ne').comp θ hqD using 1 ; ring
   have hden :
       HasDerivAt (fun u ↦ x * Real.sqrt (q u))
         (x * (θ / (2 * Real.sqrt (q θ)))) θ :=
-    by convert (hasDerivAt_const θ x).mul hsqrt using 1 <;> ring
+    by convert (hasDerivAt_const θ x).mul hsqrt using 1 ; ring
   have hden0 : x * Real.sqrt (q θ) ≠ 0 := by positivity
   have hquot :=
     (hasDerivAt_id θ).div hden hden0
@@ -132,7 +132,7 @@ private theorem abs_rpow_neg_three_halves_sub_le
   have hderiv {z : ℝ} (hz : 0 < z) : HasDerivAt f (f' z) z := by
     dsimp [f, f']
     convert Real.hasDerivAt_rpow_const (x := z)
-      (p := -(3 : ℝ) / 2) (Or.inl hz.ne') using 1 <;> ring
+      (p := -(3 : ℝ) / 2) (Or.inl hz.ne') using 1 ; ring_nf
   have hordered :
       ∀ {u v : ℝ}, L ≤ u → L ≤ v → u ≤ v →
         |u ^ (-(3 : ℝ) / 2) - v ^ (-(3 : ℝ) / 2)| ≤
@@ -237,7 +237,7 @@ theorem abs_resonantMoment_sub_quadraticModel_le_invSqrt
   have hsquare : c ^ 2 * θ ^ 4 ≤ L ^ 2 := by
     have hsq :=
       pow_le_pow_left₀ (mul_nonneg hc.le (sq_nonneg θ)) hctheta 2
-    convert hsq using 1 <;> ring
+    convert hsq using 1 ; ring
   have hpow :
       θ ^ 4 * L ^ (-(5 : ℝ) / 2) ≤
         c⁻¹ ^ 2 * L ^ (-(1 : ℝ) / 2) := by
@@ -409,7 +409,7 @@ theorem abs_reducedCuspMoment_one_neg_three_halves_sub_model_le
         ∫ θ in (-Real.pi)..Real.pi, f θ := by
     have h := hfper.intervalIntegral_add_eq (-Real.pi) 0
     symm
-    convert h using 1 <;> ring
+    convert h using 1 <;> ring_nf
   have hpoint :
       ∀ θ ∈ Ι (-Real.pi) Real.pi,
         ‖f θ - g θ‖ ≤
@@ -736,7 +736,7 @@ theorem reducedCuspResonantD1Remainder_eq_integral
         (hasDerivAt_reducedLatitudeCuspD1Value
           (α := 1) hy0).sub
             ((hasDerivAt_const y
-              reducedCuspResonantPrincipalCoefficient).mul hlog) using 1 <;>
+              reducedCuspResonantPrincipalCoefficient).mul hlog) using 1 ;
         ring
     · apply ContinuousOn.intervalIntegrable_of_Icc hx1
       intro y hy

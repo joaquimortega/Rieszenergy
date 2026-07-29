@@ -136,7 +136,7 @@ theorem angularPairKernel_neg
 
 set_option maxHeartbeats 800000 in
 theorem integral_uniform_angularPairKernel
-    (P Q : OccupiedRing) {α : ℝ} (hα : 0 < α) (θ : ℝ) :
+    (P Q : OccupiedRing) {α : ℝ} (_hα : 0 < α) (θ : ℝ) :
     (∫ φ : ℝ,
         dist
           (parallelPoint P.height θ P.height_mem)
@@ -150,7 +150,7 @@ theorem integral_uniform_angularPairKernel
   have hshift :
       (∫ t : ℝ in -θ..2 * Real.pi - θ, g t) =
         ∫ t : ℝ in (0 : ℝ)..2 * Real.pi, g t := by
-    convert hg.intervalIntegral_add_eq (-θ) 0 using 1 <;> ring
+    convert hg.intervalIntegral_add_eq (-θ) 0 using 1 <;> ring_nf
   calc
     (∫ φ : ℝ,
         dist

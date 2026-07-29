@@ -66,7 +66,7 @@ theorem taylor_one_zero (L : TwoMomentFunctional) (f : ℝ → ℝ) :
       taylorWithinEval f 1 (Icc L.a L.b) L.a x =
         f L.a + (x - L.a) * derivWithin f (Icc L.a L.b) L.a := by
     intro x
-    simpa using taylorWithinEval_succ f 0 (Icc L.a L.b) L.a x
+    simp [taylorWithinEval_succ]
   rw [show (fun x ↦ taylorWithinEval f 1 (Icc L.a L.b) L.a x) =
       fun x ↦ f L.a + (x - L.a) * derivWithin f (Icc L.a L.b) L.a by
         funext x; exact hformula x]
@@ -97,7 +97,7 @@ theorem abs_eval_le_of_secondDerivative
       taylorWithinEval f 1 (Icc L.a L.b) L.a x =
         f L.a + (x - L.a) * derivWithin f (Icc L.a L.b) L.a := by
     intro x
-    simpa using taylorWithinEval_succ f 0 (Icc L.a L.b) L.a x
+    simp [taylorWithinEval_succ]
   have hbound : ∀ x ∈ Icc L.a L.b, |R x| ≤ C * L.width ^ 2 := by
     intro x hx
     have hTaylor := taylor_mean_remainder_bound (f := f) (n := 1)

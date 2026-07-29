@@ -156,7 +156,7 @@ theorem LatitudeGenericComparableRadiusChart.normalizedGap_le
 
 /-- The generic chart supplies the sharp angular power jet. -/
 theorem LatitudeGenericComparableRadiusChart.powerJet
-    {α s t R K : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {α s t R K : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
     (h : LatitudeGenericComparableRadiusChart s t R K) :
     LatitudeComparablePowerJetGradedBound α s t R
       (latitudeComparablePowerJetConstant α) := by
@@ -309,7 +309,7 @@ theorem LatitudeGenericComparableRadiusChart.rawCuspSeparated
           R ^ (4 - 2 * α)) := by
         dsimp [d, c] at hpow1 ⊢
         gcongr
-        convert hpow1 using 1 <;> ring
+        convert hpow1 using 1 ; ring_nf
       _ ≤ C * R ^ (4 - 2 * α) * d ^ (α - 2) := by
         have hnon : 0 ≤ R ^ (4 - 2 * α) * d ^ (α - 2) := by
           positivity
@@ -323,7 +323,7 @@ theorem LatitudeGenericComparableRadiusChart.rawCuspSeparated
           R ^ (6 - 2 * α)) := by
         dsimp [d, c] at hpow2 ⊢
         gcongr
-        convert hpow2 using 1 <;> ring
+        convert hpow2 using 1 ; ring_nf
       _ ≤ C * R ^ (6 - 2 * α) * d ^ (α - 3) := by
         have hnon : 0 ≤ R ^ (6 - 2 * α) * d ^ (α - 3) := by
           positivity
@@ -337,7 +337,7 @@ theorem LatitudeGenericComparableRadiusChart.rawCuspSeparated
           R ^ (10 - 2 * α)) := by
         dsimp [d, c] at hpow3 ⊢
         gcongr
-        convert hpow3 using 1 <;> ring
+        convert hpow3 using 1 ; ring_nf
       _ ≤ C * R ^ (10 - 2 * α) * d ^ (α - 5) := by
         have hnon : 0 ≤ R ^ (10 - 2 * α) * d ^ (α - 5) := by
           positivity
@@ -351,7 +351,7 @@ theorem LatitudeGenericComparableRadiusChart.rawCuspSeparated
           R ^ (14 - 2 * α)) := by
         dsimp [d, c] at hpow4 ⊢
         gcongr
-        convert hpow4 using 1 <;> ring
+        convert hpow4 using 1 ; ring_nf
       _ ≤ C * R ^ (14 - 2 * α) * d ^ (α - 7) := by
         have hnon : 0 ≤ R ^ (14 - 2 * α) * d ^ (α - 7) := by
           positivity
@@ -451,7 +451,7 @@ theorem genericComparableChart_firstMixedBlock
       SeparatedScaledAbs R d (-8) 2 1
         (normalizedLatitudeGapDt s t ^ 2) := by
     have hm := hqt.mul hR hd hqt (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hc0 :
       SeparatedScaledAbs R d 0 0 H
         (latitudeCusp0 α s t) := by
@@ -526,7 +526,7 @@ theorem genericComparableChart_firstMixedBlock
           P * (H * Q) * K ^ (1 : ℝ))
         (latitudePowerDss α s t * latitudeCusp0Dtt α s t) := by
     unfold latitudeCusp0Dtt
-    convert hz3A'.add hz3B' using 1 <;> ring
+    convert hz3A'.add hz3B' using 1 ; ring
   let C : ℝ :=
     P * H * K ^ (3 - α) +
       2 * (P * H * K ^ (2 : ℝ)) +
@@ -654,7 +654,7 @@ theorem genericComparableChart_secondMixedBlock
       SeparatedScaledAbs R d (-8) 2 1
         (normalizedLatitudeGapDt s t ^ 2) := by
     have hm := hqt.mul hR hd hqt (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hc1 :
       SeparatedScaledAbs R d (4 - 2 * α) (α - 2) H
         (latitudeCusp1 α s t) := by
@@ -860,28 +860,28 @@ theorem genericComparableChart_thirdMixedBlock
   have hqs2 : SeparatedScaledAbs R d (-8) 2 1
       (normalizedLatitudeGapDs s t ^ 2) := by
     have hm := hqs.mul hR hd hqs (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hqt2 : SeparatedScaledAbs R d (-8) 2 1
       (normalizedLatitudeGapDt s t ^ 2) := by
     have hm := hqt.mul hR hd hqt (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hgap1 : SeparatedScaledAbs R d (-8) 1 (2 * G₁)
       (2 * normalizedLatitudeGapDs s t *
         normalizedLatitudeGapDst s t) := by
     have hm := hqs.mul hR hd hqst (by norm_num) hG₁0
     have hc := hm.const_mul (c := (2 : ℝ))
-    convert hc using 1 <;> norm_num <;> ring
+    convert hc using 1 <;> norm_num ; ring
   have hgap2A : SeparatedScaledAbs R d (-8) 0 (2 * G₁ ^ 2)
       (2 * normalizedLatitudeGapDst s t ^ 2) := by
     have hm := hqst.mul hR hd hqst hG₁0 hG₁0
     have hc := hm.const_mul (c := (2 : ℝ))
-    convert hc using 1 <;> norm_num <;> ring
+    convert hc using 1 <;> norm_num ; ring
   have hgap2Braw : SeparatedScaledAbs R d (-10) 1 (2 * G₂)
       (2 * normalizedLatitudeGapDs s t *
         normalizedLatitudeGapDstt s t) := by
     have hm := hqs.mul hR hd hqstt (by norm_num) hG₂0
     have hc := hm.const_mul (c := (2 : ℝ))
-    convert hc using 1 <;> norm_num <;> ring
+    convert hc using 1 <;> norm_num ; ring
   have hgap2B := hgap2Braw.shift hR hd hK0
     (by norm_num : (0 : ℝ) ≤ 1) hsep (by positivity)
   have hgap2B' : SeparatedScaledAbs R d (-8) 0 (2 * G₂ * K)
@@ -1059,7 +1059,7 @@ theorem genericComparableChart_fourthMixedBlock
   have hqt2 : SeparatedScaledAbs R d (-8) 2 1
       (normalizedLatitudeGapDt s t ^ 2) := by
     have hm := hqt.mul hR hd hqt (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hqss : SeparatedScaledAbs R d (-4) 0 Q
       (normalizedLatitudeGapDss s t) := by
     unfold SeparatedScaledAbs

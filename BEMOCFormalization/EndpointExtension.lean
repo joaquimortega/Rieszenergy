@@ -61,7 +61,7 @@ private theorem hasDerivAt_leftQuadratic
   convert
     ((hasDerivAt_const x (f 0)).add
       ((hasDerivAt_id x).const_mul (f' 0))).add
-      (((hasDerivAt_pow 2 x).const_mul (f'' 0 / 2))) using 1 <;> ring
+      (((hasDerivAt_pow 2 x).const_mul (f'' 0 / 2))) using 1 ; ring
 
 private theorem hasDerivAt_rightQuadratic
     (f f' f'' : ℝ → ℝ) (x : ℝ) :
@@ -73,19 +73,19 @@ private theorem hasDerivAt_rightQuadratic
     (hasDerivAt_id x).sub_const 1
   convert
     ((hasDerivAt_const x (f 1)).add (hsub.const_mul (f' 1))).add
-      (((hsub.pow 2).const_mul (f'' 1 / 2))) using 1 <;> ring
+      (((hsub.pow 2).const_mul (f'' 1 / 2))) using 1 ; ring
 
 private theorem hasDerivAt_leftLinear
     (f' f'' : ℝ → ℝ) (x : ℝ) :
     HasDerivAt (fun y : ℝ => f' 0 + f'' 0 * y) (f'' 0) x := by
   convert (hasDerivAt_const x (f' 0)).add
-    ((hasDerivAt_id x).const_mul (f'' 0)) using 1 <;> ring
+    ((hasDerivAt_id x).const_mul (f'' 0)) using 1 ; ring
 
 private theorem hasDerivAt_rightLinear
     (f' f'' : ℝ → ℝ) (x : ℝ) :
     HasDerivAt (fun y : ℝ => f' 1 + f'' 1 * (y - 1)) (f'' 1) x := by
   convert (hasDerivAt_const x (f' 1)).add
-    (((hasDerivAt_id x).sub_const 1).const_mul (f'' 1)) using 1 <;> ring
+    (((hasDerivAt_id x).sub_const 1).const_mul (f'' 1)) using 1 ; ring
 
 theorem quadraticJetExtension_hasDerivAt
     (f f' f'' : ℝ → ℝ)

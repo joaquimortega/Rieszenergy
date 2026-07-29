@@ -296,12 +296,12 @@ theorem neighboring_power_cusp_scale
         _ = _ := by
           rw [← Real.rpow_add hR]
           congr 2
-          ring
+          ring_nf
 
 /-- The universal geometric factor in both nonresonant neighboring
 power branches has the expected physical cusp scale. -/
 theorem neighboringComparable_powerFactor_le
-    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {α : ℝ} (hα0 : 0 < α) (_hα2 : α < 2)
     {N : ℕ} (hM : 1 ≤ bandCount N)
     {j k : Fin (bandTailCount N + 1)}
     (hjk : NeighboringComparableLatitudePair N j k)
@@ -630,7 +630,7 @@ private theorem neighboringCuspScale_identity
     _ = (10 : ℝ) ^ (2 + α) * 6 ^ (1 + α) *
         d ^ (-1 : ℝ) * M ^ (-α) := by
       rw [← Real.rpow_add hd, ← Real.rpow_add hM]
-      congr 1 <;> ring
+      congr 1 <;> ring_nf
 
 /-- A rectangle bound by a physical neighboring cusp is already at the
 comparable block scale.  This is the literal fixed-rectangle transfer used
@@ -900,7 +900,7 @@ def HasLargeDepthNeighboringLowerSmoothBlockBound
 
 theorem neighboringComparable_largeDepth_upper_block_bound
     {α C : ℝ} (hα1 : 1 < α) (hα2 : α < 2)
-    {N : ℕ} (hM : 3 ≤ bandCount N) (hC : 0 ≤ C)
+    {N : ℕ} (hM : 3 ≤ bandCount N) (_hC : 0 ≤ C)
     (hsmooth : HasLargeDepthNeighboringUpperSmoothBlockBound α N C) :
     HasLargeDepthNeighboringComparableLatitudeBlockBound α N
       (C + neighboringUpperBranchBlockConstant α) := by
@@ -937,7 +937,7 @@ theorem neighboringComparable_largeDepth_upper_block_bound
 
 theorem neighboringComparable_largeDepth_lower_block_bound
     {α C : ℝ} (hα0 : 0 < α) (hα1 : α < 1)
-    {N : ℕ} (hM : 3 ≤ bandCount N) (hC : 0 ≤ C)
+    {N : ℕ} (hM : 3 ≤ bandCount N) (_hC : 0 ≤ C)
     (hsmooth : HasLargeDepthNeighboringLowerSmoothBlockBound α N C) :
     HasLargeDepthNeighboringComparableLatitudeBlockBound α N
       (C + neighboringLowerBranchBlockConstant α) := by
@@ -1048,7 +1048,7 @@ theorem neighboring_normalized_resonant_coefficients_bounded
     (hsceil : heightRadius s ≤ 40 * R)
     (htceil : heightRadius t ≤ 40 * R)
     (hq0 : 0 ≤ normalizedLatitudeGap s t)
-    (hq1 : normalizedLatitudeGap s t ≤ 1) :
+    (_hq1 : normalizedLatitudeGap s t ≤ 1) :
     0 < neighboringNormalizedQuadraticCoefficient R s t ∧
       neighboringNormalizedQuadraticCoefficient R s t ≤ (1 : ℝ) / 2 ∧
       0 < neighboringNormalizedAngularCoefficient R s t ∧

@@ -10,7 +10,7 @@ namespace BEMOC
 noncomputable def squareWithinRingScale (α : ℝ) (m : ℕ) : ℝ :=
   if m = 0 then 1 else (m : ℝ) ^ (2 - α)
 
-theorem squareWithinRingScale_pos {α : ℝ} (hα2 : α < 2) (m : ℕ) :
+theorem squareWithinRingScale_pos {α : ℝ} (_hα2 : α < 2) (m : ℕ) :
     0 < squareWithinRingScale α m := by
   rw [squareWithinRingScale]
   split_ifs with hm
@@ -126,8 +126,8 @@ theorem integral_withinRingLimitProfile {α : ℝ} (hα : -2 < α) :
       rcases hx with ⟨hx0, hx1⟩
       nlinarith [sq_nonneg x]
     have hb : HasDerivAt (fun y : ℝ => 2 - y ^ 2) (-2 * x) x := by
-      convert (hasDerivAt_const x 2).sub ((hasDerivAt_id x).pow 2) using 1 <;>
-        simp [id] <;> ring
+      convert (hasDerivAt_const x 2).sub ((hasDerivAt_id x).pow 2) using 1 ;
+        simp [id]
     have hp := hb.rpow_const (p := 1 + α / 2) (Or.inl hbase)
     have hF := hp.neg.div_const (α + 2)
     have hcoef :

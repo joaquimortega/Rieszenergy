@@ -133,7 +133,7 @@ theorem angularScale_mul_affine_normalizedGap_eq_smooth
       p ^ (α / 2) = p ^ (α / 2 - 1) * p := by
     calc
       p ^ (α / 2) =
-          p ^ ((α / 2 - 1) + 1) := by congr 1 <;> ring
+          p ^ ((α / 2 - 1) + 1) := by congr 1 ; ring
       _ = p ^ (α / 2 - 1) * p ^ (1 : ℝ) :=
         Real.rpow_add hp _ _
       _ = _ := by rw [Real.rpow_one]

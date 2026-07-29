@@ -313,7 +313,7 @@ theorem largerLatitude_row_sum_le
         ∑ k : Fin (bandTailCount N + 1),
           (latitudeBandScale N k : ℝ) ^ (α - 3) := by
       rw [Finset.mul_sum]
-      ring
+      ring_nf
     _ ≤ (A * (latitudeBandScale N j : ℝ)) *
         latitudeComparableSumConstant α := by
       apply mul_le_mul_of_nonneg_left
@@ -389,7 +389,7 @@ theorem latitudeHeadWeight_le_linear
       rw [show (e : ℝ) ^ (4 : ℕ) = (e : ℝ) ^ (4 : ℝ) by
         exact (Real.rpow_natCast (e : ℝ) 4).symm,
         Real.rpow_add heR]
-    _ = (e : ℝ) ^ (α - 1) := by congr 1 <;> ring
+    _ = (e : ℝ) ^ (α - 1) := by congr 1 ; ring
     _ ≤ (e : ℝ) ^ (1 : ℝ) :=
       Real.rpow_le_rpow_of_exponent_le he1 (by linarith)
     _ = (e : ℝ) := by simp

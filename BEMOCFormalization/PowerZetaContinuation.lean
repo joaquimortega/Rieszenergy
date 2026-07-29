@@ -390,15 +390,15 @@ theorem hasDerivAt_zetaPower0 (s : ℂ) {x : ℝ} (hx : 0 < x) :
 theorem hasDerivAt_zetaPower1 (s : ℂ) {x : ℝ} (hx : 0 < x) :
     HasDerivAt (zetaPower1 s) (zetaPower2 s x) x := by
   convert (ComplexPowerTaylor.hasDerivAt_powerFun
-    (p := -s - 1) hx).const_mul (-s) using 1 <;>
-    simp only [zetaPower1, zetaPower2, ComplexPowerTaylor.powerFun] <;>
+    (p := -s - 1) hx).const_mul (-s) using 1 ;
+    simp only [zetaPower1, zetaPower2, ComplexPowerTaylor.powerFun] ;
     ring_nf
 
 theorem hasDerivAt_zetaPower2 (s : ℂ) {x : ℝ} (hx : 0 < x) :
     HasDerivAt (zetaPower2 s) (zetaPower3 s x) x := by
   convert (ComplexPowerTaylor.hasDerivAt_powerFun
-    (p := -s - 2) hx).const_mul ((-s) * (-s - 1)) using 1 <;>
-    simp only [zetaPower2, zetaPower3, ComplexPowerTaylor.powerFun] <;>
+    (p := -s - 2) hx).const_mul ((-s) * (-s - 1)) using 1 ;
+    simp only [zetaPower2, zetaPower3, ComplexPowerTaylor.powerFun] ;
     ring_nf
 
 theorem continuous_zetaPower3_on_Ici (s : ℂ) :
@@ -460,7 +460,7 @@ theorem zetaFiniteIncrement_eq_peano {s : ℂ} (hs1 : s ≠ 1) (n : ℕ) :
       ((b : ℂ) ^ (1 - s) - (a : ℂ) ^ (1 - s)) / (1 - s) := by
     unfold zetaPower0
     rw [integral_cpow (Or.inr ⟨hsneg, hzero⟩)]
-    congr 2 <;> ring
+    congr 2 <;> ring_nf
   rw [hint] at hloc
   dsimp [a, b] at hloc ⊢
   rw [zetaFiniteIncrement, ComplexFinitePart.zetaFiniteApprox,
@@ -469,7 +469,7 @@ theorem zetaFiniteIncrement_eq_peano {s : ℂ} (hs1 : s ≠ 1) (n : ℕ) :
     (fun k : ℕ ↦ (k : ℂ) ^ (-s))
   rw [hsum]
   dsimp [zetaPower0, zetaPower1] at hloc
-  convert hloc using 1 <;> push_cast <;> ring
+  convert hloc using 1 ; push_cast ; ring
 
 /-- Uniform increment bound on a parameter set with lower real-part bound
 and bounded norm.  This is the quantitative input for the local-ball
@@ -515,7 +515,7 @@ theorem norm_zetaFiniteIncrement_le
     have hk : ‖peanoKernelC ((n + 1 : ℕ) : ℝ)
         ((n + 2 : ℕ) : ℝ) x‖ ≤ 1 / 2 := by
       rw [peanoKernelC, Complex.norm_real, Real.norm_eq_abs]
-      convert abs_peanoKernel_le hxIcc using 1 <;> push_cast <;> norm_num
+      convert abs_peanoKernel_le hxIcc using 1 ; push_cast ; norm_num
     have hexp : (-s - 3).re ≤ -β - 3 := by
       norm_num
       linarith
@@ -599,7 +599,7 @@ theorem differentiableOn_zetaFiniteApprox (N : ℕ) (hN : 0 < N) :
     linarith
   unfold ComplexFinitePart.zetaFiniteApprox
   apply DifferentiableAt.differentiableWithinAt
-  fun_prop (disch := aesop)
+  fun_prop (disch := aesop (config := { warnOnNonterminal := false }))
 
 theorem differentiableOn_zetaFiniteIncrement (n : ℕ) :
     DifferentiableOn ℂ (fun s ↦ zetaFiniteIncrement s n)

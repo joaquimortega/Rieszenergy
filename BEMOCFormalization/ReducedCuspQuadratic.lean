@@ -39,9 +39,9 @@ theorem hasDerivAt_reducedCuspQuadratic
   have hx : 0 < c * w ^ 2 := mul_pos hc (sq_pos_of_ne_zero hw)
   have hinner :
       HasDerivAt (fun y : ℝ ↦ c * y ^ 2) (2 * c * w) w := by
-    convert (hasDerivAt_const w c).mul (hasDerivAt_pow 2 w) using 1 <;> ring
+    convert (hasDerivAt_const w c).mul (hasDerivAt_pow 2 w) using 1 ; ring
   unfold reducedCuspQuadratic reducedCuspQuadraticD1
-  convert (hasDerivAt_reducedLatitudeCusp (α := α) hx).comp w hinner using 1 <;>
+  convert (hasDerivAt_reducedLatitudeCusp (α := α) hx).comp w hinner using 1 ;
     ring
 
 theorem hasDerivAt_reducedCuspQuadraticD1
@@ -51,13 +51,13 @@ theorem hasDerivAt_reducedCuspQuadraticD1
   have hx : 0 < c * w ^ 2 := mul_pos hc (sq_pos_of_ne_zero hw)
   have hinner :
       HasDerivAt (fun y : ℝ ↦ c * y ^ 2) (2 * c * w) w := by
-    convert (hasDerivAt_const w c).mul (hasDerivAt_pow 2 w) using 1 <;> ring
+    convert (hasDerivAt_const w c).mul (hasDerivAt_pow 2 w) using 1 ; ring
   have hout :=
     (hasDerivAt_reducedLatitudeCuspD1Value (α := α) hx).comp w hinner
   unfold reducedCuspQuadraticD1 reducedCuspQuadraticD2
   convert
     (((hasDerivAt_const w (2 * c)).mul (hasDerivAt_id w)).mul hout)
-      using 1 <;> simp only [Function.comp_apply, id_eq] <;> ring
+      using 1 ; simp only [Function.comp_apply, id_eq] ; ring
 
 theorem hasDerivAt_reducedCuspQuadraticD2
     {α c w : ℝ} (hc : 0 < c) (hw : w ≠ 0) :
@@ -66,7 +66,7 @@ theorem hasDerivAt_reducedCuspQuadraticD2
   have hx : 0 < c * w ^ 2 := mul_pos hc (sq_pos_of_ne_zero hw)
   have hinner :
       HasDerivAt (fun y : ℝ ↦ c * y ^ 2) (2 * c * w) w := by
-    convert (hasDerivAt_const w c).mul (hasDerivAt_pow 2 w) using 1 <;> ring
+    convert (hasDerivAt_const w c).mul (hasDerivAt_pow 2 w) using 1 ; ring
   have hD1 :=
     (hasDerivAt_reducedLatitudeCuspD1Value (α := α) hx).comp w hinner
   have hD2 :=
@@ -75,8 +75,8 @@ theorem hasDerivAt_reducedCuspQuadraticD2
   convert
     ((hasDerivAt_const w (2 * c)).mul hD1).add
       ((((hasDerivAt_const w (4 * c ^ 2)).mul
-        (hasDerivAt_pow 2 w)).mul hD2)) using 1 <;>
-    simp only [Function.comp_apply, id_eq] <;> ring
+        (hasDerivAt_pow 2 w)).mul hD2)) using 1 ;
+    simp only [Function.comp_apply, id_eq] ; ring
 
 theorem hasDerivAt_reducedCuspQuadraticD3
     {α c w : ℝ} (hc : 0 < c) (hw : w ≠ 0) :
@@ -85,7 +85,7 @@ theorem hasDerivAt_reducedCuspQuadraticD3
   have hx : 0 < c * w ^ 2 := mul_pos hc (sq_pos_of_ne_zero hw)
   have hinner :
       HasDerivAt (fun y : ℝ ↦ c * y ^ 2) (2 * c * w) w := by
-    convert (hasDerivAt_const w c).mul (hasDerivAt_pow 2 w) using 1 <;> ring
+    convert (hasDerivAt_const w c).mul (hasDerivAt_pow 2 w) using 1 ; ring
   have hD2 :=
     (hasDerivAt_reducedLatitudeCuspD2Value (α := α) hx).comp w hinner
   have hD3 :=
@@ -95,14 +95,14 @@ theorem hasDerivAt_reducedCuspQuadraticD3
     ((((hasDerivAt_const w (12 * c ^ 2)).mul
       (hasDerivAt_id w)).mul hD2).add
       ((((hasDerivAt_const w (8 * c ^ 3)).mul
-        (hasDerivAt_pow 3 w)).mul hD3))) using 1 <;>
-    simp only [Function.comp_apply, id_eq] <;> ring
+        (hasDerivAt_pow 3 w)).mul hD3))) using 1 ;
+    simp only [Function.comp_apply, id_eq] ; ring
 
 /-- Quantitative fourth derivative bound after the quadratic transfer.
 Every term on the right has the same `|w|^(α-3)` homogeneity after the
 clean moment bounds are substituted. -/
 theorem abs_reducedCuspQuadraticD4_le
-    {α c w : ℝ} (hc : 0 < c) (hw : w ≠ 0) (hα : α ≤ 2) :
+    {α c w : ℝ} (hc : 0 < c) (_hw : w ≠ 0) (_hα : α ≤ 2) :
     |reducedCuspQuadraticD4 α c w| ≤
       12 * c ^ 2 * |reducedLatitudeCuspD2Value α (c * w ^ 2)| +
       48 * c ^ 3 * |w| ^ 2 *

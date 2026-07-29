@@ -91,7 +91,7 @@ theorem contDiffAt_sincPiPow {α x : ℝ} (hx : |x| < 1) :
 theorem hasDerivAt_sincPiPow_zero (α : ℝ) :
     HasDerivAt (sincPiPow α) 0 0 := by
   unfold sincPiPow
-  convert hasDerivAt_sincPi_zero.rpow_const (Or.inl (by simp)) using 1 <;> simp
+  convert hasDerivAt_sincPi_zero.rpow_const (Or.inl (by simp)) using 1 ; simp
 
 theorem contDiffOn_sincPiPow (α : ℝ) :
     ContDiffOn ℝ (⊤ : WithTop ℕ∞) (sincPiPow α) (Ioo (-1 : ℝ) 1) := by

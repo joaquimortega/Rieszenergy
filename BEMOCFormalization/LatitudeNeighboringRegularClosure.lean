@@ -130,7 +130,7 @@ theorem abs_bandPairError_neighboringComparable_smallDepth
         (by positivity) (by positivity)
         (by simpa [A] using hjgap.2)
         (by simpa [A] using hkgap.2)
-    convert hbound using 1 <;> dsimp [A] <;> ring
+    convert hbound using 1 ; dsimp [A] ; ring_nf
   · have hjgap := southern_rectangle_height_gap_of_scale_le
       hN hM j hSS.1 hjD hs
     have hkgap := southern_rectangle_height_gap_of_scale_le
@@ -141,6 +141,6 @@ theorem abs_bandPairError_neighboringComparable_smallDepth
         (by positivity) (by positivity)
         (by simpa [A] using hjgap.2)
         (by simpa [A] using hkgap.2)
-    convert hbound using 1 <;> dsimp [A] <;> ring
+    convert hbound using 1 ; dsimp [A] ; ring_nf
 
 end BEMOC

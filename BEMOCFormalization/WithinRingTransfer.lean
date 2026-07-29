@@ -121,7 +121,7 @@ theorem tendsto_triangularArray_weighted_error
           intro p hp
           calc
             |a m p * e (population m p) - L * a m p| =
-                |a m p * (e (population m p) - L)| := by congr 1 <;> ring
+                |a m p * (e (population m p) - L)| := by congr 1 ; ring
             _ = a m p * |e (population m p) - L| := by
               rw [abs_mul, abs_of_nonneg (ha m p)]
     have hdiv :
@@ -163,7 +163,7 @@ theorem tendsto_triangularArray_weighted_error
             have heq : C * (ε / (4 * (C + 1))) =
                 (ε / 4) * (C / (C + 1)) := by
               field_simp [hden.ne']
-              <;> ring
+              ; ring
             rw [heq]
             nlinarith
     have hhigh : δ * ((∑ p : ι m, a m p) / scale m) < ε / 4 := by
@@ -175,7 +175,7 @@ theorem tendsto_triangularArray_weighted_error
           dsimp [δ]
           have hden : 4 * (|K| + 2) ≠ 0 := by positivity
           field_simp [hden]
-          <;> ring
+          ; ring
     linarith
   rw [Real.dist_eq]
   calc
@@ -210,7 +210,7 @@ theorem tendsto_triangularArray_weighted_error
               have heq : |L| * (ε / (2 * (|L| + 1))) =
                   (ε / 2) * (|L| / (|L| + 1)) := by
                 field_simp [hden.ne']
-                <;> ring
+                ; ring
               rw [heq]
               nlinarith
       linarith
@@ -426,7 +426,7 @@ theorem scratch_low_population_mass_eventual_le
       _ = (4 * (((2 : ℝ) * W) ^ α) * D) / (m : ℝ) := by
         rw [Real.rpow_two]
         field_simp [hmR.ne']
-        <;> ring
+        ; ring
   rw [← hnormalize]
   exact div_le_div_of_nonneg_right hsum (scratchWithinRingScale_pos α m).le
 

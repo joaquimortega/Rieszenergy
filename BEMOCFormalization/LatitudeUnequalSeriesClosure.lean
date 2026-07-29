@@ -205,7 +205,6 @@ private theorem latitude_common_factor_eq
   rw [← h]
   rw [hr]
   field_simp [pow_ne_zero _ hA.ne']
-  push_cast
   ring
 
 private theorem abs_unequalRadiusPower_le
@@ -319,7 +318,6 @@ private theorem rpow_sub_nat_le_four_pow_mul
       (4 : ℝ) ^ (k - r) * A ^ (e - k) := by
   have hexp :
       e - (r : ℝ) = (e - (k : ℝ)) + ((k - r : ℕ) : ℝ) := by
-    push_cast
     rw [Nat.cast_sub hrk]
     ring
   rw [hexp, Real.rpow_add hA, Real.rpow_natCast]
@@ -488,7 +486,7 @@ private theorem abs_unequalAPowST_le
           have := mul_le_mul_of_nonneg_right
             (show 100 * w ^ 2 + 40 * w ≤ 140 * w ^ 2 by
               nlinarith) hA2nonneg
-          convert this using 1 <;> ring
+          convert this using 1 ; ring
         _ ≤ _ := mul_le_mul_of_nonneg_right hcoeff hA2nonneg
 
 private theorem abs_unequalAPowSST_le
@@ -560,7 +558,7 @@ private theorem abs_unequalAPowSST_le
             (show 1000 * w ^ 3 + 800 * w ^ 2 ≤ 1800 * w ^ 3 by
               nlinarith)
             hA3nonneg
-          convert this using 1 <;> ring
+          convert this using 1 ; ring
         _ ≤ _ := mul_le_mul_of_nonneg_right hcoef hA3nonneg
 
 private theorem abs_unequalAPowSTT_le
@@ -608,7 +606,7 @@ private theorem abs_unequalAPowSSTT_le
   have hp24 : A ^ (e - 2) ≤ 16 * A ^ (e - 4) := by
     convert
       (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
-        hA hA4 (r := 2) (k := 4) (by omega)) using 1 <;>
+        hA hA4 (r := 2) (k := 4) (by omega)) using 1 ;
       norm_num [A, e]
   have hA4nonneg : 0 ≤ A ^ (e - 4) := Real.rpow_nonneg hA.le _
   have hw : 1 ≤ w := by
@@ -674,7 +672,7 @@ private theorem abs_unequalAPowSSTT_le
                 29200 * w ^ 4 by
               nlinarith)
             hA4nonneg
-          convert this using 1 <;> ring
+          convert this using 1 ; ring
         _ ≤ _ := mul_le_mul_of_nonneg_right hcoef hA4nonneg
 
 private theorem rpow_sub_nat_mul_pow
@@ -683,7 +681,6 @@ private theorem rpow_sub_nat_mul_pow
   rw [← Real.rpow_natCast]
   rw [← Real.rpow_add hA]
   congr 1
-  push_cast
   ring
 
 /-- The base and angular-ratio part of the closed-rectangle geometry needed
@@ -708,8 +705,8 @@ structure LatitudeEvenPowerSeriesBaseGeometry
 /-- The stronger geometry used when identifying the differentiated even
 series with the off-pole height-chart derivative of the original kernel. -/
 structure LatitudeEvenPowerSeriesRectangleGeometry
-    (N : ℕ) (j k : Fin (bandTailCount N + 1)) (L : ℝ)
-    extends LatitudeEvenPowerSeriesBaseGeometry N j k L : Prop where
+    (N : ℕ) (j k : Fin (bandTailCount N + 1)) (L : ℝ) : Prop
+    extends LatitudeEvenPowerSeriesBaseGeometry N j k L where
   interior_offDiagonal : ∀ s ∈ Icc
       (bandBoundaryHeight N (j + 1)) (bandBoundaryHeight N j),
     ∀ t ∈ Icc (bandBoundaryHeight N (k + 1))
@@ -1422,9 +1419,9 @@ theorem abs_latitudeEvenPower_lowerDerivatives_le_on_leftSmall_rectangle
       unequalAngularRatio s t ^ (m - 2) ≤ _
     exact mul_le_mul_of_nonneg_left hqpow (by positivity)
   have hA2 : A ^ 2 ≤ 16 := by
-    convert pow_le_pow_left₀ hA.le hA4 2 using 1 <;> norm_num
+    convert pow_le_pow_left₀ hA.le hA4 2 using 1 ; norm_num
   have hA3 : A ^ 3 ≤ 64 := by
-    convert pow_le_pow_left₀ hA.le hA4 3 using 1 <;> norm_num
+    convert pow_le_pow_left₀ hA.le hA4 3 using 1 ; norm_num
   have hAe1 : A ^ (e + 1) = A ^ e * A := by
     simpa [Real.rpow_one] using Real.rpow_add hA e 1
   have hw14 : w ≤ w ^ 4 := by
@@ -1760,7 +1757,7 @@ theorem abs_latitudeEvenPowerSummand_le_on_leftSmall_rectangle
   have hu2 : u ^ 2 ≤ A ^ 2 := pow_le_pow_left₀ hu0 huA 2
   have hv2 : v ^ 2 ≤ A ^ 2 := pow_le_pow_left₀ hv0 hvA 2
   have hA4pow : A ^ 4 ≤ 256 := by
-    convert pow_le_pow_left₀ hA.le hA4 4 using 1 <;> norm_num
+    convert pow_le_pow_left₀ hA.le hA4 4 using 1 ; norm_num
   have huv : u ^ 2 * v ^ 2 ≤ A ^ 4 := by
     calc
       u ^ 2 * v ^ 2 ≤ A ^ 2 * A ^ 2 := by gcongr
@@ -1771,15 +1768,15 @@ theorem abs_latitudeEvenPowerSummand_le_on_leftSmall_rectangle
           (u ^ 2 * v ^ 2) := by
     have hum : u ^ m = u ^ (m - 2) * u ^ 2 := by
       calc
-        u ^ m = u ^ ((m - 2) + 2) := by congr 1 <;> omega
+        u ^ m = u ^ ((m - 2) + 2) := by congr 1 ; omega
         _ = u ^ (m - 2) * u ^ 2 := pow_add _ _ _
     have hvm : v ^ m = v ^ (m - 2) * v ^ 2 := by
       calc
-        v ^ m = v ^ ((m - 2) + 2) := by congr 1 <;> omega
+        v ^ m = v ^ ((m - 2) + 2) := by congr 1 ; omega
         _ = v ^ (m - 2) * v ^ 2 := pow_add _ _ _
     have hfourm : (4 : ℝ) ^ m = (4 : ℝ) ^ (m - 2) * 16 := by
       calc
-        (4 : ℝ) ^ m = 4 ^ ((m - 2) + 2) := by congr 1 <;> omega
+        (4 : ℝ) ^ m = 4 ^ ((m - 2) + 2) := by congr 1 ; omega
         _ = 4 ^ (m - 2) * 4 ^ 2 := pow_add _ _ _
         _ = 4 ^ (m - 2) * 16 := by norm_num
     change |A ^ e * (4 : ℝ) ^ m * u ^ m * v ^ m| = _
@@ -2593,12 +2590,12 @@ private theorem abs_latitudeEvenPowerSummandDSSTT_one_le
       |unequalAPowS e s t| ≤ 20 * A ^ (e - 1) := by
     convert
       (abs_unequalAPowS_le (α := α) (m := 1)
-        hα0 hα2 ht hA) using 1 <;> norm_num [e, A] <;> ring
+        hα0 hα2 ht hA) using 1 <;> norm_num [e, A]
   have hP1t :
       |unequalAPowT e s t| ≤ 20 * A ^ (e - 1) := by
     convert
       (abs_unequalAPowT_le (α := α) (m := 1)
-        hα0 hα2 hs hA) using 1 <;> norm_num [e, A] <;> ring
+        hα0 hα2 hs hA) using 1 <;> norm_num [e, A]
   have hP2ss :
       |unequalAPowSS e s t| ≤ 1024 * A ^ (e - 2) := by
     have hh := abs_unequalAPowSS_le
@@ -2610,7 +2607,7 @@ private theorem abs_latitudeEvenPowerSummandDSSTT_one_le
       |unequalAPowST e s t| ≤ 1024 * A ^ (e - 2) := by
     convert
       (abs_unequalAPowST_le (α := α) (m := 1)
-        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A] <;> ring
+        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A]
   have hP2tt :
       |unequalAPowTT e s t| ≤ 1024 * A ^ (e - 2) := by
     have hh := abs_unequalAPowTT_le
@@ -2622,17 +2619,17 @@ private theorem abs_latitudeEvenPowerSummandDSSTT_one_le
       |unequalAPowSST e s t| ≤ 16384 * A ^ (e - 3) := by
     convert
       (abs_unequalAPowSST_le (α := α) (m := 1)
-        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A] <;> ring
+        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A]
   have hP3stt :
       |unequalAPowSTT e s t| ≤ 16384 * A ^ (e - 3) := by
     convert
       (abs_unequalAPowSTT_le (α := α) (m := 1)
-        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A] <;> ring
+        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A]
   have hP4 :
       |unequalAPowSSTT e s t| ≤ 524288 * A ^ (e - 4) := by
     convert
       (abs_unequalAPowSSTT_le (α := α) (m := 1)
-        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A] <;> ring
+        hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A]
   have h43 : A ^ (e - 4) * A = A ^ (e - 3) := by
     have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 3) hA 1
     norm_num at hh
@@ -2659,7 +2656,7 @@ private theorem abs_latitudeEvenPowerSummandDSSTT_one_le
   have he0 : A ^ e ≤ 16 * A ^ (e - 2) := by
     rw [← h10, ← h21]
     have hA2 : A ^ 2 ≤ 16 := by
-      convert pow_le_pow_left₀ hA.le hA4 2 using 1 <;> norm_num
+      convert pow_le_pow_left₀ hA.le hA4 2 using 1 ; norm_num
     nlinarith [hA2, show 0 ≤ A ^ (e - 2) by positivity]
   let X :=
     unequalAPowSS e s t * U + 2 * unequalAPowS e s t * U1 +
@@ -2791,7 +2788,7 @@ private theorem abs_latitudeEvenPowerSummandDSSTT_one_le
   · simp [latitudeEvenPowerSummandDSSTT, X, XT, XTT,
       U, U1, U2, V, V1, V2, e]
   · dsimp [A, e]
-    ring
+    ring_nf
 
 private theorem abs_latitudeEvenPowerDSSTTSeriesTerm_one_le
     {α s t : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
@@ -3343,7 +3340,7 @@ theorem unequalLatitudeDssttConstant_nonneg (α : ℝ) :
     (Real.rpow_nonneg (by norm_num) _)
 
 private theorem leftSmallLatitude_seriesScale_le_manuscriptScale
-    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {α : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N) (hM : 1 ≤ bandCount N)
     (k : Fin (bandTailCount N + 1)) :
     (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4) ≤
@@ -3402,12 +3399,12 @@ private theorem leftSmallLatitude_seriesScale_le_manuscriptScale
           exact (Real.rpow_natCast d 2).symm,
         ← Real.rpow_mul hMpos.le, ← Real.rpow_mul hdpos.le,
         div_eq_mul_inv, ← Real.rpow_neg hdpos.le]
-      ring
+      ring_nf
     _ = 10 ^ (4 - α / 2) *
         (bandCount N : ℝ) ^ (8 - α) *
         (latitudeBandScale N k : ℝ) ^ (α - 8) := by
       dsimp [M, d, p]
-      congr 1 <;> ring
+      congr 1 <;> ring_nf
 
 /-- The analytic series proof supplies the exact pointwise hypothesis used
 by the left-small mixed-Peano bridge. -/

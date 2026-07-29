@@ -19,7 +19,7 @@ def ScaledAbs (R e C x : ℝ) : Prop :=
 
 theorem ScaledAbs.mul {R e f C D x y : ℝ} (hR : 0 < R)
     (hx : ScaledAbs R e C x) (hy : ScaledAbs R f D y)
-    (hC : 0 ≤ C) (hD : 0 ≤ D) :
+    (hC : 0 ≤ C) (_hD : 0 ≤ D) :
     ScaledAbs R (e + f) (C * D) (x * y) := by
   unfold ScaledAbs at *
   rw [abs_mul]
@@ -77,14 +77,14 @@ noncomputable def latitudeComparablePowerJetConstant (α : ℝ) : ℝ :=
     latitudeComparablePowerRpowConstant α
 
 private theorem scaled_coefficient
-    {α B c R : ℝ} (hB : LatitudePowerCoefficientBound α B)
+    {α B c R : ℝ} (_hB : LatitudePowerCoefficientBound α B)
     (hc : |c| ≤ B) :
     ScaledAbs R 0 B c := by
   unfold ScaledAbs
   simpa using hc
 
 private theorem scaled_rpow
-    {α s t R A e : ℝ}
+    {_α s t R A e : ℝ}
     (h : |latitudeAngularScale s t ^ e| ≤ A * R ^ (2 * e)) :
     ScaledAbs R (2 * e) A (latitudeAngularScale s t ^ e) := h
 
@@ -200,7 +200,7 @@ theorem latitudeComparablePowerJetGradedBound
     unfold latitudePowerDss
     have ha := hss1.congr_exp (show 0 + (α - 4) + 0 + 0 = α - 4 by ring)
     have hb := hss2.congr_exp (show 0 + (α - 2) + -2 = α - 4 by ring)
-    convert (ha.add hb).mono_const hR (by nlinarith) using 1 <;> ring
+    convert (ha.add hb).mono_const hR (by nlinarith) using 1 ; ring
   have htt1 := ((sB2.mul hR su2 hB0 hA0).mul hR spt hBA
     (by norm_num)).mul hR spt (by positivity) (by norm_num)
   have htt2 := (sB1.mul hR su1 hB0 hA0).mul hR sptt hBA (by norm_num)
@@ -208,7 +208,7 @@ theorem latitudeComparablePowerJetGradedBound
     unfold latitudePowerDtt
     have ha := htt1.congr_exp (show 0 + (α - 4) + 0 + 0 = α - 4 by ring)
     have hb := htt2.congr_exp (show 0 + (α - 2) + -2 = α - 4 by ring)
-    convert (ha.add hb).mono_const hR (by nlinarith) using 1 <;> ring
+    convert (ha.add hb).mono_const hR (by nlinarith) using 1 ; ring
   have hst1 := ((sB2.mul hR su2 hB0 hA0).mul hR spt hBA
     (by norm_num)).mul hR sps (by positivity) (by norm_num)
   have hst2 := (sB1.mul hR su1 hB0 hA0).mul hR spst hBA (by norm_num)
@@ -216,7 +216,7 @@ theorem latitudeComparablePowerJetGradedBound
     unfold latitudePowerDst
     have ha := hst1.congr_exp (show 0 + (α - 4) + 0 + 0 = α - 4 by ring)
     have hb := hst2.congr_exp (show 0 + (α - 2) + -2 = α - 4 by ring)
-    convert (ha.add hb).mono_const hR (by nlinarith) using 1 <;> ring
+    convert (ha.add hb).mono_const hR (by nlinarith) using 1 ; ring
   have hsst1 := (((sB3.mul hR su3 hB0 hA0).mul hR spt hBA
     (by norm_num)).mul hR sps (by positivity) (by norm_num)).mul hR sps
       (by positivity) (by norm_num)
@@ -237,7 +237,7 @@ theorem latitudeComparablePowerJetGradedBound
     have h4 := hsst4.congr_exp (show
       0 + (α - 2) + -4 = α - 6 by ring)
     convert (((h1.add h2).add h3).add h4).mono_const (D := P) hR
-      (by norm_num; nlinarith) using 1 <;> ring
+      (by norm_num; nlinarith) using 1 ; ring
   have hstt1 := (((sB3.mul hR su3 hB0 hA0).mul hR spt hBA
     (by norm_num)).mul hR spt (by positivity) (by norm_num)).mul hR sps
       (by positivity) (by norm_num)
@@ -258,7 +258,7 @@ theorem latitudeComparablePowerJetGradedBound
     have h4 := hstt4.congr_exp (show
       0 + (α - 2) + -4 = α - 6 by ring)
     convert (((h1.add h2).add h3).add h4).mono_const (D := P) hR
-      (by norm_num; nlinarith) using 1 <;> ring
+      (by norm_num; nlinarith) using 1 ; ring
   have z1 := ((((sB4.mul hR su4 hB0 hA0).mul hR spt hBA
     (by norm_num)).mul hR spt (by positivity) (by norm_num)).mul hR sps
       (by positivity) (by norm_num)).mul hR sps (by positivity) (by norm_num)
@@ -305,11 +305,11 @@ theorem latitudeComparablePowerJetGradedBound
     have h9 := z9.congr_exp (show
       0 + (α - 2) + -6 = α - 8 by ring)
     convert ((((((((h1.add h2).add h3).add h4).add h5).add h6).add h7).add h8).add h9).mono_const
-      (D := P) hR (by norm_num; nlinarith) using 1 <;> ring
+      (D := P) hR (by norm_num; nlinarith) using 1 ; ring
   exact ⟨hP0, hzero, hds, hdt, hss, hst, htt, hsst, hstt, hsstt⟩
 
 theorem comparableSame_rectangle_powerJetGradedBound
-    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {α : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hM : 1 ≤ bandCount N)
     {j k : Fin (bandTailCount N + 1)}
     (hjk : ComparableSameLatitudePair N j k)
@@ -350,7 +350,7 @@ theorem rpow_monomial_shift_le
     R ^ a * d ^ b =
         (R ^ a * d ^ (b - n)) * d ^ n := by
       rw [show b = (b - n) + n by ring, Real.rpow_add hd]
-      ring
+      ring_nf
     _ ≤ (R ^ a * d ^ (b - n)) * (K ^ n * R ^ (2 * n)) := by
       rw [← hKR]
       exact mul_le_mul_of_nonneg_left hdn hbase
@@ -365,7 +365,7 @@ theorem SeparatedScaledAbs.mul
     {R d a b a' b' C D x y : ℝ} (hR : 0 < R) (hd : 0 < d)
     (hx : SeparatedScaledAbs R d a b C x)
     (hy : SeparatedScaledAbs R d a' b' D y)
-    (hC : 0 ≤ C) (hD : 0 ≤ D) :
+    (hC : 0 ≤ C) (_hD : 0 ≤ D) :
     SeparatedScaledAbs R d (a + a') (b + b') (C * D) (x * y) := by
   unfold SeparatedScaledAbs at *
   rw [abs_mul]
@@ -522,7 +522,7 @@ theorem separatedComparableSame_rectangle_rawCuspSeparatedBound
           R ^ (4 - 2 * α)) := by
         dsimp [R, d, c] at hpow1 ⊢
         gcongr
-        convert hpow1 using 1 <;> ring
+        convert hpow1 using 1 ; ring_nf
       _ ≤ C * R ^ (4 - 2 * α) * d ^ (α - 2) := by
         have hnon : 0 ≤ R ^ (4 - 2 * α) * d ^ (α - 2) := by positivity
         nlinarith
@@ -535,7 +535,7 @@ theorem separatedComparableSame_rectangle_rawCuspSeparatedBound
           R ^ (6 - 2 * α)) := by
         dsimp [R, d, c] at hpow2 ⊢
         gcongr
-        convert hpow2 using 1 <;> ring
+        convert hpow2 using 1 ; ring_nf
       _ ≤ C * R ^ (6 - 2 * α) * d ^ (α - 3) := by
         have hnon : 0 ≤ R ^ (6 - 2 * α) * d ^ (α - 3) := by positivity
         nlinarith
@@ -548,7 +548,7 @@ theorem separatedComparableSame_rectangle_rawCuspSeparatedBound
           R ^ (10 - 2 * α)) := by
         dsimp [R, d, c] at hpow3 ⊢
         gcongr
-        convert hpow3 using 1 <;> ring
+        convert hpow3 using 1 ; ring_nf
       _ ≤ C * R ^ (10 - 2 * α) * d ^ (α - 5) := by
         have hnon : 0 ≤ R ^ (10 - 2 * α) * d ^ (α - 5) := by positivity
         nlinarith
@@ -561,7 +561,7 @@ theorem separatedComparableSame_rectangle_rawCuspSeparatedBound
           R ^ (14 - 2 * α)) := by
         dsimp [R, d, c] at hpow4 ⊢
         gcongr
-        convert hpow4 using 1 <;> ring
+        convert hpow4 using 1 ; ring_nf
       _ ≤ C * R ^ (14 - 2 * α) * d ^ (α - 7) := by
         have hnon : 0 ≤ R ^ (14 - 2 * α) * d ^ (α - 7) := by positivity
         nlinarith

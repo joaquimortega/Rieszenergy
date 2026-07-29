@@ -52,7 +52,7 @@ theorem hasDerivAt_heightRadius
     nlinarith [hs.1, hs.2]
   have hinner :
       HasDerivAt (fun y : ℝ ↦ 1 - y ^ 2) (-2 * s) s := by
-    convert (hasDerivAt_const s 1).sub (hasDerivAt_pow 2 s) using 1 <;> ring
+    convert (hasDerivAt_const s 1).sub (hasDerivAt_pow 2 s) using 1 ; ring
   unfold heightRadiusD1
   unfold heightRadius
   convert (Real.hasDerivAt_sqrt hbase).comp s hinner using 1
@@ -134,7 +134,7 @@ theorem hasDerivAt_latitudeAngularScale_left
   unfold latitudeAngularScale latitudeAngularScaleDs heightRadius
   convert
     ((hasDerivAt_const s 2).mul (hasDerivAt_heightRadius hs)).mul_const
-      (Real.sqrt (1 - t ^ 2)) using 1 <;> ring
+      (Real.sqrt (1 - t ^ 2)) using 1 ; ring
 
 theorem hasDerivAt_latitudeAngularScaleDs_left
     {s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1) :
@@ -143,7 +143,7 @@ theorem hasDerivAt_latitudeAngularScaleDs_left
   unfold latitudeAngularScaleDs latitudeAngularScaleDss
   convert
     ((hasDerivAt_const s 2).mul
-      (hasDerivAt_heightRadiusD1 hs)).mul_const (heightRadius t) using 1 <;>
+      (hasDerivAt_heightRadiusD1 hs)).mul_const (heightRadius t) using 1 ;
     ring
 
 theorem hasDerivAt_latitudeAngularScaleDss_right
@@ -153,7 +153,7 @@ theorem hasDerivAt_latitudeAngularScaleDss_right
   unfold latitudeAngularScaleDss latitudeAngularScaleDsst
   convert
     (hasDerivAt_const t (2 * heightRadiusD2 s)).mul
-      (hasDerivAt_heightRadius ht) using 1 <;> ring
+      (hasDerivAt_heightRadius ht) using 1 ; ring
 
 theorem hasDerivAt_latitudeAngularScaleDsst_right
     {s t : ℝ} (ht : t ∈ Ioo (-1 : ℝ) 1) :
@@ -162,7 +162,7 @@ theorem hasDerivAt_latitudeAngularScaleDsst_right
   unfold latitudeAngularScaleDsst latitudeAngularScaleDsstt
   convert
     (hasDerivAt_const t (2 * heightRadiusD2 s)).mul
-      (hasDerivAt_heightRadiusD1 ht) using 1 <;> ring
+      (hasDerivAt_heightRadiusD1 ht) using 1 ; ring
 
 /-- Mixed `(2,2)` coefficient bound for the angular scale. -/
 theorem abs_latitudeAngularScaleDsstt_le
@@ -307,7 +307,7 @@ theorem hasDerivAt_normalizedLatitudeGapDs_left
           heightRadius t) s := by
     convert
       ((hasDerivAt_heightRadius hs).pow 3).mul_const
-        (heightRadius t) using 1 <;> ring
+        (heightRadius t) using 1
   unfold normalizedLatitudeGapDs normalizedLatitudeGapDss
   convert
     (((hasDerivAt_id s).sub_const t).div hden
@@ -336,14 +336,14 @@ theorem hasDerivAt_normalizedLatitudeGapDss_right
     convert
       (hasDerivAt_const t (heightRadius s ^ 2)).add
         ((hasDerivAt_const t (3 * s)).mul
-          ((hasDerivAt_const t s).sub (hasDerivAt_id t))) using 1 <;>
+          ((hasDerivAt_const t s).sub (hasDerivAt_id t))) using 1 ;
       ring
   have hden :
       HasDerivAt (fun y ↦ heightRadius s ^ 5 * heightRadius y)
         (heightRadius s ^ 5 * heightRadiusD1 t) t := by
     convert
       (hasDerivAt_const t (heightRadius s ^ 5)).mul
-        (hasDerivAt_heightRadius ht) using 1 <;> ring
+        (hasDerivAt_heightRadius ht) using 1 ; ring
   unfold normalizedLatitudeGapDss normalizedLatitudeGapDsst
   convert hnum.div hden (mul_ne_zero (pow_ne_zero 5 hrs) hrt) using 1
   have hmul := congrArg
@@ -367,18 +367,18 @@ theorem hasDerivAt_normalizedLatitudeGapDsst_right
   have hpow :
       HasDerivAt (fun y ↦ heightRadius y ^ 3)
         (3 * heightRadius t ^ 2 * heightRadiusD1 t) t := by
-    convert (hasDerivAt_heightRadius ht).pow 3 using 1 <;> ring
+    convert (hasDerivAt_heightRadius ht).pow 3 using 1
   have hden3 :
       HasDerivAt (fun y ↦ heightRadius s ^ 3 * heightRadius y ^ 3)
         (heightRadius s ^ 3 *
           (3 * heightRadius t ^ 2 * heightRadiusD1 t)) t := by
-    convert (hasDerivAt_const t (heightRadius s ^ 3)).mul hpow using 1 <;>
+    convert (hasDerivAt_const t (heightRadius s ^ 3)).mul hpow using 1 ;
       ring
   have hden5 :
       HasDerivAt (fun y ↦ heightRadius s ^ 5 * heightRadius y ^ 3)
         (heightRadius s ^ 5 *
           (3 * heightRadius t ^ 2 * heightRadiusD1 t)) t := by
-    convert (hasDerivAt_const t (heightRadius s ^ 5)).mul hpow using 1 <;>
+    convert (hasDerivAt_const t (heightRadius s ^ 5)).mul hpow using 1 ;
       ring
   have hfirst :
       HasDerivAt
@@ -393,7 +393,7 @@ theorem hasDerivAt_normalizedLatitudeGapDsst_right
   have hnum :
       HasDerivAt (fun y ↦ 1 - s * y) (-s) t := by
     convert (hasDerivAt_const t 1).sub
-      ((hasDerivAt_const t s).mul (hasDerivAt_id t)) using 1 <;> ring
+      ((hasDerivAt_const t s).mul (hasDerivAt_id t)) using 1 ; ring
   have hquot :
       HasDerivAt
         (fun y ↦ (1 - s * y) /
@@ -413,7 +413,7 @@ theorem hasDerivAt_normalizedLatitudeGapDsst_right
               (1 - s * t) * (heightRadius s ^ 5 *
                 (3 * heightRadius t ^ 2 * heightRadiusD1 t))) /
             (heightRadius s ^ 5 * heightRadius t ^ 3) ^ 2)) t := by
-    convert (hasDerivAt_const t (3 * s)).mul hquot using 1 <;> ring
+    convert (hasDerivAt_const t (3 * s)).mul hquot using 1 ; ring
   unfold normalizedLatitudeGapDsst normalizedLatitudeGapDsstt
   convert hfirst.sub hsecond using 1
   · funext y

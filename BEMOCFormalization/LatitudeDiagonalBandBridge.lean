@@ -34,7 +34,7 @@ noncomputable def neighboringBandLength (N : ℕ)
   bandWidth N j + bandWidth N k
 
 theorem neighboringBandLength_eq_populations
-    {N : ℕ} (hN : 0 < N)
+    {N : ℕ} (_hN : 0 < N)
     (j k : Fin (bandTailCount N + 1)) :
     neighboringBandLength N j k =
       2 * ((finiteBandPopulation N j : ℝ) +

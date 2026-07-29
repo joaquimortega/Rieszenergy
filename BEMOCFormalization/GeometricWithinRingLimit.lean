@@ -65,7 +65,7 @@ theorem squareLimitPair_mem_rectangle {c : ℝ}
 array.  The factor `d/m` kills the finitely many polar coefficients, while
 uniform continuity handles all depths `d` beyond a fixed cutoff. -/
 theorem tendsto_compactCoefficient_perturbation
-    {α c E : ℝ} (hc : c ∈ Set.Icc (1 / 2 : ℝ) 4) (hE : 0 ≤ E)
+    {α c E : ℝ} (hc : c ∈ Set.Icc (1 / 2 : ℝ) 4) (_hE : 0 ≤ E)
     (A B : (m : ℕ) → Fin (m - 1) → ℝ)
     (hrect : ∀ m, 3 ≤ m → ∀ j,
       (A m j, B m j) ∈ squareCoefficientRectangle)
@@ -286,8 +286,8 @@ theorem sum_fin_two_mul_add_one_of_reflect
         apply Finset.sum_congr rfl
         intro i _
         dsimp [g, e]
-        convert href (Fin.rev i) using 1 <;> congr 1 <;>
-          apply Fin.ext <;> simp [Fin.rev] <;> omega
+        convert href (Fin.rev i) using 1 ; congr 1 ;
+          apply Fin.ext ; simp [Fin.rev] ; omega
       _ = ∑ i : Fin k, a i.castSucc := by
         apply Finset.sum_congr rfl
         intro i _
@@ -332,8 +332,8 @@ theorem sum_fin_two_mul_of_reflect
         apply Finset.sum_congr rfl
         intro i _
         dsimp [g, e]
-        convert href (Fin.rev i) using 1 <;> congr 1 <;>
-          apply Fin.ext <;> simp [Fin.rev] <;> omega
+        convert href (Fin.rev i) using 1 ; congr 1 ;
+          apply Fin.ext ; simp [Fin.rev] ; omega
       _ = ∑ i : Fin k, a i := by rfl
   have hnorth : (∑ i : Fin k, a i) =
       ∑ j : Fin k, f ⟨(j : ℕ), by omega⟩ := by
@@ -398,7 +398,7 @@ theorem sum_squareMidpointWeightedTerm_decomposition
       squareMidpointWeightedTerm α m (squareCentralBandIndex m) := by
   let f : Fin (2 * (m - 1) + 1) → ℝ := fun j ↦
     squareMidpointWeightedTerm α m
-      ⟨(j : ℕ), by simpa using j.isLt⟩
+      ⟨(j : ℕ), by simp⟩
   have href (j : Fin (m - 1)) :
       f ⟨(m - 1) + 1 + (j : ℕ), by omega⟩ =
         f ⟨(m - 1) - 1 - (j : ℕ), by omega⟩ := by
@@ -432,7 +432,7 @@ theorem sum_squareBoundaryWeightedTerm_decomposition
         squareBoundaryWeightedTerm α m (squareNorthBoundaryIndex m j)) := by
   let f : Fin (2 * (m - 1)) → ℝ := fun j ↦
     squareBoundaryWeightedTerm α m
-      ⟨(j : ℕ), by simpa using j.isLt⟩
+      ⟨(j : ℕ), by simp⟩
   have href (j : Fin (m - 1)) :
       f ⟨(m - 1) + (j : ℕ), by omega⟩ =
         f ⟨(m - 1) - 1 - (j : ℕ), by omega⟩ := by
@@ -453,7 +453,7 @@ theorem sum_squareBoundaryWeightedTerm_decomposition
     intro j
     dsimp [f, e]
   rw [hall]
-  convert h using 1 <;> simp [f, squareNorthBoundaryIndex]
+  convert h using 1
 
 theorem bemocWeightedRadiusPopulationSum_square_decomposition
     (α : ℝ) {m : ℕ} (hm : 0 < m) :
@@ -494,11 +494,11 @@ theorem integral_withinRingGeometricProfile {α : ℝ} (hα0 : 0 < α) :
       rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at hx
       nlinarith [hx.1, hx.2]
     have hb : HasDerivAt (fun y : ℝ ↦ 2 - y ^ 2) (-2 * x) x := by
-      convert (hasDerivAt_const x 2).sub ((hasDerivAt_id x).pow 2) using 1 <;>
-        simp <;> ring
+      convert (hasDerivAt_const x 2).sub ((hasDerivAt_id x).pow 2) using 1 ;
+        simp
     dsimp [F, withinRingGeometricProfile]
     convert ((hb.rpow_const (p := 1 + α / 2) (Or.inl hbase.ne')).neg.div_const
-        (α + 2)) using 1 <;> field_simp <;> ring
+        (α + 2)) using 1 ; field_simp ; ring
   have hint : IntervalIntegrable (withinRingGeometricProfile α)
       MeasureTheory.volume 0 1 :=
     (continuous_withinRingGeometricProfile hα0).intervalIntegrable 0 1
@@ -669,7 +669,7 @@ theorem squareBoundaryRadiusCoefficient_error {m : ℕ} (hm : 3 ≤ m)
   exact square_boundary_radius_factor_error (m := m) (by omega)
     (squareNorthBoundaryIndex m j) (by exact j.isLt)
 
-theorem squareMidpointPopulationCoefficient_error {m : ℕ} (hm : 3 ≤ m)
+theorem squareMidpointPopulationCoefficient_error {m : ℕ} (_hm : 3 ≤ m)
     (j : Fin (m - 1)) :
     |squareMidpointPopulationCoefficient m j - (8 / 3 : ℝ)| ≤
       1 / ((((j : ℕ) + 1 : ℕ) : ℝ)) := by
@@ -687,7 +687,7 @@ theorem squareMidpointPopulationCoefficient_error {m : ℕ} (hm : 3 ≤ m)
     abs_div, abs_of_pos hdpos]
   exact (div_le_div_iff_of_pos_right hdpos).2 hp
 
-theorem squareBoundaryBulkPopulationCoefficient_error {m : ℕ} (hm : 3 ≤ m)
+theorem squareBoundaryBulkPopulationCoefficient_error {m : ℕ} (_hm : 3 ≤ m)
     (j : Fin (m - 1)) :
     |squareBoundaryBulkPopulationCoefficient m j - (4 / 3 : ℝ)| ≤
       2 / ((((j : ℕ) + 1 : ℕ) : ℝ)) := by
@@ -963,7 +963,7 @@ theorem tendsto_northernModelSum {α : ℝ} (hα0 : 0 < α) :
     (tendsto_northernBoundaryModelSum hα0)
   convert h using 1
   unfold withinRingAsymptoticWeight
-  ring
+  ring_nf
 
 /-! ## Returning from coefficient arrays to literal ring weights -/
 
@@ -1191,7 +1191,7 @@ theorem tendsto_squareNorthernNormalizedSum {α : ℝ} (hα0 : 0 < α) :
     (tendsto_squareNorthernBoundaryNormalizedSum hα0)
   convert h using 1
   unfold withinRingAsymptoticWeight
-  ring
+  ring_nf
 
 theorem bemocWeightedRadiusPopulationSum_div_scale_square_decomposition
     {α : ℝ} {m : ℕ} (hm : 3 ≤ m) :
@@ -1292,7 +1292,7 @@ theorem tendsto_bemocWeightedRadiusPopulationSum_four_mul_sq
         squareCentralMidpointWeightedTerm α m / (m : ℝ) ^ (2 - α) +
         2 * squareNorthernBoundaryNormalizedSum α m)
       atTop (𝓝 (2 * withinRingAsymptoticWeight α)) := by
-    convert h using 1 <;> unfold withinRingAsymptoticWeight <;> ring
+    convert h using 1 ; unfold withinRingAsymptoticWeight ; ring_nf
   apply hlim.congr'
   filter_upwards [eventually_atTop.2 ⟨3, fun m hm ↦ hm⟩] with m hm
   exact (bemocWeightedRadiusPopulationSum_div_scale_square_decomposition hm).symm

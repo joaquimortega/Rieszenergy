@@ -138,7 +138,7 @@ theorem latitudeKernel_eq_scale_mul_reducedCusp
           (latitudeRadialGapSq s t / latitudeAngularScale s t +
             (1 - Real.cos θ)) := by
     field_simp [hp.ne']
-    <;> ring
+    ; ring
   have hinside (θ : ℝ) :
       0 ≤ latitudeRadialGapSq s t / latitudeAngularScale s t +
         (1 - Real.cos θ) := by
@@ -174,7 +174,7 @@ theorem hasDerivAt_const_mul_abs_rpow_of_pos
       (p * |w| ^ (p - 1)) |w| :=
     Real.hasDerivAt_rpow_const
       (Or.inl (abs_ne_zero.mpr hw.ne'))
-  convert (hasDerivAt_const w c).mul (hpow.comp w habs) using 1 <;> ring
+  convert (hasDerivAt_const w c).mul (hpow.comp w habs) using 1 ; ring
 
 /-- The corresponding derivative lemma on the negative half-line. -/
 theorem hasDerivAt_const_mul_abs_rpow_of_neg
@@ -187,7 +187,7 @@ theorem hasDerivAt_const_mul_abs_rpow_of_neg
       (p * |w| ^ (p - 1)) |w| :=
     Real.hasDerivAt_rpow_const
       (Or.inl (abs_ne_zero.mpr hw.ne))
-  convert (hasDerivAt_const w c).mul (hpow.comp w habs) using 1 <;> ring
+  convert (hasDerivAt_const w c).mul (hpow.comp w habs) using 1 ; ring
 
 noncomputable def latitudePowerBranchD1 (α w : ℝ) : ℝ :=
   (1 + α) * |w| ^ α
@@ -207,28 +207,28 @@ theorem hasDerivAt_latitudePowerBranch_of_pos
     HasDerivAt (latitudePowerBranch α) (latitudePowerBranchD1 α w) w := by
   unfold latitudePowerBranch latitudePowerBranchD1
   convert hasDerivAt_const_mul_abs_rpow_of_pos
-    (c := (1 : ℝ)) (p := 1 + α) hw using 1 <;> ring
+    (c := (1 : ℝ)) (p := 1 + α) hw using 1 <;> ring_nf
 
 theorem hasDerivAt_latitudePowerBranchD1_of_pos
     {α w : ℝ} (hw : 0 < w) :
     HasDerivAt (latitudePowerBranchD1 α) (latitudePowerBranchD2 α w) w := by
   unfold latitudePowerBranchD1 latitudePowerBranchD2
   convert hasDerivAt_const_mul_abs_rpow_of_pos
-    (c := 1 + α) (p := α) hw using 1 <;> ring
+    (c := 1 + α) (p := α) hw using 1
 
 theorem hasDerivAt_latitudePowerBranchD2_of_pos
     {α w : ℝ} (hw : 0 < w) :
     HasDerivAt (latitudePowerBranchD2 α) (latitudePowerBranchD3 α w) w := by
   unfold latitudePowerBranchD2 latitudePowerBranchD3
   convert hasDerivAt_const_mul_abs_rpow_of_pos
-    (c := (1 + α) * α) (p := α - 1) hw using 1 <;> ring
+    (c := (1 + α) * α) (p := α - 1) hw using 1 ; ring_nf
 
 theorem hasDerivAt_latitudePowerBranchD3_of_pos
     {α w : ℝ} (hw : 0 < w) :
     HasDerivAt (latitudePowerBranchD3 α) (latitudePowerBranchD4 α w) w := by
   unfold latitudePowerBranchD3 latitudePowerBranchD4
   convert hasDerivAt_const_mul_abs_rpow_of_pos
-    (c := (1 + α) * α * (α - 1)) (p := α - 2) hw using 1 <;> ring
+    (c := (1 + α) * α * (α - 1)) (p := α - 2) hw using 1 ; ring_nf
 
 /-- The same chain on the negative side.  Odd derivatives change sign and
 the fourth derivative agrees with the positive-side formula. -/
@@ -237,7 +237,7 @@ theorem hasDerivAt_latitudePowerBranch_of_neg
     HasDerivAt (latitudePowerBranch α) (-latitudePowerBranchD1 α w) w := by
   unfold latitudePowerBranch latitudePowerBranchD1
   convert hasDerivAt_const_mul_abs_rpow_of_neg
-    (c := (1 : ℝ)) (p := 1 + α) hw using 1 <;> ring
+    (c := (1 : ℝ)) (p := 1 + α) hw using 1 <;> ring_nf
 
 theorem hasDerivAt_neg_latitudePowerBranchD1_of_neg
     {α w : ℝ} (hw : w < 0) :
@@ -245,14 +245,14 @@ theorem hasDerivAt_neg_latitudePowerBranchD1_of_neg
       (latitudePowerBranchD2 α w) w := by
   unfold latitudePowerBranchD1 latitudePowerBranchD2
   convert hasDerivAt_const_mul_abs_rpow_of_neg
-    (c := -(1 + α)) (p := α) hw using 1 <;> ring
+    (c := -(1 + α)) (p := α) hw using 1 <;> ring_nf
 
 theorem hasDerivAt_latitudePowerBranchD2_of_neg
     {α w : ℝ} (hw : w < 0) :
     HasDerivAt (latitudePowerBranchD2 α) (-latitudePowerBranchD3 α w) w := by
   unfold latitudePowerBranchD2 latitudePowerBranchD3
   convert hasDerivAt_const_mul_abs_rpow_of_neg
-    (c := (1 + α) * α) (p := α - 1) hw using 1 <;> ring
+    (c := (1 + α) * α) (p := α - 1) hw using 1 ; ring_nf
 
 theorem hasDerivAt_neg_latitudePowerBranchD3_of_neg
     {α w : ℝ} (hw : w < 0) :
@@ -260,7 +260,7 @@ theorem hasDerivAt_neg_latitudePowerBranchD3_of_neg
       (latitudePowerBranchD4 α w) w := by
   unfold latitudePowerBranchD3 latitudePowerBranchD4
   convert hasDerivAt_const_mul_abs_rpow_of_neg
-    (c := -((1 + α) * α * (α - 1))) (p := α - 2) hw using 1 <;> ring
+    (c := -((1 + α) * α * (α - 1))) (p := α - 2) hw using 1 <;> ring_nf
 
 /-- Exact magnitude of the mixed-fourth branch coefficient.  When the
 branch is composed with `s-t`, two derivatives in each variable have total
@@ -298,7 +298,7 @@ theorem hasDerivAt_latitudePowerBranchD2_sub_right_of_gt
       (-latitudePowerBranchD3 α (s - t)) t := by
   convert
     (hasDerivAt_latitudePowerBranchD2_of_pos (sub_pos.mpr hst)).comp t
-      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 <;> ring
+      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 ; ring
 
 /-- The second `t` derivative completes the mixed `s²t²` chain and equals
 the fourth one-variable derivative. -/
@@ -308,7 +308,7 @@ theorem hasDerivAt_neg_latitudePowerBranchD3_sub_right_of_gt
       (latitudePowerBranchD4 α (s - t)) t := by
   convert
     (hasDerivAt_latitudePowerBranchD3_of_pos (sub_pos.mpr hst)).neg.comp t
-      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 <;> ring
+      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 ; ring
 
 /-- First `s` derivative on the reflected `s < t` component. -/
 theorem hasDerivAt_latitudePowerBranch_sub_left_of_lt
@@ -335,7 +335,7 @@ theorem hasDerivAt_latitudePowerBranchD2_sub_right_of_lt
       (latitudePowerBranchD3 α (s - t)) t := by
   convert
     (hasDerivAt_latitudePowerBranchD2_of_neg (sub_neg.mpr hst)).comp t
-      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 <;> ring
+      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 ; ring
 
 /-- Completion of the mixed chain on `s < t`; again the answer is `D4`. -/
 theorem hasDerivAt_latitudePowerBranchD3_sub_right_of_lt
@@ -363,8 +363,8 @@ theorem hasDerivAt_resonantLatitudeBranch
     HasDerivAt resonantLatitudeBranch
       (2 * w * Real.log w + w) w := by
   unfold resonantLatitudeBranch
-  convert ((hasDerivAt_pow 2 w).mul (Real.hasDerivAt_log hw)) using 1 <;>
-    field_simp [hw] <;> ring
+  convert ((hasDerivAt_pow 2 w).mul (Real.hasDerivAt_log hw)) using 1 ;
+    field_simp [hw] ; ring
 
 /-- Second derivative in a derivative chain for the resonant branch. -/
 theorem hasDerivAt_resonantLatitudeBranch_first
@@ -373,8 +373,8 @@ theorem hasDerivAt_resonantLatitudeBranch_first
       (2 * Real.log w + 3) w := by
   convert
     (((hasDerivAt_const w 2).mul (hasDerivAt_id w)).mul
-      (Real.hasDerivAt_log hw) |>.add (hasDerivAt_id w)) using 1 <;>
-    field_simp <;> ring
+      (Real.hasDerivAt_log hw) |>.add (hasDerivAt_id w)) using 1 ;
+    field_simp ; ring
 
 /-- Third derivative in a derivative chain for the resonant branch. -/
 theorem hasDerivAt_resonantLatitudeBranch_second
@@ -382,7 +382,7 @@ theorem hasDerivAt_resonantLatitudeBranch_second
     HasDerivAt (fun x : ℝ ↦ 2 * Real.log x + 3)
       (2 / w) w := by
   convert ((hasDerivAt_const w 2).mul (Real.hasDerivAt_log hw) |>.add_const 3)
-    using 1 <;> field_simp
+    using 1 ; field_simp
 
 /-- Fourth derivative in a derivative chain for the resonant branch.  This
 is the key resonance fact: after four derivatives no logarithm remains. -/
@@ -390,12 +390,12 @@ theorem hasDerivAt_resonantLatitudeBranch_third
     {w : ℝ} (hw : w ≠ 0) :
     HasDerivAt (fun x : ℝ ↦ 2 / x)
       (-2 / w ^ 2) w := by
-  convert (hasDerivAt_const w 2).div (hasDerivAt_id w) hw using 1 <;>
-    field_simp <;> ring
+  convert (hasDerivAt_const w 2).div (hasDerivAt_id w) hw using 1 ;
+    field_simp
 
 /-- Quantitative fourth-derivative estimate for the `α = 1` branch model. -/
 theorem abs_resonantLatitudeBranch_fourth
-    {w : ℝ} (hw : w ≠ 0) :
+    {w : ℝ} (_hw : w ≠ 0) :
     |-2 / w ^ 2| = 2 / |w| ^ 2 := by
   rw [abs_div, abs_neg, abs_pow]
   norm_num
@@ -427,7 +427,7 @@ theorem hasDerivAt_resonantLatitudeBranch_second_sub_right
       (-(2 / (s - t))) t := by
   convert
     (hasDerivAt_resonantLatitudeBranch_second (sub_ne_zero.mpr hst)).comp t
-      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 <;> ring
+      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 ; ring
 
 /-- Completion of the resonant mixed `s²t²` chain.  The endpoint contains
 no logarithm and has the sharp inverse-square singularity. -/
@@ -438,7 +438,7 @@ theorem hasDerivAt_neg_resonantLatitudeBranch_third_sub_right
   convert
     (hasDerivAt_resonantLatitudeBranch_third
       (sub_ne_zero.mpr hst)).neg.comp t
-      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 <;>
-    field_simp [sub_ne_zero.mpr hst] <;> ring
+      ((hasDerivAt_const t s).sub (hasDerivAt_id t)) using 1 ;
+    field_simp [sub_ne_zero.mpr hst]
 
 end BEMOC

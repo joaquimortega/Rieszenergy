@@ -65,7 +65,7 @@ theorem angularPairKernel_base_le_of_north_gaps
 theorem angularPairKernel_le_of_north_gaps
     {α s t θ A B : ℝ} (hα : 0 ≤ α)
     (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
-    (hA0 : 0 ≤ A) (hB0 : 0 ≤ B)
+    (_hA0 : 0 ≤ A) (_hB0 : 0 ≤ B)
     (hA : 1 - s ≤ A) (hB : 1 - t ≤ B) :
     angularPairKernel α s t θ ≤ (4 * (A + B)) ^ (α / 2) := by
   unfold angularPairKernel

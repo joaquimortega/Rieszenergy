@@ -96,13 +96,12 @@ theorem hasDerivAt_variableReducedLatitudeKernel_left
           latitudeAngularScaleDs s t) s := by
     convert
       (Real.hasDerivAt_rpow_const (x := latitudeAngularScale s t)
-        (p := α / 2) (Or.inl hp.ne')).comp s hpDeriv using 1 <;>
-      simp only [Function.comp_apply] <;> ring
+        (p := α / 2) (Or.inl hp.ne')).comp s hpDeriv using 1
   have hCusp :=
     (hasDerivAt_reducedLatitudeCusp (α := α) hq).comp s hqDeriv
   unfold variableReducedLatitudeKernel variableReducedLatitudeKernelDs
-  convert hpPow.mul hCusp using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+  convert hpPow.mul hCusp using 1 ;
+    simp only [Function.comp_apply] ; ring
 
 /-- Second height derivative of the exact variable-coefficient reduced cusp.
 This is the first half of the mixed `(2,2)` chain used on separated L5
@@ -131,8 +130,7 @@ theorem hasDerivAt_variableReducedLatitudeKernelDs_left
           latitudeAngularScaleDs s t) s := by
     convert
       (Real.hasDerivAt_rpow_const (x := latitudeAngularScale s t)
-        (p := e) (Or.inl hp.ne')).comp s hpD using 1 <;>
-      simp only [Function.comp_apply] <;> ring
+        (p := e) (Or.inl hp.ne')).comp s hpD using 1
   have hC0 :=
     (hasDerivAt_reducedLatitudeCusp (α := α) hq).comp s hqD
   have hC1 :=
@@ -149,7 +147,7 @@ theorem hasDerivAt_variableReducedLatitudeKernelDs_left
     dsimp [A]
     convert
       (((hasDerivAt_const s (α / 2)).mul (hpPow (α / 2 - 1))).mul
-        hpDD) using 1 <;> ring
+        hpDD) using 1 ; ring_nf
   let P : ℝ → ℝ := fun y ↦ latitudeAngularScale y t ^ (α / 2)
   have hP := hpPow (α / 2)
   unfold variableReducedLatitudeKernelDs variableReducedLatitudeKernelDss
@@ -157,8 +155,8 @@ theorem hasDerivAt_variableReducedLatitudeKernelDs_left
     (fun y ↦ A y * reducedLatitudeCusp α (normalizedLatitudeGap y t) +
       P y * reducedLatitudeCuspD1Value α (normalizedLatitudeGap y t) *
         normalizedLatitudeGapDs y t) _ s
-  convert (hA.mul hC0).add ((hP.mul hC1).mul hqDD) using 1 <;>
-    dsimp [A, P] <;> ring
+  convert (hA.mul hC0).add ((hP.mul hC1).mul hqDD) using 1 ;
+    dsimp [A, P] ; ring
 
 /-- The exact remainder amplitude which the concrete variation estimate
 must see in order to yield the manuscript comparable-block weight. -/

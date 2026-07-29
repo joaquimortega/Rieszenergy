@@ -443,7 +443,7 @@ theorem sum_range_one_add_rpow_neg_le
     rw [integral_rpow (a := (1 : ℝ)) (b := (X : ℝ))
       (r := -a) (Or.inl (by linarith))]
     norm_num [Real.one_rpow]
-    ring
+    ring_nf
   have hXpow : 1 ≤ (X : ℝ) ^ (1 - a) := by
     have h1X : (1 : ℝ) ≤ X := by exact_mod_cast hX
     have hexp : 0 ≤ 1 - a := by linarith
@@ -515,7 +515,7 @@ theorem sum_Icc_rpow_alpha_sub_one_le
     rw [show α - 1 = -(1 - α) by ring]
     have hsum := sum_Icc_rpow_neg_le (a := 1 - α)
       (by linarith) (by linarith) hX
-    convert hsum using 1 <;> ring
+    convert hsum using 1 ; ring_nf
   · rw [powerSumConstant, if_neg hα1, one_mul]
     have hexp : 0 ≤ α - 1 := by linarith
     calc
@@ -649,7 +649,7 @@ private theorem sum_divisible_rpow_neg_le
 
 private theorem gcdArithmeticWeight_le_divisor_sum
     {α : ℝ} {q r X : ℕ}
-    (hq : 1 ≤ q) (hqX : q ≤ X) (hr : 1 ≤ r) (hrX : r ≤ X) :
+    (hq : 1 ≤ q) (hqX : q ≤ X) (hr : 1 ≤ r) (_hrX : r ≤ X) :
     gcdArithmeticWeight α q r ≤
       ∑ k ∈ Finset.Icc 1 X,
         if k ∣ q ∧ k ∣ r then
@@ -804,7 +804,7 @@ theorem gcd_arithmetic_double_sum_le
     have hD :
         D ≤ B := by
       have hraw := sum_divisible_rpow_neg_le ha0 ha1 hk1 hkX
-      convert hraw using 1 <;> dsimp [D, B, a, K₀] <;> ring
+      convert hraw using 1 ; dsimp [D, B, a, K₀] ; ring_nf
     have hD0 : 0 ≤ D := by
       dsimp [D]
       positivity
@@ -976,7 +976,7 @@ theorem bemoc_population_double_gcd_sum_le
           gcdArithmeticWeight α q r) := by
       rw [Finset.sum_comm]
       simp_rw [Finset.mul_sum]
-      ring
+      ring_nf
     _ ≤ 49 * (gcdArithmeticConstant α * (X : ℝ) ^ 2) := by
       apply mul_le_mul_of_nonneg_left
         (gcd_arithmetic_double_sum_le hα0 hα2 hX)
@@ -1255,7 +1255,7 @@ theorem exists_bemocCrossRingDeficit_bandCount_bound
           (concrete_bemocRingFamily_population_pos hM p)
           (concrete_bemocRingFamily_population_pos hM q)
       unfold crossRingPairWeight
-      convert hp using 1 <;> ring
+      convert hp using 1 ; ring
     · dsimp [E]
       rw [if_neg hpq, abs_zero]
       exact mul_nonneg hC₀.le

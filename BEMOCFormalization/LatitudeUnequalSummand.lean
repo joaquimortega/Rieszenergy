@@ -72,7 +72,7 @@ theorem contDiffAt_latitudeEvenPowerSummand_right
       (fun _ : ℝ ↦ (4 : ℝ) ^ m * (1 - s ^ 2) ^ m) t :=
     contDiffAt_const
   unfold latitudeEvenPowerSummand
-  convert (hApow.mul hc).mul hv using 1 <;> ring
+  convert (hApow.mul hc).mul hv using 1 ; ring_nf
 
 /-- In particular every summand is `C²` in each variable, as required
 before taking the mixed `(2,2)` derivative. -/
@@ -202,7 +202,7 @@ theorem hasDerivAt_unequalRadiusPower (m : ℕ) (s : ℝ) :
     HasDerivAt (unequalRadiusPower m) (unequalRadiusPowerD1 m s) s := by
   unfold unequalRadiusPower unequalRadiusPowerD1
   convert
-    (((hasDerivAt_const s 1).sub (hasDerivAt_pow 2 s)).pow m) using 1 <;>
+    (((hasDerivAt_const s 1).sub (hasDerivAt_pow 2 s)).pow m) using 1 ;
     ring
 
 theorem hasDerivAt_unequalRadiusPowerD1 (m : ℕ) (s : ℝ) :
@@ -219,13 +219,13 @@ theorem hasDerivAt_unequalRadiusPowerD1 (m : ℕ) (s : ℝ) :
   | succ m =>
       have hbase :
           HasDerivAt (fun y : ℝ ↦ 1 - y ^ 2) (-2 * s) s := by
-        convert (hasDerivAt_const s 1).sub (hasDerivAt_pow 2 s) using 1 <;> ring
+        convert (hasDerivAt_const s 1).sub (hasDerivAt_pow 2 s) using 1 ; ring
       have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) s := by
-        convert (hasDerivAt_const s (-2)).mul (hasDerivAt_id s) using 1 <;> ring
+        convert (hasDerivAt_const s (-2)).mul (hasDerivAt_id s) using 1 ; ring
       unfold unequalRadiusPowerD1 unequalRadiusPowerD2
       have hm : m + 1 - 2 = m - 1 := by omega
       convert
-        ((hbase.pow m).const_mul ((m + 1 : ℕ) : ℝ)).mul hlin using 1 <;>
+        ((hbase.pow m).const_mul ((m + 1 : ℕ) : ℝ)).mul hlin using 1 ;
         norm_num [Nat.cast_add]
       rw [hm]
       ring
@@ -257,8 +257,7 @@ theorem hasDerivAt_unequalAPow_left
   convert
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e) (Or.inl hA.ne')).comp s
-        (hasDerivAt_angularKernelA_left s t) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+        (hasDerivAt_angularKernelA_left s t) using 1
 
 theorem hasDerivAt_unequalAPowS_left
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -272,7 +271,7 @@ theorem hasDerivAt_unequalAPowS_left
   · funext y
     simp only [Function.comp_apply]
     ring
-  · ring
+  · ring_nf
 
 theorem hasDerivAt_unequalAPow_right
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -281,8 +280,7 @@ theorem hasDerivAt_unequalAPow_right
   convert
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e) (Or.inl hA.ne')).comp t
-        (hasDerivAt_angularKernelA_right s t) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+        (hasDerivAt_angularKernelA_right s t) using 1
 
 theorem hasDerivAt_unequalAPowT_right
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -296,7 +294,7 @@ theorem hasDerivAt_unequalAPowT_right
   · funext y
     simp only [Function.comp_apply]
     ring
-  · ring
+  · ring_nf
 
 theorem hasDerivAt_unequalAPowS_right
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -307,13 +305,13 @@ theorem hasDerivAt_unequalAPowS_right
       (p := e - 1) (Or.inl hA.ne')).comp t
         (hasDerivAt_angularKernelA_right s t)
   have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) t := by
-    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 <;> ring
+    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 ; ring
   convert (hp.mul hlin).const_mul e using 1
   · funext y
     simp only [Function.comp_apply, id_eq]
     ring
   · simp only [Function.comp_apply]
-    ring
+    ring_nf
 
 theorem hasDerivAt_unequalAPowSS_right
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -326,14 +324,14 @@ theorem hasDerivAt_unequalAPowSS_right
   have hsq : HasDerivAt (fun y : ℝ ↦ (-2 * y) ^ 2)
       (2 * (-2 * t) * (-2)) t := by
     convert
-      (((hasDerivAt_const t (-2)).mul (hasDerivAt_id t)).pow 2) using 1 <;>
-      simp only [id_eq] <;> ring
+      (((hasDerivAt_const t (-2)).mul (hasDerivAt_id t)).pow 2) using 1 ;
+      simp only [id_eq] ; ring
   convert (hp.mul hsq).const_mul (e * (e - 1)) using 1
   · funext y
     simp only [Function.comp_apply, id_eq]
     ring
   · simp only [Function.comp_apply]
-    ring
+    ring_nf
 
 theorem hasDerivAt_unequalAPowST_right
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -348,7 +346,7 @@ theorem hasDerivAt_unequalAPowST_right
       (p := e - 1) (Or.inl hA.ne')).comp t
         (hasDerivAt_angularKernelA_right s t)
   have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) t := by
-    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 <;> ring
+    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 ; ring
   convert
     (((hp2.mul hlin).const_mul (e * (e - 1) * (-2 * s))).add
       (hp1.const_mul (e * (-2)))) using 1
@@ -356,7 +354,7 @@ theorem hasDerivAt_unequalAPowST_right
     simp only [Function.comp_apply, id_eq]
     ring
   · simp only [Function.comp_apply]
-    ring
+    ring_nf
 
 theorem hasDerivAt_unequalAPowSST_right
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -374,10 +372,10 @@ theorem hasDerivAt_unequalAPowSST_right
   have hsq : HasDerivAt (fun y : ℝ ↦ (-2 * y) ^ 2)
       (2 * (-2 * t) * (-2)) t := by
     convert
-      (((hasDerivAt_const t (-2)).mul (hasDerivAt_id t)).pow 2) using 1 <;>
-      simp only [id_eq] <;> ring
+      (((hasDerivAt_const t (-2)).mul (hasDerivAt_id t)).pow 2) using 1 ;
+      simp only [id_eq] ; ring
   have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) t := by
-    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 <;> ring
+    convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 ; ring
   convert
     (((hp3.mul hsq).const_mul
         (e * (e - 1) * (e - 2) * (-2 * s))).add
@@ -387,7 +385,7 @@ theorem hasDerivAt_unequalAPowSST_right
     simp only [Function.comp_apply, id_eq]
     ring
   · simp only [Function.comp_apply]
-    ring
+    ring_nf
 
 theorem hasDerivAt_latitudeEvenPowerSummand_left
     {α : ℝ} {m : ℕ} {s t : ℝ}
@@ -625,7 +623,7 @@ noncomputable def latitudeEvenPowerMixed22Majorant
 /-- The mixed-derivative majorant is normally summable in `m` for every
 fixed positive angular scale. -/
 theorem summable_latitudeEvenPowerMixed22Majorant
-    {α A : ℝ} (hA : 0 < A) :
+    {α A : ℝ} (_hA : 0 < A) :
     Summable (fun r : ℕ ↦
       latitudeEvenPowerMixed22Majorant α A (r + 2)) := by
   have hgeo :=

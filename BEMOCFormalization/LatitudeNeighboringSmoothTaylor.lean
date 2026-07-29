@@ -65,8 +65,7 @@ theorem hasDerivAt_latitudePower_left
     (Real.hasDerivAt_rpow_const (x := latitudeAngularScale s t)
       (p := α / 2) (Or.inl hp.ne')).comp s
         (hasDerivAt_latitudeAngularScale_left (s := s) (t := t) hs)
-      using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+      using 1
 
 theorem hasDerivAt_latitudePowerDs_left
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -92,7 +91,7 @@ theorem hasDerivAt_latitudePowerDs_left
   convert
     (((hasDerivAt_const s (α / 2)).mul hpow).mul
       (hasDerivAt_latitudeAngularScaleDs_left (s := s) (t := t) hs))
-      using 1 <;>
+      using 1 ;
     ring
 
 theorem hasDerivAt_neighboringAffineSmoothKernel_left
@@ -130,8 +129,8 @@ theorem hasDerivAt_neighboringAffineSmoothKernelDs_right
         (((hasDerivAt_id t).neg.mul hQ).add
           (((hasDerivAt_const t 1).sub
             ((hasDerivAt_const t s).mul (hasDerivAt_id t))).mul hQs)))
-      using 1 <;>
-    (try { funext y }) <;> simp only [id_eq] <;> ring
+      using 1 ;
+    simp only [id_eq] ; ring
 
 theorem hasDerivAt_neighboringAffineSmoothKernelDst_right
     {α H L s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -152,8 +151,8 @@ theorem hasDerivAt_neighboringAffineSmoothKernelDst_right
   convert
     ((hasDerivAt_const t (H - L)).mul hP).add
       ((hasDerivAt_const t (2 * L)).mul hinside)
-      using 1 <;>
-    (try { funext y }) <;> simp only [id_eq] <;> ring
+      using 1 ;
+    simp only [id_eq] ; ring
 
 theorem hasDerivAt_neighboringAffineSmoothKernelDs_left
     {α H L s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -170,8 +169,8 @@ theorem hasDerivAt_neighboringAffineSmoothKernelDs_left
         (((hasDerivAt_const s (-t)).mul hQ).add
           (((hasDerivAt_const s 1).sub
             ((hasDerivAt_id s).mul_const t)).mul hQs)))
-      using 1 <;>
-    (try { funext x }) <;> simp only [id_eq] <;> ring
+      using 1 ;
+    simp only [id_eq] ; ring
 
 theorem hasDerivAt_neighboringAffineSmoothKernelDss_right
     {α H L s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -188,8 +187,8 @@ theorem hasDerivAt_neighboringAffineSmoothKernelDss_right
         (((((hasDerivAt_const t 1).sub
             ((hasDerivAt_const t s).mul (hasDerivAt_id t))).mul hQ).sub
           (((hasDerivAt_const t 2).mul (hasDerivAt_id t)).mul hQs))))
-      using 1 <;>
-    (try { funext y }) <;> simp only [id_eq] <;> ring
+      using 1 ;
+    simp only [id_eq] ; ring
 
 theorem hasDerivAt_neighboringAffineSmoothKernelDsst_right
     {α H L s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -210,8 +209,8 @@ theorem hasDerivAt_neighboringAffineSmoothKernelDsst_right
             ((hasDerivAt_const t s).mul (hasDerivAt_id t))).mul hQsst)).sub
           ((hasDerivAt_const t 2).mul hQs)).sub
           (((hasDerivAt_const t 2).mul (hasDerivAt_id t)).mul hQst)))
-      using 1 <;>
-    (try { funext y }) <;> simp only [id_eq] <;> ring
+      using 1 ;
+    simp only [id_eq] ; ring
 
 theorem neighboringAffineSmoothKernelDstt_eq_Dsst_swap
     (α H L s t : ℝ) :
@@ -263,7 +262,7 @@ theorem hasDerivAt_neighboringSmoothRightTaylorError_left
     (α := α) (H := H) (L := L) hc hs
   unfold neighboringSmoothRightTaylorError neighboringSmoothRightTaylorErrorDs
   convert (hK.sub hKc).sub ((hasDerivAt_const s (t - c)).mul hDs)
-    using 1 <;> ring
+    using 1 ; ring
 
 theorem hasDerivAt_neighboringSmoothRightTaylorErrorDs_left
     {α H L c s t : ℝ}
@@ -279,7 +278,7 @@ theorem hasDerivAt_neighboringSmoothRightTaylorErrorDs_left
     (α := α) (H := H) (L := L) hc hs
   unfold neighboringSmoothRightTaylorErrorDs neighboringSmoothRightTaylorErrorDss
   convert (hK.sub hKc).sub
-    ((hasDerivAt_const s (t - c)).mul hDst) using 1 <;> ring
+    ((hasDerivAt_const s (t - c)).mul hDst) using 1 ; ring
 
 theorem neighboringSmoothMixedRemainder_decomposition
     (α H L a c s t : ℝ) :

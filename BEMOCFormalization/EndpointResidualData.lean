@@ -92,7 +92,7 @@ theorem hasDerivAt_leftSingularCorrection {α x : ℝ}
       (leftSingularCorrectionD1 α x) x := by
   unfold leftSingularCorrection leftSingularCorrectionD1
   convert (Real.hasDerivAt_rpow_const (p := α) (Or.inl hx0)).mul
-    ((hasDerivAt_q hx1).sub_const 1) using 1 <;> ring
+    ((hasDerivAt_q hx1).sub_const 1) using 1
 
 theorem hasDerivAt_leftSingularCorrectionD1 {α x : ℝ}
     (hx0 : x ≠ 0) (hx1 : x ∈ Ioo (-1 : ℝ) 1) :
@@ -105,7 +105,7 @@ theorem hasDerivAt_leftSingularCorrectionD1 {α x : ℝ}
     (show |x| < 1 by simpa [abs_lt] using hx1)
   have hq1 := hasDerivAt_q1 (α := α) hx1
   convert (((hp1.const_mul α).mul (hq.sub_const 1)).add
-    (hp0.mul hq1)) using 1 <;> ring
+    (hp0.mul hq1)) using 1 ; ring_nf
 
 theorem hasDerivAt_leftSingularCorrectionD2 {α x : ℝ}
     (hx0 : x ≠ 0) (hx1 : x ∈ Ioo (-1 : ℝ) 1) :
@@ -120,7 +120,7 @@ theorem hasDerivAt_leftSingularCorrectionD2 {α x : ℝ}
   have hq1 := hasDerivAt_q1 (α := α) hx1
   have hq2 := hasDerivAt_q2 (α := α) hx1
   convert ((((hp2.const_mul (α * (α - 1))).mul (hq.sub_const 1)).add
-    ((hp1.const_mul (2 * α)).mul hq1)).add (hp0.mul hq2)) using 1 <;> ring
+    ((hp1.const_mul (2 * α)).mul hq1)).add (hp0.mul hq2)) using 1 ; ring_nf
 
 theorem leftSingularCorrectionD3_bound {α : ℝ} (hα : 0 < α) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ x ∈ Ioc (0 : ℝ) (1 / 2 : ℝ),
@@ -158,10 +158,10 @@ theorem leftSingularCorrectionD3_bound {α : ℝ} (hα : 0 < α) :
     calc
       x ^ (α - 2) * x = x ^ (α - 2) * x ^ (1 : ℝ) := by rw [Real.rpow_one]
       _ = x ^ ((α - 2) + 1) := (Real.rpow_add hx.1 _ _).symm
-      _ = _ := by congr 1 <;> ring
+      _ = _ := by congr 1 ; ring
   have hp0 : x ^ α = x ^ (α - 1) * x := by
     calc
-      x ^ α = x ^ ((α - 1) + 1) := by congr 1 <;> ring
+      x ^ α = x ^ ((α - 1) + 1) := by congr 1 ; ring
       _ = x ^ (α - 1) * x ^ (1 : ℝ) := Real.rpow_add hx.1 _ _
       _ = _ := by rw [Real.rpow_one]
   have ht0 :
@@ -276,7 +276,7 @@ theorem leftSingularCorrectionD1_bound (α : ℝ) :
   have hxI : x ∈ Icc (0 : ℝ) (1 / 2 : ℝ) := ⟨hx.1.le, hx.2⟩
   have hp2 : x ^ (α - 1) * x ^ 2 = x ^ (α + 1) := by
     rw [← Real.rpow_natCast, ← Real.rpow_add hx.1]
-    congr 1 <;> ring
+    congr 1 ; ring
   have hp1 : x ^ α * x = x ^ (α + 1) := by
     calc
       x ^ α * x = x ^ α * x ^ (1 : ℝ) := by rw [Real.rpow_one]
@@ -321,12 +321,12 @@ theorem leftSingularCorrectionD2_bound (α : ℝ) :
   have hxI : x ∈ Icc (0 : ℝ) (1 / 2 : ℝ) := ⟨hx.1.le, hx.2⟩
   have hp2 : x ^ (α - 2) * x ^ 2 = x ^ α := by
     rw [← Real.rpow_natCast, ← Real.rpow_add hx.1]
-    congr 1 <;> ring
+    congr 1 ; ring
   have hp1 : x ^ (α - 1) * x = x ^ α := by
     calc
       x ^ (α - 1) * x = x ^ (α - 1) * x ^ (1 : ℝ) := by rw [Real.rpow_one]
       _ = x ^ ((α - 1) + 1) := (Real.rpow_add hx.1 _ _).symm
-      _ = _ := by congr 1 <;> ring
+      _ = _ := by congr 1 ; ring
   have ht0 :
       |α * (α - 1) * x ^ (α - 2) * (sincPiPow α x - 1)| ≤
         |α * (α - 1)| * C0 * x ^ α := by
@@ -440,32 +440,32 @@ private theorem hasDerivAt_smoothEndpointTail {α x : ℝ}
     (hx : 1 - x ≠ 0) :
     HasDerivAt (smoothEndpointTail α) (smoothEndpointTailD1 α x) x := by
   have hsub : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> ring
+    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 ; ring
   have hpoly : HasDerivAt (fun y : ℝ => α * y * (1 - y))
       (α * (1 - 2 * x)) x := by
     convert ((hasDerivAt_id x).mul hsub).const_mul α using 1 <;>
-      simp only [id_eq] <;> ring
+      simp only [id_eq] <;> ring_nf
   unfold smoothEndpointTail smoothEndpointTailD1
-  convert (((hsub.rpow_const (Or.inl hx)).sub_const 1).add hpoly) using 1 <;> ring
+  convert (((hsub.rpow_const (Or.inl hx)).sub_const 1).add hpoly) using 1 ; ring
 
 private theorem hasDerivAt_smoothEndpointTailD1 {α x : ℝ}
     (hx : 1 - x ≠ 0) :
     HasDerivAt (smoothEndpointTailD1 α) (smoothEndpointTailD2 α x) x := by
   have hsub : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> ring
+    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 ; ring
   unfold smoothEndpointTailD1 smoothEndpointTailD2
   convert ((hsub.rpow_const (p := α - 1) (Or.inl hx)).const_mul (-α)).add
     ((hasDerivAt_const x 1).sub ((hasDerivAt_id x).const_mul 2) |>.const_mul α)
-    using 1 <;> ring
+    using 1 ; ring_nf
 
 private theorem hasDerivAt_smoothEndpointTailD2 {α x : ℝ}
     (hx : 1 - x ≠ 0) :
     HasDerivAt (smoothEndpointTailD2 α) (smoothEndpointTailD3 α x) x := by
   have hsub : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> ring
+    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 ; ring
   unfold smoothEndpointTailD2 smoothEndpointTailD3
   convert ((hsub.rpow_const (p := α - 2) (Or.inl hx)).const_mul
-    (α * (α - 1))).sub_const (2 * α) using 1 <;> ring
+    (α * (α - 1))).sub_const (2 * α) using 1 ; ring_nf
 
 theorem hasDerivAt_leftResidual {α x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     HasDerivAt (leftResidual α) (leftResidualD1 α x) x := by
@@ -536,8 +536,8 @@ theorem tendsto_leftResidualD2_zero {α : ℝ} (hα : 0 < α) :
   have ht := (tendsto_leftSingularCorrectionD2_zero hα).sub
     ((hasDerivAt_smoothEndpointTailD2 (α := α) (x := 0) (by norm_num)).continuousAt.tendsto.mono_left
       inf_le_left)
-  convert ht.const_mul ((2 * Real.pi) ^ α) using 1 <;>
-    simp [smoothEndpointTailD2] <;> ring
+  convert ht.const_mul ((2 * Real.pi) ^ α) using 1 ;
+    simp [smoothEndpointTailD2] ; ring
 
 theorem hasDerivWithinAt_leftResidual_zero {α : ℝ} (hα : 0 < α) :
     HasDerivWithinAt (leftResidual α) 0 (Ici (0 : ℝ)) 0 := by
@@ -580,7 +580,7 @@ theorem circleEndpointResidual_symm (α x : ℝ) :
   unfold circleEndpointResidual circleProfile endpointModel
   rw [hsin]
   congr 1
-  ring
+  ring_nf
 
 theorem leftResidual_symm {α x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     leftResidual α (1 - x) = leftResidual α x := by
@@ -593,7 +593,7 @@ theorem leftResidualD1_symm {α x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     leftResidualD1 α (1 - x) = -leftResidualD1 α x := by
   have hx' : 1 - x ∈ Ioo (0 : ℝ) 1 := by constructor <;> linarith [hx.1, hx.2]
   have hsub : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> ring
+    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 ; ring
   have hc := (hasDerivAt_leftResidual (α := α) hx').comp x hsub
   have heq : leftResidual α =ᶠ[𝓝 x]
       (leftResidual α ∘ fun y : ℝ => 1 - y) := by
@@ -607,7 +607,7 @@ theorem leftResidualD2_symm {α x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     leftResidualD2 α (1 - x) = leftResidualD2 α x := by
   have hx' : 1 - x ∈ Ioo (0 : ℝ) 1 := by constructor <;> linarith [hx.1, hx.2]
   have hsub : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> ring
+    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 ; ring
   have hc := (hasDerivAt_leftResidualD1 (α := α) hx').comp x hsub
   have heq : (fun y : ℝ => -leftResidualD1 α y) =ᶠ[𝓝 x]
       (leftResidualD1 α ∘ fun y : ℝ => 1 - y) := by
@@ -622,7 +622,7 @@ theorem leftResidualD3_symm {α x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     leftResidualD3 α (1 - x) = -leftResidualD3 α x := by
   have hx' : 1 - x ∈ Ioo (0 : ℝ) 1 := by constructor <;> linarith [hx.1, hx.2]
   have hsub : HasDerivAt (fun y : ℝ => 1 - y) (-1) x := by
-    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 <;> ring
+    convert (hasDerivAt_const x 1).sub (hasDerivAt_id x) using 1 ; ring
   have hc := (hasDerivAt_leftResidualD2 (α := α) hx').comp x hsub
   have heq : leftResidualD2 α =ᶠ[𝓝 x]
       (leftResidualD2 α ∘ fun y : ℝ => 1 - y) := by
@@ -637,7 +637,7 @@ private theorem tendsto_one_sub_nhdsLT_one :
   rw [tendsto_nhdsWithin_iff]
   constructor
   · convert (tendsto_const_nhds.sub tendsto_id :
-      Tendsto (fun x : ℝ => 1 - x) (𝓝 (1 : ℝ)) (𝓝 (1 - 1))) |>.mono_left inf_le_left <;>
+      Tendsto (fun x : ℝ => 1 - x) (𝓝 (1 : ℝ)) (𝓝 (1 - 1))) |>.mono_left inf_le_left ;
       norm_num
   · filter_upwards [self_mem_nhdsWithin] with x hx
     change 0 < 1 - x
@@ -872,7 +872,7 @@ theorem continuousOn_residualDeriv2 {α : ℝ} (hα : 0 < α) :
     exact (continuousWithinAt_singleton.union hright).mono (by
       intro y hy
       by_cases hy0 : y = 0
-      · exact Or.inl (by simpa [hy0])
+      · exact Or.inl (by simp [hy0])
       · exact Or.inr (lt_of_le_of_ne hy.1 (Ne.symm hy0)))
   · rcases hx.2.eq_or_lt with rfl | hx1
     · have hleft : ContinuousWithinAt (residualDeriv2 α) (Iio (1 : ℝ)) 1 := by
@@ -883,7 +883,7 @@ theorem continuousOn_residualDeriv2 {α : ℝ} (hα : 0 < α) :
       exact (hleft.union continuousWithinAt_singleton).mono (by
         intro y hy
         by_cases hy1 : y = 1
-        · exact Or.inr (by simpa [hy1])
+        · exact Or.inr (by simp [hy1])
         · exact Or.inl (lt_of_le_of_ne hy.2 hy1))
     · exact (hasDerivAt_leftResidualD2 (α := α) ⟨hx0, hx1⟩).continuousAt.continuousWithinAt.congr_of_eventuallyEq
         (by

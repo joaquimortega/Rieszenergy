@@ -18,7 +18,7 @@ namespace BEMOC
 chain.  Continuity of the second derivative is not required. -/
 theorem abs_sub_linear_le_of_hasDerivAt_chain
     {f f₁ f₂ : ℝ → ℝ} {a b C x : ℝ}
-    (hab : a ≤ b) (hx : x ∈ Icc a b) (hC : 0 ≤ C)
+    (_hab : a ≤ b) (hx : x ∈ Icc a b) (hC : 0 ≤ C)
     (hf : ∀ y ∈ Icc a b, HasDerivAt f (f₁ y) y)
     (hf₁ : ∀ y ∈ Icc a b, HasDerivAt f₁ (f₂ y) y)
     (hf₂ : ∀ y ∈ Icc a b, |f₂ y| ≤ C) :
@@ -83,7 +83,7 @@ theorem abs_sub_linear_le_of_hasDerivAt_chain
         f a + (x - a) * f₁ a := by
     rw [show taylorWithinEval f 1 (Icc a x) a x =
       f a + (x - a) * derivWithin f (Icc a x) a by
-        simpa using taylorWithinEval_succ f 0 (Icc a x) a x]
+        simp [taylorWithinEval_succ]]
     rw [hderiv a ⟨le_rfl, hax.le⟩]
   have hyB : |f₂ y| ≤ C := hf₂ y (hI hyI)
   rw [hTaylor, hiter₂] at hrem
@@ -144,7 +144,7 @@ theorem hasDerivAt_variableReducedLatitudeKernelDs_right
     (variableReducedLatitudeKernelDst α s t) t
   unfold variableReducedLatitudeKernelDst latitudeJetMulD1
     latitudeJetMul3D1
-  convert (hPs.mul hH0).add ((hP.mul hH1).mul hQs) using 1 <;> ring
+  convert (hPs.mul hH0).add ((hP.mul hH1).mul hQs) using 1 ; ring
 
 theorem hasDerivAt_variableReducedLatitudeKernelDst_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -289,7 +289,7 @@ theorem hasDerivAt_latitudeFirstTaylorError_right
     (α := α) ha ht hat
   unfold latitudeFirstTaylorError latitudeFirstTaylorErrorDt
   convert (hK.sub hKa).sub ((hasDerivAt_const t (s - a)).mul hDs)
-    using 1 <;> ring
+    using 1 ; ring
 
 theorem hasDerivAt_latitudeFirstTaylorErrorDt_right
     {α a s t : ℝ}
@@ -306,7 +306,7 @@ theorem hasDerivAt_latitudeFirstTaylorErrorDt_right
     (α := α) ha ht hat
   unfold latitudeFirstTaylorErrorDt latitudeFirstTaylorErrorDtt
   convert (hDss.sub hDssa).sub
-    ((hasDerivAt_const t (s - a)).mul hDst) using 1 <;> ring
+    ((hasDerivAt_const t (s - a)).mul hDst) using 1 ; ring
 
 /-- Exact decomposition into the mixed remainder, a term affine in `t`,
 and a term affine in `s`. -/
@@ -417,7 +417,7 @@ theorem hasDerivAt_latitudeRightTaylorError_left
     (α := α) hc hs hsc.symm
   unfold latitudeRightTaylorError latitudeRightTaylorErrorDs
   convert (hK.sub hKc).sub ((hasDerivAt_const s (t - c)).mul hDs)
-    using 1 <;> ring
+    using 1 ; ring
 
 theorem hasDerivAt_latitudeRightTaylorErrorDs_left
     {α c s t : ℝ}
@@ -434,7 +434,7 @@ theorem hasDerivAt_latitudeRightTaylorErrorDs_left
     (α := α) hc hs hsc.symm
   unfold latitudeRightTaylorErrorDs latitudeRightTaylorErrorDss
   convert (hK.sub hKc).sub
-    ((hasDerivAt_const s (t - c)).mul hDst) using 1 <;> ring
+    ((hasDerivAt_const s (t - c)).mul hDst) using 1 ; ring
 
 theorem latitudeExplicitMixedRemainderRightFirst_decomposition
     (α a c s t : ℝ) :

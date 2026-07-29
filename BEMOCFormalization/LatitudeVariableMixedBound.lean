@@ -355,7 +355,7 @@ theorem latitudeCuspJetBound_of_radiusFloor
 
 private theorem abs_latitudeJetMulD2_le
     {a a₁ a₂ b b₁ b₂ P H : ℝ}
-    (hP : 0 ≤ P) (hH : 0 ≤ H)
+    (hP : 0 ≤ P) (_hH : 0 ≤ H)
     (ha : |a| ≤ P) (ha₁ : |a₁| ≤ P) (ha₂ : |a₂| ≤ P)
     (hb : |b| ≤ H) (hb₁ : |b₁| ≤ H) (hb₂ : |b₂| ≤ H) :
     |latitudeJetMulD2 a a₁ a₂ b b₁ b₂| ≤ 4 * P * H := by
@@ -371,7 +371,7 @@ private theorem abs_latitudeJetMulD2_le
 
 private theorem abs_latitudeJetMul3D2_le
     {a a₁ a₂ b b₁ b₂ c c₁ c₂ P H Q : ℝ}
-    (hP : 0 ≤ P) (hH : 0 ≤ H) (hQ : 0 ≤ Q)
+    (hP : 0 ≤ P) (hH : 0 ≤ H) (_hQ : 0 ≤ Q)
     (ha : |a| ≤ P) (ha₁ : |a₁| ≤ P) (ha₂ : |a₂| ≤ P)
     (hb : |b| ≤ H) (hb₁ : |b₁| ≤ H) (hb₂ : |b₂| ≤ H)
     (hc : |c| ≤ Q) (hc₁ : |c₁| ≤ Q) (hc₂ : |c₂| ≤ Q) :
@@ -584,7 +584,7 @@ local scale estimate, the actual mixed derivative has exactly the desired
 radius and separation powers. -/
 theorem abs_variableReducedLatitudeKernelDsstt_le_powerder
     {α s t R C P H Q : ℝ}
-    (hR : 0 < R) (hst : 0 < |s - t|)
+    (_hR : 0 < R) (_hst : 0 < |s - t|)
     (hP : LatitudePowerJetBound α s t P)
     (hH : LatitudeCuspJetBound α s t H)
     (hQ : LatitudeGapJetBound s t Q)

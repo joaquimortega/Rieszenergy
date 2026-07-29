@@ -146,7 +146,7 @@ theorem northern_band_heightRadius_floor
           (((j : ℕ) + 1 : ℕ) : ℝ) ^ 2 /
             (25 * (bandCount N : ℝ) ^ 2) := by
               field_simp
-              <;> ring
+              ; ring
       _ ≤ 1 - s := hgap
       _ ≤ (1 - s) * (1 + s) := by
         nlinarith [sub_nonneg.mpr hsSphere.2]
@@ -251,7 +251,7 @@ theorem northern_band_rectangle_separation
     apply (div_le_div_iff₀ (by positivity) hNpos).2
     convert hcross using 1 <;> ring
   exact hgeom.trans (by
-    convert hst using 1 <;> ring)
+    convert hst using 1 ; ring)
 
 /-- Symmetric distance form of the preceding estimate.  For rectangles
 separated by at least one intervening band, index distance controls physical
@@ -309,7 +309,7 @@ theorem northern_band_rectangle_dist_separation
           (((k : ℕ) - (j : ℕ) - 1 : ℕ) : ℝ) /
             (5 * (bandCount N : ℝ) ^ 2) := by positivity
     rw [abs_of_nonneg (by linarith [hraw, hrawLeft])]
-    convert hden.trans hraw using 1 <;> ring
+    convert hden.trans hraw using 1 ; ring
   · have hkj' : (k : ℕ) + 1 < (j : ℕ) := by
       rw [Nat.dist_comm, Nat.dist_eq_sub_of_le hkj] at hsep
       omega
@@ -349,7 +349,7 @@ theorem northern_band_rectangle_dist_separation
             (5 * (bandCount N : ℝ) ^ 2) := by positivity
     rw [abs_sub_comm,
       abs_of_nonneg (by linarith [hraw, hrawLeft])]
-    convert hden.trans hraw using 1 <;> ring
+    convert hden.trans hraw using 1 ; ring
 
 /-- Factor-two comparability turns the two individual radius floors into one
 floor expressed using the row scale `d_j`. -/
@@ -540,7 +540,7 @@ theorem comparable_sameHemisphere_angularScale_floor
         ((latitudeBandScale N j : ℝ) /
           (10 * (bandCount N : ℝ))) := by
             field_simp
-            <;> ring
+            ; ring
     _ ≤ 2 * heightRadius s * heightRadius t := by nlinarith
 
 /-- Same-hemisphere version of the physical separation estimate.  Reflection

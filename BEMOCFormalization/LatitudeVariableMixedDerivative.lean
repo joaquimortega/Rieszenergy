@@ -35,7 +35,7 @@ theorem hasDerivAt_latitudeAngularScale_right
     heightRadius
   convert
     ((hasDerivAt_const t (2 * Real.sqrt (1 - s ^ 2))).mul
-      (hasDerivAt_heightRadius ht)) using 1 <;> ring
+      (hasDerivAt_heightRadius ht)) using 1 ; ring
 
 theorem hasDerivAt_latitudeAngularScaleDt_right
     {s t : ℝ} (ht : t ∈ Ioo (-1 : ℝ) 1) :
@@ -57,7 +57,7 @@ theorem hasDerivAt_latitudeAngularScaleDs_right
   unfold latitudeAngularScaleDs latitudeAngularScaleDst
   convert
     (hasDerivAt_const t (2 * heightRadiusD1 s)).mul
-      (hasDerivAt_heightRadius ht) using 1 <;> ring
+      (hasDerivAt_heightRadius ht) using 1 ; ring
 
 theorem hasDerivAt_latitudeAngularScaleDst_right
     {s t : ℝ} (ht : t ∈ Ioo (-1 : ℝ) 1) :
@@ -67,7 +67,7 @@ theorem hasDerivAt_latitudeAngularScaleDst_right
     latitudeAngularScaleDsst
   convert
     (hasDerivAt_const t (2 * heightRadiusD1 s)).mul
-      (hasDerivAt_heightRadiusD1 ht) using 1 <;> ring
+      (hasDerivAt_heightRadiusD1 ht) using 1 ; ring
 
 theorem normalizedLatitudeGap_comm (s t : ℝ) :
     normalizedLatitudeGap s t = normalizedLatitudeGap t s := by
@@ -120,7 +120,7 @@ theorem hasDerivAt_normalizedLatitudeGapDs_right
         (heightRadius s ^ 3 * heightRadiusD1 t) t := by
     convert
       (hasDerivAt_const t (heightRadius s ^ 3)).mul
-        (hasDerivAt_heightRadius ht) using 1 <;> ring
+        (hasDerivAt_heightRadius ht) using 1 ; ring
   unfold normalizedLatitudeGapDs normalizedLatitudeGapDst
   convert
     ((hasDerivAt_const t s).sub (hasDerivAt_id t)).div hden
@@ -145,7 +145,7 @@ theorem hasDerivAt_normalizedLatitudeGapDst_right
           (3 * heightRadius t ^ 2 * heightRadiusD1 t)) t := by
     convert
       (hasDerivAt_const t (heightRadius s ^ 3)).mul
-        ((hasDerivAt_heightRadius ht).pow 3) using 1 <;> ring
+        ((hasDerivAt_heightRadius ht).pow 3) using 1 ; ring
   unfold normalizedLatitudeGapDst normalizedLatitudeGapDstt
     normalizedLatitudeGapDsst
   convert
@@ -252,8 +252,7 @@ theorem hasDerivAt_latitudePower_right
   convert
     (Real.hasDerivAt_rpow_const (x := latitudeAngularScale s t)
       (p := α / 2) (Or.inl hp.ne')).comp t
-        (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+        (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1
 
 theorem hasDerivAt_latitudePowerDt_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -272,13 +271,12 @@ theorem hasDerivAt_latitudePowerDt_right
     convert
       (Real.hasDerivAt_rpow_const (x := latitudeAngularScale s t)
         (p := e) (Or.inl hp.ne')).comp t
-          (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1 <;>
-      simp only [Function.comp_apply] <;> ring
+          (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1
   unfold latitudePowerDt latitudePowerDtt
   convert
     (((hasDerivAt_const t (α / 2)).mul (hpow (α / 2 - 1))).mul
-      (hasDerivAt_latitudeAngularScaleDt_right (s := s) ht)) using 1 <;>
-    ring
+      (hasDerivAt_latitudeAngularScaleDt_right (s := s) ht)) using 1 ;
+    ring_nf
 
 theorem hasDerivAt_latitudePowerDs_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -303,7 +301,7 @@ theorem hasDerivAt_latitudePowerDs_right
   unfold latitudePowerDs latitudePowerDst
   convert
     (((hasDerivAt_const t (α / 2)).mul hpow).mul
-      (hasDerivAt_latitudeAngularScaleDs_right (s := s) ht)) using 1 <;>
+      (hasDerivAt_latitudeAngularScaleDs_right (s := s) ht)) using 1 ;
     ring
 
 theorem hasDerivAt_latitudePowerDst_right
@@ -323,8 +321,7 @@ theorem hasDerivAt_latitudePowerDst_right
     convert
       (Real.hasDerivAt_rpow_const (x := latitudeAngularScale s t)
         (p := e) (Or.inl hp.ne')).comp t
-          (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1 <;>
-      simp only [Function.comp_apply] <;> ring
+          (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1
   unfold latitudePowerDst latitudePowerDstt
   have hinside :=
     (((((hasDerivAt_const t (α / 2 - 1)).mul
@@ -334,8 +331,8 @@ theorem hasDerivAt_latitudePowerDst_right
       ((hpow (α / 2 - 1)).mul
         (hasDerivAt_latitudeAngularScaleDst_right (s := s) ht)))
   convert
-    (hasDerivAt_const t (α / 2)).mul hinside using 1 <;>
-    ring
+    (hasDerivAt_const t (α / 2)).mul hinside using 1 ;
+    ring_nf
 
 theorem hasDerivAt_latitudePowerDss_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -354,8 +351,7 @@ theorem hasDerivAt_latitudePowerDss_right
     convert
       (Real.hasDerivAt_rpow_const (x := latitudeAngularScale s t)
         (p := e) (Or.inl hp.ne')).comp t
-          (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1 <;>
-      simp only [Function.comp_apply] <;> ring
+          (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1
   unfold latitudePowerDss latitudePowerDsst
   convert
     (((((hasDerivAt_const t ((α / 2) * (α / 2 - 1))).mul
@@ -363,8 +359,8 @@ theorem hasDerivAt_latitudePowerDss_right
         ((hasDerivAt_latitudeAngularScaleDs_right (s := s) ht).pow 2))).add
       (((hasDerivAt_const t (α / 2)).mul
         (hpow (α / 2 - 1))).mul
-        (hasDerivAt_latitudeAngularScaleDss_right (s := s) ht))) using 1 <;>
-    ring
+        (hasDerivAt_latitudeAngularScaleDss_right (s := s) ht))) using 1 ;
+    ring_nf
 
 theorem hasDerivAt_latitudePowerDsst_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -383,8 +379,7 @@ theorem hasDerivAt_latitudePowerDsst_right
     convert
       (Real.hasDerivAt_rpow_const (x := latitudeAngularScale s t)
         (p := e) (Or.inl hp.ne')).comp t
-          (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1 <;>
-      simp only [Function.comp_apply] <;> ring
+          (hasDerivAt_latitudeAngularScale_right (s := s) ht) using 1
   have hpT := hasDerivAt_latitudeAngularScaleDt_right (s := s) ht
   have hpS := hasDerivAt_latitudeAngularScaleDs_right (s := s) ht
   have hpST := hasDerivAt_latitudeAngularScaleDst_right (s := s) ht
@@ -400,8 +395,8 @@ theorem hasDerivAt_latitudePowerDsst_right
     ((hasDerivAt_const t (α / 2)).mul
       (((((hasDerivAt_const t (α / 2 - 1)).mul
           (hpow (α / 2 - 2))).mul hpT).mul hpSS).add
-        ((hpow (α / 2 - 1)).mul hpSST))) using 1 <;>
-    ring
+        ((hpow (α / 2 - 1)).mul hpSST))) using 1 ;
+    ring_nf
 
 /-! The three reduced-cusp two-jets needed by the mixed chain. -/
 
@@ -453,8 +448,7 @@ theorem hasDerivAt_latitudeCusp0_right
   unfold latitudeCusp0 latitudeCusp0Dt
   convert
     (hasDerivAt_reducedLatitudeCusp (α := α) hq).comp t
-      (hasDerivAt_normalizedLatitudeGap_right hs ht) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+      (hasDerivAt_normalizedLatitudeGap_right hs ht) using 1
 
 theorem hasDerivAt_latitudeCusp0Dt_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -466,8 +460,8 @@ theorem hasDerivAt_latitudeCusp0Dt_right
   convert
     (((hasDerivAt_reducedLatitudeCuspD1Value (α := α) hq).comp t
       (hasDerivAt_normalizedLatitudeGap_right hs ht)).mul
-      (hasDerivAt_normalizedLatitudeGapDt_right hs ht)) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+      (hasDerivAt_normalizedLatitudeGapDt_right hs ht)) using 1 ;
+    simp only [Function.comp_apply] ; ring
 
 theorem hasDerivAt_latitudeCusp1_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -478,8 +472,7 @@ theorem hasDerivAt_latitudeCusp1_right
   unfold latitudeCusp1 latitudeCusp1Dt
   convert
     (hasDerivAt_reducedLatitudeCuspD1Value (α := α) hq).comp t
-      (hasDerivAt_normalizedLatitudeGap_right hs ht) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+      (hasDerivAt_normalizedLatitudeGap_right hs ht) using 1
 
 theorem hasDerivAt_latitudeCusp1Dt_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -491,8 +484,8 @@ theorem hasDerivAt_latitudeCusp1Dt_right
   convert
     (((hasDerivAt_reducedLatitudeCuspD2Value (α := α) hq).comp t
       (hasDerivAt_normalizedLatitudeGap_right hs ht)).mul
-      (hasDerivAt_normalizedLatitudeGapDt_right hs ht)) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+      (hasDerivAt_normalizedLatitudeGapDt_right hs ht)) using 1 ;
+    simp only [Function.comp_apply] ; ring
 
 theorem hasDerivAt_latitudeCusp2_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -503,8 +496,7 @@ theorem hasDerivAt_latitudeCusp2_right
   unfold latitudeCusp2 latitudeCusp2Dt
   convert
     (hasDerivAt_reducedLatitudeCuspD2Value (α := α) hq).comp t
-      (hasDerivAt_normalizedLatitudeGap_right hs ht) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+      (hasDerivAt_normalizedLatitudeGap_right hs ht) using 1
 
 theorem hasDerivAt_latitudeCusp2Dt_right
     {α s t : ℝ} (hs : s ∈ Ioo (-1 : ℝ) 1)
@@ -516,8 +508,8 @@ theorem hasDerivAt_latitudeCusp2Dt_right
   convert
     (((hasDerivAt_reducedLatitudeCuspD3Value (α := α) hq).comp t
       (hasDerivAt_normalizedLatitudeGap_right hs ht)).mul
-      (hasDerivAt_normalizedLatitudeGapDt_right hs ht)) using 1 <;>
-    simp only [Function.comp_apply] <;> ring
+      (hasDerivAt_normalizedLatitudeGapDt_right hs ht)) using 1 ;
+    simp only [Function.comp_apply] ; ring
 
 /-! Small algebraic constructors for named first- and second-order product
 jets. -/
@@ -544,7 +536,7 @@ theorem hasDerivAt_latitudeJetMulD1
       (fun y ↦ latitudeJetMulD1 (a y) (a₁ y) (b y) (b₁ y))
       (latitudeJetMulD2 (a x) (a₁ x) a₂ (b x) (b₁ x) b₂) x := by
   unfold latitudeJetMulD1 latitudeJetMulD2
-  convert (ha₁.mul hb).add (ha.mul hb₁) using 1 <;> ring
+  convert (ha₁.mul hb).add (ha.mul hb₁) using 1 ; ring
 
 theorem hasDerivAt_latitudeJetMul3D1
     {a a₁ b b₁ c c₁ : ℝ → ℝ} {a₂ b₂ c₂ x : ℝ}
@@ -559,7 +551,7 @@ theorem hasDerivAt_latitudeJetMul3D1
   unfold latitudeJetMul3D1 latitudeJetMul3D2
   convert
     (((ha₁.mul hb).mul hc).add ((ha.mul hb₁).mul hc)).add
-      ((ha.mul hb).mul hc₁) using 1 <;> ring
+      ((ha.mul hb).mul hc₁) using 1 ; ring
 
 noncomputable def variableReducedLatitudeKernelDsst
     (α s t : ℝ) : ℝ :=
@@ -646,7 +638,7 @@ theorem hasDerivAt_variableReducedLatitudeKernelDss_right
     (variableReducedLatitudeKernelDsst α s t) t
   unfold variableReducedLatitudeKernelDsst latitudeJetMulD1
     latitudeJetMul3D1
-  convert ((hterm1.add hterm2).add hterm3).add hterm4 using 1 <;> ring
+  convert ((hterm1.add hterm2).add hterm3).add hterm4 using 1 <;> ring_nf
 
 /-- The genuine mixed `(2,2)` derivative chain for
 `p(s,t)^(α/2) hα(q(s,t))`, hence for `latitudeKernel` on every interior
@@ -676,7 +668,7 @@ theorem hasDerivAt_variableReducedLatitudeKernelDsst_right
       HasDerivAt (fun y ↦ normalizedLatitudeGapDs s y ^ 2)
         (2 * normalizedLatitudeGapDs s t *
           normalizedLatitudeGapDst s t) t := by
-    convert hQs.pow 2 using 1 <;> ring
+    convert hQs.pow 2 using 1 ; ring
   have hQsSqD :
       HasDerivAt
         (fun y ↦ 2 * normalizedLatitudeGapDs s y *
@@ -684,7 +676,7 @@ theorem hasDerivAt_variableReducedLatitudeKernelDsst_right
         (2 * normalizedLatitudeGapDst s t ^ 2 +
           2 * normalizedLatitudeGapDs s t *
             normalizedLatitudeGapDstt s t) t := by
-    convert ((hasDerivAt_const t 2).mul hQs).mul hQst using 1 <;> ring
+    convert ((hasDerivAt_const t 2).mul hQs).mul hQst using 1 ; ring
   have hterm1 :=
     hasDerivAt_latitudeJetMulD1 hPss hPsst hH0 hH0t
   have hterm2 :=
@@ -697,6 +689,6 @@ theorem hasDerivAt_variableReducedLatitudeKernelDsst_right
     variableReducedLatitudeKernelDsstt
   convert
     ((hterm1.add ((hasDerivAt_const t 2).mul hterm2)).add hterm3).add
-      hterm4 using 1 <;> ring
+      hterm4 using 1 ; ring
 
 end BEMOC

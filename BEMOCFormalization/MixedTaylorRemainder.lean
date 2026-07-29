@@ -75,13 +75,12 @@ theorem mixedTaylor_decomposition
   have hs :
       taylorWithinEval (fun x ↦ K x t) 1 Is a s =
         K a t + (s - a) * derivWithin (fun x ↦ K x t) Is a := by
-    simpa using taylorWithinEval_succ (fun x ↦ K x t) 0 Is a s
+    simp [taylorWithinEval_succ]
   have ht :
       taylorWithinEval (firstTaylorError K Is a s) 1 It c t =
         firstTaylorError K Is a s c +
           (t - c) * derivWithin (firstTaylorError K Is a s) It c := by
-    simpa using
-      taylorWithinEval_succ (firstTaylorError K Is a s) 0 It c t
+    simp [taylorWithinEval_succ]
   unfold mixedTaylorRemainder
   rw [ht]
   unfold mixedTaylorRightIntercept mixedTaylorRightSlope
@@ -133,8 +132,7 @@ theorem abs_mixedTaylorRemainder_le
         taylorWithinEval (fun x ↦ Ktt x y) 1 (Icc a b) a s =
           Ktt a y + (s - a) *
             derivWithin (fun x ↦ Ktt x y) (Icc a b) a := by
-      simpa using
-        taylorWithinEval_succ (fun x ↦ Ktt x y) 0 (Icc a b) a s
+      simp [taylorWithinEval_succ]
     rw [show (1 : ℕ) + 1 = 2 by norm_num] at hTaylor
     norm_num at hTaylor
     calc
@@ -159,8 +157,7 @@ theorem abs_mixedTaylorRemainder_le
         firstTaylorError K (Icc a b) a s c +
           (t - c) * derivWithin
             (firstTaylorError K (Icc a b) a s) (Icc c d) c := by
-    simpa using taylorWithinEval_succ
-      (firstTaylorError K (Icc a b) a s) 0 (Icc c d) c t
+    simp [taylorWithinEval_succ]
   unfold mixedTaylorRemainder
   calc
     |firstTaylorError K (Icc a b) a s t -

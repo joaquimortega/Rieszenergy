@@ -64,8 +64,8 @@ theorem latitudeComparableAngularJetBound
   exact ⟨hpLower, hpUpper,
     by norm_num at hps ⊢; exact hps,
     by norm_num at hpt ⊢; exact hpt,
-    by convert hpss using 1 <;> norm_num [inv_pow],
-    by convert hptt using 1 <;> norm_num [inv_pow],
+    by convert hpss using 1 ; norm_num [inv_pow],
+    by convert hptt using 1 ; norm_num [inv_pow],
     hpst, hpsst, hpstt, hpsstt⟩
 
 /-- The preceding sharp angular jet holds unconditionally on every literal
@@ -195,35 +195,35 @@ theorem latitudeComparablePowerRpowGradedBound
       |latitudeAngularScale s t ^ (α / 2)| ≤
           (3200 : ℝ) ^ (α / 2) * R ^ (2 * (α / 2)) := h
       _ ≤ A * R ^ (2 * (α / 2)) := by gcongr
-      _ = A * R ^ α := by ring
+      _ = A * R ^ α := by ring_nf
   · have h := abs_rpow_le_lower_radiusScale hR
       (by linarith : α / 2 - 1 ≤ 0) hpLower
     calc
       |latitudeAngularScale s t ^ (α / 2 - 1)| ≤
           (2 : ℝ) ^ (α / 2 - 1) * R ^ (2 * (α / 2 - 1)) := h
       _ ≤ A * R ^ (2 * (α / 2 - 1)) := by gcongr
-      _ = A * R ^ (α - 2) := by ring
+      _ = A * R ^ (α - 2) := by ring_nf
   · have h := abs_rpow_le_lower_radiusScale hR
       (by linarith : α / 2 - 2 ≤ 0) hpLower
     calc
       |latitudeAngularScale s t ^ (α / 2 - 2)| ≤
           (2 : ℝ) ^ (α / 2 - 2) * R ^ (2 * (α / 2 - 2)) := h
       _ ≤ A * R ^ (2 * (α / 2 - 2)) := by gcongr
-      _ = A * R ^ (α - 4) := by ring
+      _ = A * R ^ (α - 4) := by ring_nf
   · have h := abs_rpow_le_lower_radiusScale hR
       (by linarith : α / 2 - 3 ≤ 0) hpLower
     calc
       |latitudeAngularScale s t ^ (α / 2 - 3)| ≤
           (2 : ℝ) ^ (α / 2 - 3) * R ^ (2 * (α / 2 - 3)) := h
       _ ≤ A * R ^ (2 * (α / 2 - 3)) := by gcongr
-      _ = A * R ^ (α - 6) := by ring
+      _ = A * R ^ (α - 6) := by ring_nf
   · have h := abs_rpow_le_lower_radiusScale hR
       (by linarith : α / 2 - 4 ≤ 0) hpLower
     calc
       |latitudeAngularScale s t ^ (α / 2 - 4)| ≤
           (2 : ℝ) ^ (α / 2 - 4) * R ^ (2 * (α / 2 - 4)) := h
       _ ≤ A * R ^ (2 * (α / 2 - 4)) := by gcongr
-      _ = A * R ^ (α - 8) := by ring
+      _ = A * R ^ (α - 8) := by ring_nf
 
 /-- The same graded angular-power estimate when the exponent is merely
 bounded above by two.  For a nonpositive exponent even the zeroth power is

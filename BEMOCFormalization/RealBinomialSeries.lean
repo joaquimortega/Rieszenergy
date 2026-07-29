@@ -51,7 +51,7 @@ theorem summable_real_choose_mul_pow (β x : ℝ) (hx : |x| < 1) :
   rw [real_choose_succ_div, pow_succ]
   simp only [norm_mul, Real.norm_eq_abs, abs_mul]
   convert mul_le_mul_of_nonneg_right hn
-    (mul_nonneg (abs_nonneg (Ring.choose β n)) (abs_nonneg (x ^ n))) using 1 <;> ring
+    (mul_nonneg (abs_nonneg (Ring.choose β n)) (abs_nonneg (x ^ n))) using 1 ; ring
 
 /-- Any fixed polynomial loss is still summable in the generalized
 binomial series.  This is the normal-convergence input for any fixed
@@ -109,8 +109,8 @@ def realBinomialTermD (β : ℝ) (n : ℕ) (x : ℝ) : ℝ :=
 
 theorem hasDerivAt_realBinomialTerm (β : ℝ) (n : ℕ) (x : ℝ) :
     HasDerivAt (realBinomialTerm β n) (realBinomialTermD β n x) x := by
-  convert (hasDerivAt_pow n x).const_mul (Ring.choose β n) using 1 <;>
-    simp [realBinomialTerm, realBinomialTermD] <;> ring
+  convert (hasDerivAt_pow n x).const_mul (Ring.choose β n) using 1 ;
+    simp [realBinomialTerm, realBinomialTermD] ; ring
 
 private def realBinomialDerivativeMajorant (β ρ : ℝ) (n : ℕ) : ℝ :=
   if n = 0 then 0 else |β * Ring.choose (β - 1) (n - 1) * ρ ^ (n - 1)|
@@ -264,7 +264,7 @@ private theorem hasDerivAt_realBinomialSum_mul_negRpow (β x : ℝ) (hx : |x| < 
         ((-β) * (1 + x) ^ (-β - 1)) x := by
     convert
       ((hasDerivAt_const x 1).add (hasDerivAt_id x)).rpow_const
-        (Or.inl hbase.ne') using 1 <;> simp only [id_eq] <;> ring
+        (Or.inl hbase.ne') using 1 ; simp only [id_eq] ; ring
   convert hF.mul hp using 1
   rw [Real.rpow_sub_one hbase.ne' (-β)]
   field_simp

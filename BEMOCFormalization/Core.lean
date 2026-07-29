@@ -359,7 +359,7 @@ theorem dist_ringPoint_zero_rpow (R : OccupiedRing) {w : ℕ}
   rw [Real.mul_rpow R.radius_nonneg hchord]
   unfold circleProfile
   congr 2
-  ring
+  ring_nf
 
 /-- The ordered energy seen from vertex zero is the radius-scaled circle
 chord sum. -/
@@ -525,7 +525,6 @@ theorem singleRingDiscreteEnergy_eq_circle (R : OccupiedRing) (α : ℝ) :
   simp_rw [ringPoint_inner_energy R hpoppos]
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
   simp only [nsmul_eq_mul, Nat.cast_ofNat]
-  push_cast
   ring
 theorem ring_energy_eq_within_add_cross {κ : Type*} [Fintype κ] [DecidableEq κ]
     (R : κ → OccupiedRing) (α : ℝ) :
@@ -667,10 +666,8 @@ theorem powerSumZetaIdentification_iff_explicit_series {α : ℝ}
       -1 / (α + 1) + 1 / 2 - α / 12 +
           ∑' n : ℕ, ((n + 1 : ℕ) : ℝ) ^ α *
             EulerPower.localIncrement α (1 / ((n + 1 : ℕ) : ℝ)) =
-        PowerZetaIdentification.zetaFunctionalCoefficient α := by
+      PowerZetaIdentification.zetaFunctionalCoefficient α := by
   unfold PowerSumZetaIdentification realRiemannZeta
-  change EulerPower.powerSumConstant α =
-      (riemannZeta ((-α : ℝ) : ℂ)).re ↔ _
   exact PowerZetaIdentification.powerSumConstant_eq_riemannZeta_re_iff hα0 hα2
 
 /-- The corrected finite-part power-sum constant is the analytically
@@ -696,7 +693,7 @@ theorem circleChordPowerSum_eq_circleGeneral (α : ℝ) (w : ℕ) :
   apply Finset.sum_congr rfl
   intro k _
   congr 2
-  ring
+  ring_nf
 
 theorem circleAngularMoment_eq_circleGeneral (α : ℝ) :
     circleAngularMoment α = CircleGeneral.angularAverage α := by
@@ -722,7 +719,7 @@ theorem hasCircleEulerMaclaurin_of_endpointData_of_powerZeta
     rw [circleChordPowerSum_eq_circleGeneral,
       circleAngularMoment_eq_circleGeneral]
     ring
-  · ring
+  · ring_nf
 
 /-- The endpoint-regularity leaf of the general circle Euler--Maclaurin
 argument is unconditional: the explicit residual has an integrable third
@@ -771,7 +768,7 @@ theorem tendsto_normalizedCircleSelfDeficit {α : ℝ}
         _ = Real.rpow (w : ℝ) α := by ring_nf
     rw [circleSelfDeficit, ← hpow]
     ring
-  · ring
+  · ring_nf
 
 /-- The normalized one-ring correction is eventually uniformly bounded.
 This is the domination extracted from endpoint Euler--Maclaurin that is
@@ -831,7 +828,7 @@ theorem exists_uniform_circleSelfDeficit_bound {α : ℝ}
     calc
       (w : ℝ) ^ (1 - α) * (w : ℝ) ^ α =
           (w : ℝ) ^ ((1 - α) + α) := (Real.rpow_add hwR _ _).symm
-      _ = (w : ℝ) ^ (1 : ℝ) := by congr 1 <;> ring
+      _ = (w : ℝ) ^ (1 : ℝ) := by congr 1 ; ring
       _ = (w : ℝ) := Real.rpow_one _
   have hfactor :
       circleSelfDeficit α w =
@@ -904,7 +901,7 @@ theorem circleAngularMoment_one :
       (∫ x in (0 : ℝ)..1, Real.sin (Real.pi * x)) =
           Real.pi⁻¹ * ∫ y in (0 : ℝ)..Real.pi, Real.sin y := by
         simp only [smul_eq_mul] at hchange
-        convert hchange using 1 <;> ring
+        convert hchange using 1 <;> ring_nf
       _ = 2 / Real.pi := by
         rw [integral_sin, Real.cos_zero, Real.cos_pi]
         field_simp
@@ -955,8 +952,8 @@ theorem sin_half_mul_circleChordSum_aux (x : ℝ) (n : ℕ) :
       ring
     _ = Real.cos (x / 2) - Real.cos (((n : ℝ) + 1 / 2) * x) := by
       convert Finset.sum_range_sub'
-        (fun i : ℕ ↦ Real.cos (((i : ℝ) + 1 / 2) * x)) n using 1 <;>
-        simp <;> ring
+        (fun i : ℕ ↦ Real.cos (((i : ℝ) + 1 / 2) * x)) n using 1 ;
+        simp ; ring_nf
 
 /-- Exact regular-polygon identity used in the manuscript's independent
 check of the within-ring term at `α = 1`. -/
@@ -1247,7 +1244,7 @@ theorem tendsto_circle_cot_asymptotic :
     · simp [hw]
     field_simp [hw, Real.pi_ne_zero]
     ring
-  · ring
+  · ring_nf
 
 /-- Any circle sum eventually equal to the exact cotangent expression has
 the same renormalized limit. -/
@@ -1285,7 +1282,7 @@ theorem tendsto_circleChordSum_remainder_alpha_one :
   · funext w
     unfold circleSelfDeficitOne
     ring
-  · ring
+  · ring_nf
 
 /-- The general endpoint Euler--Maclaurin statement agrees with, and at
 `α = 1` follows from, the independent exact cotangent computation. -/
@@ -1297,7 +1294,7 @@ theorem hasCircleEulerMaclaurin_one : HasCircleEulerMaclaurin 1 := by
       Real.rpow_one]
     ring
   · rw [realRiemannZeta_neg_one, Real.rpow_one]
-    ring
+    ring_nf
 
 namespace GridMultiplicity
 
@@ -2269,7 +2266,7 @@ theorem integral_uniform_ringKernel_eq_moment
   have hshift :
       (∫ t in -θ..2 * Real.pi - θ, g t) =
         ∫ t in (0 : ℝ)..2 * Real.pi, g t := by
-    convert hg.intervalIntegral_add_eq (-θ) 0 using 1 <;> ring
+    convert hg.intervalIntegral_add_eq (-θ) 0 using 1 <;> ring_nf
   calc
     (∫ φ,
         dist
@@ -2886,7 +2883,7 @@ theorem slicedUpperHeightSolid_section_of_one_le {a z : ℝ} (hz : 1 ≤ z) :
   nlinarith
 
 theorem slicedUpperHeightSolid_section_of_lt_a {a z : ℝ}
-    (ha : 0 < a) (ha1 : a < 1) (hz0 : 0 < z) (hza : z < a) :
+    (ha : 0 < a) (_ha1 : a < 1) (hz0 : 0 < z) (hza : z < a) :
     Prod.mk z ⁻¹' slicedUpperHeightSolid a = horizontalSqBall (upperConeSectionSq a z) := by
   ext u
   simp only [Set.mem_preimage, slicedUpperHeightSolid, Set.mem_setOf_eq,
@@ -2923,7 +2920,7 @@ theorem slicedUpperHeightSolid_section_of_lt_a {a z : ℝ}
     simpa [mul_pow, hsquare] using hsquared
 
 theorem slicedUpperHeightSolid_section_of_a_le {a z : ℝ}
-    (ha : 0 < a) (haz : a ≤ z) (hz1 : z < 1) :
+    (ha : 0 < a) (haz : a ≤ z) (_hz1 : z < 1) :
     Prod.mk z ⁻¹' slicedUpperHeightSolid a = horizontalSqBall (1 - z ^ 2) := by
   ext u
   simp only [Set.mem_preimage, slicedUpperHeightSolid, Set.mem_setOf_eq,
@@ -3049,7 +3046,7 @@ theorem lintegral_ofReal_one_sub_sq_Ico {a : ℝ} (ha : 0 ≤ a) (ha1 : a ≤ 1)
       intervalIntegral.integral_sub, intervalIntegral.integral_const,
       integral_pow]
     norm_num
-    ring
+    ring_nf
     · exact continuous_const.intervalIntegrable a 1
     · exact (continuous_id.pow 2).intervalIntegrable a 1
   · filter_upwards [ae_restrict_mem measurableSet_Ioc] with z hz
@@ -3186,7 +3183,7 @@ theorem lowerHeightCone_volume_of_pos_lt_one {a : ℝ} (ha : 0 < a) (ha1 : a < 1
   ring
 
 theorem slicedUpperHeightSolid_zero_section_of_pos {z : ℝ}
-    (hz0 : 0 < z) (hz1 : z < 1) :
+    (hz0 : 0 < z) (_hz1 : z < 1) :
     Prod.mk z ⁻¹' slicedUpperHeightSolid 0 = horizontalSqBall (1 - z ^ 2) := by
   ext u
   simp only [Set.mem_preimage, slicedUpperHeightSolid, Set.mem_setOf_eq,
@@ -3597,7 +3594,7 @@ noncomputable def sphereLinearIsometryMap
     (T : Ambient ≃ₗᵢ[ℝ] Ambient) (x : Sphere) : Sphere :=
   ⟨T x, by
     rw [Metric.mem_sphere, dist_zero_right]
-    simpa using norm_eq_of_mem_sphere x⟩
+    simp⟩
 
 theorem continuous_sphereLinearIsometryMap (T : Ambient ≃ₗᵢ[ℝ] Ambient) :
     Continuous (sphereLinearIsometryMap T) := by
@@ -3883,7 +3880,7 @@ theorem sphere_dist_sq_coordinates (x y : Sphere) :
             ring
     _ = _ := by
       rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, hx, hy]
-      ring
+      ring_nf
       rw [Finset.sum_mul]
 
 theorem kernelPairEnergy_sq_distance
@@ -4517,7 +4514,7 @@ theorem schoenbergIntegral_scaling {p r : ℝ} (hr : 0 < r) :
     rw [Real.mul_rpow hr.le ht.le]
     have he : -(r * t) = -(t * r) := by ring
     rw [he]
-    ring
+    ring_nf
   rw [setIntegral_congr_fun measurableSet_Ioi hpoint, integral_const_mul,
     mul_zero, smul_eq_mul] at hchange
   unfold schoenbergIntegral

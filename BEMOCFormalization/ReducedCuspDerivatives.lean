@@ -134,7 +134,7 @@ theorem integral_inv_add_mul_sq_eq
 
 /-- Centered reciprocal-quadratic integral bound. -/
 theorem integral_inv_add_mul_sq_le
-    {x c L : ℝ} (hx : 0 < x) (hc : 0 < c) (hL : 0 ≤ L) :
+    {x c L : ℝ} (hx : 0 < x) (hc : 0 < c) (_hL : 0 ≤ L) :
     (∫ θ in (-L)..L, (x + c * θ ^ 2)⁻¹) ≤
       x⁻¹ * (Real.sqrt (c / x))⁻¹ * Real.pi := by
   rw [integral_inv_add_mul_sq_eq hx hc]
@@ -178,7 +178,7 @@ theorem reducedCuspMoment_le_halfPowerScale
         ∫ θ in (-Real.pi)..Real.pi, f θ := by
     have h := hfper.intervalIntegral_add_eq (-Real.pi) 0
     symm
-    convert h using 1 <;> ring
+    convert h using 1 <;> ring_nf
   have hfcont : Continuous f := by
     dsimp [f]
     exact
@@ -277,7 +277,7 @@ theorem reducedCuspMoment_le_halfPowerScale
         (Real.sqrt ((2 / Real.pi ^ 2) / x))⁻¹ := by
       dsimp [c]
       field_simp [Real.pi_ne_zero]
-      <;> ring
+      ; ring
 
 /-- Simplification of the exact half-power scale. -/
 theorem halfPowerScale_eq_rpow
@@ -372,7 +372,7 @@ theorem abs_reducedLatitudeCuspD2Value_le
   have h := abs_mul_reducedCuspMoment_le_halfPowerScale
     (c := (α / 2) * (α / 2 - 1))
     (γ := α / 2 - 2) hx (by linarith)
-  convert h using 1 <;> ring
+  convert h using 1 ; ring_nf
 
 /-- Sharp singular scale for the third derivative. -/
 theorem abs_reducedLatitudeCuspD3Value_le
@@ -385,7 +385,7 @@ theorem abs_reducedLatitudeCuspD3Value_le
   have h := abs_mul_reducedCuspMoment_le_halfPowerScale
     (c := (α / 2) * (α / 2 - 1) * (α / 2 - 2))
     (γ := α / 2 - 3) hx (by linarith)
-  convert h using 1 <;> ring
+  convert h using 1 ; ring_nf
 
 /-- Sharp singular scale for the fourth derivative.  This is the direct
 integral analogue of differentiating the branch
@@ -401,7 +401,7 @@ theorem abs_reducedLatitudeCuspD4Value_le
     (c := (α / 2) * (α / 2 - 1) * (α / 2 - 2) *
       (α / 2 - 3))
     (γ := α / 2 - 4) hx (by linarith)
-  convert h using 1 <;> ring
+  convert h using 1 ; ring_nf
 
 theorem abs_reducedLatitudeCuspD2Value_le_rpow
     {α x : ℝ} (hx : 0 < x) (hα : α ≤ 2) :
@@ -415,7 +415,7 @@ theorem abs_reducedLatitudeCuspD2Value_le_rpow
     (γ := α / 2 - 2) hx (by linarith)
   have hh := mul_le_mul_of_nonneg_left hm
     (abs_nonneg ((α / 2) * (α / 2 - 1)))
-  convert hh using 1 <;> ring
+  convert hh using 1 ; ring_nf
 
 theorem abs_reducedLatitudeCuspD3Value_le_rpow
     {α x : ℝ} (hx : 0 < x) (hα : α ≤ 2) :
@@ -429,7 +429,7 @@ theorem abs_reducedLatitudeCuspD3Value_le_rpow
     (γ := α / 2 - 3) hx (by linarith)
   have hh := mul_le_mul_of_nonneg_left hm
     (abs_nonneg ((α / 2) * (α / 2 - 1) * (α / 2 - 2)))
-  convert hh using 1 <;> ring
+  convert hh using 1 ; ring_nf
 
 theorem abs_reducedLatitudeCuspD4Value_le_rpow
     {α x : ℝ} (hx : 0 < x) (hα : α ≤ 2) :
@@ -444,7 +444,7 @@ theorem abs_reducedLatitudeCuspD4Value_le_rpow
   have hh := mul_le_mul_of_nonneg_left hm
     (abs_nonneg ((α / 2) * (α / 2 - 1) * (α / 2 - 2) *
       (α / 2 - 3)))
-  convert hh using 1 <;> ring
+  convert hh using 1 ; ring_nf
 
 /-- Differentiation under the angular integral.  Positivity of `x` keeps
 the base uniformly away from zero, so this holds for every real exponent. -/
@@ -570,8 +570,8 @@ theorem hasDerivAt_reducedCuspMoment
     dsimp [F, F']
     convert
       ((hasDerivAt_id y).add_const (1 - Real.cos θ)).rpow_const
-        (Or.inl (hbase hy).ne') using 1 <;>
-      simp only [id_eq] <;> ring
+        (Or.inl (hbase hy).ne') using 1 ;
+      simp only [id_eq] ; ring
   have hraw :=
     (intervalIntegral.hasDerivAt_integral_of_dominated_loc_of_deriv_le
       (μ := volume) hε hF_meas hF_int hF'_meas hbound hCint hdiff).2
@@ -594,7 +594,7 @@ theorem hasDerivAt_reducedCuspMoment_D1
     HasDerivAt (fun y ↦ β * reducedCuspMoment (β - 1) y)
       (β * (β - 1) * reducedCuspMoment (β - 2) x) x := by
   convert (hasDerivAt_const x β).mul
-    (hasDerivAt_reducedCuspMoment (β := β - 1) hx) using 1 <;> ring
+    (hasDerivAt_reducedCuspMoment (β := β - 1) hx) using 1 ; ring_nf
 
 /-- Exact third derivative recurrence. -/
 theorem hasDerivAt_reducedCuspMoment_D2
@@ -604,7 +604,7 @@ theorem hasDerivAt_reducedCuspMoment_D2
       (β * (β - 1) * (β - 2) *
         reducedCuspMoment (β - 3) x) x := by
   convert (hasDerivAt_const x (β * (β - 1))).mul
-    (hasDerivAt_reducedCuspMoment (β := β - 2) hx) using 1 <;> ring
+    (hasDerivAt_reducedCuspMoment (β := β - 2) hx) using 1 ; ring_nf
 
 /-- Exact fourth derivative recurrence. -/
 theorem hasDerivAt_reducedCuspMoment_D3
@@ -615,7 +615,7 @@ theorem hasDerivAt_reducedCuspMoment_D3
       (β * (β - 1) * (β - 2) * (β - 3) *
         reducedCuspMoment (β - 4) x) x := by
   convert (hasDerivAt_const x (β * (β - 1) * (β - 2))).mul
-    (hasDerivAt_reducedCuspMoment (β := β - 3) hx) using 1 <;> ring
+    (hasDerivAt_reducedCuspMoment (β := β - 3) hx) using 1 ; ring_nf
 
 /-- Fourth-derivative chain for the reduced latitude cusp. -/
 theorem hasDerivAt_reducedLatitudeCusp_D3

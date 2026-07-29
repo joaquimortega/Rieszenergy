@@ -58,7 +58,7 @@ theorem polar_leftSmall_same_baseGeometry
           hN kr hkrN hkrReg htr
       have hscaleEq :
           latitudeBandScale N kr = latitudeBandScale N k := by
-        simpa [kr] using latitudeBandScale_reflect N k
+        simp [kr]
       rw [angularKernelA_eq_radiusSq_add]
       rw [hscaleEq] at hb
       nlinarith [show 0 ≤ 1 - s ^ 2 by
@@ -105,7 +105,7 @@ theorem polar_leftSmall_same_baseGeometry
           hN j k hSS.1 hSS.2 hscale hs ht)
 
 theorem polarLatitude_seriesScale_le_manuscriptScale
-    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {α : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
     {N : ℕ} (hN : 0 < N) (hM : 1 ≤ bandCount N)
     (k : Fin (bandTailCount N + 1)) :
     (2 * (latitudeBandScale N k : ℝ) ^ 2 / N) ^ (α / 2 - 4) ≤
@@ -162,12 +162,12 @@ theorem polarLatitude_seriesScale_le_manuscriptScale
           exact (Real.rpow_natCast d 2).symm,
         ← Real.rpow_mul hMpos.le, ← Real.rpow_mul hdpos.le,
         div_eq_mul_inv, ← Real.rpow_neg hdpos.le]
-      ring
+      ring_nf
     _ = 10 ^ (4 - α / 2) *
         (bandCount N : ℝ) ^ (8 - α) *
         (latitudeBandScale N k : ℝ) ^ (α - 8) := by
       dsimp [M, d, p]
-      congr 1 <;> ring
+      congr 1 <;> ring_nf
 
 theorem polar_leftSmall_same_unequal_bound_series
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)

@@ -14,14 +14,14 @@ noncomputable def centralNegativePowerRpowBound (γ : ℝ) : ℝ :=
 
 theorem latitudePowerRpowBound_central_of_nonpos
     {γ s t : ℝ} (hγ : γ ≤ 0)
-    (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
+    (_hs : s ∈ Icc (-1 : ℝ) 1) (_ht : t ∈ Icc (-1 : ℝ) 1)
     (hsfloor : (1 : ℝ) / 2 ≤ heightRadius s)
     (htfloor : (1 : ℝ) / 2 ≤ heightRadius t) :
     LatitudePowerRpowBound γ s t (centralNegativePowerRpowBound γ) := by
   have hp :
       (1 : ℝ) / 2 ≤ latitudeAngularScale s t := by
     convert two_mul_radiusFloor_sq_le_latitudeAngularScale
-      (by norm_num : (0 : ℝ) ≤ (1 : ℝ) / 2) hsfloor htfloor using 1 <;>
+      (by norm_num : (0 : ℝ) ≤ (1 : ℝ) / 2) hsfloor htfloor using 1 ;
       norm_num [inv_pow]
   have hp0 : 0 < latitudeAngularScale s t :=
     (by norm_num : (0 : ℝ) < (1 : ℝ) / 2).trans_le hp

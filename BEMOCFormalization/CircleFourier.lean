@@ -226,7 +226,6 @@ theorem Gamma_add_nat_eq_prod {a : ℝ} (ha : 0 < a) (n : ℕ) :
       rw [show a + ((n : ℝ) + 1) = (a + n) + 1 by ring,
         Real.Gamma_add_one (by positivity : a + (n : ℝ) ≠ 0), ih,
         Finset.prod_range_succ]
-      push_cast
       ring
 
 /-- A Gamma quotient rewritten exactly in terms of Euler's convergent
@@ -287,7 +286,6 @@ theorem tendsto_scaled_Gamma_ratio
     convert ho.congr' ?_ using 1 <;> norm_num
     filter_upwards [eventually_atTop.2 ⟨1, fun _ hn => hn⟩] with n hn
     have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_zero_of_lt hn)
-    push_cast
     field_simp
   have hbasepow : Tendsto
       (fun n : ℕ => ((((n + 1 : ℕ) : ℝ) / (n : ℝ)) ^ (b - a)))
@@ -415,7 +413,7 @@ theorem tendsto_chord_Gamma_quotient {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) 
   convert tendsto_scaled_Gamma_ratio_of_forall_ne ha hb using 1
   · funext n
     congr 1
-    · congr 1 <;> ring
+    · congr 1 ; ring
     · congr 2 <;> push_cast <;> ring
 
 /-- Unshifted form of the chord Gamma-quotient limit. -/
@@ -674,7 +672,7 @@ theorem integral_sin_rpow_eq_symmetricBeta {α : ℝ} (hα : 0 < α) :
     intro x hx
     apply HasDerivAt.hasDerivWithinAt
     dsimp [f, f']
-    convert ((hasDerivAt_const x 1).sub (Real.hasDerivAt_cos x)).div_const 2 using 1 <;>
+    convert ((hasDerivAt_const x 1).sub (Real.hasDerivAt_cos x)).div_const 2 using 1 ;
       ring
   have himageOpen : f '' Ioo (min (0 : ℝ) Real.pi) (max (0 : ℝ) Real.pi) ⊆
       Ioo (0 : ℝ) 1 := by
@@ -780,7 +778,7 @@ theorem sum_fourier_rootPoint (w : ℕ) [NeZero w] (n : ℤ) :
     (ZMod.isPrimitive_stdAddChar w)
   by_cases hn : (n : ZMod w) = 0
   · rw [if_pos hn]
-    simpa [hn, ZMod.card, mul_comm (n : ZMod w)] using h
+    simp [hn, ZMod.card, mul_comm (n : ZMod w)]
   · rw [if_neg hn]
     simpa [hn, ZMod.card, mul_comm (n : ZMod w)] using h
 

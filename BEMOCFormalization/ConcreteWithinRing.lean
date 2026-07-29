@@ -119,7 +119,7 @@ def concreteCentralBandIndex (N : ℕ) : Fin (bandTailCount N + 1) :=
   ⟨bandCount N - 1, by simp [bandTailCount]; omega⟩
 
 theorem concrete_finiteBandPopulation_central {N : ℕ}
-    (hM : 1 ≤ bandCount N) :
+    (_hM : 1 ≤ bandCount N) :
     finiteBandPopulation N (concreteCentralBandIndex N) = centralPopulation N := by
   change (symmetricBandPopulations N)[bandCount N - 1]'_ = centralPopulation N
   simp [symmetricBandPopulations, northernBandPopulations, concreteCentralBandIndex]
@@ -198,7 +198,7 @@ theorem concrete_sharedBoundaryPopulation_interior_two_le {N : ℕ}
   have hleft : 1 ≤ boundarySixth N j.castSucc := by
     apply concrete_boundarySixth_interior_one_le hM
     · simpa using hj0
-    · simpa using (show (j : ℕ) < bandTailCount N by omega)
+    · simp
   have hright : 1 ≤ boundarySixth N j.succ := by
     apply concrete_boundarySixth_interior_one_le hM
     · simp
@@ -259,7 +259,7 @@ theorem concrete_bemocRingFamily_population_pos {N : ℕ}
         simpa using (show 0 < (j : ℕ) by omega)
       have hcastLast : ((j.castSucc : Fin (bandTailCount N + 1)) : ℕ) <
           bandTailCount N := by
-        simpa using (show (j : ℕ) < bandTailCount N by omega)
+        simp
       have hb := concrete_boundarySixth_interior_one_le hM j.castSucc hcast hcastLast
       omega
     · exact (concrete_sharedBoundaryPopulation_interior_two_le hM j
@@ -346,7 +346,7 @@ theorem concrete_midpoint_radius_upper_north {N : ℕ}
   rw [hheight] at hr
   have hrN : (N : ℝ) * R.radius ^ 2 ≤ 2 * a := by
     have hr' : R.radius ^ 2 ≤ 2 * a / N := by
-      convert hr using 1 <;> ring
+      convert hr using 1 ; ring
     have := (le_div_iff₀ hN).1 hr'
     nlinarith
   have hscaleNat : 4 * bandCount N ^ 2 ≤ N :=
@@ -390,7 +390,7 @@ theorem concrete_boundary_radius_upper_north {N : ℕ}
   rw [hheight] at hr
   have hrN : (N : ℝ) * R.radius ^ 2 ≤ 2 * a := by
     have hr' : R.radius ^ 2 ≤ 2 * a / N := by
-      convert hr using 1 <;> ring
+      convert hr using 1 ; ring
     have := (le_div_iff₀ hN).1 hr'
     nlinarith
   have hscaleNat : 4 * bandCount N ^ 2 ≤ N :=
@@ -452,7 +452,7 @@ theorem concrete_shared_population_index_le_ordinary {N : ℕ}
   rw [sharedBoundaryPopulation, concrete_boundarySixth_north j.castSucc hleft,
     concrete_boundarySixth_north j.succ hright]
   convert concrete_ordinary_shared_index_le
-    (d := (j : ℕ) + 1) (by omega) using 1 <;> omega
+    (d := (j : ℕ) + 1) (by omega) using 1
 
 theorem concrete_boundarySixth_central_lower {N : ℕ}
     (hM : 3 ≤ bandCount N) :
@@ -542,7 +542,7 @@ theorem concrete_midpoint_lower_comparison_central {N : ℕ}
 /-! ## North--south reflection -/
 
 theorem concrete_sum_take_reflect {N k : ℕ}
-    (hk : k ≤ (symmetricBandPopulations N).length) :
+    (_hk : k ≤ (symmetricBandPopulations N).length) :
     ((symmetricBandPopulations N).take
         ((symmetricBandPopulations N).length - k)).sum =
       N - ((symmetricBandPopulations N).take k).sum := by
@@ -683,7 +683,7 @@ theorem concrete_midpoint_radius_reflect {N : ℕ} (hN : 0 < N)
       (bemocRingFamily N (Sum.inl j)).radius := by
   simp only [OccupiedRing.radius, bemocRingFamily, dif_pos hN]
   rw [concrete_bandMidpointHeight_reflect hN]
-  ring
+  ring_nf
 
 theorem concrete_shared_radius_reflect {N : ℕ} (hN : 0 < N)
     (j : Fin (bandTailCount N)) :
@@ -691,7 +691,7 @@ theorem concrete_shared_radius_reflect {N : ℕ} (hN : 0 < N)
       (bemocRingFamily N (Sum.inr j)).radius := by
   simp only [OccupiedRing.radius, bemocRingFamily, dif_pos hN]
   rw [concrete_sharedBoundaryHeight_reflect hN]
-  ring
+  ring_nf
 
 /-- Uniform lower population--radius comparison for every literal BEMOC ring.
 This includes both polar singleton rings and all midpoint, shared-boundary,
@@ -812,7 +812,7 @@ private theorem weighted_term_le_of_comparison_nonneg
 
 private theorem weighted_term_le_of_comparison_nonpos
     {α M ρ w : ℝ} (hα : 1 ≤ α) (hM : 0 < M) (hρ : 0 < ρ)
-    (hw : 0 < w) (hlower : M * ρ ≤ 2 * w) :
+    (_hw : 0 < w) (hlower : M * ρ ≤ 2 * w) :
     ρ ^ α * w ^ (1 - α) ≤
       (1 / 2 : ℝ) ^ (1 - α) * M ^ (1 - α) * ρ := by
   have hbase : 0 < M * ρ / 2 := by positivity
@@ -865,7 +865,7 @@ theorem bemocWeightedGeometryConstant_pos (α : ℝ) :
   split_ifs <;> positivity
 
 theorem bemocWeightedRadiusPopulationSum_le_of_comparison
-    {N : ℕ} {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    {N : ℕ} {α : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
     (hgeom : BemocPopulationRadiusComparison N) :
     bemocWeightedRadiusPopulationSum α N ≤
       bemocWeightedGeometryConstant α * (N : ℝ) ^ (1 - α / 2) := by
@@ -1085,7 +1085,7 @@ private theorem low_alpha_weighted_sum_N_bound {α : ℝ}
       (by norm_num))
 
 private theorem high_alpha_ring_term {α M ρ w : ℝ}
-    (hα : 1 ≤ α) (hM : 0 < M) (hρ : 0 ≤ ρ) (hw : 0 < w)
+    (hα : 1 ≤ α) (hM : 0 < M) (hρ : 0 ≤ ρ) (_hw : 0 < w)
     (hcomparison : M * ρ ≤ 2 * w) :
     ρ ^ α * w ^ (1 - α) ≤
       (1 / 2 : ℝ) ^ (1 - α) * M ^ (1 - α) * ρ := by

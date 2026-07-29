@@ -48,10 +48,10 @@ theorem exists_parallelPoint_eq (y : Sphere) :
   fin_cases i
   · change Real.sqrt (1 - t ^ 2) * Real.cos (Complex.arg z) = (y : Ambient) 0
     rw [hradius]
-    simpa [z] using congrArg Complex.re (Complex.norm_mul_cos_add_sin_mul_I z)
+    simp [z]
   · change Real.sqrt (1 - t ^ 2) * Real.sin (Complex.arg z) = (y : Ambient) 1
     rw [hradius]
-    simpa [z] using congrArg Complex.im (Complex.norm_mul_cos_add_sin_mul_I z)
+    simp [z]
   · rfl
 
 theorem latitudeKernel_swap' (α s t : ℝ) :

@@ -300,7 +300,7 @@ theorem expCosPartial_tendsto
     have hneg : fourier (-1) x = starRingEnd ℂ (fourier 1 x) := by
       simpa using (@fourier_neg (1 : ℝ) 1 x)
     rw [hneg]
-    apply Complex.ext <;> simp <;> ring
+    apply Complex.ext <;> simp ; ring
   unfold expCosPartial
   rw [hlimit]
   exact htend
@@ -417,7 +417,7 @@ theorem fourierCoeff_ofReal_re
     change (fourier (-n) x * (f x : ℂ)).re =
       circleCos n x * f x
     rw [show fourier (-n) x = starRingEnd ℂ (fourier n x) by
-      simpa using (@fourier_neg (1 : ℝ) n x)]
+      simp]
     unfold circleCos
     simp
 
@@ -452,7 +452,7 @@ theorem integral_circleCos_eq_zero
   simpa [one, circleCos] using hreal.symm.trans hzero
 
 noncomputable def smoothedCuspCircle
-    (p δ : ℝ) (hp : 0 < p) (hδ : 0 ≤ δ) :
+    (p δ : ℝ) (hp : 0 < p) (_hδ : 0 ≤ δ) :
     C(AddCircle (1 : ℝ), ℂ) where
   toFun x := (smoothedCuspBase δ x ^ p : ℝ)
   continuous_toFun := by
@@ -574,7 +574,7 @@ theorem smoothedCuspBase_zero_eq_norm_sq_div_two
   ring
 
 theorem smoothedCuspBase_zero_rpow_eq_chord
-    {p : ℝ} (hp : 0 < p) (x : AddCircle (1 : ℝ)) :
+    {p : ℝ} (_hp : 0 < p) (x : AddCircle (1 : ℝ)) :
     smoothedCuspBase 0 x ^ p =
       (2 : ℝ) ^ (-p) *
         ‖((AddCircle.toCircle x : Circle) : ℂ) - 1‖ ^ (2 * p) := by
@@ -585,7 +585,6 @@ theorem smoothedCuspBase_zero_rpow_eq_chord
   rw [← Real.rpow_natCast_mul (norm_nonneg _) 2 p]
   rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 2)]
   dsimp [r]
-  norm_num only [Nat.cast_ofNat]
   rw [div_eq_mul_inv]
   ring
 
@@ -741,8 +740,8 @@ theorem integral_schoenberg_cusp_swap
       exact Filter.Eventually.of_forall fun x ↦ by ring
 
 theorem integral_circleCos_mul_schoenbergIntegrand
-    {p δ : ℝ} (hδ : 0 ≤ δ) {n : ℤ} (hn : n ≠ 0)
-    {t : ℝ} (ht : 0 < t) :
+    {p δ : ℝ} (_hδ : 0 ≤ δ) {n : ℤ} (hn : n ≠ 0)
+    {t : ℝ} (_ht : 0 < t) :
     (∫ x : AddCircle (1 : ℝ),
         circleCos n x *
           schoenbergIntegrand p (smoothedCuspBase δ x) t
@@ -821,7 +820,7 @@ noncomputable def cuspMixtureWeight
       t ^ (-p - 1)
 
 theorem cuspMixtureWeight_nonneg
-    {p δ t : ℝ} (hδ : 0 ≤ δ) {n : ℤ} (ht : 0 < t) :
+    {p δ t : ℝ} (_hδ : 0 ≤ δ) {n : ℤ} (ht : 0 < t) :
     0 ≤ cuspMixtureWeight p δ n t := by
   unfold cuspMixtureWeight
   exact mul_nonneg

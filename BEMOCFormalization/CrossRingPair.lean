@@ -210,7 +210,6 @@ theorem discreteRingPairEnergy_eq_commonGrid
                 (((ZMod.finEquiv r).symm j : Fin r) : ℝ) / (r : ℝ))
             P.height_mem Q.height_mem]
           congr 2
-          push_cast
           rw [hi, hj]
           ring
       _ = F (GridMultiplicity.generalGridDifferenceHom q r (i, j)) := by

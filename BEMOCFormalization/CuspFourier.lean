@@ -48,12 +48,12 @@ theorem sinePowerCosMoment_succ
     intro x
     dsimp [u, u']
     convert (Real.hasDerivAt_sin x).rpow_const
-      (Or.inr (by linarith : 1 ≤ α + 1)) using 1 <;> ring
+      (Or.inr (by linarith : 1 ≤ α + 1)) using 1 ; ring_nf
   have hv : ∀ x : ℝ, HasDerivAt v (v' x) x := by
     intro x
     dsimp [v, v', m]
     convert (Real.hasDerivAt_cos (m * x)).comp x
-      ((hasDerivAt_id x).const_mul m) using 1 <;> ring
+      ((hasDerivAt_id x).const_mul m) using 1 ; ring
   have hu'int : IntervalIntegrable u' volume 0 Real.pi := by
     apply Continuous.intervalIntegrable
     dsimp [u']
@@ -166,7 +166,7 @@ noncomputable def unitChordSinCoeff (α : ℝ) (n : ℕ) : ℝ :=
     (2 * Real.sin (Real.pi * x)) ^ α *
       Real.sin (2 * Real.pi * (n : ℝ) * x)
 
-theorem unitChordSinCoeff_eq_zero {α : ℝ} (hα : 0 < α) (n : ℕ) :
+theorem unitChordSinCoeff_eq_zero {α : ℝ} (_hα : 0 < α) (n : ℕ) :
     unitChordSinCoeff α n = 0 := by
   let f : ℝ → ℝ := fun x ↦
     (2 * Real.sin (Real.pi * x)) ^ α *
@@ -178,7 +178,6 @@ theorem unitChordSinCoeff_eq_zero {α : ℝ} (hα : 0 < α) (n : ℕ) :
       Real.sin_pi_sub]
     rw [show 2 * Real.pi * (n : ℝ) * (1 - x) =
         n * (2 * Real.pi) - (2 * Real.pi * (n : ℝ) * x) by
-          push_cast
           ring,
       Real.sin_nat_mul_two_pi_sub]
     ring
@@ -198,7 +197,7 @@ theorem unitChordSinCoeff_eq_zero {α : ℝ} (hα : 0 < α) (n : ℕ) :
   simpa [unitChordSinCoeff, f] using this
 
 theorem unitChordCosCoeff_eq_sinePowerCosMoment
-    {α : ℝ} (hα : 0 < α) (n : ℕ) :
+    {α : ℝ} (_hα : 0 < α) (n : ℕ) :
     unitChordCosCoeff α n =
       (2 : ℝ) ^ α / Real.pi * sinePowerCosMoment α n := by
   let g : ℝ → ℝ := fun y ↦

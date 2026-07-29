@@ -358,7 +358,7 @@ theorem abs_inverse_normalizedGapDenominator_sub_le
     (hc1 : c ≤ 40) (hd1 : d ≤ 40)
     (hac : |a - c| ≤ δ) (hbd : |b - d| ≤ δ)
     (hq0 : 0 ≤ q) (hr0 : 0 ≤ r)
-    (hq1 : q ≤ 1) (hr1 : r ≤ 1)
+    (hq1 : q ≤ 1) (_hr1 : r ≤ 1)
     (hqr : |q - r| ≤ δ) :
     |(((a * b) ^ 2 * (q + 2))⁻¹) -
         (((c * d) ^ 2 * (r + 2))⁻¹)| ≤
@@ -515,13 +515,13 @@ theorem neighboringComparable_normalizedGap_oscillation
 /-- Algebraic normal form of `c̃`: it is the reciprocal of a denominator
 built only from the two normalized radii and the normalized gap. -/
 theorem neighboringNormalizedQuadraticCoefficient_eq_inverse
-    {R s t : ℝ} (hR : 0 < R) :
+    {R s t : ℝ} (_hR : 0 < R) :
     neighboringNormalizedQuadraticCoefficient R s t =
       (((heightRadius s / R) * (heightRadius t / R)) ^ 2 *
         (normalizedLatitudeGap s t + 2))⁻¹ := by
   unfold neighboringNormalizedQuadraticCoefficient
     latitudeQuadraticGapCoefficient
-  field_simp [hR.ne']
+  field_simp [_hR.ne']
   ring
 
 /-- Uniform `O(δ)` freezing estimate for `c̃ = R⁴c` on every large-depth
@@ -606,8 +606,8 @@ theorem neighboringComparable_normalizedQuadraticCoefficient_oscillation
 /-- Square of the normalized angular coefficient. -/
 theorem neighboringNormalizedAngularCoefficient_sq
     {R s t : ℝ} (hR : 0 < R)
-    (hs : s ∈ Ioo (-1 : ℝ) 1)
-    (ht : t ∈ Ioo (-1 : ℝ) 1) :
+    (_hs : s ∈ Ioo (-1 : ℝ) 1)
+    (_ht : t ∈ Ioo (-1 : ℝ) 1) :
     neighboringNormalizedAngularCoefficient R s t ^ 2 =
       2 * (heightRadius s / R) * (heightRadius t / R) := by
   have hp : 0 ≤ latitudeAngularScale s t := by
@@ -662,7 +662,7 @@ private theorem abs_sqrtProductParameter_sub_le
       |p - q| * (p + q) = |(p - q) * (p + q)| := by
         rw [abs_mul, abs_of_nonneg (by linarith : 0 ≤ p + q)]
       _ = |p ^ 2 - q ^ 2| := by ring_nf
-      _ = |2 * (a * b - c * d)| := by rw [hp, hq]; ring
+      _ = |2 * (a * b - c * d)| := by rw [hp, hq]; ring_nf
       _ = 2 * |a * b - c * d| := by rw [abs_mul]; norm_num
   have hmul : 2 * |p - q| ≤ 160 * δ := by
     calc
@@ -1809,7 +1809,7 @@ theorem neighboringComparable_resonantHigherBranch_block_bound
       intro s hs t ht
       convert
         abs_neighboringResonantHigherBranchKernel_le_physicalCusp_onRectangle
-          (by omega : 1 ≤ bandCount N) hjk hdepth hs ht using 1 <;>
+          (by omega : 1 ≤ bandCount N) hjk hdepth hs ht using 1 ;
         norm_num)
   norm_num at hraw ⊢
   exact hraw

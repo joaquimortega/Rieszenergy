@@ -77,7 +77,7 @@ theorem reducedLatitudeCusp_one_zero_eq_resonantConstantCoefficient :
   have hbranchMajor :
       Tendsto (fun x : ℝ ↦ K * x ^ (3 / 2 : ℝ))
         (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-    convert hxpow.const_mul K using 1 <;> simp
+    convert hxpow.const_mul K using 1 ; simp
   have hbranchAbs :
       Tendsto
         (fun x : ℝ ↦

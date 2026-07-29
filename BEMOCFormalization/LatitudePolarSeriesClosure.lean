@@ -21,7 +21,7 @@ namespace BEMOC
 closed interval.  This endpoint version is the form needed for polar bands. -/
 theorem abs_sub_linear_le_of_hasDerivWithinAt_chain
     {f f₁ f₂ : ℝ → ℝ} {a b C x : ℝ}
-    (hab : a ≤ b) (hx : x ∈ Icc a b) (hC : 0 ≤ C)
+    (_hab : a ≤ b) (hx : x ∈ Icc a b) (hC : 0 ≤ C)
     (hf : ∀ y ∈ Icc a b, HasDerivWithinAt f (f₁ y) (Icc a b) y)
     (hf₁ : ∀ y ∈ Icc a b, HasDerivWithinAt f₁ (f₂ y) (Icc a b) y)
     (hf₂ : ∀ y ∈ Icc a b, |f₂ y| ≤ C) :
@@ -86,7 +86,7 @@ theorem abs_sub_linear_le_of_hasDerivWithinAt_chain
         f a + (x - a) * f₁ a := by
     rw [show taylorWithinEval f 1 (Icc a x) a x =
       f a + (x - a) * derivWithin f (Icc a x) a by
-        simpa using taylorWithinEval_succ f 0 (Icc a x) a x]
+        simp [taylorWithinEval_succ]]
     rw [hderiv a ⟨le_rfl, hax.le⟩]
   have hyB : |f₂ y| ≤ C := hf₂ y (hI hyI)
   rw [hTaylor, hiter₂] at hrem
@@ -238,7 +238,7 @@ theorem hasDerivAt_latitudeEvenPowerSummandDST_right
   dsimp only
   convert
     (((hYT.mul hv).add (hY.mul hv1)).const_mul ((4 : ℝ) ^ m))
-      using 1 <;> dsimp [e, U, U1] <;> ring
+      using 1 ; dsimp [e, U, U1] ; ring
 
 /-- Equality of mixed partials for the polynomial even-power summand. -/
 theorem latitudeEvenPowerSummandDSTT_eq_DSST_swap
@@ -251,7 +251,7 @@ theorem latitudeEvenPowerSummandDSTT_eq_DSST_swap
     unequalRadiusPower unequalRadiusPowerD1 unequalRadiusPowerD2
     angularKernelA
   dsimp only
-  ring
+  ring_nf
 
 /-- The base geometry is invariant under transposition of its rectangle. -/
 theorem LatitudeEvenPowerSeriesBaseGeometry.swap
@@ -261,10 +261,10 @@ theorem LatitudeEvenPowerSeriesBaseGeometry.swap
   base_pos := hgeo.base_pos
   base_le t ht s hs := by
     have h := hgeo.base_le s hs t ht
-    convert h using 1 <;> unfold angularKernelA <;> ring
+    convert h using 1 ; unfold angularKernelA ; ring
   ratio_le t ht s hs := by
     have h := hgeo.ratio_le s hs t ht
-    convert h using 1 <;> unfold unequalAngularRatio angularKernelA <;> ring
+    convert h using 1 ; unfold unequalAngularRatio angularKernelA ; ring
 
 /-- Both cross tails are normally summable with the same majorant as the
 already constructed lower derivative stages. -/

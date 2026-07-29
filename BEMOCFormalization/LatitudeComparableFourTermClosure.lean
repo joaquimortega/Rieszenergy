@@ -34,7 +34,7 @@ theorem SeparatedScaledAbs.latitudeJetMulD2
       (BEMOC.latitudeJetMulD2 a₀ a₁ a₂ b₀ b₁ b₂) := by
   unfold BEMOC.latitudeJetMulD2
   have hh₂ := h₂.const_mul (c := (2 : ℝ))
-  convert (h₁.add hh₂).add h₃ using 1 <;> norm_num <;> ring
+  convert (h₁.add hh₂).add h₃ using 1 <;> norm_num ; ring
 
 theorem SeparatedScaledAbs.latitudeJetMul3D2
     {R d a b C₁ C₂ C₃ C₄ C₅ C₆
@@ -54,7 +54,7 @@ theorem SeparatedScaledAbs.latitudeJetMul3D2
   have hh₅ := h₅.const_mul (c := (2 : ℝ))
   have hh₆ := h₆.const_mul (c := (2 : ℝ))
   convert (((((h₁.add h₂).add h₃).add hh₄).add hh₅).add hh₆)
-    using 1 <;> norm_num <;> ring
+    using 1 <;> norm_num ; ring
 
 /-- The right pure gap derivatives have the same fixed-chart grading as
 the left ones, using the same common radius floor. -/
@@ -233,7 +233,7 @@ theorem separatedComparableSame_rectangle_firstMixedBlock
       SeparatedScaledAbs R d (-8) 2 1
         (normalizedLatitudeGapDt s t ^ 2) := by
     have hm := hqt.mul hR hd hqt (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hc0 :
       SeparatedScaledAbs R d 0 0 H
         (latitudeCusp0 α s t) := by
@@ -308,7 +308,7 @@ theorem separatedComparableSame_rectangle_firstMixedBlock
           P * (H * Q) * K ^ (1 : ℝ))
         (latitudePowerDss α s t * latitudeCusp0Dtt α s t) := by
     unfold latitudeCusp0Dtt
-    convert hz3A'.add hz3B' using 1 <;> ring
+    convert hz3A'.add hz3B' using 1 ; ring
   let C : ℝ :=
     P * H * K ^ (3 - α) +
       2 * (P * H * K ^ (2 : ℝ)) +
@@ -475,7 +475,7 @@ theorem separatedComparableSame_rectangle_secondMixedBlock
       SeparatedScaledAbs R d (-8) 2 1
         (normalizedLatitudeGapDt s t ^ 2) := by
     have hm := hqt.mul hR hd hqt (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hc1 :
       SeparatedScaledAbs R d (4 - 2 * α) (α - 2) H
         (latitudeCusp1 α s t) := by
@@ -722,28 +722,28 @@ theorem separatedComparableSame_rectangle_thirdMixedBlock
   have hqs2 : SeparatedScaledAbs R d (-8) 2 1
       (normalizedLatitudeGapDs s t ^ 2) := by
     have hm := hqs.mul hR hd hqs (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hqt2 : SeparatedScaledAbs R d (-8) 2 1
       (normalizedLatitudeGapDt s t ^ 2) := by
     have hm := hqt.mul hR hd hqt (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hgap1 : SeparatedScaledAbs R d (-8) 1 (2 * G₁)
       (2 * normalizedLatitudeGapDs s t *
         normalizedLatitudeGapDst s t) := by
     have hm := hqs.mul hR hd hqst (by norm_num) hG₁0
     have hc := hm.const_mul (c := (2 : ℝ))
-    convert hc using 1 <;> norm_num <;> ring
+    convert hc using 1 <;> norm_num ; ring
   have hgap2A : SeparatedScaledAbs R d (-8) 0 (2 * G₁ ^ 2)
       (2 * normalizedLatitudeGapDst s t ^ 2) := by
     have hm := hqst.mul hR hd hqst hG₁0 hG₁0
     have hc := hm.const_mul (c := (2 : ℝ))
-    convert hc using 1 <;> norm_num <;> ring
+    convert hc using 1 <;> norm_num ; ring
   have hgap2Braw : SeparatedScaledAbs R d (-10) 1 (2 * G₂)
       (2 * normalizedLatitudeGapDs s t *
         normalizedLatitudeGapDstt s t) := by
     have hm := hqs.mul hR hd hqstt (by norm_num) hG₂0
     have hc := hm.const_mul (c := (2 : ℝ))
-    convert hc using 1 <;> norm_num <;> ring
+    convert hc using 1 <;> norm_num ; ring
   have hgap2B := hgap2Braw.shift hR hd hK0
     (by norm_num : (0 : ℝ) ≤ 1) hsep (by positivity)
   have hgap2B' : SeparatedScaledAbs R d (-8) 0 (2 * G₂ * K)
@@ -960,7 +960,7 @@ theorem separatedComparableSame_rectangle_fourthMixedBlock
   have hqt2 : SeparatedScaledAbs R d (-8) 2 1
       (normalizedLatitudeGapDt s t ^ 2) := by
     have hm := hqt.mul hR hd hqt (by norm_num) (by norm_num)
-    convert hm using 1 <;> norm_num <;> ring
+    convert hm using 1 <;> norm_num ; ring
   have hqss : SeparatedScaledAbs R d (-4) 0 Q
       (normalizedLatitudeGapDss s t) := by
     unfold SeparatedScaledAbs

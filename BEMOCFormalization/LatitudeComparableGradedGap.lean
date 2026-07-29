@@ -280,7 +280,7 @@ noncomputable def latitudePowerDerivativeScale (α R d : ℝ) : ℝ :=
 negative powers used by the cusp moments.  It records, in a reusable exact
 form, the exponent arithmetic behind (5.5). -/
 theorem rpow_le_of_comparable_quadratic_gap
-    {x c d R e : ℝ} (hx : 0 < x) (hc : 0 < c)
+    {x c d R e : ℝ} (_hx : 0 < x) (hc : 0 < c)
     (hd : 0 < d) (hR : 0 < R) (he : e ≤ 0)
     (hlower : c * d ^ (2 : ℝ) * R ^ (-4 : ℝ) ≤ x) :
     x ^ e ≤
@@ -344,8 +344,8 @@ the natural scale, the genuine mixed derivative has the same scale with
 the explicit total weight `5` (the second block occurs with coefficient
 two). -/
 theorem abs_variableReducedLatitudeKernelDsstt_le_of_comparableTerms
-    {α s t R C : ℝ} (hC : 0 ≤ C)
-    (hscale : 0 ≤ latitudePowerDerivativeScale α R |s - t|)
+    {α s t R C : ℝ} (_hC : 0 ≤ C)
+    (_hscale : 0 ≤ latitudePowerDerivativeScale α R |s - t|)
     (hterms : LatitudeComparableMixedTermBound α s t R C) :
     |variableReducedLatitudeKernelDsstt α s t| ≤
       5 * C * latitudePowerDerivativeScale α R |s - t| := by

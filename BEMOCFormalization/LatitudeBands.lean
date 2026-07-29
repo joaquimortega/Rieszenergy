@@ -321,7 +321,7 @@ noncomputable def bandPairError (N : ℕ)
 supremum.  This is the elementary polar-block estimate. -/
 theorem abs_bandAtomicValue_le (N : ℕ)
     (j : Fin (bandTailCount N + 1)) (f : ℝ → ℝ) (C : ℝ)
-    (hC : 0 ≤ C) (hbound : ∀ t, |f t| ≤ C) :
+    (_hC : 0 ≤ C) (hbound : ∀ t, |f t| ≤ C) :
     |bandAtomicValue N j f| ≤ (finiteBandPopulation N j : ℝ) * C := by
   unfold bandAtomicValue
   have hm : 0 ≤ (midpointRingPopulation N j : ℝ) := by positivity
@@ -360,7 +360,7 @@ theorem abs_bandAtomicValue_le (N : ℕ)
 bound. -/
 theorem abs_bandContinuousValue_le {N : ℕ} (hN : 0 < N)
     (j : Fin (bandTailCount N + 1)) (f : ℝ → ℝ) (C : ℝ)
-    (hC : 0 ≤ C) (hbound : ∀ t, |f t| ≤ C) :
+    (_hC : 0 ≤ C) (hbound : ∀ t, |f t| ≤ C) :
     |bandContinuousValue N j f| ≤ (finiteBandPopulation N j : ℝ) * C := by
   unfold bandContinuousValue
   have hwidth := bandBoundaryHeight_sub_succ N j
@@ -393,7 +393,7 @@ theorem abs_bandError_le_of_uniform_bound {N : ℕ} (hN : 0 < N)
     |bandAtomicValue N j f - bandContinuousValue N j f| ≤
         |bandAtomicValue N j f| + |bandContinuousValue N j f| := by
       calc
-        _ = |bandAtomicValue N j f + -bandContinuousValue N j f| := by ring
+        _ = |bandAtomicValue N j f + -bandContinuousValue N j f| := by ring_nf
         _ ≤ _ := by simpa using
           (abs_add_le (bandAtomicValue N j f) (-bandContinuousValue N j f))
     _ ≤ (finiteBandPopulation N j : ℝ) * C +
@@ -420,7 +420,7 @@ theorem abs_bandPairError_le_of_uniform_bound {N : ℕ} (hN : 0 < N)
             |bandContinuousValue N k (fun t ↦ K s t)| := by
               calc
                 _ = |bandAtomicValue N k (fun t ↦ K s t) +
-                    -bandContinuousValue N k (fun t ↦ K s t)| := by ring
+                    -bandContinuousValue N k (fun t ↦ K s t)| := by ring_nf
                 _ ≤ _ := by simpa using
                   (abs_add_le (bandAtomicValue N k (fun t ↦ K s t))
                     (-bandContinuousValue N k (fun t ↦ K s t)))
@@ -439,7 +439,7 @@ theorem abs_bandPairError_le_of_uniform_bound {N : ℕ} (hN : 0 < N)
           |bandContinuousValue N j (fun s ↦ bandError N k (fun t ↦ K s t))| := by
             calc
               _ = |bandAtomicValue N j (fun s ↦ bandError N k (fun t ↦ K s t)) +
-                  -bandContinuousValue N j (fun s ↦ bandError N k (fun t ↦ K s t))| := by ring
+                  -bandContinuousValue N j (fun s ↦ bandError N k (fun t ↦ K s t))| := by ring_nf
               _ ≤ _ := by simpa using
                 (abs_add_le (bandAtomicValue N j (fun s ↦ bandError N k (fun t ↦ K s t)))
                   (-bandContinuousValue N j (fun s ↦ bandError N k (fun t ↦ K s t))))

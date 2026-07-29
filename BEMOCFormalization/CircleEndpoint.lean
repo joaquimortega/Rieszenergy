@@ -45,7 +45,7 @@ theorem circleChordPowerSum_eq_profile_mesh (α : ℝ) (w : ℕ) :
   intro k _
   unfold circleProfile
   congr 2
-  ring
+  ring_nf
 
 /-! ## Explicit singular endpoint subtraction -/
 
@@ -237,10 +237,10 @@ theorem endpointModel_mesh_error_eq_renormalized
   have hwR : (0 : ℝ) < (w : ℝ) := by exact_mod_cast hw
   have h1 : (w : ℝ) ^ (-β) * (w : ℝ) ^ (β + 1) = (w : ℝ) := by
     rw [← Real.rpow_add hwR]
-    convert Real.rpow_one (w : ℝ) using 2 <;> ring
+    convert Real.rpow_one (w : ℝ) using 2 ; ring
   have h0 : (w : ℝ) ^ (-β) * (w : ℝ) ^ β = 1 := by
     rw [← Real.rpow_add hwR]
-    convert Real.rpow_zero (w : ℝ) using 2 <;> ring
+    convert Real.rpow_zero (w : ℝ) using 2 ; ring
   have hm1 : (w : ℝ) ^ (-β) * (w : ℝ) ^ (β - 1) =
       1 / (w : ℝ) := by
     rw [← Real.rpow_add hwR]

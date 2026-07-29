@@ -188,7 +188,7 @@ theorem latitudePowerJetBound_of_coefficient_rpow_angular
               latitudeAngularScaleDtt s t| := abs_add _ _
       _ ≤ A * U * D ^ 4 + A * U * D ^ 4 := by
         exact add_le_add
-          (by convert htwo ha2 hu2 hpt hpt using 1 <;> ring)
+          (by convert htwo ha2 hu2 hpt hpt using 1 ; ring_nf)
           (hone ha1 hu1 hptt)
       _ ≤ 15 * A * U * D ^ 4 := by
         have h2 := htwo ha2 hu2 hpt hpt
@@ -233,7 +233,7 @@ theorem latitudePowerJetBound_of_coefficient_rpow_angular
         latitudeAngularScaleDstt s t
     have hz₁ : |z₁| ≤ A * U * D ^ 4 := by
       dsimp [z₁]
-      convert hthree ha3 hu3 hpt hpt hps using 1 <;> ring
+      convert hthree ha3 hu3 hpt hpt hps using 1 ; ring_nf
     have hz₂ : |z₂| ≤ A * U * D ^ 4 := by
       dsimp [z₂]
       exact htwo ha2 hu2 hptt hps
@@ -264,7 +264,7 @@ theorem latitudePowerJetBound_of_coefficient_rpow_angular
               latitudeAngularScaleDss s t| := abs_add _ _
       _ ≤ A * U * D ^ 4 + A * U * D ^ 4 := by
         exact add_le_add
-          (by convert htwo ha2 hu2 hps hps using 1 <;> ring)
+          (by convert htwo ha2 hu2 hps hps using 1 ; ring_nf)
           (hone ha1 hu1 hpss)
       _ ≤ 15 * A * U * D ^ 4 := by nlinarith
   · unfold latitudePowerDsst
@@ -282,7 +282,7 @@ theorem latitudePowerJetBound_of_coefficient_rpow_angular
         latitudeAngularScaleDsst s t
     have hz₁ : |z₁| ≤ A * U * D ^ 4 := by
       dsimp [z₁]
-      convert hthree ha3 hu3 hpt hps hps using 1 <;> ring
+      convert hthree ha3 hu3 hpt hps hps using 1 ; ring_nf
     have hz₂ : |z₂| ≤ 2 * (A * U * D ^ 4) := by
       dsimp [z₂]
       rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
@@ -335,10 +335,10 @@ theorem latitudePowerJetBound_of_coefficient_rpow_angular
       latitudeAngularScaleDsstt s t
     have hz₁ : |z₁| ≤ A * U * D ^ 4 := by
       dsimp [z₁]
-      convert hfour ha4 hu4 hpt hpt hps hps using 1 <;> ring
+      convert hfour ha4 hu4 hpt hpt hps hps using 1 ; ring_nf
     have hz₂ : |z₂| ≤ A * U * D ^ 4 := by
       dsimp [z₂]
-      convert hthree ha3 hu3 hptt hps hps using 1 <;> ring
+      convert hthree ha3 hu3 hptt hps hps using 1 ; ring_nf
     have hz₃ : |z₃| ≤ 4 * (A * U * D ^ 4) := by
       dsimp [z₃]
       rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 4)]
@@ -348,7 +348,7 @@ theorem latitudePowerJetBound_of_coefficient_rpow_angular
       dsimp [z₄]
       rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
       gcongr
-      convert htwo ha2 hu2 hpst hpst using 1 <;> ring
+      convert htwo ha2 hu2 hpst hpst using 1 ; ring_nf
     have hz₅ : |z₅| ≤ 2 * (A * U * D ^ 4) := by
       dsimp [z₅]
       rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
@@ -356,7 +356,7 @@ theorem latitudePowerJetBound_of_coefficient_rpow_angular
       exact htwo ha2 hu2 hps hpstt
     have hz₆ : |z₆| ≤ A * U * D ^ 4 := by
       dsimp [z₆]
-      convert hthree ha3 hu3 hpt hpt hpss using 1 <;> ring
+      convert hthree ha3 hu3 hpt hpt hpss using 1 ; ring_nf
     have hz₇ : |z₇| ≤ A * U * D ^ 4 := by
       dsimp [z₇]
       exact htwo ha2 hu2 hptt hpss

@@ -180,7 +180,7 @@ theorem reducedLatitudeCusp_zero_eq_upperConstantCoefficient
     convert
       (hxlim.const_mul
         |reducedCuspUpperLinearCoefficient α|).add
-        (hpow.const_mul K) using 1 <;> simp
+        (hpow.const_mul K) using 1 ; simp
   have hone :
       ∀ᶠ x in 𝓝[>] (0 : ℝ), x ≤ 1 := by
     have honeFull : {x : ℝ | x ≤ 1} ∈ 𝓝 (0 : ℝ) := by
@@ -274,7 +274,7 @@ theorem reducedLatitudeCusp_zero_eq_lowerConstantCoefficient
   have hmajor :
       Tendsto (fun x : ℝ ↦ K * x ^ ν)
         (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-    convert hpow.const_mul K using 1 <;> simp
+    convert hpow.const_mul K using 1 ; simp
   have hone :
       ∀ᶠ x in 𝓝[>] (0 : ℝ), x ≤ 1 := by
     have honeFull : {x : ℝ | x ≤ 1} ∈ 𝓝 (0 : ℝ) := by
@@ -1755,7 +1755,7 @@ theorem central_neighboring_cusp_raw_bound_to_majorant
           _ = _ := by
             rw [← Real.rpow_natCast M 2, ← Real.rpow_add hMr]
             congr 1
-            ring
+            ring_nf
   have hrow : bandCount N ≤ 2 * latitudeBandScale N j := by
     unfold ComparableLatitudeScales at hcomp
     rcases hcentral.2 with hjC | hkC

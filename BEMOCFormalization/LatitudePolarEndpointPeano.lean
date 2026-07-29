@@ -569,7 +569,7 @@ theorem hasDerivWithinAt_polarSeriesFirstTaylorError_right
       hα0 hα2 hN hM hgeo ha ht
   unfold polarSeriesFirstTaylorError polarSeriesFirstTaylorErrorDt
   convert (hK.sub hKa).sub
-    (hDs.const_mul (s - a)) using 1 <;> ring
+    (hDs.const_mul (s - a)) using 1
 
 theorem hasDerivWithinAt_polarSeriesFirstTaylorErrorDt_right
     {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
@@ -599,7 +599,7 @@ theorem hasDerivWithinAt_polarSeriesFirstTaylorErrorDt_right
       hα0 hα2 hN hM hgeo ha ht
   unfold polarSeriesFirstTaylorErrorDt polarSeriesFirstTaylorErrorDtt
   convert (hDss.sub hDssa).sub
-    (hDst.const_mul (s - a)) using 1 <;> ring
+    (hDst.const_mul (s - a)) using 1
 
 /-- Endpoint-safe tensor Taylor bound for the complete even-power series. -/
 theorem abs_polarSeriesExplicitMixedRemainder_le
