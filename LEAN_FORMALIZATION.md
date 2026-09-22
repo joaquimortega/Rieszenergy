@@ -6,7 +6,8 @@ previous Simpson-based proof is archived, not used as a proof of this target.
 
 ## Verified proof progress
 
-The reviewed scaffold was pushed as `d621018`. Subsequent proof development
+The reviewed scaffold was pushed as `d621018`, and the first substantial proof
+checkpoint as `2300930`. Subsequent proof development
 uses the same Lean 4.19.0 and pinned mathlib revision. The following targets
 now have checked proofs in the active namespace `BEMOC.Definitive`:
 
@@ -23,10 +24,12 @@ now have checked proofs in the active namespace `BEMOC.Definitive`:
 | Phase-uniform angular trapezoid estimate for 0<α<2 | `trapezoid_bound` in AngularQuadrature |
 | Exact periodic gcd/lcm grid counting | `Grid.grid_multiplicity` in GridMultiplicity |
 | Arithmetic gcd sum for all α>0 | `gcd_sum_bound` in Longitude |
+| Full phase-uniform longitude bound for 0<α<2 | `longitude_bound` in Longitude |
+| Summation of the three latitude block regimes | `latitude_bound_of_blocks` in LatitudeSummation |
 | Uniform finite-size closure | `small_size_bound` in Latitude |
-| Main theorem reduced to the two large analytic bounds | `main_theorem_of_latitude_longitude` in MainTheorem |
+| Main theorem reduced to the latitude bound, or its three block regimes | `main_theorem_of_latitude`, `main_theorem_of_block_estimates` in MainTheorem |
 | Projection averages and exact cap area | SphereProjection and SphereCapMeasure |
-| Cap indicator overlap kernel and finite relabeling | CapDiscrepancy |
+| Universal and Diamond Stolarsky identities with ordinary dt | `stolarskyIdentity`, `diamondStolarsky` in CapDiscrepancy |
 | Conditional cap/Sobolev assembly | `cap_assembly`, `sobolev_assembly` in Corollaries |
 | Nonempty spectral unit ball; bounded supremum under embedding | SobolevBasic |
 
@@ -38,15 +41,14 @@ helpers are not being counted as the completed block estimates.
 ## Remaining work
 
 The **unconditional main theorem and both final corollaries are not yet
-proved**. The current main assembly requires exactly `LatitudeBound α` and
-`LongitudeBound α`. The remaining main-theorem work includes the concrete
-angular-error assembly, polar band geometry, smooth separated-kernel series,
-full mixed Taylor calculus, comparable cusp/neighbor blocks, unequal blocks,
-and the finite latitude summation.
+proved**. The current main assembly requires only `LatitudeBound α`, which
+has itself been reduced to the three exhaustive block estimates. The remaining
+work includes polar band geometry, smooth separated-kernel series, full mixed
+Taylor calculus, comparable cusp/neighbor blocks, and unequal blocks.
 
-The cap branch still needs the full Stolarsky square expansion and a proved
-universal Beck lower bound. The Sobolev branch needs existence/completeness of
-the harmonic basis, the spectral-space/continuous-representative bridge,
+The cap branch has a complete Stolarsky proof and now needs the main energy
+theorem and a proved universal Beck lower bound. The Sobolev branch needs
+existence/completeness of the harmonic basis, the spectral-space/continuous-representative bridge,
 embedding, the distance-kernel comparison and the universal lower bound.
 The conditional assembly proofs do not discharge these hypotheses.
 
@@ -58,8 +60,7 @@ latitude-potential consequence has been proved without assuming it.
 
 `MainTheoremTarget` and `DefinitiveTargets` remain proposition definitions,
 not completed theorems. The actual cap/Sobolev observables are defined
-independently of energy. No custom axioms or proof shortcuts are used. An axiom audit of eighteen
-major proved declarations reports only `propext`, `Classical.choice`, and
+independently of energy. No custom axioms or proof shortcuts are used. Axiom audits of the major proved declarations reports only `propext`, `Classical.choice`, and
 `Quot.sound`.
 
 ## Comparator and metadata

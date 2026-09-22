@@ -1,4 +1,6 @@
 import BEMOCFormalization.Latitude
+import BEMOCFormalization.LatitudeIdentity
+import BEMOCFormalization.LatitudeSummation
 import BEMOCFormalization.Longitude
 
 namespace BEMOC.Definitive
@@ -34,5 +36,18 @@ def MainTheoremTarget : Prop := ∀ α : ℝ, 0 < α → α < 2 → MainTheorem 
 theorem main_theorem_of_latitude_longitude {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
     (hlat : LatitudeBound α) (hlong : LongitudeBound α) : MainTheorem α :=
   main_theorem_of_estimates hlat hlong (small_size_bound hα2) (diamond_nonnegative hα0 hα2)
+
+/-- The full energy theorem is now reduced to the latitude estimate alone. -/
+theorem main_theorem_of_latitude {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hlat : LatitudeBound α) : MainTheorem α :=
+  main_theorem_of_latitude_longitude hα0 hα2 hlat (longitude_bound hα0 hα2)
+
+/-- The remaining analytic inputs are the three exhaustive latitude block regimes. -/
+theorem main_theorem_of_block_estimates {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hc : ComparableBlockBound α) (hs : SameSideBlockBound α)
+    (ho : OppositeBlockBound α) : MainTheorem α :=
+  main_theorem_of_latitude hα0 hα2
+    (latitude_bound_of_blocks hα0 hα2 (latitudeIdentity_of_pos hα0)
+      (blockSymmetry_of_pos hα0) hc hs ho)
 
 end BEMOC.Definitive

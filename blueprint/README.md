@@ -90,3 +90,7 @@ mode rejects stale embedded statements.
 
 `LatitudeIdentity` now proves the exact signed-band decomposition using the
 constant height potential; see [its proof guide](modules/LatitudeIdentity.md).
+
+`LatitudeSummation` now sums the three exhaustive block regimes into
+`LatitudeBound`; see [its proof guide](modules/LatitudeSummation.md). The full
+longitude bound and the ordinary-dt Stolarsky identity have checked proofs.

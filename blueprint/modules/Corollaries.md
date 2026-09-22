@@ -92,6 +92,11 @@ theorem cap_assembly : CapAssembly := by
       _ = (N : ℝ) ^ 2 * (C * (N : ℝ) ^ (2 * (-(3 : ℝ) / 4))) := by rw [← hp]; ring
   exact nonneg_le_sqrt_mul_rpow hC hn hsq
 
+/-- The cap corollary now requires only the energy theorem and universal lower bound. -/
+theorem cap_corollary_of_main_and_beck (hmain : MainTheorem 1)
+    (hbeck : BeckLowerBound) : CapDiscrepancyCorollary :=
+  cap_assembly constructionFacts hmain diamondStolarsky hbeck
+
 /-- Conditional transfer from the actual spectral WCE comparison to the paper's decay rate. -/
 theorem sobolev_assembly : SobolevAssembly := by
   intro Y s _hs1 _hs2 hcon hmain _hemb hcomp
@@ -143,3 +148,8 @@ The comparison gives `WCE²≤A_s*deficit/N²≤A_s*C_α*N^((1-α/2)-2)`. `sobol
 **Optimality and final target.** `SobolevAssembly` concludes only the upper `SobolevCorollary`. The full `DefinitiveTargets` additionally requires `Nonempty HarmonicBasis` and `SobolevOptimality Y s` for **every** harmonic basis, while the cap conjunct requires both Beck lower and upper. Prove harmonic-basis existence in `Sobolev`, universal Sobolev lower there or in a dedicated module, and the cap lower theorem in `CapDiscrepancy`; then combine their resulting theorems with `MainTheoremTarget` and `ConstructionFacts`. The final theorem should have type `DefinitiveTargets` with no arguments. Avoid replacing it by a theorem that assumes the target itself or by a tautological proposition. A conditional theorem `CapAssembly`/`SobolevAssembly` is useful as an intermediate proof but is not the requested completed formalization.
 
 **Small sizes and audit.** The new `MainTheorem` asserts all `N≥4`, whereas the manuscript conducts estimates for `N≥1024` and absorbs smaller sizes. Ensure `SmallSizeBound` is genuinely uniform over all phases before using it. For `N=4` the cap and WCE denominators are safe; in general-purpose lemmas require `0<n`. Verify at the end with `lake build`, a project-owned source scan for `sorry`, `admit`, custom `axiom`, and `opaque`, and a declaration check that the final theorem is inhabited rather than merely named as a `Prop`.
+
+The universal and Diamond Stolarsky identities are now proved independently
+of energy bounds. Accordingly, `cap_corollary_of_main_and_beck` needs only
+`MainTheorem 1` and `BeckLowerBound`; the construction and invariance principle
+are supplied by checked witnesses.

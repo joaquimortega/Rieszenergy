@@ -338,6 +338,210 @@ theorem integral_cap_indicator_centers (x : Sphere) (t : ℝ) :
   simpa [Measure.real_def] using
     (integral_indicator_one (μ := sigma) (measurableSet_cap x t))
 
+/-- Exact normalized cap area at a height in the geometric range. -/
+theorem capArea_formula (u : Sphere) {t : ℝ} (ht : t ∈ Set.Icc (-1 : ℝ) 1) :
+    (sigma (cap u t)).toReal = (1-t)/2 := by
+  simpa only [cap] using sphere_cap_measure_toReal u ht
+
+theorem integrable_cap_pair_centers (x y : Sphere) (t : ℝ) :
+    Integrable (fun u : Sphere =>
+      (if x ∈ cap u t then (1 : ℝ) else 0) *
+      (if y ∈ cap u t then (1 : ℝ) else 0)) sigma := by
+  have hfun : ∀ u : Sphere,
+      (if x ∈ cap u t then (1 : ℝ) else 0) *
+      (if y ∈ cap u t then (1 : ℝ) else 0) =
+        (cap x t ∩ cap y t).indicator (fun _ => (1 : ℝ)) u := by
+    intro u
+    have hx : x ∈ cap u t ↔ u ∈ cap x t := by
+      simp only [cap, Set.mem_setOf_eq]
+      simpa only [real_inner_comm]
+    have hy : y ∈ cap u t ↔ u ∈ cap y t := by
+      simp only [cap, Set.mem_setOf_eq]
+      simpa only [real_inner_comm]
+    by_cases hxu : u ∈ cap x t <;> by_cases hyu : u ∈ cap y t <;>
+      simp [Set.indicator, hx, hy, hxu, hyu]
+  simp_rw [hfun]
+  exact (integrable_const (1 : ℝ)).indicator
+    ((measurableSet_cap x t).inter (measurableSet_cap y t))
+
+/-- Centered second-moment identity for finitely many integrable features. -/
+private theorem integral_empirical_centered_sq {Ω ι : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [IsProbabilityMeasure μ] [Fintype ι] [Nonempty ι]
+    (f : ι → Ω → ℝ) (p : ℝ)
+    (hf : ∀ i, Integrable (f i) μ)
+    (hf2 : ∀ i j, Integrable (fun u => f i u * f j u) μ)
+    (hmean : ∀ i, ∫ u, f i u ∂μ = p) :
+    (∫ u, ((∑ i, f i u) / (Fintype.card ι : ℝ) - p) ^ 2 ∂μ) =
+      (∑ i, ∑ j, (∫ u, f i u * f j u ∂μ)) /
+        (Fintype.card ι : ℝ) ^ 2 - p ^ 2 := by
+  let n : ℝ := Fintype.card ι
+  have hn : n ≠ 0 := by
+    dsimp [n]
+    exact_mod_cast (Fintype.card_pos.ne')
+  have hsum : Integrable (fun u => ∑ i, f i u) μ :=
+    integrable_finset_sum Finset.univ (fun i _ => hf i)
+  have hpair : Integrable (fun u => ∑ i, ∑ j, f i u * f j u) μ :=
+    integrable_finset_sum Finset.univ (fun i _ =>
+      integrable_finset_sum Finset.univ (fun j _ => hf2 i j))
+  have hsq : (fun u => (∑ i, f i u) ^ 2) =
+      (fun u => ∑ i, ∑ j, f i u * f j u) := by
+    funext u
+    simp only [sq, Finset.mul_sum, Finset.sum_mul]
+    exact Finset.sum_congr rfl (fun i hi => Finset.sum_congr rfl (fun j hj => mul_comm _ _))
+  have hsum2 : Integrable (fun u => (∑ i, f i u) ^ 2) μ := by
+    rw [hsq]
+    exact hpair
+  let S : Ω → ℝ := fun u => ∑ i, f i u
+  let A : Ω → ℝ := fun u => S u ^ 2 / n ^ 2
+  let B : Ω → ℝ := fun u => (2 * p * S u) / n
+  have hA : Integrable A μ := hsum2.div_const _
+  have hB : Integrable B μ := (hsum.const_mul (2 * p)).div_const _
+  have hpoint : ∀ u, (S u / n - p) ^ 2 = A u - B u + p ^ 2 := by
+    intro u
+    dsimp [A, B]
+    field_simp
+    ring
+  have hsplit : (∫ u, A u - B u + p ^ 2 ∂μ) =
+      (∫ u, A u ∂μ) - (∫ u, B u ∂μ) + p ^ 2 := by
+    have h₁ := integral_sub hA hB
+    have h₂ := integral_add (hA.sub hB) (integrable_const (p ^ 2 : ℝ))
+    simpa only [Pi.sub_apply, Pi.add_apply, integral_const, Measure.real_def,
+      measure_univ, ENNReal.toReal_one, one_smul, h₁] using h₂
+  have hAint : (∫ u, A u ∂μ) =
+      (∑ i, ∑ j, (∫ u, f i u * f j u ∂μ)) / n ^ 2 := by
+    dsimp [A, S]
+    rw [integral_div, hsq]
+    rw [integral_finset_sum Finset.univ (fun i _ =>
+      integrable_finset_sum Finset.univ (fun j _ => hf2 i j))]
+    congr 1
+    apply Finset.sum_congr rfl
+    intro i hi
+    rw [integral_finset_sum Finset.univ (fun j _ => hf2 i j)]
+  have hBint : (∫ u, B u ∂μ) = 2 * p ^ 2 := by
+    dsimp [B, S]
+    rw [integral_div, integral_const_mul]
+    rw [integral_finset_sum Finset.univ (fun i _ => hf i)]
+    simp_rw [hmean]
+    have hcard : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast Fintype.card_pos.ne'
+    field_simp [hcard]
+    ring
+  change (∫ u, (S u / n - p) ^ 2 ∂μ) = _
+  simp_rw [hpoint]
+  rw [hsplit, hAint, hBint]
+  ring
+
+
+
+theorem integral_capError_sq_fixed_height {n : ℕ} (hn : 0 < n) (X : Fin n → Sphere)
+    (t : ℝ) (ht : t ∈ Set.Icc (-1 : ℝ) 1) :
+    (∫ u : Sphere, capError X u t ^ 2 ∂sigma) =
+      (∑ i : Fin n, ∑ j : Fin n,
+        (∫ u : Sphere,
+          (if X i ∈ cap u t then (1 : ℝ) else 0) *
+          (if X j ∈ cap u t then (1 : ℝ) else 0) ∂sigma)) / (n : ℝ) ^ 2 -
+      ((1 - t) / 2) ^ 2 := by
+  let f : Fin n → Sphere → ℝ := fun i u => if X i ∈ cap u t then 1 else 0
+  haveI : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
+  have hf (i : Fin n) : Integrable (f i) sigma :=
+    integrable_cap_indicator_centers (X i) t
+  have hf2 (i j : Fin n) : Integrable (fun u => f i u * f j u) sigma :=
+    integrable_cap_pair_centers (X i) (X j) t
+  have hmean (i : Fin n) : (∫ u, f i u ∂sigma) = (1 - t) / 2 := by
+    rw [show (∫ u, f i u ∂sigma) = (sigma (cap (X i) t)).toReal from
+      integral_cap_indicator_centers (X i) t]
+    exact capArea_formula (X i) ht
+  have h := integral_empirical_centered_sq sigma f ((1 - t) / 2) hf hf2 hmean
+  have heq (u : Sphere) : capError X u t =
+      (∑ i, f i u) / (n : ℝ) - (1 - t) / 2 := by
+    simp [capError, f, capArea_formula u ht]
+  simpa only [heq, f, Fintype.card_fin] using h
+
+theorem integrable_cap_pair_heights (x y : Sphere) :
+    Integrable (fun t : ℝ => ∫ u : Sphere,
+      (if x ∈ cap u t then (1 : ℝ) else 0) *
+      (if y ∈ cap u t then (1 : ℝ) else 0) ∂sigma)
+      (volume.restrict (Set.Icc (-1 : ℝ) 1)) := by
+  simpa only [capFeature] using (integrable_capFeature_pair x y).integral_prod_left
+
+private theorem integral_capArea_sq :
+    (∫ t in Set.Icc (-1 : ℝ) 1, ((1 - t) / 2) ^ 2) = (2 / 3 : ℝ) := by
+  rw [integral_Icc_eq_integral_Ioc,
+    ← intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]
+  have hsub := intervalIntegral.integral_comp_sub_left
+    (a := (-1 : ℝ)) (b := 1) (fun u : ℝ => (u / 2) ^ 2) 1
+  norm_num at hsub
+  rw [hsub]
+  simp_rw [div_pow]
+  rw [intervalIntegral.integral_div, integral_pow]
+  norm_num
+
+/-- Stolarsky invariance for the actual cap-discrepancy integral, with ordinary `dt`. -/
+theorem stolarsky_identity (n : ℕ) (hn : 0 < n) (X : Fin n → Sphere) :
+    4 * capDiscrepancySq X = continuousEnergy 1 - energy X 1 / (n : ℝ) ^ 2 := by
+  have hfun : ∀ t ∈ Set.Icc (-1 : ℝ) 1,
+      (∫ u : Sphere, capError X u t ^ 2 ∂sigma) =
+      (∑ i : Fin n, ∑ j : Fin n,
+        (∫ u : Sphere,
+          (if X i ∈ cap u t then (1 : ℝ) else 0) *
+          (if X j ∈ cap u t then (1 : ℝ) else 0) ∂sigma)) / (n : ℝ) ^ 2 -
+      ((1 - t) / 2) ^ 2 := by
+    intro t ht
+    exact integral_capError_sq_fixed_height hn X t ht
+  have hA : Integrable (fun t : ℝ =>
+      (∑ i : Fin n, ∑ j : Fin n,
+        (∫ u : Sphere,
+          (if X i ∈ cap u t then (1 : ℝ) else 0) *
+          (if X j ∈ cap u t then (1 : ℝ) else 0) ∂sigma)) / (n : ℝ) ^ 2)
+      (volume.restrict (Set.Icc (-1 : ℝ) 1)) := by
+    apply Integrable.div_const
+    apply integrable_finset_sum Finset.univ
+    intro i hi
+    apply integrable_finset_sum Finset.univ
+    intro j hj
+    exact integrable_cap_pair_heights (X i) (X j)
+  have hB : Integrable (fun t : ℝ => ((1 - t) / 2) ^ 2)
+      (volume.restrict (Set.Icc (-1 : ℝ) 1)) := by
+    exact (((continuous_const.sub continuous_id).div_const 2).pow 2).integrableOn_Icc
+  have hsplit : (∫ t in Set.Icc (-1 : ℝ) 1,
+      (∑ i : Fin n, ∑ j : Fin n,
+        (∫ u : Sphere,
+          (if X i ∈ cap u t then (1 : ℝ) else 0) *
+          (if X j ∈ cap u t then (1 : ℝ) else 0) ∂sigma)) / (n : ℝ) ^ 2 -
+      ((1 - t) / 2) ^ 2) =
+      (∫ t in Set.Icc (-1 : ℝ) 1,
+      (∑ i : Fin n, ∑ j : Fin n,
+        (∫ u : Sphere,
+          (if X i ∈ cap u t then (1 : ℝ) else 0) *
+          (if X j ∈ cap u t then (1 : ℝ) else 0) ∂sigma)) / (n : ℝ) ^ 2) -
+      (∫ t in Set.Icc (-1 : ℝ) 1, ((1 - t) / 2) ^ 2) := by
+    simpa only [Pi.sub_apply] using integral_sub hA hB
+  unfold capDiscrepancySq
+  rw [setIntegral_congr_fun measurableSet_Icc hfun, hsplit]
+  rw [integral_div]
+  rw [integral_finset_sum Finset.univ (fun i _ =>
+    integrable_finset_sum Finset.univ (fun j _ => integrable_cap_pair_heights (X i) (X j)))]
+  simp_rw [integral_finset_sum Finset.univ (fun j _ => integrable_cap_pair_heights _ _)]
+  simp_rw [integral_two_caps_manuscript_order]
+  rw [integral_capArea_sq, continuousEnergy_one]
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
+  simp only [energy, pow_one]
+  simp_rw [Finset.sum_sub_distrib]
+  simp only [Finset.sum_const_zero, Finset.sum_const, Finset.card_fin, nsmul_eq_mul]
+  have hsum : (∑ i : Fin n, ∑ j : Fin n, dist (X i) (X j) / 4) =
+      (∑ i : Fin n, ∑ j : Fin n, dist (X i) (X j)) / 4 := by
+    rw [Finset.sum_div]
+    congr 1
+    ext i
+    rw [Finset.sum_div]
+  rw [hsum]
+  field_simp [hn0]
+  ring
+
+/-- The cap discrepancy Stolarsky contract is unconditional. -/
+theorem stolarskyIdentity : StolarskyIdentity := by
+  intro n hn X
+  exact stolarsky_identity n hn X
+
 /-- Empirical cap error is unchanged by an arbitrary finite relabeling. -/
 theorem capError_comp_equiv {ι κ : Type} [Fintype ι] [Fintype κ]
     (e : ι ≃ κ) (X : κ → Sphere) (u : Sphere) (t : ℝ) :
@@ -396,6 +600,10 @@ theorem diamondStolarsky_of_stolarsky (hcon : ConstructionFacts)
   unfold deficit diamondEnergy
   field_simp at h ⊢
   nlinarith
+
+/-- The exact invariance principle for every valid Diamond configuration. -/
+theorem diamondStolarsky : DiamondStolarsky :=
+  diamondStolarsky_of_stolarsky constructionFacts stolarskyIdentity
 
 /-- Beck's external lower estimate for actual sets, with injectivity explicit. -/
 def BeckLowerBound : Prop :=

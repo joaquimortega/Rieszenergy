@@ -17,7 +17,7 @@ rg -n '^\s*(axiom|opaque)\b|\b(sorry|admit)\b' \
 The expected `rg` result is no matches (exit code 1). The standalone file
 currently contains definitions, formal proof obligations, and conditional
 assembly results including `BEMOC.Definitive.main_theorem_of_estimates` and
-`BEMOC.Definitive.main_theorem_of_latitude_longitude`. Its successful elaboration does
+`BEMOC.Definitive.main_theorem_of_latitude`. Its successful elaboration does
 **not** prove `BEMOC.Definitive.MainTheoremTarget` or the cap/Sobolev targets.
 
 Comparator compares the statement of a solution theorem with a trusted

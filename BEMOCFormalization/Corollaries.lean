@@ -83,6 +83,11 @@ theorem cap_assembly : CapAssembly := by
       _ = (N : ℝ) ^ 2 * (C * (N : ℝ) ^ (2 * (-(3 : ℝ) / 4))) := by rw [← hp]; ring
   exact nonneg_le_sqrt_mul_rpow hC hn hsq
 
+/-- The cap corollary now requires only the energy theorem and universal lower bound. -/
+theorem cap_corollary_of_main_and_beck (hmain : MainTheorem 1)
+    (hbeck : BeckLowerBound) : CapDiscrepancyCorollary :=
+  cap_assembly constructionFacts hmain diamondStolarsky hbeck
+
 /-- Conditional transfer from the actual spectral WCE comparison to the paper's decay rate. -/
 theorem sobolev_assembly : SobolevAssembly := by
   intro Y s _hs1 _hs2 hcon hmain _hemb hcomp

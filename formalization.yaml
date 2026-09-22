@@ -38,11 +38,11 @@ status:
   sorry_in_definitions: 0
   axioms: ["propext", "Quot.sound", "Classical.choice"]
   main_results:
-    - declaration: "BEMOC.Definitive.main_theorem_of_latitude_longitude"
+    - declaration: "BEMOC.Definitive.main_theorem_of_latitude"
       file: "BEMOCFormalization/MainTheorem.lean"
       sorry_count: 0
       axioms: ["propext", "Quot.sound", "Classical.choice"]
-      note: "Checked conditional assembly: only LatitudeBound and LongitudeBound remain analytic assumptions; nonnegativity and small sizes are proved."
+      note: "Checked conditional assembly: only LatitudeBound remains an analytic assumption; longitude, nonnegativity and small sizes are proved."
   open_targets:
     - "BEMOC.Definitive.MainTheoremTarget"
     - "BEMOC.Definitive.CapDiscrepancyCorollary"
@@ -90,7 +90,7 @@ alignment:
       lean: "MainTheoremTarget"
       module: "BEMOCFormalization/MainTheorem.lean"
       status: "in-progress"
-      note: "Concrete statement exists; conditional assembly proved; analytic inputs open."
+      note: "Concrete statement exists; conditional assembly proved; only the latitude bound remains open."
     - source: "cor:main"
       lean: "CapDiscrepancyCorollary"
       module: "BEMOCFormalization/CapDiscrepancy.lean"

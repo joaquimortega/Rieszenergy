@@ -713,4 +713,491 @@ private theorem point_distance_power_eq_angularKernel
       rfl
 
 
+
+private theorem angularKernel_periodic (α A B : ℝ) :
+    Function.Periodic (angularKernel α A B) (2 * Real.pi) := by
+  intro θ
+  unfold angularKernel
+  rw [Real.cos_add_two_pi]
+
+private theorem ringPairDiscreteEnergy_eq_grid {α : ℝ} {N : ℕ}
+    (hN : 4 ≤ N) (φ : Phases N) (j k : RingIndex N) :
+    ringPairDiscreteEnergy α N φ j k =
+      (Nat.gcd (population N (j.val + 1))
+        (population N (k.val + 1)) : ℝ) *
+      ∑ u : Fin (Nat.lcm (population N (j.val + 1))
+        (population N (k.val + 1))),
+        angularKernel α
+          (2 - 2 * height N (j.val + 1) * height N (k.val + 1))
+          (2 * radius N (j.val + 1) * radius N (k.val + 1))
+          (φ j - φ k + 2 * Real.pi * (u.val : ℝ) /
+            Nat.lcm (population N (j.val + 1))
+              (population N (k.val + 1))) := by
+  let q := population N (j.val + 1)
+  let r := population N (k.val + 1)
+  have hq : 0 < q := population_pos hN (by omega)
+    (by have hj := j.isLt; omega)
+  have hr : 0 < r := population_pos hN (by omega)
+    (by have hk := k.isLt; omega)
+  let A := 2 - 2 * height N (j.val + 1) * height N (k.val + 1)
+  let B := 2 * radius N (j.val + 1) * radius N (k.val + 1)
+  let G : ℝ → ℝ := angularKernel α A B
+  have hgrid := Grid.grid_multiplicity q r hq hr G
+    (angularKernel_periodic α A B) (φ j - φ k)
+  unfold ringPairDiscreteEnergy
+  simp_rw [point_distance_power_eq_angularKernel hN φ j k]
+  simpa [q, r, A, B, G] using hgrid
+
+
+private theorem generic_pair_grid_error_bound {α C A B phase : ℝ}
+    {q r : ℕ} (hq : 0 < q) (hr : 0 < r)
+    (htrap : ∀ A B : ℝ, 0 ≤ B → B ≤ A →
+      ∀ L : ℕ, 1 ≤ L → ∀ φ : ℝ,
+        |angularAverage L φ (angularKernel α A B) -
+          (2 * Real.pi)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi,
+            angularKernel α A B θ| ≤
+          C * B ^ (α / 2) * (L : ℝ) ^ (-1 - α))
+    (hB : 0 ≤ B) (hAB : B ≤ A) :
+    |(q : ℝ) * r * ((2 * Real.pi)⁻¹ *
+        ∫ θ in (0 : ℝ)..2 * Real.pi, angularKernel α A B θ) -
+      (Nat.gcd q r : ℝ) *
+        ∑ u : Fin (Nat.lcm q r),
+          angularKernel α A B
+            (phase + 2 * Real.pi * (u.val : ℝ) / Nat.lcm q r)| ≤
+      C * B ^ (α / 2) * (Nat.gcd q r : ℝ) *
+        (Nat.lcm q r : ℝ) ^ (-α) := by
+  let d := Nat.gcd q r
+  let L := Nat.lcm q r
+  have hL : 0 < L := Nat.lcm_pos hq hr
+  have hLr : (0 : ℝ) < L := by exact_mod_cast hL
+  have hdr : (0 : ℝ) ≤ d := by positivity
+  have hqrd : (q : ℝ) * r = (d : ℝ) * L := by
+    exact_mod_cast (Nat.gcd_mul_lcm q r).symm
+  have hsum :
+      (d : ℝ) * (∑ u : Fin L,
+        angularKernel α A B (phase + 2 * Real.pi * (u.val : ℝ) / L)) =
+      (d : ℝ) * L * angularAverage L phase (angularKernel α A B) := by
+    unfold angularAverage
+    field_simp
+    ring
+  have ht := htrap A B hB hAB L hL phase
+  change |(q : ℝ) * r * ((2 * Real.pi)⁻¹ *
+      ∫ θ in (0 : ℝ)..2 * Real.pi, angularKernel α A B θ) -
+    (d : ℝ) * (∑ u : Fin L,
+      angularKernel α A B (phase + 2 * Real.pi * (u.val : ℝ) / L))| ≤ _
+  rw [hqrd, hsum]
+  calc
+    |(d : ℝ) * L * ((2 * Real.pi)⁻¹ *
+        ∫ θ in (0 : ℝ)..2 * Real.pi, angularKernel α A B θ) -
+      (d : ℝ) * L * angularAverage L phase (angularKernel α A B)| =
+      (d : ℝ) * L *
+        |angularAverage L phase (angularKernel α A B) -
+          (2 * Real.pi)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi,
+            angularKernel α A B θ| := by
+      rw [← mul_sub, abs_mul, abs_of_nonneg (mul_nonneg hdr hLr.le), abs_sub_comm]
+    _ ≤ (d : ℝ) * L * (C * B ^ (α / 2) * (L : ℝ) ^ (-1 - α)) := by
+      exact mul_le_mul_of_nonneg_left ht (mul_nonneg hdr hLr.le)
+    _ = C * B ^ (α / 2) * (d : ℝ) * (L : ℝ) ^ (-α) := by
+      have hpow : (L : ℝ) * (L : ℝ) ^ (-1 - α) =
+          (L : ℝ) ^ (-α) := by
+        calc
+          (L : ℝ) * (L : ℝ) ^ (-1 - α) =
+              (L : ℝ) ^ (1 : ℝ) * (L : ℝ) ^ (-1 - α) := by rw [Real.rpow_one]
+          _ = (L : ℝ) ^ ((1 : ℝ) + (-1 - α)) :=
+            (Real.rpow_add hLr _ _).symm
+          _ = (L : ℝ) ^ (-α) := by ring_nf
+      rw [show (d : ℝ) * (L : ℝ) * (C * B ^ (α / 2) *
+        (L : ℝ) ^ (-1 - α)) =
+        C * B ^ (α / 2) * (d : ℝ) *
+          ((L : ℝ) * (L : ℝ) ^ (-1 - α)) by ring, hpow]
+
+
+private theorem gcd_mul_lcm_rpow_identity {α : ℝ} {q r : ℕ}
+    (hq : 0 < q) (hr : 0 < r) :
+    (Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) ^ (-α) =
+      (Nat.gcd q r : ℝ) ^ (1 + α) /
+        ((q : ℝ) * (r : ℝ)) ^ α := by
+  have hd : 0 < (Nat.gcd q r : ℝ) := by
+    exact_mod_cast Nat.gcd_pos_of_pos_left r hq
+  have hL : 0 < (Nat.lcm q r : ℝ) := by
+    exact_mod_cast Nat.lcm_pos hq hr
+  have hprod : (q : ℝ) * (r : ℝ) =
+      (Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) := by
+    exact_mod_cast (Nat.gcd_mul_lcm q r).symm
+  rw [hprod, Real.mul_rpow hd.le hL.le, Real.rpow_add hd]
+  rw [Real.rpow_one, Real.rpow_neg hL.le]
+  field_simp [(Real.rpow_pos_of_pos hd α).ne',
+    (Real.rpow_pos_of_pos hL α).ne']
+  ring
+
+private theorem gcd_weight_algebra {α : ℝ} {q r : ℕ}
+    (hq : 0 < q) (hr : 0 < r) :
+    (Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) ^ (-α) *
+        ((q : ℝ) * r) ^ (α / 2) =
+      (Nat.gcd q r : ℝ) ^ (1 + α) /
+        ((q : ℝ) * r) ^ (α / 2) := by
+  have hprod : 0 < (q : ℝ) * r := by positivity
+  rw [gcd_mul_lcm_rpow_identity hq hr]
+  have hpow : ((q : ℝ) * r) ^ α =
+      (((q : ℝ) * r) ^ (α / 2)) ^ 2 := by
+    rw [← Real.rpow_mul_natCast hprod.le]
+    congr 1
+    ring
+  rw [hpow]
+  have hx : ((q : ℝ) * r) ^ (α / 2) ≠ 0 :=
+    (Real.rpow_pos_of_pos hprod _).ne'
+  field_simp [hx]
+  ring
+
+
+private theorem generic_pair_weight_bound {α C B : ℝ} {M q r : ℕ}
+    (hα0 : 0 < α) (hC : 0 ≤ C) (hM : 0 < M)
+    (hq : 0 < q) (hr : 0 < r) (hB : 0 ≤ B)
+    (hBbound : B ≤ ((q : ℝ) * r) / (M : ℝ) ^ 2) :
+    C * B ^ (α / 2) * (Nat.gcd q r : ℝ) *
+        (Nat.lcm q r : ℝ) ^ (-α) ≤
+      C * (M : ℝ) ^ (-α) *
+        ((Nat.gcd q r : ℝ) ^ (1 + α) /
+          ((q : ℝ) * r) ^ (α / 2)) := by
+  have ha : 0 ≤ α / 2 := by linarith
+  have hMr : (0 : ℝ) < M := by exact_mod_cast hM
+  have hprod : 0 < (q : ℝ) * r := by positivity
+  have hBpow := Real.rpow_le_rpow hB hBbound ha
+  have hscale : (((q : ℝ) * r) / (M : ℝ) ^ 2) ^ (α / 2) =
+      ((q : ℝ) * r) ^ (α / 2) * (M : ℝ) ^ (-α) := by
+    rw [Real.div_rpow hprod.le (by positivity : (0 : ℝ) ≤ (M : ℝ) ^ 2)]
+    rw [← Real.rpow_natCast (M : ℝ) 2,
+      ← Real.rpow_mul hMr.le]
+    have hexp : (2 : ℝ) * (α / 2) = α := by ring
+    norm_num only [Nat.cast_ofNat]
+    rw [hexp, div_eq_mul_inv, Real.rpow_neg hMr.le]
+  calc
+    C * B ^ (α / 2) * (Nat.gcd q r : ℝ) *
+        (Nat.lcm q r : ℝ) ^ (-α) ≤
+      C * ((((q : ℝ) * r) / (M : ℝ) ^ 2) ^ (α / 2)) *
+        (Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) ^ (-α) := by
+      gcongr
+    _ = C * (M : ℝ) ^ (-α) *
+        ((Nat.gcd q r : ℝ) ^ (1 + α) /
+          ((q : ℝ) * r) ^ (α / 2)) := by
+      rw [hscale]
+      rw [show C * (((q : ℝ) * r) ^ (α / 2) * (M : ℝ) ^ (-α)) *
+          (Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) ^ (-α) =
+        C * (M : ℝ) ^ (-α) *
+          ((Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) ^ (-α) *
+            ((q : ℝ) * r) ^ (α / 2)) by ring]
+      rw [gcd_weight_algebra hq hr]
+
+
+private theorem ring_pair_B_bound {N : ℕ} (hN : 4 ≤ N)
+    (j k : RingIndex N) :
+    2 * radius N (j.val + 1) * radius N (k.val + 1) ≤
+      ((population N (j.val + 1) : ℝ) *
+        population N (k.val + 1)) / (bandParameter N : ℝ) ^ 2 := by
+  let M := bandParameter N
+  let ρ := radius N (j.val + 1)
+  let σ := radius N (k.val + 1)
+  let q := population N (j.val + 1)
+  let r := population N (k.val + 1)
+  have hM : 0 < M := bandParameter_pos hN
+  have hMr : (0 : ℝ) < M := by exact_mod_cast hM
+  have hρ : 0 ≤ ρ := Real.sqrt_nonneg _
+  have hσ : 0 ≤ σ := Real.sqrt_nonneg _
+  have hq : 2 * (M : ℝ) * ρ ≤ q :=
+    (population_radius_comparison hN (by omega)
+      (by have hj := j.isLt; omega)).1
+  have hr : 2 * (M : ℝ) * σ ≤ r :=
+    (population_radius_comparison hN (by omega)
+      (by have hk := k.isLt; omega)).1
+  have hprod : (2 * (M : ℝ) * ρ) * (2 * (M : ℝ) * σ) ≤
+      (q : ℝ) * r :=
+    mul_le_mul hq hr (by positivity) (by positivity)
+  have hM2 : (0 : ℝ) < (M : ℝ) ^ 2 := by positivity
+  apply (le_div_iff₀ hM2).2
+  dsimp [M, ρ, σ, q, r] at *
+  nlinarith
+
+
+private theorem gcdArithmeticWeight_eq_div {α : ℝ} {q r : ℕ}
+    (hq : 0 < q) (hr : 0 < r) :
+    gcdArithmeticWeight α q r =
+      (Nat.gcd q r : ℝ) ^ (1 + α) /
+        ((q : ℝ) * r) ^ (α / 2) := by
+  have hq0 : 0 ≤ (q : ℝ) := by positivity
+  have hr0 : 0 ≤ (r : ℝ) := by positivity
+  unfold gcdArithmeticWeight
+  rw [Real.mul_rpow hq0 hr0]
+  rw [show -α / 2 = -(α / 2) by ring]
+  rw [Real.rpow_neg hq0, Real.rpow_neg hr0]
+  field_simp [(Real.rpow_pos_of_pos (by exact_mod_cast hq : (0 : ℝ) < q) (α / 2)).ne',
+    (Real.rpow_pos_of_pos (by exact_mod_cast hr : (0 : ℝ) < r) (α / 2)).ne']
+
+private theorem ring_pair_error_bound {α C : ℝ}
+    (hα0 : 0 < α) (hC : 0 ≤ C)
+    (htrap : ∀ A B : ℝ, 0 ≤ B → B ≤ A →
+      ∀ L : ℕ, 1 ≤ L → ∀ φ : ℝ,
+        |angularAverage L φ (angularKernel α A B) -
+          (2 * Real.pi)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi,
+            angularKernel α A B θ| ≤
+          C * B ^ (α / 2) * (L : ℝ) ^ (-1 - α))
+    {N : ℕ} (hN : 4 ≤ N) (φ : Phases N) (j k : RingIndex N) :
+    |(population N (j.val + 1) : ℝ) * population N (k.val + 1) *
+        latitudeKernel α (height N (j.val + 1)) (height N (k.val + 1)) -
+      ringPairDiscreteEnergy α N φ j k| ≤
+    C * (bandParameter N : ℝ) ^ (-α) *
+      gcdArithmeticWeight α (population N (j.val + 1))
+        (population N (k.val + 1)) := by
+  let q := population N (j.val + 1)
+  let r := population N (k.val + 1)
+  let s := height N (j.val + 1)
+  let t := height N (k.val + 1)
+  let A := 2 - 2 * s * t
+  let B := 2 * radius N (j.val + 1) * radius N (k.val + 1)
+  let M := bandParameter N
+  have hq : 0 < q := population_pos hN (by omega)
+    (by have hj := j.isLt; omega)
+  have hr : 0 < r := population_pos hN (by omega)
+    (by have hk := k.isLt; omega)
+  have hM : 0 < M := bandParameter_pos hN
+  have hs : s ∈ Set.Icc (-1 : ℝ) 1 :=
+    Set.Ioo_subset_Icc_self (height_in_open_unit hN
+      (by omega) (by have hj := j.isLt; omega))
+  have ht : t ∈ Set.Icc (-1 : ℝ) 1 :=
+    Set.Ioo_subset_Icc_self (height_in_open_unit hN
+      (by omega) (by have hk := k.isLt; omega))
+  have hcoeff : 0 ≤ B ∧ B ≤ A := angular_coefficients hs ht
+  have hmean : latitudeKernel α s t =
+      (2 * Real.pi)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi,
+        angularKernel α A B θ := by rfl
+  have hgrid := ringPairDiscreteEnergy_eq_grid (α := α) hN φ j k
+  have hraw := generic_pair_grid_error_bound hq hr htrap hcoeff.1 hcoeff.2
+    (phase := φ j - φ k)
+  dsimp [q, r, A, B, s, t] at hraw
+  rw [← hmean, ← hgrid] at hraw
+  have hBbound : B ≤ ((q : ℝ) * r) / (M : ℝ) ^ 2 :=
+    ring_pair_B_bound hN j k
+  have hweight := generic_pair_weight_bound hα0 hC hM hq hr
+    hcoeff.1 hBbound
+  change |(q : ℝ) * r * latitudeKernel α s t -
+    ringPairDiscreteEnergy α N φ j k| ≤ _
+  rw [gcdArithmeticWeight_eq_div hq hr]
+  exact hraw.trans hweight
+
+
+private theorem diamondEnergy_eq_sum_ringPairDiscreteEnergy
+    (α : ℝ) (N : ℕ) (φ : Phases N) :
+    diamondEnergy α N φ =
+      ∑ j : RingIndex N, ∑ k : RingIndex N,
+        ringPairDiscreteEnergy α N φ j k := by
+  unfold diamondEnergy energy ringPairDiscreteEnergy
+  simp only [Fintype.sum_sigma]
+  apply Finset.sum_congr rfl
+  intro j hj
+  rw [Finset.sum_comm]
+
+private theorem population_sum_le_three {N : ℕ} (hN : 4 ≤ N)
+    (g : ℕ → ℝ) (hg : ∀ q, 0 ≤ g q) :
+    (∑ j : RingIndex N, g (population N (j.val + 1))) ≤
+      3 * ∑ q ∈ Finset.Icc 1 (15 * bandParameter N), g q := by
+  classical
+  let w : RingIndex N → ℕ := fun j ↦ population N (j.val + 1)
+  let T := Finset.Icc 1 (15 * bandParameter N)
+  have hmaps : ∀ j ∈ (Finset.univ : Finset (RingIndex N)), w j ∈ T := by
+    intro j hj
+    exact Finset.mem_Icc.mpr
+      ⟨population_pos hN (by omega) (by have hj' := j.isLt; omega),
+        population_le_fifteen hN (by omega) (by have hj' := j.isLt; omega)⟩
+  have hfiber :
+      (∑ q ∈ T, ∑ j ∈ (Finset.univ : Finset (RingIndex N))
+          with w j = q, g q) =
+        ∑ j : RingIndex N, g (w j) :=
+    Finset.sum_fiberwise_of_maps_to' hmaps g
+  rw [← hfiber]
+  calc
+    (∑ q ∈ T, ∑ j ∈ (Finset.univ : Finset (RingIndex N))
+        with w j = q, g q) ≤
+        ∑ q ∈ T, 3 * g q := by
+      apply Finset.sum_le_sum
+      intro q hq
+      rw [Finset.sum_const, nsmul_eq_mul]
+      exact mul_le_mul_of_nonneg_right
+        (by exact_mod_cast population_multiplicity_le_three N q hN)
+        (hg q)
+    _ = 3 * ∑ q ∈ T, g q := by rw [Finset.mul_sum]
+
+private theorem population_double_gcd_sum_le
+    {α : ℝ} {N : ℕ} (hN : 4 ≤ N) :
+    (∑ j : RingIndex N, ∑ k : RingIndex N,
+      gcdArithmeticWeight α (population N (j.val + 1))
+        (population N (k.val + 1))) ≤
+      9 * gcdSum α (15 * bandParameter N) := by
+  let T := 15 * bandParameter N
+  have hinner (j : RingIndex N) :
+      (∑ k : RingIndex N,
+        gcdArithmeticWeight α (population N (j.val + 1))
+          (population N (k.val + 1))) ≤
+        3 * ∑ v ∈ Finset.Icc 1 T,
+          gcdArithmeticWeight α (population N (j.val + 1)) v := by
+    exact population_sum_le_three hN
+      (fun v ↦ gcdArithmeticWeight α (population N (j.val + 1)) v)
+      (fun v ↦ gcdArithmeticWeight_nonneg α _ v)
+  calc
+    (∑ j : RingIndex N, ∑ k : RingIndex N,
+        gcdArithmeticWeight α (population N (j.val + 1))
+          (population N (k.val + 1))) ≤
+      ∑ j : RingIndex N,
+        3 * ∑ v ∈ Finset.Icc 1 T,
+          gcdArithmeticWeight α (population N (j.val + 1)) v :=
+      Finset.sum_le_sum fun j hj ↦ hinner j
+    _ = 3 * ∑ v ∈ Finset.Icc 1 T,
+          ∑ j : RingIndex N,
+            gcdArithmeticWeight α (population N (j.val + 1)) v := by
+      rw [Finset.sum_comm, Finset.mul_sum]
+    _ ≤ 3 * ∑ v ∈ Finset.Icc 1 T,
+          (3 * ∑ u ∈ Finset.Icc 1 T,
+            gcdArithmeticWeight α u v) := by
+      apply mul_le_mul_of_nonneg_left
+      · apply Finset.sum_le_sum
+        intro v hv
+        exact population_sum_le_three hN
+          (fun u ↦ gcdArithmeticWeight α u v)
+          (fun u ↦ gcdArithmeticWeight_nonneg α u v)
+      · norm_num
+    _ = 9 * gcdSum α T := by
+      rw [gcdSum_eq_arithmeticWeight]
+      rw [Finset.sum_comm]
+      simp_rw [Finset.mul_sum]
+      ring_nf
+
+private theorem longitudeError_eq_sum_pair_errors
+    (α : ℝ) (N : ℕ) (φ : Phases N) :
+    longitudeError α N φ =
+      ∑ j : RingIndex N, ∑ k : RingIndex N,
+        ((population N (j.val + 1) : ℝ) * population N (k.val + 1) *
+          latitudeKernel α (height N (j.val + 1))
+            (height N (k.val + 1)) -
+          ringPairDiscreteEnergy α N φ j k) := by
+  unfold longitudeError ringEnergy
+  rw [diamondEnergy_eq_sum_ringPairDiscreteEnergy]
+  simp_rw [Finset.sum_sub_distrib]
+
+private theorem M_power_le_scale {α : ℝ} (hα2 : α < 2)
+    {N : ℕ} (hN : 4 ≤ N) :
+    (bandParameter N : ℝ) ^ (2 - α) ≤ scale α N := by
+  let M := bandParameter N
+  have hM : 0 ≤ (M : ℝ) := by positivity
+  have hM2N : (M : ℝ) ^ 2 ≤ N := by
+    have h := (bandParameter_bounds N).1
+    change 4 * M ^ 2 ≤ N at h
+    exact_mod_cast (by omega : M ^ 2 ≤ N)
+  have hβ : 0 ≤ 1 - α / 2 := by linarith
+  have hpow := Real.rpow_le_rpow (by positivity : 0 ≤ (M : ℝ) ^ 2)
+    hM2N hβ
+  unfold scale
+  calc
+    (M : ℝ) ^ (2 - α) =
+        (M : ℝ) ^ ((2 : ℝ) * (1 - α / 2)) := by congr 1; ring
+    _ = ((M : ℝ) ^ 2) ^ (1 - α / 2) := by
+      rw [Real.rpow_mul hM]
+      congr 1
+      exact Real.rpow_natCast (M : ℝ) 2
+    _ ≤ (N : ℝ) ^ (1 - α / 2) := hpow
+
+private theorem longitude_error_le_gcd_sum {α C : ℝ}
+    (hα0 : 0 < α) (hC : 0 ≤ C)
+    (htrap : ∀ A B : ℝ, 0 ≤ B → B ≤ A →
+      ∀ L : ℕ, 1 ≤ L → ∀ φ : ℝ,
+        |angularAverage L φ (angularKernel α A B) -
+          (2 * Real.pi)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi,
+            angularKernel α A B θ| ≤
+          C * B ^ (α / 2) * (L : ℝ) ^ (-1 - α))
+    {N : ℕ} (hN : 4 ≤ N) (φ : Phases N) :
+    |longitudeError α N φ| ≤
+      C * (bandParameter N : ℝ) ^ (-α) *
+        (9 * gcdSum α (15 * bandParameter N)) := by
+  let E : RingIndex N → RingIndex N → ℝ := fun j k ↦
+    (population N (j.val + 1) : ℝ) * population N (k.val + 1) *
+      latitudeKernel α (height N (j.val + 1))
+        (height N (k.val + 1)) -
+      ringPairDiscreteEnergy α N φ j k
+  let W : RingIndex N → RingIndex N → ℝ := fun j k ↦
+    gcdArithmeticWeight α (population N (j.val + 1))
+      (population N (k.val + 1))
+  have hpair (j k : RingIndex N) :
+      |E j k| ≤ C * (bandParameter N : ℝ) ^ (-α) * W j k :=
+    ring_pair_error_bound hα0 hC htrap hN φ j k
+  rw [longitudeError_eq_sum_pair_errors]
+  change |∑ j : RingIndex N, ∑ k : RingIndex N, E j k| ≤ _
+  calc
+    |∑ j : RingIndex N, ∑ k : RingIndex N, E j k| ≤
+        ∑ j : RingIndex N, ∑ k : RingIndex N, |E j k| := by
+      calc
+        _ ≤ ∑ j : RingIndex N, |∑ k : RingIndex N, E j k| :=
+          Finset.abs_sum_le_sum_abs _ _
+        _ ≤ ∑ j : RingIndex N, ∑ k : RingIndex N, |E j k| := by
+          apply Finset.sum_le_sum
+          intro j hj
+          exact Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ j : RingIndex N, ∑ k : RingIndex N,
+          C * (bandParameter N : ℝ) ^ (-α) * W j k := by
+      apply Finset.sum_le_sum
+      intro j hj
+      apply Finset.sum_le_sum
+      intro k hk
+      exact hpair j k
+    _ = C * (bandParameter N : ℝ) ^ (-α) *
+          (∑ j : RingIndex N, ∑ k : RingIndex N, W j k) := by
+      simp_rw [Finset.mul_sum]
+    _ ≤ C * (bandParameter N : ℝ) ^ (-α) *
+          (9 * gcdSum α (15 * bandParameter N)) := by
+      apply mul_le_mul_of_nonneg_left
+        (population_double_gcd_sum_le hN)
+      positivity
+
+/-- The angular discretization error for the actual Diamond configuration is
+uniform in every choice of ring phases. -/
+theorem longitude_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
+    LongitudeBound α := by
+  obtain ⟨Ct, hCt, htrap⟩ := trapezoid_bound hα0 hα2
+  obtain ⟨Cg, hCg, hgcd⟩ := gcd_sum_bound hα0
+  refine ⟨2025 * Ct * Cg, by positivity, ?_⟩
+  intro N hN φ
+  let M := bandParameter N
+  have hM : 0 < M := bandParameter_pos hN
+  have hMr : (0 : ℝ) < M := by exact_mod_cast hM
+  have hscale : (M : ℝ) ^ (2 - α) ≤ scale α N :=
+    M_power_le_scale hα2 hN
+  have hsum := hgcd (15 * M)
+  have hraw := longitude_error_le_gcd_sum hα0 hCt.le htrap hN φ
+  have hpow : (M : ℝ) ^ (-α) * (M : ℝ) ^ 2 =
+      (M : ℝ) ^ (2 - α) := by
+    calc
+      (M : ℝ) ^ (-α) * (M : ℝ) ^ 2 =
+          (M : ℝ) ^ (-α) * (M : ℝ) ^ (2 : ℝ) := by
+            congr 1
+            exact (Real.rpow_natCast (M : ℝ) 2).symm
+      _ = (M : ℝ) ^ (-α + 2) :=
+        (Real.rpow_add hMr (-α) 2).symm
+      _ = (M : ℝ) ^ (2 - α) := by ring_nf
+  calc
+    |longitudeError α N φ| ≤
+        Ct * (M : ℝ) ^ (-α) * (9 * gcdSum α (15 * M)) := hraw
+    _ ≤ Ct * (M : ℝ) ^ (-α) *
+          (9 * (Cg * (15 * M : ℕ) ^ 2)) := by
+      apply mul_le_mul_of_nonneg_left
+      · exact mul_le_mul_of_nonneg_left hsum (by norm_num)
+      · positivity
+    _ = (2025 * Ct * Cg) * (M : ℝ) ^ (2 - α) := by
+      push_cast
+      rw [mul_pow]
+      calc
+        Ct * (M : ℝ) ^ (-α) *
+            (9 * (Cg * (15 ^ 2 * (M : ℝ) ^ 2))) =
+          (2025 * Ct * Cg) *
+            ((M : ℝ) ^ (-α) * (M : ℝ) ^ 2) := by ring
+        _ = (2025 * Ct * Cg) * (M : ℝ) ^ (2 - α) := by
+          rw [hpow]
+    _ ≤ (2025 * Ct * Cg) * scale α N := by
+      exact mul_le_mul_of_nonneg_left hscale (by positivity)
+
 end BEMOC.Definitive
