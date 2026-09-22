@@ -94,3 +94,7 @@ constant height potential; see [its proof guide](modules/LatitudeIdentity.md).
 `LatitudeSummation` now sums the three exhaustive block regimes into
 `LatitudeBound`; see [its proof guide](modules/LatitudeSummation.md). The full
 longitude bound and the ordinary-dt Stolarsky identity have checked proofs.
+
+`AngularGeometry` proves the complete polar band contract, and `Taylor`
+now proves the mixed Taylor bound without extra calculus assumptions. See
+[AngularGeometry](modules/AngularGeometry.md) and [Taylor](modules/Taylor.md).

@@ -1,6 +1,7 @@
 import BEMOCFormalization.Corollaries
 import BEMOCFormalization.NegativeType
 import BEMOCFormalization.AngularQuadrature
+import BEMOCFormalization.AngularGeometry
 import BEMOCFormalization.SphereProjection
 import BEMOCFormalization.GridMultiplicity
 import BEMOCFormalization.LatitudePotential

@@ -15,6 +15,8 @@ now have checked proofs in the active namespace `BEMOC.Definitive`:
 |---|---|
 | Full construction, cardinality, injectivity, boundary identities, canonical set | `constructionFacts`, `boundaryFormulas`, `diamondPoints_card` in Construction |
 | Radius/population comparability and multiplicity at most three | `geometry_bounds` in Geometry |
+| Polar band widths, noncap sine comparison, and band separation | `angular_geometry` in AngularGeometry |
+| Full mixed Taylor estimate on closed band rectangles | `mixedTaylorBound` in Taylor |
 | Measure conditional negative definiteness for 0<α<2 | `measureNegativeType_of_pos_of_lt_two` in NegativeType |
 | Probability surface measure, uniform height marginal and constant potential | `constantPotential_of_pos` in SurfaceMeasure |
 | Nonnegative finite and Diamond energy deficits | `energy_nonnegative`, `diamond_nonnegative` in EnergyDecomposition |
@@ -33,18 +35,18 @@ now have checked proofs in the active namespace `BEMOC.Definitive`:
 | Conditional cap/Sobolev assembly | `cap_assembly`, `sobolev_assembly` in Corollaries |
 | Nonempty spectral unit ball; bounded supremum under embedding | SobolevBasic |
 
-Taylor contains checked one- and two-band estimates, slice smoothness and
-within/global derivative bridges. Its `MixedTaylorCalculusBridge` still needs
-a proof before the full `MixedTaylorBound` is unconditional. These analytic
-helpers are not being counted as the completed block estimates.
+Taylor now proves `MixedTaylorCalculusBridge` and the unconditional
+`mixedTaylorBound`, including differentiation of parameterized band integrals,
+commutation of the required mixed partials, and closed endpoints. The remaining
+block estimates still require concrete kernel derivative/cusp bounds.
 
 ## Remaining work
 
 The **unconditional main theorem and both final corollaries are not yet
 proved**. The current main assembly requires only `LatitudeBound α`, which
 has itself been reduced to the three exhaustive block estimates. The remaining
-work includes polar band geometry, smooth separated-kernel series, full mixed
-Taylor calculus, comparable cusp/neighbor blocks, and unequal blocks.
+work includes smooth separated-kernel series, polar kernel derivative bounds,
+comparable cusp/neighbor blocks, and unequal blocks.
 
 The cap branch has a complete Stolarsky proof and now needs the main energy
 theorem and a proved universal Beck lower bound. The Sobolev branch needs
@@ -60,7 +62,8 @@ latitude-potential consequence has been proved without assuming it.
 
 `MainTheoremTarget` and `DefinitiveTargets` remain proposition definitions,
 not completed theorems. The actual cap/Sobolev observables are defined
-independently of energy. No custom axioms or proof shortcuts are used. Axiom audits of the major proved declarations reports only `propext`, `Classical.choice`, and
+independently of energy. No custom axioms or proof shortcuts are used. Axiom
+audits of the major proved declarations report only `propext`, `Classical.choice`, and
 `Quot.sound`.
 
 ## Comparator and metadata
