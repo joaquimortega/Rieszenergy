@@ -4,56 +4,74 @@ The current target is `definitive.tex`, Theorem `thm:main`, Corollaries
 `cor:main` and `cor:wce`, and the accompanying optimality statements. The
 previous Simpson-based proof is archived, not used as a proof of this target.
 
-## Verified checkpoint: reviewed scaffold
+## Verified proof progress
 
-`lake build` successfully elaborates the 18 active modules and root entry
-point with Lean 4.19.0 and mathlib revision
-`c44e0c8ee63ca166450922a373c7409c5d26b00b`. A Mathlib-only standalone export also
-elaborates. Every module has a detailed guide and an independent gpt-6-sol
-interface review. The source-shortcut and whitespace checks pass.
+The reviewed scaffold was pushed as `d621018`. Subsequent proof development
+uses the same Lean 4.19.0 and pinned mathlib revision. The following targets
+now have checked proofs in the active namespace `BEMOC.Definitive`:
 
-The initial checkpoint proves:
-
-| Declaration in `BEMOC.Definitive` | Content |
+| Result | Checked declaration / module |
 |---|---|
-| `parallelVector_mem_sphere` | The valid-height parametrization lies on the unit sphere |
-| `continuousEnergy_one` | The named energy constant at α=1 is 4/3 |
-| `deficit_eq_latitude_add_longitude` | Exact algebraic decomposition D=A+B |
-| `main_theorem_of_estimates` | Conditional assembly from latitude, longitude, small-N and nonnegativity estimates |
-| `capDiscrepancySq_nonneg` | The integral of the squared actual cap error is nonnegative |
-| `sobolev_exponent_range` | 1<s<2 implies 0<2s−2<2 |
-| `sobolev_normalized_exponent` | Normalized energy exponent is −s |
-| `cap_normalized_exponent` | Cap square-root exponent is −3/4 |
+| Full construction, cardinality, injectivity, boundary identities, canonical set | `constructionFacts`, `boundaryFormulas`, `diamondPoints_card` in Construction |
+| Radius/population comparability and multiplicity at most three | `geometry_bounds` in Geometry |
+| Measure conditional negative definiteness for 0<α<2 | `measureNegativeType_of_pos_of_lt_two` in NegativeType |
+| Probability surface measure, uniform height marginal and constant potential | `constantPotential_of_pos` in SurfaceMeasure |
+| Nonnegative finite and Diamond energy deficits | `energy_nonnegative`, `diamond_nonnegative` in EnergyDecomposition |
+| Two vanishing band moments and positive-exponent block symmetry | `bandMoments`, `blockSymmetry_of_pos` in BandErrors |
+| Constant height potential of the actual averaged latitude kernel | `half_intervalIntegral_latitudeKernel` in LatitudePotential |
+| Exact summed latitude-error decomposition | `latitudeIdentity_of_pos` in LatitudeIdentity |
+| Phase-uniform angular trapezoid estimate for 0<α<2 | `trapezoid_bound` in AngularQuadrature |
+| Exact periodic gcd/lcm grid counting | `Grid.grid_multiplicity` in GridMultiplicity |
+| Arithmetic gcd sum for all α>0 | `gcd_sum_bound` in Longitude |
+| Uniform finite-size closure | `small_size_bound` in Latitude |
+| Main theorem reduced to the two large analytic bounds | `main_theorem_of_latitude_longitude` in MainTheorem |
+| Projection averages and exact cap area | SphereProjection and SphereCapMeasure |
+| Cap indicator overlap kernel and finite relabeling | CapDiscrepancy |
+| Conditional cap/Sobolev assembly | `cap_assembly`, `sobolev_assembly` in Corollaries |
+| Nonempty spectral unit ball; bounded supremum under embedding | SobolevBasic |
 
-These results do **not** include a proof of the main energy bound, a proof of
-Stolarsky's identity, a Beck lower bound, or a Sobolev kernel comparison.
-Absence of proof shortcuts is not evidence that these missing proofs exist.
+Taylor contains checked one- and two-band estimates, slice smoothness and
+within/global derivative bridges. Its `MixedTaylorCalculusBridge` still needs
+a proof before the full `MixedTaylorBound` is unconditional. These analytic
+helpers are not being counted as the completed block estimates.
 
 ## Remaining work
 
-- Prove `ConstructionFacts`, `BoundaryFormulas`, `GeometryBounds` and
-  `AngularGeometry`, including the genuine N-element-set bridge.
-- Prove normalized surface disintegration, `ConstantPotential`,
-  `MeasureNegativeType`, and `DiamondNonnegative`.
-- Prove Fourier decay and `TrapezoidBound`, grid multiplicity and `GcdSumBound`,
-  then `LongitudeBound` for the concrete Diamond polygons.
-- Prove band moments, kernel symmetry, the exact latitude identity, the double
-  Taylor inequality, separated and polar derivative estimates, the angular
-  cusp split, all three block regimes and their sums; discharge `LatitudeBound`.
-- Prove uniform `SmallSizeBound` and instantiate the proved main assembly.
-- Prove actual Stolarsky and Beck/relabeling ingredients and the cap corollary.
-- Construct a complete orthonormal harmonic basis, identify the continuous
-  spectral model with the manuscript's H^s space, prove bounded evaluation,
-  the distance-kernel spectral comparison and universal Sobolev lower bound,
-  then the actual worst-case-error corollary.
-- Verify the self-contained export with a working comparator/exporter pair
-  and update the metadata with final theorem declarations and evidence.
+The **unconditional main theorem and both final corollaries are not yet
+proved**. The current main assembly requires exactly `LatitudeBound α` and
+`LongitudeBound α`. The remaining main-theorem work includes the concrete
+angular-error assembly, polar band geometry, smooth separated-kernel series,
+full mixed Taylor calculus, comparable cusp/neighbor blocks, unequal blocks,
+and the finite latitude summation.
 
-`MainTheoremTarget`, `CapDiscrepancyCorollary`, `SobolevCorollary`,
-`SobolevOptimality` and `DefinitiveTargets` are currently **unproved proposition
-definitions**. They are explicit destinations and are not added to Lean's
-axiom environment. The source defines the actual observables independently
-of energy, so the corollary targets cannot be satisfied by relabeling a deficit.
+The cap branch still needs the full Stolarsky square expansion and a proved
+universal Beck lower bound. The Sobolev branch needs existence/completeness of
+the harmonic basis, the spectral-space/continuous-representative bridge,
+embedding, the distance-kernel comparison and the universal lower bound.
+The conditional assembly proofs do not discharge these hypotheses.
+
+Some blueprint contracts describe optional proof routes: Appendix-1 Gamma
+coefficient statements are not yet inhabited, but the required trapezoid
+bound is already proved by the extracted generic cusp/smoothing route. The
+full `SurfaceIntegration` formula remains separate; its specific constant
+latitude-potential consequence has been proved without assuming it.
+
+`MainTheoremTarget` and `DefinitiveTargets` remain proposition definitions,
+not completed theorems. The actual cap/Sobolev observables are defined
+independently of energy. No custom axioms or proof shortcuts are used. An axiom audit of eighteen
+major proved declarations reports only `propext`, `Classical.choice`, and
+`Quot.sound`.
+
+## Comparator and metadata
+
+The Mathlib-only standalone file is generated from the active import graph
+and elaborated separately. A pinned comparator/exporter has been built for
+Lean 4.19, but actual comparison currently exposes internal-name/export
+compatibility problems. **No comparator certification is claimed.** See
+[comparator/README.md](comparator/README.md) for setup and evidence as the
+integration develops. The root `formalization.yaml` validates against the
+reporting standard's v0.4 schema and distinguishes proved conditional results
+from the still-open final targets.
 
 ## Reproducible checks
 

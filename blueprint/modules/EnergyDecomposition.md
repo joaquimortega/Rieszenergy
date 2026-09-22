@@ -1,18 +1,14 @@
 # EnergyDecomposition proof guide
 
-Source anchors: `definitive.tex` `eq:energianu`, `eq:Falpha`, and `eq:decomp` (around lines 386–411), the conditional negative definiteness paragraph (around 414–421), the longitude expansion (around 466–515), and the latitude height-measure decomposition (around 560–620). This module defines the three energies and their algebraic difference. It should be the meeting point of construction, normalized surface energy, angular quadrature, and latitude band errors, while leaving the hard analytic estimates in their own modules.
+Source anchors: `definitive.tex` `eq:energianu`, `eq:Falpha`, and `eq:decomp` (around lines 386–421). The module defines the continuous ring energy, latitude and longitude errors, and their exact algebraic decomposition. It now also proves that the actual finite configuration deficit is nonnegative for `0 < α < 2`.
 
-For valid `N`, let `U_h` be the pushforward of normalized angular Lebesgue measure under `θ↦parallelPoint h θ`. Show `U_h` is a probability measure on the latitude circle and that its height pushforward is `δ_h`. The weighted ring measure is `ν=Σ_{j∈RingIndex N}r_j U_{h_j}`. From Construction, `Σr_j=N`, so `ν` has mass `N`. Then expand its energy by bilinearity of the finite sum and apply the Core kernel-average identity: `E_α[ν]=Σ_{j,k}r_jr_kF_α(h_j,h_k)=ringEnergy α N`. The source's `F_α` uses a single angular difference; proving that two independent uniform angles reduce to this average requires angular translation invariance. Check that self-ring terms `j=k` are included. The uniform ring measure has a nonzero self-interaction integral, whereas the finite polygon includes zero diagonal pair terms; their difference belongs to longitude error.
+For an arbitrary finite label type `ι`, define its counting measure `μ = Σᵢ δ_{Xᵢ}`. Integration against `μ` is summation over labels, so its self pair energy is exactly the ordered sum `energy X α`, including the diagonal. The reference measure `ν = (card ι) • sigma` has the same total mass. `constantPotential_of_pos` evaluates the two reference and mixed pair energies as `continuousEnergy α * (card ι)^2`; symmetry of the distance-power kernel supplies the reversed mixed orientation. Applying `measureNegativeType_of_pos_of_lt_two` and rearranging proves `energy_nonnegative_finite`.
 
-Let `ξ=Σ_{i∈PointIndex N}δ_{point N φ i}`. Its energy is the finite ordered double sum `diamondEnergy α N φ`. The phase enters only through `ξ`, not through `ν` or `ringEnergy`. Once Construction proves injectivity, `ξ` is also the atomic measure of an `N`-element finite set. The exact deficit is `I_αN²−E[ξ]`, `latitudeError=I_αN²−E[ν]`, and `longitudeError=E[ν]−E[ξ]`. The implemented `deficit_eq_latitude_add_longitude` follows by ring algebra; it has no analytic assumptions and is already proved. Record explicitly that `longitudeError` can have either sign. The manuscript estimates its absolute value; no nonnegativity lemma for this term is needed.
+The specialization `energy_nonnegative` inhabits the existing `EnergyNonnegative α` contract for `Fin n`. The specialization `diamond_nonnegative` inhabits `DiamondNonnegative α`, using `card_pointIndex N hN` and `diamondEnergy = energy (point N φ) α`. Injectivity of the point map is unnecessary for this numerical inequality. Both theorems retain the exact assumptions `0 < α` and `α < 2`.
 
-`DiamondNonnegative α` should be derived from `EnergyNonnegative α` after identifying the label count with `N`. Its proof can reindex `PointIndex N` to `Fin N`, or use a generalized finite-index version of the nonnegativity theorem to avoid an explicit equivalence. If the former is chosen, show `Fintype.card (PointIndex N)=N` and use the energy invariance under label equivalence. Injectivity is unnecessary for the numerical inequality but necessary for calling the image an `N`-set. Keep `0<α<2` in the theorem that inhabits `DiamondNonnegative`; the bare proposition's definition does not carry those hypotheses.
+The two-term algebraic decomposition remains independent of analytic estimates. The geometric identification of `ringEnergy` with the energy of a continuous ring measure, the latitude block identity, and the bounds on latitude/longitude errors are separate obligations.
 
-The latitude identity is the next bridge. Define the continuous height measure `λ=(N/2)1_[−1,1]dt`, the atomic height measure `ν_z=Σ_jr_jδ_{h_j}`, and for each band `B_j=[H_j,H_{j−1}]` its pieces `λ_j`, `ν_j`, and signed error `μ_j=λ_j−ν_j`. The implemented `bandError N j f` in `BandErrors.lean` is exactly `∫f dμ_j` expressed as an ordinary integral minus midpoint evaluation. Prove `λ=Σ_jλ_j` despite closed bands: adjacent endpoints overlap, but Lebesgue measure of each endpoint is zero. Prove `ν_z=Σ_jν_j` trivially. Use `SurfaceIntegration` and the ring height pushforward to obtain `E[Nσ]=∬F dλ dλ` and `E[ν]=∬F dν_z dν_z`. By constant potential, `∫F(s,t)dλ(t)=NI_α` for every `s∈[-1,1]`; since `λ` and `ν_z` both have mass `N`, the two mixed terms equal `N²I_α`. Expand the signed difference `μ=λ−ν_z`: `E[μ]=E[λ]+E[ν_z]−2E[λ,ν_z]=E[ν]−I_αN²=−latitudeError`. Finally distribute the finite band sum to obtain `latitudeError=−Σ_{j,k}kernelBlock α N j k`.
-
-The manuscript's displayed `eq:latitude-decomposition` accidentally writes `dμ_k(s)dμ_j(t)` while the outer variable `s` belongs to `B_j` and inner variable `t` belongs to `B_k`. The Lean `bandBlock` correctly applies band `j` to `s` and band `k` to `t`; preserve that binding throughout integration and derivative lemmas. For each band, exact mass `λ_j(B_j)=r_j` and first moment `∫t dλ_j=r_jh_j` give `bandError 1=bandError id=0`. These two cancellations power the Taylor block estimates, but the singular diagonal and polar blocks need more analysis than a global fourth-derivative estimate.
-
-Status: the four numeric definitions and algebraic decomposition are implemented. The geometric interpretations of `ringEnergy` and `diamondEnergy`, `DiamondNonnegative`, and the latitude identity remain proof obligations. `BandErrors.lean` holds the last identity's target rather than this file, so later imports must close that dependency before claiming the full deficit theorem.
+Status: all statements in this module elaborate. `lake build BEMOCFormalization.EnergyDecomposition` passes. The proof-shortcut audit finds no `sorry`, `admit`, `axiom`, or `opaque`.
 
 <!-- LEAN_STATEMENTS -->
 
@@ -21,8 +17,10 @@ Status: the four numeric definitions and algebraic decomposition are implemented
 ```lean
 import BEMOCFormalization.Construction
 import BEMOCFormalization.ContinuousEnergy
+import BEMOCFormalization.SurfaceMeasure
 
 open scoped BigOperators
+open MeasureTheory
 namespace BEMOC.Definitive
 
 /-- Energy of the weighted union of uniform parallels. -/
@@ -49,6 +47,103 @@ theorem deficit_eq_latitude_add_longitude (α : ℝ) (N : ℕ) (φ : Phases N) :
 /-- Required geometric identification, including the finite-label cardinality. -/
 def DiamondNonnegative (α : ℝ) : Prop :=
   ∀ N : ℕ, 4 ≤ N → ∀ φ : Phases N, 0 ≤ deficit α N φ
+
+/-- The counting measure of a finitely labelled configuration. -/
+noncomputable def finitePointMeasure {ι : Type*} [Fintype ι]
+    (X : ι → Sphere) : Measure Sphere :=
+  ∑ i, Measure.dirac (X i)
+
+@[simp] theorem finitePointMeasure_apply_univ {ι : Type*} [Fintype ι]
+    (X : ι → Sphere) : finitePointMeasure X Set.univ = Fintype.card ι := by
+  simp [finitePointMeasure, Measure.sum_apply]
+
+/-- Integration against counting measure is summation over labels. -/
+theorem integral_finitePointMeasure {ι : Type*} [Fintype ι]
+    (X : ι → Sphere) (f : Sphere → ℝ) :
+    ∫ x, f x ∂finitePointMeasure X = ∑ i, f (X i) := by
+  unfold finitePointMeasure
+  rw [integral_finset_sum_measure (s := Finset.univ)
+    (fun _ _ ↦ integrable_dirac)]
+  simp
+
+/-- Pair energy of a labelled configuration is the ordered double sum. -/
+theorem pairEnergy_finitePointMeasure {ι : Type*} [Fintype ι]
+    (X : ι → Sphere) (α : ℝ) :
+    kernelPairEnergy (fun x y ↦ dist x y ^ α)
+      (finitePointMeasure X) (finitePointMeasure X) = energy X α := by
+  unfold kernelPairEnergy energy
+  simp_rw [integral_finitePointMeasure]
+
+/-- The mass-scaled normalized area measure used for comparison. -/
+noncomputable def referenceMeasure (n : ℕ) : Measure Sphere :=
+  (n : ENNReal) • sigma
+
+@[simp] theorem referenceMeasure_apply_univ (n : ℕ) :
+    referenceMeasure n Set.univ = n := by
+  simp [referenceMeasure]
+
+theorem pairEnergy_reference_right (n : ℕ) {α : ℝ}
+    (hpot : ConstantPotential α) (μ : Measure Sphere)
+    (hmass : μ Set.univ = n) :
+    kernelPairEnergy (fun x y ↦ dist x y ^ α) μ (referenceMeasure n) =
+      continuousEnergy α * (n : ℝ) ^ 2 := by
+  unfold kernelPairEnergy referenceMeasure
+  simp_rw [integral_smul_measure]
+  simp only [smul_eq_mul]
+  simp_rw [show ∀ x : Sphere, (∫ y, dist x y ^ α ∂sigma) = continuousEnergy α from hpot]
+  rw [integral_const]
+  simp [Measure.real_def, hmass]
+  ring
+
+theorem pairEnergy_reference_left (n : ℕ) {α : ℝ} (hα : 0 < α)
+    (hpot : ConstantPotential α) (μ : Measure Sphere)
+    [IsFiniteMeasure μ] (hmass : μ Set.univ = n) :
+    kernelPairEnergy (fun x y ↦ dist x y ^ α) (referenceMeasure n) μ =
+      continuousEnergy α * (n : ℝ) ^ 2 := by
+  letI : IsFiniteMeasure (referenceMeasure n) :=
+    IsFiniteMeasure.mk (by simp)
+  rw [kernelPairEnergy_distancePower_comm hα]
+  exact pairEnergy_reference_right n hpot μ hmass
+
+theorem pairEnergy_reference_self (n : ℕ) {α : ℝ}
+    (hpot : ConstantPotential α) :
+    kernelPairEnergy (fun x y ↦ dist x y ^ α)
+      (referenceMeasure n) (referenceMeasure n) =
+      continuousEnergy α * (n : ℝ) ^ 2 := by
+  exact pairEnergy_reference_right n hpot (referenceMeasure n)
+    (referenceMeasure_apply_univ n)
+
+/-- Every finite spherical configuration satisfies the Riesz deficit bound. -/
+theorem energy_nonnegative_finite {ι : Type*} [Fintype ι]
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) (X : ι → Sphere) :
+    0 ≤ continuousEnergy α * (Fintype.card ι : ℝ) ^ 2 - energy X α := by
+  let μ := finitePointMeasure X
+  let ν := referenceMeasure (Fintype.card ι)
+  have hμfinite : IsFiniteMeasure μ := IsFiniteMeasure.mk (by simp [μ])
+  have hνfinite : IsFiniteMeasure ν := IsFiniteMeasure.mk (by simp [ν])
+  have h := measureNegativeType_of_pos_of_lt_two hα0 hα2
+    μ ν hμfinite hνfinite (by simp [μ, ν])
+  change kernelPairEnergy (fun x y ↦ dist x y ^ α) μ μ +
+      kernelPairEnergy (fun x y ↦ dist x y ^ α) ν ν -
+        2 * kernelPairEnergy (fun x y ↦ dist x y ^ α) μ ν ≤ 0 at h
+  rw [show μ = finitePointMeasure X from rfl,
+    pairEnergy_finitePointMeasure, show ν = referenceMeasure (Fintype.card ι) from rfl,
+    pairEnergy_reference_self _ (constantPotential_of_pos hα0),
+    pairEnergy_reference_right _ (constantPotential_of_pos hα0)
+      (finitePointMeasure X) (finitePointMeasure_apply_univ X)] at h
+  linarith
+
+theorem energy_nonnegative {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
+    EnergyNonnegative α := by
+  intro n X
+  simpa using energy_nonnegative_finite hα0 hα2 X
+
+/-- The Diamond configuration inherits the finite energy inequality. -/
+theorem diamond_nonnegative {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
+    DiamondNonnegative α := by
+  intro N hN φ
+  simpa [deficit, diamondEnergy, card_pointIndex N hN] using
+    energy_nonnegative_finite hα0 hα2 (point N φ)
 
 end BEMOC.Definitive
 ```

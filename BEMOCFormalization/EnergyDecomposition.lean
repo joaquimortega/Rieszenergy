@@ -1,7 +1,9 @@
 import BEMOCFormalization.Construction
 import BEMOCFormalization.ContinuousEnergy
+import BEMOCFormalization.SurfaceMeasure
 
 open scoped BigOperators
+open MeasureTheory
 namespace BEMOC.Definitive
 
 /-- Energy of the weighted union of uniform parallels. -/
@@ -28,5 +30,102 @@ theorem deficit_eq_latitude_add_longitude (α : ℝ) (N : ℕ) (φ : Phases N) :
 /-- Required geometric identification, including the finite-label cardinality. -/
 def DiamondNonnegative (α : ℝ) : Prop :=
   ∀ N : ℕ, 4 ≤ N → ∀ φ : Phases N, 0 ≤ deficit α N φ
+
+/-- The counting measure of a finitely labelled configuration. -/
+noncomputable def finitePointMeasure {ι : Type*} [Fintype ι]
+    (X : ι → Sphere) : Measure Sphere :=
+  ∑ i, Measure.dirac (X i)
+
+@[simp] theorem finitePointMeasure_apply_univ {ι : Type*} [Fintype ι]
+    (X : ι → Sphere) : finitePointMeasure X Set.univ = Fintype.card ι := by
+  simp [finitePointMeasure, Measure.sum_apply]
+
+/-- Integration against counting measure is summation over labels. -/
+theorem integral_finitePointMeasure {ι : Type*} [Fintype ι]
+    (X : ι → Sphere) (f : Sphere → ℝ) :
+    ∫ x, f x ∂finitePointMeasure X = ∑ i, f (X i) := by
+  unfold finitePointMeasure
+  rw [integral_finset_sum_measure (s := Finset.univ)
+    (fun _ _ ↦ integrable_dirac)]
+  simp
+
+/-- Pair energy of a labelled configuration is the ordered double sum. -/
+theorem pairEnergy_finitePointMeasure {ι : Type*} [Fintype ι]
+    (X : ι → Sphere) (α : ℝ) :
+    kernelPairEnergy (fun x y ↦ dist x y ^ α)
+      (finitePointMeasure X) (finitePointMeasure X) = energy X α := by
+  unfold kernelPairEnergy energy
+  simp_rw [integral_finitePointMeasure]
+
+/-- The mass-scaled normalized area measure used for comparison. -/
+noncomputable def referenceMeasure (n : ℕ) : Measure Sphere :=
+  (n : ENNReal) • sigma
+
+@[simp] theorem referenceMeasure_apply_univ (n : ℕ) :
+    referenceMeasure n Set.univ = n := by
+  simp [referenceMeasure]
+
+theorem pairEnergy_reference_right (n : ℕ) {α : ℝ}
+    (hpot : ConstantPotential α) (μ : Measure Sphere)
+    (hmass : μ Set.univ = n) :
+    kernelPairEnergy (fun x y ↦ dist x y ^ α) μ (referenceMeasure n) =
+      continuousEnergy α * (n : ℝ) ^ 2 := by
+  unfold kernelPairEnergy referenceMeasure
+  simp_rw [integral_smul_measure]
+  simp only [smul_eq_mul]
+  simp_rw [show ∀ x : Sphere, (∫ y, dist x y ^ α ∂sigma) = continuousEnergy α from hpot]
+  rw [integral_const]
+  simp [Measure.real_def, hmass]
+  ring
+
+theorem pairEnergy_reference_left (n : ℕ) {α : ℝ} (hα : 0 < α)
+    (hpot : ConstantPotential α) (μ : Measure Sphere)
+    [IsFiniteMeasure μ] (hmass : μ Set.univ = n) :
+    kernelPairEnergy (fun x y ↦ dist x y ^ α) (referenceMeasure n) μ =
+      continuousEnergy α * (n : ℝ) ^ 2 := by
+  letI : IsFiniteMeasure (referenceMeasure n) :=
+    IsFiniteMeasure.mk (by simp)
+  rw [kernelPairEnergy_distancePower_comm hα]
+  exact pairEnergy_reference_right n hpot μ hmass
+
+theorem pairEnergy_reference_self (n : ℕ) {α : ℝ}
+    (hpot : ConstantPotential α) :
+    kernelPairEnergy (fun x y ↦ dist x y ^ α)
+      (referenceMeasure n) (referenceMeasure n) =
+      continuousEnergy α * (n : ℝ) ^ 2 := by
+  exact pairEnergy_reference_right n hpot (referenceMeasure n)
+    (referenceMeasure_apply_univ n)
+
+/-- Every finite spherical configuration satisfies the Riesz deficit bound. -/
+theorem energy_nonnegative_finite {ι : Type*} [Fintype ι]
+    {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) (X : ι → Sphere) :
+    0 ≤ continuousEnergy α * (Fintype.card ι : ℝ) ^ 2 - energy X α := by
+  let μ := finitePointMeasure X
+  let ν := referenceMeasure (Fintype.card ι)
+  have hμfinite : IsFiniteMeasure μ := IsFiniteMeasure.mk (by simp [μ])
+  have hνfinite : IsFiniteMeasure ν := IsFiniteMeasure.mk (by simp [ν])
+  have h := measureNegativeType_of_pos_of_lt_two hα0 hα2
+    μ ν hμfinite hνfinite (by simp [μ, ν])
+  change kernelPairEnergy (fun x y ↦ dist x y ^ α) μ μ +
+      kernelPairEnergy (fun x y ↦ dist x y ^ α) ν ν -
+        2 * kernelPairEnergy (fun x y ↦ dist x y ^ α) μ ν ≤ 0 at h
+  rw [show μ = finitePointMeasure X from rfl,
+    pairEnergy_finitePointMeasure, show ν = referenceMeasure (Fintype.card ι) from rfl,
+    pairEnergy_reference_self _ (constantPotential_of_pos hα0),
+    pairEnergy_reference_right _ (constantPotential_of_pos hα0)
+      (finitePointMeasure X) (finitePointMeasure_apply_univ X)] at h
+  linarith
+
+theorem energy_nonnegative {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
+    EnergyNonnegative α := by
+  intro n X
+  simpa using energy_nonnegative_finite hα0 hα2 X
+
+/-- The Diamond configuration inherits the finite energy inequality. -/
+theorem diamond_nonnegative {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
+    DiamondNonnegative α := by
+  intro N hN φ
+  simpa [deficit, diamondEnergy, card_pointIndex N hN] using
+    energy_nonnegative_finite hα0 hα2 (point N φ)
 
 end BEMOC.Definitive

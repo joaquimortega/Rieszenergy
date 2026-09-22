@@ -63,4 +63,20 @@ def SobolevOptimality (Y : HarmonicBasis) (s : ℝ) : Prop :=
   ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 1 ≤ n → ∀ X : Fin n → Sphere,
     Function.Injective X → c * (n : ℝ) ^ (-s / 2) ≤ sobolevWCE Y s X
 
+/-- Quadrature on a finite family is invariant under relabeling its nodes. -/
+theorem quadratureError_comp_equiv {ι κ : Type} [Fintype ι] [Fintype κ]
+    (e : ι ≃ κ) (X : κ → Sphere) (f : C(Sphere, ℝ)) :
+    quadratureError (X ∘ e) f = quadratureError X f := by
+  have hs : (∑ i : ι, f (X (e i))) = ∑ j : κ, f (X j) := by
+    apply Fintype.sum_equiv e
+    intro i
+    rfl
+  simp only [quadratureError, Function.comp_apply, hs, Fintype.card_congr e]
+
+/-- The actual spectral supremum is independent of the finite label type. -/
+theorem sobolevWCE_comp_equiv {ι κ : Type} [Fintype ι] [Fintype κ]
+    (e : ι ≃ κ) (Y : HarmonicBasis) (s : ℝ) (X : κ → Sphere) :
+    sobolevWCE Y s (X ∘ e) = sobolevWCE Y s X := by
+  simp only [sobolevWCE, quadratureError_comp_equiv e X]
+
 end BEMOC.Definitive

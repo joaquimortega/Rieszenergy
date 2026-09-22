@@ -14,6 +14,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 IMPORT = re.compile(r"^import\s+(.+?)\s*$")
 LOCAL_PREFIX = "BEMOCFormalization."
+PRIVATE_DECL = re.compile(
+    r"^\s*private\s+(?:(?:noncomputable|unsafe|partial)\s+)*"
+    r"(?:theorem|lemma|def|abbrev)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
+    re.MULTILINE,
+)
 
 
 def source_for(module: str) -> Path:
@@ -63,10 +68,22 @@ def main() -> None:
     for module in ordered:
         source = source_for(module).read_text()
         body = "\n".join(line for line in source.splitlines() if not IMPORT.fullmatch(line))
-        chunks.append(f"\n/- Begin {module} -/\n{body.rstrip()}\n/- End {module} -/\n")
+        # `private` names are scoped to a source file in Lean. A single merged
+        # file loses that boundary, so qualify each private name by its module.
+        for name in sorted(set(PRIVATE_DECL.findall(body)), key=len, reverse=True):
+            qualified = f"{module.rsplit('.', 1)[-1]}_{name}"
+            body = re.sub(rf"(?<![\w.]){re.escape(name)}\b", qualified, body)
+        # File-level `open`, `open scoped`, variables, and options must not leak
+        # into the following inlined module.
+        chunks.append(
+            f"\n/- Begin {module} -/\nsection\n{body.rstrip()}\nend\n"
+            f"/- End {module} -/\n"
+        )
     output = args.output.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text("".join(chunks))
+    # Keep the emitted source free of trailing whitespace even if a source
+    # module is being cleaned up concurrently.
+    output.write_text("\n".join(line.rstrip() for line in "".join(chunks).split("\n")))
     print(f"Wrote {output} from {len(ordered)} project modules; external imports: {external}")
 
 

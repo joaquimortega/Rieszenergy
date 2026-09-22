@@ -1,5 +1,7 @@
 # MainTheorem proof guide
 
+Checked progress: `main_theorem_of_latitude_longitude` now derives the main bound from only `LatitudeBound` and `LongitudeBound` in the open exponent range. `diamond_nonnegative` and the phase-uniform `small_size_bound` discharge the other inputs. The two upper estimates remain open. The detailed plan below explains their remaining dependencies.
+
 Source anchors: `definitive.tex` Theorem `thm:main` and inequality `theo:ineq` (around lines 118–126); construction threshold and proof cutoff (line 274); longitude bound `lem:BalphaN` (around 438–540); latitude block lemma and summed estimate `lem:blocks`/`lem:latitude` (around 620–730). The public goal is a constant depending only on `α` for **every** `N≥4` and **every** choice of phases. The manuscript names one zero-phase convention but explicitly says the estimates survive arbitrary rotations; the phase-uniform Lean target is therefore a faithful strengthening.
 
 `MainTheorem α` states `∃C>0, ∀N≥4, ∀φ, 0≤deficit α N φ≤C*scale α N`. `MainTheoremTarget` supplies `0<α` and `α<2` before that conclusion. The existing `main_theorem_of_estimates` is a sound assembly theorem: it accepts absolute latitude and longitude bounds, a small-size upper bound, and geometric deficit nonnegativity. It takes the sum of their positive constants. On `N≥1024`, use the exact algebraic decomposition and `x≤|x|` twice; on `4≤N<1024`, use `SmallSizeBound`. Since `scale≥0`, increasing either constant preserves the bound. The finite cutoff needs no dependence on phase, despite phases ranging over continuum many choices.
@@ -50,6 +52,11 @@ theorem main_theorem_of_estimates {α : ℝ}
 
 /-- Complete unconditional statement to be proved; no proof of this target is asserted. -/
 def MainTheoremTarget : Prop := ∀ α : ℝ, 0 < α → α < 2 → MainTheorem α
+
+/-- The remaining analytic burden is exactly the latitude and longitude upper estimates. -/
+theorem main_theorem_of_latitude_longitude {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hlat : LatitudeBound α) (hlong : LongitudeBound α) : MainTheorem α :=
+  main_theorem_of_estimates hlat hlong (small_size_bound hα2) (diamond_nonnegative hα0 hα2)
 
 end BEMOC.Definitive
 ```

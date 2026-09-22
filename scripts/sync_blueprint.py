@@ -10,8 +10,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--check', action='store_true')
 args = parser.parse_args()
 failures = []
-for lean in sorted((ROOT / 'BEMOCFormalization').glob('*.lean')):
-    guide = ROOT / 'blueprint/modules' / (lean.stem + '.md')
+for lean in sorted((ROOT / 'BEMOCFormalization').rglob('*.lean')):
+    guide = ROOT / 'blueprint/modules' / lean.relative_to(ROOT / 'BEMOCFormalization').with_suffix('.md')
     if not guide.exists():
         failures.append(f'missing guide: {guide.relative_to(ROOT)}')
         continue

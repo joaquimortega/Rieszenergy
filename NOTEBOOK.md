@@ -164,3 +164,35 @@ claimed until an actual run succeeds.
 definition is a checked statement, not its proof. Current public targets are
 not completed theorems. `formalization.yaml` and the proof inventory must
 track open obligations separately from the absence of proof shortcuts.
+
+## 2026-09-22 — proof development
+
+**N25 — Reuse actually checked.** Generic negative-type and geometric surface
+measure proofs were extracted into current modules and re-elaborated against
+the new definitions. This proves the constant potential and nonnegative
+deficit for the new labelled family; no Simpson-specific bound was imported.
+
+**N26 — Alternative angular proof (simplification).** The new `Angular/` chain
+ports general circle cusp/Fourier smoothing arguments, proving the full
+`TrapezoidBound` including δ=0 and arbitrary phases. This discharges the main
+angular lemma without first inhabiting the optional Appendix-1 Gamma-formula
+contracts. The distinction is explicit in the proof inventory.
+
+**N27 — Gcd bound beyond required range (generalization).** The arithmetic
+`gcd_sum_bound` holds for every α>0. The implemented proof treats 0<α<2 by
+divisor majorization and p-series, then compares larger α to α=1 using
+gcd(u,v)²≤uv. Only 0<α<2 is used in the Riesz theorem.
+
+**N28 — Comparator backport still under verification.** A Lean4.19-compatible
+exporter/comparator and real landrun were built. Initial modular/standalone
+comparison reported an internal definition mismatch, and a diagnostic
+self-comparison reached a replay/private-name failure. These are tool/export
+integration issues, not evidence of a proved or disproved mathematical target.
+The tool setup is being investigated; no certification is claimed.
+
+**N29 — Latitude summation simplification.** The main theorem only requires
+O(M^(2−α)). For an oriented unequal same-side pair, r_j≤r_k and α<2 imply
+r_j³/r_k^(5−α)≤1. Thus crude O(M²) pair counting after M^(−α) suffices,
+without reproducing the sharper O(1) intermediate sum. This is a valid
+alternative proof route for the requested total bound; it must not be reported
+as a proof of the manuscript's stronger intermediate estimate.

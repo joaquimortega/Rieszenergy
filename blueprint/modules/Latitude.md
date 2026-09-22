@@ -1,5 +1,7 @@
 # Latitude: finite block summation and the uniform size bridge
 
+Checked progress: `diamondEnergy_nonneg` and `small_size_bound` are proved. The latter uses the explicit constant `(|continuousEnergy α|+1)*1024²` and `scale α N≥1` for α<2, uniformly in phases. The large-N latitude bound still requires the three analytic block estimates and summation.
+
 `Latitude.lean` is the assembly of `definitive.tex` `lem:latitude`, lines 669–735. Its `LatitudeBound α` is a slightly stronger formulation than the printed upper bound: `|latitudeError α N|≤C·scale α N` for all `N≥1024`. This follows because each block contribution is estimated in absolute value. The module also states `SmallSizeBound α` to bridge the manuscript's global large-`N` convention to a theorem for all `N≥4`; that predicate is about the full phase-dependent deficit, not merely the latitude part. Prove the latitude theorem under `0<α<2` and the input contracts `LatitudeIdentity`, `BlockSymmetry`, `ComparableBlockBound`, `SameSideBlockBound`, and `OppositeBlockBound`.
 
 The pair partition must be exhaustive and disjoint enough for finite sums. For any ordered `j,k`, either `r_j/8≤r_k≤8r_j` (comparable), `r_k>8r_j`, or `r_j>8r_k`. The third case is moved to the second using `BlockSymmetry`; the appropriate bound is then selected by `SameSide` versus its negation. The strict comparisons use natural populations, but `Comparable` uses real casts; prove simple equivalence lemmas with `norm_num` or `exact_mod_cast`. The central index `M` is classified in the negated `SameSide` regime. Avoid a partition relying on geographic height signs, because `B_M` straddles the equator. Preserve the ordered pair multiplicity: reverse-oriented unequal pairs contribute a factor at most two, and the two hemispheres contribute another fixed factor. The diagonal is comparable and remains included.
@@ -37,6 +39,32 @@ def LatitudeBound (α : ℝ) : Prop :=
 def SmallSizeBound (α : ℝ) : Prop :=
   ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ, 4 ≤ N → N < 1024 →
     ∀ φ : Phases N, deficit α N φ ≤ C * scale α N
+
+/-- Every term of the actual ordered energy is nonnegative. -/
+theorem diamondEnergy_nonneg (α : ℝ) (N : ℕ) (φ : Phases N) :
+    0 ≤ diamondEnergy α N φ := by
+  unfold diamondEnergy energy
+  positivity
+
+/-- Uniform finite-size closure; no compactness argument over ring phases is needed. -/
+theorem small_size_bound {α : ℝ} (hα2 : α < 2) : SmallSizeBound α := by
+  refine ⟨(|continuousEnergy α| + 1) * 1024 ^ 2, by positivity, ?_⟩
+  intro N hN hNsmall φ
+  have hNreal : (N : ℝ) < 1024 := by exact_mod_cast hNsmall
+  have hNnonneg : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+  have hNlarge : (1 : ℝ) ≤ N := by exact_mod_cast (show 1 ≤ N by omega)
+  have hscale : 1 ≤ scale α N :=
+    Real.one_le_rpow hNlarge (by linarith : 0 ≤ 1 - α / 2)
+  have henergy := diamondEnergy_nonneg α N φ
+  have hcoeff : continuousEnergy α ≤ |continuousEnergy α| := le_abs_self _
+  have hsq : (N : ℝ) ^ 2 ≤ (1024 : ℝ) ^ 2 := by nlinarith
+  have hstep : continuousEnergy α * (N : ℝ) ^ 2 ≤
+      |continuousEnergy α| * (1024 : ℝ) ^ 2 :=
+    (mul_le_mul_of_nonneg_right hcoeff (sq_nonneg _)).trans
+      (mul_le_mul_of_nonneg_left hsq (abs_nonneg _))
+  unfold deficit
+  nlinarith [mul_nonneg (show 0 ≤ (|continuousEnergy α| + 1) * 1024 ^ 2 by positivity)
+    (sub_nonneg.mpr hscale)]
 
 end BEMOC.Definitive
 ```

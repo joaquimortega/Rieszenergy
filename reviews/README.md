@@ -30,3 +30,8 @@ Resolution log:
 Reviews describe the scaffold at their initial inspection. Later proof changes
 must receive appropriate Lean checks and, where their statements change,
 follow-up review recorded here.
+
+A subsequent [proof-checkpoint alignment review](proof-checkpoint-review.md)
+independently checked the 32-module proof checkpoint. It found no concrete
+normalization mismatch and confirmed the documented boundary between checked
+foundations and the unfinished unconditional main theorem and corollaries.

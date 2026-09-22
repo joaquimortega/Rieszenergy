@@ -1,0 +1,39 @@
+diff --git a/Comparator/Parser.lean b/Comparator/Parser.lean
+index 9667a47..89f2fe3 100644
+--- a/Comparator/Parser.lean
++++ b/Comparator/Parser.lean
+@@ -200 +200 @@ def parseHints : LineM Lean.ReducibilityHints := do
+-    return .regular n
++    return .regular n.toUInt32
+diff --git a/Main.lean b/Main.lean
+index 7ac8c09..5706dc2 100644
+--- a/Main.lean
++++ b/Main.lean
+@@ -47 +47 @@ def runSandBoxedWithStdout (spawnArgs : LandrunArgs) : M String := do
+-    #[spawnArgs.cmd] ++
++    #["--", spawnArgs.cmd] ++
+@@ -60 +60 @@ def runSandBoxed (spawnArgs : LandrunArgs) : M Unit := do
+-    #[spawnArgs.cmd] ++
++    #["--", spawnArgs.cmd] ++
+@@ -74,0 +75,4 @@ def safeLakeBuild (target : Lean.Name) : M Unit := do
++  let args := if target == `comparator.SelfContained then
++    #["env", "lean", "comparator/SelfContained.lean", "-o",
++      ".lake/build/lib/lean/comparator/SelfContained.olean"]
++    else #["build", target.toString (escape := false)]
+@@ -77,3 +81,2 @@ def safeLakeBuild (target : Lean.Name) : M Unit := do
+-    args := #["build", target.toString (escape := false)],
+-    envPass := #["PATH", "HOME", "LEAN_ABORT_ON_PANIC"]
+-    envOverride := #[("LEAN_ABORT_ON_PANIC", some "1")]
++    args := args,
++    envPass := #["PATH", "HOME", "LEAN_ABORT_ON_PANIC=1"]
+@@ -90,2 +93 @@ def safeExport (module : Lean.Name) (decls : Array Lean.Name) : M String := do
+-    envPass := #["PATH", "HOME", "LEAN_PATH", "LEAN_ABORT_ON_PANIC"]
+-    envOverride := #[("LEAN_ABORT_ON_PANIC", some "1")]
++    envPass := #["PATH", "HOME", "LEAN_PATH", "LEAN_ABORT_ON_PANIC=1"]
+diff --git a/lean-toolchain b/lean-toolchain
+index 1efd365..7aca1d8 100644
+--- a/lean-toolchain
++++ b/lean-toolchain
+@@ -1 +1 @@
+-leanprover/lean4:v4.21.0-rc3
++leanprover/lean4:v4.19.0

@@ -6,7 +6,9 @@ cap discrepancy*, by Carlos Beltrán, Jordi Marzo and Joaquim Ortega-Cerdà.
 
 The current development defines the new midpoint-only Diamond configuration
 and its energy, actual cap discrepancy, and spectral Sobolev worst-case error.
-It contains a modular, executable blueprint and the first checked proofs.
+It contains a modular, executable blueprint and checked analytic foundations,
+including negative type, constant surface potential, angular trapezoid error,
+gcd arithmetic and conditional theorem/corollary assembly.
 **The main analytic estimates and the two corollaries are not yet proved.**
 Named proposition definitions are open obligations, not accepted axioms or
 completed theorems.

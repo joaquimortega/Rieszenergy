@@ -1,4 +1,12 @@
 import BEMOCFormalization.Corollaries
+import BEMOCFormalization.NegativeType
+import BEMOCFormalization.AngularQuadrature
+import BEMOCFormalization.SphereProjection
+import BEMOCFormalization.GridMultiplicity
+import BEMOCFormalization.LatitudePotential
+import BEMOCFormalization.LatitudeIdentity
+import BEMOCFormalization.SobolevBasic
+import BEMOCFormalization.SphereCapMeasure
 
 /-!
 # Deterministic Diamond points: definitive.tex scaffold

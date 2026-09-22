@@ -30,4 +30,9 @@ theorem main_theorem_of_estimates {α : ℝ}
 /-- Complete unconditional statement to be proved; no proof of this target is asserted. -/
 def MainTheoremTarget : Prop := ∀ α : ℝ, 0 < α → α < 2 → MainTheorem α
 
+/-- The remaining analytic burden is exactly the latitude and longitude upper estimates. -/
+theorem main_theorem_of_latitude_longitude {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hlat : LatitudeBound α) (hlong : LongitudeBound α) : MainTheorem α :=
+  main_theorem_of_estimates hlat hlong (small_size_bound hα2) (diamond_nonnegative hα0 hα2)
+
 end BEMOC.Definitive

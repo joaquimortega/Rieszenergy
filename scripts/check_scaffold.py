@@ -3,8 +3,9 @@
 import re
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-modules = {p.stem: p for p in (ROOT / 'BEMOCFormalization').glob('*.lean')}
-imports = re.compile(r'^import BEMOCFormalization\.([A-Za-z0-9_]+)$', re.M)
+modules = {str(p.relative_to(ROOT / 'BEMOCFormalization').with_suffix('')).replace('/', '.'): p
+           for p in (ROOT / 'BEMOCFormalization').rglob('*.lean')}
+imports = re.compile(r'^import BEMOCFormalization\.([A-Za-z0-9_.]+)$', re.M)
 errors = []
 visited = set()
 def visit(name):
@@ -21,7 +22,7 @@ for name in imports.findall((ROOT / 'BEMOCFormalization.lean').read_text()):
 for name, path in modules.items():
     if name not in visited:
         errors.append(f'module not imported by root: {name}')
-    guide = ROOT / 'blueprint/modules' / (name + '.md')
+    guide = ROOT / 'blueprint/modules' / (name.replace('.', '/') + '.md')
     if not guide.exists():
         errors.append(f'missing proof guide: {name}')
     text = path.read_text()

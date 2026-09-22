@@ -47,12 +47,18 @@ def main() -> None:
         "challenge_module": args.challenge_module,
         "solution_module": args.solution_module,
         "theorem_names": args.theorem,
-        "definition_names": args.definition,
         "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
     }
+    if args.definition:
+        config["definition_names"] = args.definition
     environment = os.environ.copy()
     environment["COMPARATOR_LEAN4EXPORT"] = exporter
     environment["COMPARATOR_LANDRUN"] = landrun
+    # The Lean 4.19 backport predates COMPARATOR_* executable overrides.
+    environment["PATH"] = os.pathsep.join(
+        [str(Path(landrun).parent), str(Path(exporter).parent), environment["PATH"]]
+    )
+    (ROOT / ".lake/build/lib/lean/comparator").mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="bemoc-comparator-") as directory:
         config_path = Path(directory) / "config.json"
         config_path.write_text(json.dumps(config, indent=2) + "\n")
