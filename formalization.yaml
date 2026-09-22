@@ -1,0 +1,106 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+project:
+  name: "Deterministic Diamond points: Riesz energy and discrepancy"
+  description: >-
+    Formalization in progress of the distance-power energy bound for deterministic
+    Diamond points on S², optimal L² cap discrepancy, and Sobolev quadrature error
+    for 1<s<2. The reviewed scaffold has concrete observables and explicit open
+    analytic contracts; the unconditional main theorem and corollaries are not
+    yet proved.
+  authors:
+    - "Codex, under instructions from Joaquim Ortega-Cerdà"
+  license: "Unspecified: no repository license grant has been supplied."
+sources:
+  - title: "A set of points with optimal L² spherical cap discrepancy"
+    authors: ["Carlos Beltrán", "Jordi Marzo", "Joaquim Ortega-Cerdà"]
+    id: "definitive.tex (repository source snapshot)"
+    type: "article"
+    location: "thm:main; cor:main; cor:wce; appendices 1 and 2"
+    relationship: "formalizes"
+    note: "The user supplied this manuscript. The source is preserved; corrections and clarifications are recorded in NOTEBOOK.md."
+  - title: "QMC designs: optimal order Quasi Monte Carlo integration schemes on the sphere"
+    authors: ["Johann S. Brauchart", "Edward B. Saff", "Ian H. Sloan", "Robert S. Womersley"]
+    id: "https://arxiv.org/abs/1208.3267"
+    type: "article"
+    location: "Section 5, equations (38)–(42); Theorem 3"
+    relationship: "background"
+    note: "Planned proof source for the spectral/distance-kernel comparison and Sobolev lower bound; not imported as an axiom."
+related_formalizations:
+  - id: "https://github.com/joaquimortega/Rieszenergy/tree/2348f376b5944bd36343bce8531332bdebf3cd65"
+    relationship: "adapts"
+    note: "Preserved in legacy/. It concerns different 4j−1 Simpson rings. Only generic lemmas can be reused after rebuilding; the current sphere-membership proof was adapted."
+classification:
+  arxiv: ["math.CA", "math.NA"]
+status:
+  scope: "Reviewed executable scaffold plus initial checked lemmas; full theorem and corollary proof development remains in progress."
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Quot.sound", "Classical.choice"]
+  main_results:
+    - declaration: "BEMOC.Definitive.main_theorem_of_estimates"
+      file: "BEMOCFormalization/MainTheorem.lean"
+      sorry_count: 0
+      axioms: ["propext", "Quot.sound", "Classical.choice"]
+      note: "Checked conditional assembly only: LatitudeBound, LongitudeBound, SmallSizeBound and DiamondNonnegative are explicit assumptions."
+  open_targets:
+    - "BEMOC.Definitive.MainTheoremTarget"
+    - "BEMOC.Definitive.CapDiscrepancyCorollary"
+    - "Nonempty BEMOC.Definitive.HarmonicBasis"
+    - "BEMOC.Definitive.SobolevCorollary"
+    - "BEMOC.Definitive.SobolevOptimality"
+  comparator_status: "SelfContained.lean elaborates; comparator compatibility investigation in progress; no comparator certification yet."
+automation:
+  methods:
+    - method: "agent"
+      framework: "Codex"
+      tool_setup: "Repository inspection, recovery from GitHub, Lean/Lake elaboration, local source audits, checked source export, and notebook maintenance."
+      prompting_notes: "User requested a detailed scaffold followed by full formalization, reuse audit, independent Sol reviews, comparator export and publication."
+    - method: "agent"
+      models: ["gpt-6-sol"]
+      framework: "Codex subagents"
+      tool_setup: "Independent construction, longitude, latitude-block, and corollary interface reviews; later disjoint proof tasks."
+      prompting_notes: "Review actual Lean statements against definitive.tex, record findings, and write detailed proof guides. Subagents were explicitly selected as Sol."
+  notes: >-
+    Proof techniques planned: finite gcd/lcm fiber counting, uniform Fourier
+    domination and Gamma ratios, p-series estimates, zero-mass and first-moment
+    cancellation, double Taylor remainders, angular cusp truncation, separated
+    even binomial series, Schoenberg negative type, Stolarsky indicator expansion,
+    and spherical-harmonic reproducing-kernel comparison. Current checked facts
+    are listed separately in LEAN_FORMALIZATION.md; planned techniques are not
+    represented as completed proofs.
+fidelity:
+  divergences: >-
+    The target explicitly requires N≥4, as the construction does, and generalizes
+    the fixed meridian choice to arbitrary ring phases with a uniform constant.
+    Integrals against band signed measures are represented as differences of
+    ordinary integrals. A swapped integration-variable binding in the manuscript
+    is corrected in the formal definition. The Sobolev model uses continuous
+    representatives with an explicit summability guard; its identification with
+    the complete spectral space remains a proof obligation. No energy-defined
+    substitutes for discrepancy or WCE are used.
+review:
+  status: "agent-reviewed"
+  reviewers: ["gpt-6-sol: foundations", "gpt-6-sol: longitude", "gpt-6-sol: latitude blocks", "gpt-6-sol: corollaries"]
+  notes: "reviews/ records independent scaffold/interface audits. This is not human peer review and does not certify unfinished analytic proofs."
+alignment:
+  namespace: "BEMOC.Definitive"
+  statements:
+    - source: "thm:main"
+      lean: "MainTheoremTarget"
+      module: "BEMOCFormalization/MainTheorem.lean"
+      status: "in-progress"
+      note: "Concrete statement exists; conditional assembly proved; analytic inputs open."
+    - source: "cor:main"
+      lean: "CapDiscrepancyCorollary"
+      module: "BEMOCFormalization/CapDiscrepancy.lean"
+      status: "in-progress"
+    - source: "cor:wce"
+      lean: "SobolevCorollary"
+      module: "BEMOCFormalization/Sobolev.lean"
+      status: "in-progress"
+    - source: "eq:decomp"
+      lean: "deficit_eq_latitude_add_longitude"
+      module: "BEMOCFormalization/EnergyDecomposition.lean"
+      status: "proved"
+acknowledgements: "Lean and mathlib; previous generic proofs preserved in legacy; comparator; the formalization.yaml reporting standard."

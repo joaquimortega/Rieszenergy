@@ -21,3 +21,12 @@ SumdistAssessment.pdf
 sumdist.pdf
 
 .DS_Store
+
+# Local build, tooling, and generated manuscripts
+build/
+__pycache__/
+*.py[cod]
+*.bbl
+*.blg
+*.synctex.gz
+definitive.pdf

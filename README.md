@@ -1,37 +1,43 @@
-# BEMOC negative Riesz energies
+# Deterministic Diamond points
 
-Lean 4 formalization and supporting manuscript/code for the BEMOC negative
-Riesz-energy project.
+Lean formalization in progress for the main theorem and both corollaries of
+[`definitive.tex`](definitive.tex), *A set of points with optimal L² spherical
+cap discrepancy*, by Carlos Beltrán, Jordi Marzo and Joaquim Ortega-Cerdà.
 
-## Status
+The current development defines the new midpoint-only Diamond configuration
+and its energy, actual cap discrepancy, and spectral Sobolev worst-case error.
+It contains a modular, executable blueprint and the first checked proofs.
+**The main analytic estimates and the two corollaries are not yet proved.**
+Named proposition definitions are open obligations, not accepted axioms or
+completed theorems.
 
-The upper-bound formalization is complete for every `0 < α < 2`, including
-the resonant exponent `α = 1`.  The public theorem
-`BEMOC.bemoc_deficit_bound` proves that the concrete BEMOC energy deficit is
-nonnegative and satisfies
+For every `0 < α < 2`, the main target is
 
 ```text
-continuousEnergy α * N² - bemocFiniteEnergy α N
-  ≤ Cα N^(1 - α/2)
+0 ≤ (2^(α+1)/(α+2)) N² − Σ(x,y) |x−y|^α ≤ Cα N^(1−α/2),
 ```
 
-for all sufficiently large `N`.  It has no caller-supplied analytic
-hypotheses.  Wagner's configuration-uniform lower bound and the matching
-lower asymptotic are outside the formalization scope.
+for all `N ≥ 4`, with a constant uniform over independent ring rotations.
+The corollary targets are cap discrepancy comparable to `N^(-3/4)` and spectral
+`H^s` worst-case error at most `Cs N^(-s/2)` for `1 < s < 2`.
 
-## Build
+- [Detailed modular blueprint](blueprint/README.md)
+- [Checked results and open proof obligations](LEAN_FORMALIZATION.md)
+- [Source corrections and formalization notebook](NOTEBOOK.md)
+- [Independent Sol reviews](reviews/README.md)
+- [Previous formalization and reuse boundaries](legacy/README.md)
+- [Formalization metadata](formalization.yaml)
 
-The canonical Lean entry point is `BEMOCFormalization.lean`:
+Build with Lean 4.19.0 and the pinned mathlib revision:
 
 ```bash
+lake exe cache get
 lake build
-latexmk -pdf BEMOCRieszEnergies.tex
+python scripts/check_scaffold.py
+python scripts/sync_blueprint.py --check
 ```
 
-The proof-completion checkpoint is Git commit `1287c26`.  The full Lean
-build passes, the expanded paper builds to a 13-page PDF, and the
-project-owned Lean sources contain no `sorry`, `admit`, custom `axiom`, or
-`opaque` declarations.
-
-See `LEAN_FORMALIZATION.md` for the detailed verified inventory and
-`FORMALIZATION_BLUEPRINT.md` for the completed proof architecture.
+`BEMOCFormalization.lean` imports every active module. The old Simpson
+configuration is archived under `legacy/`; its main theorem is not a proof for
+the new point set. The current project replaces the old default build while
+preserving the repository's history and reusable source material.
