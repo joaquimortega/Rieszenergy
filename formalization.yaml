@@ -26,6 +26,13 @@ sources:
     location: "Section 5, equations (38)–(42); Theorem 3"
     relationship: "background"
     note: "Planned proof source for the spectral/distance-kernel comparison and Sobolev lower bound; not imported as an axiom."
+  - title: "On the lower bounds for the spherical cap discrepancy"
+    authors: ["Dmitriy Bilyk", "Johann S. Brauchart"]
+    id: "https://arxiv.org/abs/2502.15984"
+    type: "article"
+    location: "Section 2"
+    relationship: "background"
+    note: "Elementary positive-binomial and projection-moment route used in the checked Beck lower proof; no external result is assumed as an axiom."
 related_formalizations:
   - id: "https://github.com/joaquimortega/Rieszenergy/tree/2348f376b5944bd36343bce8531332bdebf3cd65"
     relationship: "adapts"
@@ -43,13 +50,18 @@ status:
       sorry_count: 0
       axioms: ["propext", "Quot.sound", "Classical.choice"]
       note: "Checked conditional assembly: only LatitudeBound remains an analytic assumption; longitude, nonnegativity and small sizes are proved."
+    - declaration: "BEMOC.Definitive.beckLowerBound"
+      file: "BEMOCFormalization/CapLowerBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Quot.sound", "Classical.choice"]
+      note: "Universal lower bound for the actual cap discrepancy, with explicit constant 1/16; the stronger underlying theorem permits repeated points."
   open_targets:
     - "BEMOC.Definitive.MainTheoremTarget"
     - "BEMOC.Definitive.CapDiscrepancyCorollary"
     - "Nonempty BEMOC.Definitive.HarmonicBasis"
     - "BEMOC.Definitive.SobolevCorollary"
     - "BEMOC.Definitive.SobolevOptimality"
-  comparator_status: "SelfContained.lean elaborates; comparator compatibility investigation in progress; no comparator certification yet."
+  comparator_status: "Full comparator passed on five selected results in the 40-module checkpoint, including Beck, longitude, mixed Taylor, and the conditional main/cap assemblies; standard axioms only and kernel replay passed."
 automation:
   methods:
     - method: "agent"
@@ -66,6 +78,7 @@ automation:
     domination and Gamma ratios, p-series estimates, zero-mass and first-moment
     cancellation, double Taylor remainders, angular cusp truncation, separated
     even binomial series, Schoenberg negative type, Stolarsky indicator expansion,
+    positive-definite projection moments and binomial coefficient blocks for Beck's bound,
     and spherical-harmonic reproducing-kernel comparison. The status of checked facts and remaining techniques
     is listed separately in LEAN_FORMALIZATION.md; planned techniques are not
     represented as completed proofs.

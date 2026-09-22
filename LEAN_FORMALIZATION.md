@@ -16,6 +16,9 @@ now have checked proofs in the active namespace `BEMOC.Definitive`:
 | Full construction, cardinality, injectivity, boundary identities, canonical set | `constructionFacts`, `boundaryFormulas`, `diamondPoints_card` in Construction |
 | Radius/population comparability and multiplicity at most three | `geometry_bounds` in Geometry |
 | Polar band widths, noncap sine comparison, and band separation | `angular_geometry` in AngularGeometry |
+| Chord comparison and near/separated band angle estimates | AngularDistance |
+| General real binomial theorem and square-root coefficient tail | SeparatedBinomialSeries and BinomialTail |
+| Analytic scalar series with exact finite-order derivatives | ScalarPowerSeries |
 | Full mixed Taylor estimate on closed band rectangles | `mixedTaylorBound` in Taylor |
 | Measure conditional negative definiteness for 0<α<2 | `measureNegativeType_of_pos_of_lt_two` in NegativeType |
 | Probability surface measure, uniform height marginal and constant potential | `constantPotential_of_pos` in SurfaceMeasure |
@@ -32,6 +35,8 @@ now have checked proofs in the active namespace `BEMOC.Definitive`:
 | Main theorem reduced to the latitude bound, or its three block regimes | `main_theorem_of_latitude`, `main_theorem_of_block_estimates` in MainTheorem |
 | Projection averages and exact cap area | SphereProjection and SphereCapMeasure |
 | Universal and Diamond Stolarsky identities with ordinary dt | `stolarskyIdentity`, `diamondStolarsky` in CapDiscrepancy |
+| Universal cap discrepancy lower bound with constant 1/16 | `beckLowerBound`, `capDiscrepancy_lower_rpow` in CapLowerBound |
+| Cap corollary reduced to the main energy theorem at α=1 | `cap_corollary_of_main` in Corollaries |
 | Conditional cap/Sobolev assembly | `cap_assembly`, `sobolev_assembly` in Corollaries |
 | Nonempty spectral unit ball; bounded supremum under embedding | SobolevBasic |
 
@@ -48,8 +53,8 @@ has itself been reduced to the three exhaustive block estimates. The remaining
 work includes smooth separated-kernel series, polar kernel derivative bounds,
 comparable cusp/neighbor blocks, and unequal blocks.
 
-The cap branch has a complete Stolarsky proof and now needs the main energy
-theorem and a proved universal Beck lower bound. The Sobolev branch needs
+The cap branch has complete Stolarsky and Beck proofs and now needs only
+the main energy theorem. Beck's bound permits repeated point labels. The Sobolev branch needs
 existence/completeness of the harmonic basis, the spectral-space/continuous-representative bridge,
 embedding, the distance-kernel comparison and the universal lower bound.
 The conditional assembly proofs do not discharge these hypotheses.
@@ -69,9 +74,12 @@ audits of the major proved declarations report only `propext`, `Classical.choice
 ## Comparator and metadata
 
 The Mathlib-only standalone file is generated from the active import graph
-and elaborated separately. A pinned comparator/exporter has been built for
-Lean 4.19, but actual comparison currently exposes internal-name/export
-compatibility problems. **No comparator certification is claimed.** See
+and elaborated separately. A pinned comparator/exporter backport for
+Lean 4.19 passed a full comparison of five major results in the current
+40-module checkpoint: the main theorem from block estimates, Beck, the cap
+corollary from the main theorem, longitude, and mixed Taylor. Statement and
+dependency matching, the standard-axiom check, and kernel replay all passed.
+The main and cap statements retain their explicit energy/block assumptions. See
 [comparator/README.md](comparator/README.md) for setup and evidence as the
 integration develops. The root `formalization.yaml` validates against the
 reporting standard's v0.4 schema and distinguishes proved conditional results

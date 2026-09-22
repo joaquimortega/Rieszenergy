@@ -16,6 +16,10 @@ git clone https://github.com/leanprover/comparator.git "$tools_dir/comparator"
 git -C "$tools_dir/comparator" checkout 437574bcec4e7d76fa141e98e4a72682ab580859
 git -C "$tools_dir/comparator" apply --unidiff-zero \
   "$repo_root/comparator/lean419-comparator.patch"
+cp "$repo_root/comparator/KernelReplay.lean" \
+  "$tools_dir/comparator/Comparator/KernelReplay.lean"
+cp "$repo_root/comparator/LICENSE-LeanReplay" \
+  "$tools_dir/comparator/Comparator/LICENSE-LeanReplay"
 (cd "$tools_dir/comparator" && lake build comparator)
 
 git clone https://github.com/leanprover/lean4export.git "$tools_dir/lean4export"

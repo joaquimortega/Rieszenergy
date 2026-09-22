@@ -1,5 +1,6 @@
 import BEMOCFormalization.MainTheorem
 import BEMOCFormalization.CapDiscrepancy
+import BEMOCFormalization.CapLowerBound
 import BEMOCFormalization.Sobolev
 
 namespace BEMOC.Definitive
@@ -87,6 +88,10 @@ theorem cap_assembly : CapAssembly := by
 theorem cap_corollary_of_main_and_beck (hmain : MainTheorem 1)
     (hbeck : BeckLowerBound) : CapDiscrepancyCorollary :=
   cap_assembly constructionFacts hmain diamondStolarsky hbeck
+
+/-- Both geometric cap inputs are proved; only the energy theorem remains. -/
+theorem cap_corollary_of_main (hmain : MainTheorem 1) : CapDiscrepancyCorollary :=
+  cap_corollary_of_main_and_beck hmain beckLowerBound
 
 /-- Conditional transfer from the actual spectral WCE comparison to the paper's decay rate. -/
 theorem sobolev_assembly : SobolevAssembly := by

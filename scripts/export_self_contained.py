@@ -75,8 +75,13 @@ def main() -> None:
             body = re.sub(rf"(?<![\w.]){re.escape(name)}\b", qualified, body)
         # File-level `open`, `open scoped`, variables, and options must not leak
         # into the following inlined module.
+        # Auxiliary-lemma cache is `.local` to a Lean module and is not saved
+        # to oleans. Reset it here so generated proof constants have the same
+        # names as in the separately compiled challenge modules.
         chunks.append(
-            f"\n/- Begin {module} -/\nsection\n{body.rstrip()}\nend\n"
+            "\nrun_cmd Lean.modifyEnv fun env => "
+            "Lean.Meta.auxLemmasExt.modifyState env fun _ => {}\n"
+            f"/- Begin {module} -/\nsection\n{body.rstrip()}\nend\n"
             f"/- End {module} -/\n"
         )
     output = args.output.resolve()

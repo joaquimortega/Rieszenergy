@@ -6,7 +6,20 @@ import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.Fourier.ZMod
 import Mathlib.Analysis.Normed.Group.Tannery
+import Mathlib.Analysis.Calculus.SmoothSeries
+import Mathlib.Analysis.Normed.Module.FiniteDimension
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Analysis.SpecificLimits.RCLike
+import Mathlib.RingTheory.Binomial
+import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Analysis.Analytic.OfScalars
+import Mathlib.Analysis.Analytic.ChangeOrigin
+import Mathlib.Analysis.Calculus.ContDiff.Defs
+import Mathlib.Analysis.Calculus.FDeriv.Analytic
+import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Core -/
 section
 
@@ -69,6 +82,7 @@ end BEMOC
 end
 /- End BEMOCFormalization.Core -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Construction -/
 section
 
@@ -707,6 +721,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.Construction -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Geometry -/
 section
 
@@ -980,6 +995,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.Geometry -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.ContinuousEnergy -/
 section
 
@@ -1015,6 +1031,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.ContinuousEnergy -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.NegativeType -/
 section
 
@@ -1723,6 +1740,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.NegativeType -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.SurfaceMeasure -/
 section
 
@@ -2974,6 +2992,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.SurfaceMeasure -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.EnergyDecomposition -/
 section
 
@@ -3107,6 +3126,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.EnergyDecomposition -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.BandErrors -/
 section
 
@@ -3308,6 +3328,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.BandErrors -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Taylor -/
 section
 
@@ -4883,6 +4904,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.Taylor -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.KernelDerivatives -/
 section
 
@@ -4919,6 +4941,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.KernelDerivatives -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.ComparableBlocks -/
 section
 
@@ -4941,6 +4964,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.ComparableBlocks -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.UnequalBlocks -/
 section
 
@@ -4973,6 +4997,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.UnequalBlocks -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Latitude -/
 section
 
@@ -5018,6 +5043,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.Latitude -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.LatitudePotential -/
 section
 
@@ -5279,6 +5305,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.LatitudePotential -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.LatitudeIdentity -/
 section
 
@@ -5508,6 +5535,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.LatitudeIdentity -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.LatitudeSummation -/
 section
 
@@ -6051,6 +6079,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.LatitudeSummation -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.FourierDecay -/
 section
 
@@ -6084,6 +6113,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.FourierDecay -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Trapezoid -/
 section
 
@@ -6117,6 +6147,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.Trapezoid -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Angular.CircleFourier -/
 section
 
@@ -6998,6 +7029,7 @@ end BEMOC.Definitive.Angular.CircleFourier
 end
 /- End BEMOCFormalization.Angular.CircleFourier -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Angular.CuspFourier -/
 section
 
@@ -7480,6 +7512,7 @@ end BEMOC.Definitive.Angular
 end
 /- End BEMOCFormalization.Angular.CuspFourier -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Angular.Schoenberg -/
 section
 
@@ -7611,6 +7644,7 @@ end BEMOC.Definitive.Angular
 end
 /- End BEMOCFormalization.Angular.Schoenberg -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Angular.CuspSmoothing -/
 section
 
@@ -8624,6 +8658,7 @@ end BEMOC.Definitive.Angular
 end
 /- End BEMOCFormalization.Angular.CuspSmoothing -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Angular.CuspTrapezoid -/
 section
 
@@ -9244,6 +9279,7 @@ end BEMOC.Definitive.Angular
 end
 /- End BEMOCFormalization.Angular.CuspTrapezoid -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.AngularQuadrature -/
 section
 
@@ -9268,6 +9304,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.AngularQuadrature -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.GridMultiplicity -/
 section
 
@@ -9742,6 +9779,7 @@ end BEMOC.Definitive.Grid
 end
 /- End BEMOCFormalization.GridMultiplicity -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Longitude -/
 section
 
@@ -10945,6 +10983,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.Longitude -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.MainTheorem -/
 section
 
@@ -10999,6 +11038,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.MainTheorem -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.SphereProjection -/
 section
 
@@ -11154,6 +11194,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.SphereProjection -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.SphereCapMeasure -/
 section
 
@@ -11238,6 +11279,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.SphereCapMeasure -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.CapDiscrepancy -/
 section
 
@@ -11873,6 +11915,1512 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.CapDiscrepancy -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
+/- Begin BEMOCFormalization.SeparatedBinomialSeries -/
+section
+
+/-! Generic binomial series lemmas adapted from the prior formalization's
+`RealBinomialSeries` module. -/
+
+namespace BEMOC.Definitive
+
+open Filter
+open scoped Topology
+
+noncomputable section
+
+/-- The elementary coefficient recurrence for generalized real binomial coefficients. -/
+theorem real_choose_succ (β : ℝ) (n : ℕ) :
+    (n + 1 : ℝ) * Ring.choose β (n + 1) = (β - n) * Ring.choose β n := by
+  have h := Ring.choose_smul_choose (R := ℝ) β (Nat.le_succ n)
+  simp only [Nat.choose_succ_self_right, nsmul_eq_mul, Nat.succ_sub, Nat.sub_self,
+    Ring.choose_one_right] at h
+  simpa [mul_comm] using h
+
+theorem real_choose_succ_div (β : ℝ) (n : ℕ) :
+    Ring.choose β (n + 1) = ((β - n) / (n + 1)) * Ring.choose β n := by
+  have hn : (n + 1 : ℝ) ≠ 0 := by positivity
+  have hdiv :
+      Ring.choose β (n + 1) = ((β - n) * Ring.choose β n) / (n + 1) := by
+    apply (eq_div_iff hn).2
+    simpa [mul_comm] using real_choose_succ β n
+  rw [hdiv]
+  ring
+
+theorem tendsto_abs_real_choose_ratio (β : ℝ) :
+    Tendsto (fun n : ℕ ↦ |(β - n) / (n + 1 : ℝ)|) atTop (𝓝 1) := by
+  have h' := RCLike.tendsto_add_mul_div_add_mul_atTop_nhds
+    (𝕜 := ℝ) β 1 (-1) (d := 1) one_ne_zero
+  have h : Tendsto (fun k : ℕ ↦ (β + -1 * k) / (1 + 1 * k)) atTop (𝓝 (-1 : ℝ)) := by
+    simpa only [div_one] using h'
+  have ha := (continuous_abs.tendsto (-1)).comp h
+  simpa [sub_eq_add_neg, add_comm, mul_comm, mul_left_comm] using ha
+
+/-- The generalized binomial series is absolutely summable throughout its open unit disk. -/
+theorem summable_real_choose_mul_pow (β x : ℝ) (hx : |x| < 1) :
+    Summable (fun n : ℕ ↦ Ring.choose β n * x ^ n) := by
+  obtain ⟨r, hxr, hr⟩ := exists_between hx
+  apply summable_of_ratio_norm_eventually_le hr
+  have hlim :
+      Tendsto (fun n : ℕ ↦ |(β - n) / (n + 1 : ℝ)| * |x|) atTop (𝓝 |x|) := by
+    simpa using (tendsto_abs_real_choose_ratio β).mul_const |x|
+  filter_upwards [hlim.eventually_le_const hxr] with n hn
+  rw [real_choose_succ_div, pow_succ]
+  simp only [norm_mul, Real.norm_eq_abs, abs_mul]
+  convert mul_le_mul_of_nonneg_right hn
+    (mul_nonneg (abs_nonneg (Ring.choose β n)) (abs_nonneg (x ^ n))) using 1 ; ring
+
+/-- Any fixed polynomial loss is still summable in the generalized
+binomial series.  This is the normal-convergence input for any fixed
+finite number of termwise differentiations. -/
+theorem summable_nat_add_one_pow_mul_real_choose_mul_pow
+    (degree : ℕ) (β x : ℝ) (hx : |x| < 1) :
+    Summable (fun n : ℕ ↦
+      ((n : ℝ) + 1) ^ degree * Ring.choose β n * x ^ n) := by
+  obtain ⟨r, hxr, hr⟩ := exists_between hx
+  apply summable_of_ratio_norm_eventually_le hr
+  have hweight' := RCLike.tendsto_add_mul_div_add_mul_atTop_nhds
+    (𝕜 := ℝ) 2 1 1 (d := 1) one_ne_zero
+  have hweight :
+      Tendsto (fun n : ℕ ↦ (((n : ℝ) + 2) / ((n : ℝ) + 1)) ^ degree)
+        atTop (𝓝 1) := by
+    have hbase :
+        Tendsto (fun n : ℕ ↦ ((n : ℝ) + 2) / ((n : ℝ) + 1))
+          atTop (𝓝 1) := by
+      simpa [add_comm, mul_comm] using hweight'
+    simpa using hbase.pow degree
+  have hlim :
+      Tendsto (fun n : ℕ ↦
+        (((n : ℝ) + 2) / ((n : ℝ) + 1)) ^ degree *
+          |(β - n) / (n + 1 : ℝ)| * |x|) atTop (𝓝 |x|) := by
+    simpa using (hweight.mul (tendsto_abs_real_choose_ratio β)).mul_const |x|
+  filter_upwards [hlim.eventually_le_const hxr] with n hn
+  rw [real_choose_succ_div, pow_succ]
+  simp only [Nat.cast_add, Nat.cast_one, norm_mul, Real.norm_eq_abs, abs_mul,
+    abs_pow, abs_of_pos (by positivity : 0 < (n : ℝ) + 1),
+    abs_of_pos (by positivity : 0 < (n : ℝ) + 2)]
+  have hn1 : (n : ℝ) + 1 ≠ 0 := by positivity
+  have hnonneg :
+      0 ≤ ((n : ℝ) + 1) ^ degree *
+        |Ring.choose β n| * |x ^ n| := by positivity
+  convert mul_le_mul_of_nonneg_right hn
+    hnonneg using 1
+  · field_simp [hn1]
+    rw [abs_of_pos (by positivity : (0 : ℝ) < n + 1 + 1)]
+    ring
+  · rw [abs_pow]
+
+theorem real_succ_mul_choose (β : ℝ) (n : ℕ) :
+    (n + 1 : ℝ) * Ring.choose β (n + 1) =
+      β * Ring.choose (β - 1) n := by
+  have h := Ring.choose_smul_choose (R := ℝ) β (show 1 ≤ n + 1 by omega)
+  simp only [Nat.choose_one_right, nsmul_eq_mul, Ring.choose_one_right,
+    Nat.succ_sub, Nat.sub_self] at h
+  simpa using h
+
+def realBinomialTerm (β : ℝ) (n : ℕ) (x : ℝ) : ℝ :=
+  Ring.choose β n * x ^ n
+
+def realBinomialTermD (β : ℝ) (n : ℕ) (x : ℝ) : ℝ :=
+  (n : ℝ) * Ring.choose β n * x ^ (n - 1)
+
+theorem hasDerivAt_realBinomialTerm (β : ℝ) (n : ℕ) (x : ℝ) :
+    HasDerivAt (realBinomialTerm β n) (realBinomialTermD β n x) x := by
+  convert (hasDerivAt_pow n x).const_mul (Ring.choose β n) using 1 ;
+    simp [realBinomialTerm, realBinomialTermD] ; ring
+
+private def SeparatedBinomialSeries_realBinomialDerivativeMajorant (β ρ : ℝ) (n : ℕ) : ℝ :=
+  if n = 0 then 0 else |β * Ring.choose (β - 1) (n - 1) * ρ ^ (n - 1)|
+
+private theorem SeparatedBinomialSeries_summable_realBinomialDerivativeMajorant (β ρ : ℝ) (hρ : |ρ| < 1) :
+    Summable (SeparatedBinomialSeries_realBinomialDerivativeMajorant β ρ) := by
+  rw [← summable_nat_add_iff 1]
+  simpa [SeparatedBinomialSeries_realBinomialDerivativeMajorant, abs_mul, mul_assoc] using
+    ((summable_real_choose_mul_pow (β - 1) ρ hρ).mul_left β).norm
+
+private theorem SeparatedBinomialSeries_norm_realBinomialTermD_le (β ρ : ℝ) {n : ℕ} {y : ℝ}
+    (hρ : 0 ≤ ρ) (hy : |y| ≤ ρ) :
+    ‖realBinomialTermD β n y‖ ≤ SeparatedBinomialSeries_realBinomialDerivativeMajorant β ρ n := by
+  cases n with
+  | zero => simp [realBinomialTermD, SeparatedBinomialSeries_realBinomialDerivativeMajorant]
+  | succ n =>
+      unfold realBinomialTermD SeparatedBinomialSeries_realBinomialDerivativeMajorant
+      simp only [Nat.add_sub_cancel, if_false (by omega : n + 1 ≠ 0), Nat.cast_add,
+        Nat.cast_one]
+      change
+        ‖((n + 1 : ℝ) * Ring.choose β (n + 1)) * y ^ n‖ ≤
+          |β * Ring.choose (β - 1) n * ρ ^ n|
+      rw [real_succ_mul_choose]
+      simp only [Real.norm_eq_abs, abs_mul, abs_pow, abs_of_nonneg hρ]
+      exact mul_le_mul_of_nonneg_left
+        (pow_le_pow_left₀ (abs_nonneg y) hy n)
+        (mul_nonneg (abs_nonneg β) (abs_nonneg (Ring.choose (β - 1) n)))
+
+/-- Termwise differentiability of the generalized real binomial series on `(-1,1)`. -/
+theorem hasDerivAt_tsum_realBinomialTerm (β x : ℝ) (hx : |x| < 1) :
+    HasDerivAt (fun y ↦ ∑' n, realBinomialTerm β n y)
+      (∑' n, realBinomialTermD β n x) x := by
+  obtain ⟨ρ, hxρ, hρ1⟩ := exists_between hx
+  have hρpos : 0 < ρ := (abs_nonneg x).trans_lt hxρ
+  apply hasDerivAt_tsum_of_isPreconnected
+    (u := SeparatedBinomialSeries_realBinomialDerivativeMajorant β ρ) (t := Set.Ioo (-ρ) ρ)
+    (g := realBinomialTerm β) (g' := realBinomialTermD β) (y₀ := 0)
+  · exact SeparatedBinomialSeries_summable_realBinomialDerivativeMajorant β ρ
+      (by rw [abs_of_pos hρpos]; exact hρ1)
+  · exact isOpen_Ioo
+  · exact isPreconnected_Ioo
+  · intro n y _
+    exact hasDerivAt_realBinomialTerm β n y
+  · intro n y hy
+    exact SeparatedBinomialSeries_norm_realBinomialTermD_le β ρ hρpos.le
+      (le_of_lt (abs_lt.2 hy))
+  · exact ⟨neg_lt_zero.mpr hρpos, hρpos⟩
+  · simpa [realBinomialTerm] using
+      summable_real_choose_mul_pow β 0 (by norm_num)
+  · exact abs_lt.mp hxρ
+
+theorem summable_realBinomialTermD (β x : ℝ) (hx : |x| < 1) :
+    Summable (fun n ↦ realBinomialTermD β n x) := by
+  rw [← summable_nat_add_iff 1]
+  simpa [realBinomialTermD, realBinomialTerm, real_succ_mul_choose, mul_assoc] using
+    (summable_real_choose_mul_pow (β - 1) x hx).mul_left β
+
+theorem tsum_realBinomialTermD_eq (β x : ℝ) (hx : |x| < 1) :
+    ∑' n, realBinomialTermD β n x =
+      β * ∑' n, realBinomialTerm (β - 1) n x := by
+  have hd := summable_realBinomialTermD β x hx
+  rw [hd.tsum_eq_zero_add]
+  simp only [realBinomialTermD, Nat.cast_zero, zero_mul, Nat.zero_sub, pow_zero, zero_add]
+  simp only [realBinomialTerm]
+  rw [← (summable_real_choose_mul_pow (β - 1) x hx).tsum_mul_left β]
+  congr 1
+  funext n
+  simp only [realBinomialTerm, realBinomialTermD, Nat.cast_add, Nat.cast_one,
+    Nat.add_sub_cancel]
+  rw [real_succ_mul_choose]
+  ring
+
+theorem hasDerivAt_tsum_realBinomialTerm_eq (β x : ℝ) (hx : |x| < 1) :
+    HasDerivAt (fun y ↦ ∑' n, realBinomialTerm β n y)
+      (β * ∑' n, realBinomialTerm (β - 1) n x) x := by
+  simpa only [tsum_realBinomialTermD_eq β x hx] using
+    hasDerivAt_tsum_realBinomialTerm β x hx
+
+theorem real_choose_succ_pascal (β : ℝ) (n : ℕ) :
+    Ring.choose β (n + 1) =
+      Ring.choose (β - 1) n + Ring.choose (β - 1) (n + 1) := by
+  have h := Ring.choose_succ_succ (R := ℝ) (β - 1) n
+  simpa using h
+
+/-- Pascal's recursion evaluated inside the open disk. -/
+theorem tsum_realBinomialTerm_pascal (β x : ℝ) (hx : |x| < 1) :
+    ∑' n, realBinomialTerm β n x =
+      (1 + x) * ∑' n, realBinomialTerm (β - 1) n x := by
+  let L := ∑' n, realBinomialTerm (β - 1) n x
+  have hL : Summable (fun n ↦ realBinomialTerm (β - 1) n x) := by
+    simpa [realBinomialTerm] using summable_real_choose_mul_pow (β - 1) x hx
+  have hβ : Summable (fun n ↦ realBinomialTerm β n x) := by
+    simpa [realBinomialTerm] using summable_real_choose_mul_pow β x hx
+  have hB :
+      HasSum (fun n ↦ realBinomialTerm (β - 1) (n + 1) x) (L - 1) := by
+    have h := (hasSum_nat_add_iff' 1).2 hL.hasSum
+    simpa only [Finset.sum_range_one, realBinomialTerm, Ring.choose_zero_right, pow_zero,
+      mul_one] using h
+  have hTail :
+      Summable (fun n ↦ realBinomialTerm (β - 1) (n + 1) x) :=
+    hB.summable
+  have hterm (n : ℕ) :
+      realBinomialTerm β (n + 1) x =
+        x * realBinomialTerm (β - 1) n x +
+          realBinomialTerm (β - 1) (n + 1) x := by
+    unfold realBinomialTerm
+    rw [real_choose_succ_pascal β n, pow_succ]
+    ring
+  rw [hβ.tsum_eq_zero_add]
+  rw [tsum_congr hterm]
+  rw [(hL.mul_left x).tsum_add hTail]
+  rw [hL.tsum_mul_left, hB.tsum_eq]
+  rw [show realBinomialTerm β 0 x = 1 by
+    simp [realBinomialTerm, Ring.choose_zero_right]]
+  ring
+
+def realBinomialSum (β x : ℝ) : ℝ :=
+  ∑' n, realBinomialTerm β n x
+
+theorem hasDerivAt_realBinomialSum_ode (β x : ℝ) (hx : |x| < 1) :
+    HasDerivAt (realBinomialSum β)
+      ((β / (1 + x)) * realBinomialSum β x) x := by
+  have hbase : 1 + x ≠ 0 := by
+    have := (abs_lt.mp hx).1
+    linarith
+  have hderiv := hasDerivAt_tsum_realBinomialTerm_eq β x hx
+  unfold realBinomialSum
+  convert hderiv using 1
+  rw [tsum_realBinomialTerm_pascal β x hx]
+  field_simp
+  ring
+
+theorem realBinomialSum_zero (β : ℝ) : realBinomialSum β 0 = 1 := by
+  unfold realBinomialSum
+  rw [tsum_eq_single 0]
+  · simp [realBinomialTerm, Ring.choose_zero_right]
+  · intro n hn
+    have hnpos : 0 < n := Nat.pos_of_ne_zero hn
+    simp [realBinomialTerm, zero_pow hnpos.ne']
+
+private theorem SeparatedBinomialSeries_hasDerivAt_realBinomialSum_mul_negRpow (β x : ℝ) (hx : |x| < 1) :
+    HasDerivAt
+      (fun y ↦ realBinomialSum β y * (1 + y) ^ (-β))
+      0 x := by
+  have hbase : 0 < 1 + x := by
+    have := (abs_lt.mp hx).1
+    linarith
+  have hF := hasDerivAt_realBinomialSum_ode β x hx
+  have hp :
+      HasDerivAt (fun y : ℝ ↦ (1 + y) ^ (-β))
+        ((-β) * (1 + x) ^ (-β - 1)) x := by
+    convert
+      ((hasDerivAt_const x 1).add (hasDerivAt_id x)).rpow_const
+        (Or.inl hbase.ne') using 1 ; simp only [id_eq] ; ring
+  convert hF.mul hp using 1
+  rw [Real.rpow_sub_one hbase.ne' (-β)]
+  field_simp
+  ring
+
+/-- The generalized real binomial theorem on the full open unit disk. -/
+theorem tsum_real_choose_mul_pow_eq_rpow (β x : ℝ) (hx : |x| < 1) :
+    ∑' n : ℕ, Ring.choose β n * x ^ n = (1 + x) ^ β := by
+  let H : ℝ → ℝ := fun y ↦ realBinomialSum β y * (1 + y) ^ (-β)
+  have hdiff : DifferentiableOn ℝ H (Set.Ioo (-1) 1) := by
+    intro y hy
+    exact (SeparatedBinomialSeries_hasDerivAt_realBinomialSum_mul_negRpow β y
+      (abs_lt.2 hy)).differentiableAt.differentiableWithinAt
+  have hzero : Set.Ioo (-1 : ℝ) 1 |>.EqOn (deriv H) 0 := by
+    intro y hy
+    exact (SeparatedBinomialSeries_hasDerivAt_realBinomialSum_mul_negRpow β y (abs_lt.2 hy)).deriv
+  have hconst :
+      H x = H 0 :=
+    isOpen_Ioo.is_const_of_deriv_eq_zero isPreconnected_Ioo hdiff hzero
+      (abs_lt.mp hx) (by norm_num)
+  have hHx : H x = 1 := by
+    rw [hconst]
+    simp [H, realBinomialSum_zero]
+  have hbase : 0 < 1 + x := by
+    have := (abs_lt.mp hx).1
+    linarith
+  change realBinomialSum β x = (1 + x) ^ β
+  dsimp [H] at hHx
+  rw [Real.rpow_neg hbase.le] at hHx
+  have hp : (1 + x) ^ β ≠ 0 := (Real.rpow_pos_of_pos hbase β).ne'
+  field_simp [hp] at hHx
+  exact hHx
+
+end
+
+end BEMOC.Definitive
+end
+/- End BEMOCFormalization.SeparatedBinomialSeries -/
+
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
+/- Begin BEMOCFormalization.BinomialTail -/
+section
+
+open scoped BigOperators
+namespace BEMOC.Definitive
+
+/-- Positive coefficients of `1 - sqrt (1-z)`, starting at degree one. -/
+noncomputable def chordBinomialCoeff (m : ℕ) : ℝ :=
+  -((-1 : ℝ) ^ m * Ring.choose (1 / 2 : ℝ) m)
+
+private theorem BinomialTail_chordBinomialCoeff_one : chordBinomialCoeff 1 = 1 / 2 := by
+  norm_num [chordBinomialCoeff]
+
+/-- The coefficient recurrence, with its positive form after degree one. -/
+theorem chordBinomialCoeff_succ (m : ℕ) (_hm : 1 ≤ m) :
+    (m + 1 : ℝ) * chordBinomialCoeff (m + 1) =
+      ((m : ℝ) - 1 / 2) * chordBinomialCoeff m := by
+  unfold chordBinomialCoeff
+  have h := real_choose_succ (1 / 2 : ℝ) m
+  rw [pow_succ]
+  calc
+    (m + 1 : ℝ) * -(((-1 : ℝ) ^ m * -1) * Ring.choose (1 / 2 : ℝ) (m + 1)) =
+        (-1 : ℝ) ^ m * ((m + 1 : ℝ) * Ring.choose (1 / 2 : ℝ) (m + 1)) := by ring
+    _ = (-1 : ℝ) ^ m * ((1 / 2 - m) * Ring.choose (1 / 2 : ℝ) m) := by rw [h]
+    _ = ((m : ℝ) - 1 / 2) * -((-1 : ℝ) ^ m * Ring.choose (1 / 2 : ℝ) m) := by ring
+
+/-- Every nonconstant coefficient is positive. -/
+theorem chordBinomialCoeff_pos (m : ℕ) (hm : 1 ≤ m) :
+    0 < chordBinomialCoeff m := by
+  induction m, hm using Nat.le_induction with
+  | base => simp [BinomialTail_chordBinomialCoeff_one]
+  | succ m hm ih =>
+      have h := chordBinomialCoeff_succ m hm
+      have hh : (1 : ℝ) ≤ m := by exact_mod_cast hm
+      have hfactor : (0 : ℝ) < (m : ℝ) - 1 / 2 := by linarith
+      have hden : (0 : ℝ) < m + 1 := by positivity
+      nlinarith [mul_pos hfactor ih]
+
+private noncomputable def BinomialTail_chordWallisCoeff (m : ℕ) : ℝ :=
+  (2 * (m : ℝ) - 1) * chordBinomialCoeff m
+
+private theorem BinomialTail_chordWallisCoeff_one : BinomialTail_chordWallisCoeff 1 = 1 / 2 := by
+  norm_num [BinomialTail_chordWallisCoeff, BinomialTail_chordBinomialCoeff_one]
+
+private theorem BinomialTail_chordWallisCoeff_pos (m : ℕ) (hm : 1 ≤ m) :
+    0 < BinomialTail_chordWallisCoeff m := by
+  unfold BinomialTail_chordWallisCoeff
+  have hh : (1 : ℝ) ≤ m := by exact_mod_cast hm
+  exact mul_pos (by linarith) (chordBinomialCoeff_pos m hm)
+
+private theorem BinomialTail_chordWallisCoeff_succ (m : ℕ) (hm : 1 ≤ m) :
+    (2 * (m : ℝ) + 2) * BinomialTail_chordWallisCoeff (m + 1) =
+      (2 * (m : ℝ) + 1) * BinomialTail_chordWallisCoeff m := by
+  have h := chordBinomialCoeff_succ m hm
+  unfold BinomialTail_chordWallisCoeff
+  push_cast
+  nlinarith [h]
+
+private theorem BinomialTail_chordWallisCoeff_sq_lower (m : ℕ) (hm : 1 ≤ m) :
+    1 ≤ 4 * (m : ℝ) * BinomialTail_chordWallisCoeff m ^ 2 := by
+  induction m, hm using Nat.le_induction with
+  | base => norm_num [BinomialTail_chordWallisCoeff_one]
+  | succ m hm ih =>
+      have hrec := BinomialTail_chordWallisCoeff_succ m hm
+      have hb0 := BinomialTail_chordWallisCoeff_pos m hm
+      have hb1 := BinomialTail_chordWallisCoeff_pos (m + 1) (by omega)
+      have hm0 : (0 : ℝ) < m := by exact_mod_cast hm
+      have hpoly : (m : ℝ) * (2 * m + 2) ^ 2 ≤
+          (m + 1) * (2 * m + 1) ^ 2 := by nlinarith [sq_nonneg (m : ℝ)]
+      have hrec_sq : (2 * (m : ℝ) + 2) ^ 2 * BinomialTail_chordWallisCoeff (m + 1) ^ 2 =
+          (2 * (m : ℝ) + 1) ^ 2 * BinomialTail_chordWallisCoeff m ^ 2 := by nlinarith [congrArg (fun x : ℝ => x ^ 2) hrec]
+      have hcompare : (m : ℝ) * BinomialTail_chordWallisCoeff m ^ 2 ≤
+          (m + 1) * BinomialTail_chordWallisCoeff (m + 1) ^ 2 := by
+        have hsq0 : 0 ≤ BinomialTail_chordWallisCoeff m ^ 2 := sq_nonneg _
+        have hmul := mul_le_mul_of_nonneg_right hpoly hsq0
+        nlinarith
+      push_cast
+      nlinarith
+
+private theorem BinomialTail_chordWallisCoeff_sq_upper (m : ℕ) (hm : 1 ≤ m) :
+    (m + 1 : ℝ) * BinomialTail_chordWallisCoeff m ^ 2 ≤ 1 := by
+  induction m, hm using Nat.le_induction with
+  | base => norm_num [BinomialTail_chordWallisCoeff_one]
+  | succ m hm ih =>
+      have hrec := BinomialTail_chordWallisCoeff_succ m hm
+      have hb0 := BinomialTail_chordWallisCoeff_pos m hm
+      have hb1 := BinomialTail_chordWallisCoeff_pos (m + 1) (by omega)
+      have hm0 : (0 : ℝ) < m := by exact_mod_cast hm
+      have hpoly : (m + 2 : ℝ) * (2 * m + 1) ^ 2 ≤
+          (m + 1) * (2 * m + 2) ^ 2 := by nlinarith [sq_nonneg (m : ℝ)]
+      have hrec_sq : (2 * (m : ℝ) + 2) ^ 2 * BinomialTail_chordWallisCoeff (m + 1) ^ 2 =
+          (2 * (m : ℝ) + 1) ^ 2 * BinomialTail_chordWallisCoeff m ^ 2 := by
+        nlinarith [congrArg (fun x : ℝ => x ^ 2) hrec]
+      have hcompare : (m + 2 : ℝ) * BinomialTail_chordWallisCoeff (m + 1) ^ 2 ≤
+          (m + 1) * BinomialTail_chordWallisCoeff m ^ 2 := by
+        have hsq0 : 0 ≤ BinomialTail_chordWallisCoeff m ^ 2 := sq_nonneg _
+        have hmul := mul_le_mul_of_nonneg_right hpoly hsq0
+        nlinarith
+      push_cast
+      nlinarith
+
+/-- Elementary inverse-three-halves majorant. -/
+theorem chordBinomialCoeff_upper (m : ℕ) (hm : 1 ≤ m) :
+    chordBinomialCoeff m ≤ 1 / ((m : ℝ) * Real.sqrt m) := by
+  have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast hm
+  have hm0 : (0 : ℝ) < m := by linarith
+  have hsqrt : 0 < Real.sqrt (m : ℝ) := Real.sqrt_pos.2 hm0
+  have hsqroot : (Real.sqrt (m : ℝ)) ^ 2 = m := Real.sq_sqrt hm0.le
+  have ha := chordBinomialCoeff_pos m hm
+  have hb := BinomialTail_chordWallisCoeff_sq_upper m hm
+  unfold BinomialTail_chordWallisCoeff at hb
+  have hfactor : (m : ℝ) ^ 2 ≤ (2 * m - 1) ^ 2 := by nlinarith
+  have hsqnonneg : 0 ≤ (m : ℝ) * chordBinomialCoeff m ^ 2 := by positivity
+  have hmul := mul_le_mul_of_nonneg_right hfactor hsqnonneg
+  have hscaled : ((m : ℝ) * Real.sqrt m * chordBinomialCoeff m) ^ 2 ≤ 1 := by
+    nlinarith [hsqroot]
+  have hscaled_pos : 0 ≤ (m : ℝ) * Real.sqrt m * chordBinomialCoeff m := by positivity
+  have hlinear : (m : ℝ) * Real.sqrt m * chordBinomialCoeff m ≤ 1 := by nlinarith
+  apply (le_div_iff₀ (by positivity : 0 < (m : ℝ) * Real.sqrt m)).2
+  nlinarith
+
+/-- A concrete inverse-three-halves lower bound for every coefficient. -/
+theorem chordBinomialCoeff_lower (m : ℕ) (hm : 1 ≤ m) :
+    1 / (4 * (m : ℝ) * Real.sqrt m) ≤ chordBinomialCoeff m := by
+  have hm0 : (0 : ℝ) < m := by exact_mod_cast hm
+  have hsqrt : 0 < Real.sqrt (m : ℝ) := Real.sqrt_pos.2 hm0
+  have hsqroot : (Real.sqrt (m : ℝ)) ^ 2 = m := Real.sq_sqrt hm0.le
+  have ha := chordBinomialCoeff_pos m hm
+  have hb := BinomialTail_chordWallisCoeff_sq_lower m hm
+  unfold BinomialTail_chordWallisCoeff at hb
+  have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast hm
+  have hfactor : (2 * (m : ℝ) - 1) ^ 2 ≤ 4 * (m : ℝ) ^ 2 := by nlinarith
+  have hsqnonneg : 0 ≤ (m : ℝ) * chordBinomialCoeff m ^ 2 := by positivity
+  have hmul := mul_le_mul_of_nonneg_right hfactor hsqnonneg
+  have hscaled : 1 ≤ (4 * (m : ℝ) * Real.sqrt m * chordBinomialCoeff m) ^ 2 := by
+    nlinarith [hsqroot]
+  have hscaled_pos : 0 ≤ 4 * (m : ℝ) * Real.sqrt m * chordBinomialCoeff m := by positivity
+  have hlinear : 1 ≤ 4 * (m : ℝ) * Real.sqrt m * chordBinomialCoeff m := by
+    nlinarith
+  apply (div_le_iff₀ (by positivity : 0 < 4 * (m : ℝ) * Real.sqrt m)).2
+  nlinarith
+
+/-- A dyadic block already contains the required square-root mass. -/
+theorem chordBinomialCoeff_even_block_lower (n : ℕ) (hn : 1 ≤ n) :
+    1 / (32 * Real.sqrt (n : ℝ)) ≤
+      ∑ r ∈ Finset.Ico n (2 * n), chordBinomialCoeff (2 * r) := by
+  have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+  have hsqrt0 : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.2 hn0
+  have hterm (r : ℕ) (hr : r ∈ Finset.Ico n (2 * n)) :
+      1 / (32 * (n : ℝ) * Real.sqrt n) ≤ chordBinomialCoeff (2 * r) := by
+    have hrlo : n ≤ r := (Finset.mem_Ico.mp hr).1
+    have hrhi : r < 2 * n := (Finset.mem_Ico.mp hr).2
+    have hm1 : 1 ≤ 2 * r := by omega
+    have hm0 : (0 : ℝ) < 2 * r := by exact_mod_cast hm1
+    have hmle : (2 * r : ℝ) ≤ 4 * n := by exact_mod_cast (by omega : 2 * r ≤ 4 * n)
+    have hsqrtle : Real.sqrt (2 * r : ℝ) ≤ 2 * Real.sqrt (n : ℝ) := by
+      calc
+        Real.sqrt (2 * r : ℝ) ≤ Real.sqrt (4 * (n : ℝ)) := Real.sqrt_le_sqrt hmle
+        _ = 2 * Real.sqrt (n : ℝ) := by
+          have hsqrt4 : Real.sqrt (4 : ℝ) = 2 := by
+            rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq_eq_abs]
+            norm_num
+          rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 4), hsqrt4]
+    have hden : 4 * (2 * r : ℝ) * Real.sqrt (2 * r : ℝ) ≤
+        32 * (n : ℝ) * Real.sqrt n := by
+      have hprod := mul_le_mul hmle hsqrtle
+        (Real.sqrt_nonneg _) (by positivity : (0 : ℝ) ≤ 4 * n)
+      nlinarith
+    have hden0 : 0 < 4 * (2 * r : ℝ) * Real.sqrt (2 * r : ℝ) := by positivity
+    have hden1 : 0 < 32 * (n : ℝ) * Real.sqrt n := by positivity
+    have hlow := chordBinomialCoeff_lower (2 * r) hm1
+    push_cast at hlow
+    exact (one_div_le_one_div_of_le hden0 hden).trans hlow
+  have hsum := Finset.sum_le_sum (s := Finset.Ico n (2 * n)) (fun r hr => hterm r hr)
+  simp only [Finset.sum_const, Nat.card_Ico, Nat.add_sub_cancel_left, nsmul_eq_mul] at hsum
+  convert hsum using 1
+  field_simp [hn0, hsqrt0]
+  ring
+
+/-- The block lower bound in the exponent convention of Beck's theorem. -/
+theorem chordBinomialCoeff_even_block_lower_rpow (n : ℕ) (hn : 1 ≤ n) :
+    (1 / 32 : ℝ) * (n : ℝ) ^ (-(1 : ℝ) / 2) ≤
+      ∑ r ∈ Finset.Ico n (2 * n), chordBinomialCoeff (2 * r) := by
+  have hn0 : (0 : ℝ) ≤ n := by positivity
+  convert chordBinomialCoeff_even_block_lower n hn using 1
+  rw [show (-(1 : ℝ) / 2) = -(1 / 2 : ℝ) by ring, Real.rpow_neg hn0,
+    ← Real.sqrt_eq_rpow]
+  ring
+
+/-- Absolute summability of the endpoint binomial coefficients. -/
+theorem summable_chordBinomialCoeff : Summable chordBinomialCoeff := by
+  have hp : Summable (fun m : ℕ => 1 / (m : ℝ) ^ (3 / 2 : ℝ)) :=
+    Real.summable_one_div_nat_rpow.mpr (by norm_num)
+  have hp' : Summable (fun n : ℕ => 1 / ((n + 1 : ℕ) : ℝ) ^ (3 / 2 : ℝ)) :=
+    hp.comp_injective (fun _ _ h => Nat.succ.inj h)
+  have heq (n : ℕ) :
+      1 / ((n + 1 : ℕ) : ℝ) ^ (3 / 2 : ℝ) =
+        1 / (((n + 1 : ℕ) : ℝ) * Real.sqrt ((n + 1 : ℕ) : ℝ)) := by
+    have hn : (0 : ℝ) < ((n + 1 : ℕ) : ℝ) := by positivity
+    rw [show (3 / 2 : ℝ) = 1 + 1 / 2 by ring, Real.rpow_add hn,
+      Real.rpow_one, ← Real.sqrt_eq_rpow]
+  have hupper : Summable (fun n : ℕ => chordBinomialCoeff (n + 1)) := by
+    apply Summable.of_nonneg_of_le
+      (fun n => (chordBinomialCoeff_pos (n + 1) (by omega)).le)
+      (fun n => (chordBinomialCoeff_upper (n + 1) (by omega)).trans_eq (heq n).symm)
+    simpa only [heq] using hp'
+  exact (summable_nat_add_iff 1).mp hupper
+
+end BEMOC.Definitive
+end
+/- End BEMOCFormalization.BinomialTail -/
+
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
+/- Begin BEMOCFormalization.CapLowerBound -/
+section
+
+open scoped BigOperators
+open MeasureTheory
+namespace BEMOC.Definitive
+
+/-- The even moments of the normalized height marginal. -/
+theorem sphereHeight_even_moment (r : ℕ) :
+    (∫ u : Sphere, sphereHeight u ^ (2 * r) ∂sigma) =
+      1 / ((2 * r + 1 : ℕ) : ℝ) := by
+  have hmap := MeasureTheory.integral_map
+    (μ := sigma) continuous_sphereHeight.measurable.aemeasurable
+    (continuous_id.pow (2 * r)).aestronglyMeasurable
+  change (∫ u : Sphere, (id (sphereHeight u)) ^ (2 * r) ∂sigma) = _
+  rw [← hmap, hasUniformHeightMarginal, uniformHeightMeasure,
+    integral_smul_measure]
+  simp only [id_eq, ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 1 / 2), smul_eq_mul]
+  rw [show (∫ z : ℝ, z ^ (2 * r) ∂volume.restrict (Set.Ioc (-1) 1)) =
+      ∫ z : ℝ in (-1)..1, z ^ (2 * r) by
+    rw [intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]]
+  rw [integral_pow]
+  simp only [one_pow, pow_add, pow_mul, neg_one_sq, one_pow, mul_neg,
+    Nat.cast_add, Nat.cast_mul, Nat.cast_one]
+  ring
+
+/-- Odd height moments vanish under the uniform marginal. -/
+theorem sphereHeight_odd_moment (r : ℕ) :
+    (∫ u : Sphere, sphereHeight u ^ (2 * r + 1) ∂sigma) = 0 := by
+  have hmap := MeasureTheory.integral_map
+    (μ := sigma) continuous_sphereHeight.measurable.aemeasurable
+    (continuous_id.pow (2 * r + 1)).aestronglyMeasurable
+  change (∫ u : Sphere, (id (sphereHeight u)) ^ (2 * r + 1) ∂sigma) = _
+  rw [← hmap, hasUniformHeightMarginal, uniformHeightMeasure,
+    integral_smul_measure]
+  simp only [id_eq, ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 1 / 2), smul_eq_mul]
+  rw [show (∫ z : ℝ, z ^ (2 * r + 1) ∂volume.restrict (Set.Ioc (-1) 1)) =
+      ∫ z : ℝ in (-1)..1, z ^ (2 * r + 1) by
+    rw [intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]]
+  rw [integral_pow]
+  simp [pow_add, pow_mul]
+
+private theorem CapLowerBound_inner_northPole_eq_height_moment (x : Sphere) :
+    @Inner.inner ℝ Ambient _ (x : Ambient) (northPole : Ambient) = sphereHeight x := by
+  simp [northPole, parallelPoint, parallelVector, sphereHeight,
+    EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Fin.sum_univ_succ]
+
+/-- Reflection invariance transfers any integer projection moment to the height coordinate. -/
+theorem sphere_projection_power_eq_height (u : Sphere) (m : ℕ) :
+    (∫ x : Sphere,
+      (@Inner.inner ℝ Ambient _ (u : Ambient) (x : Ambient)) ^ m ∂sigma) =
+      (∫ x : Sphere, sphereHeight x ^ m ∂sigma) := by
+  let R : Ambient ≃ₗᵢ[ℝ] Ambient :=
+    (ℝ ∙ ((u : Ambient) - (northPole : Ambient)))ᗮ.reflection
+  have hnorm : ‖(u : Ambient)‖ = ‖(northPole : Ambient)‖ := by
+    rw [norm_eq_of_mem_sphere u, norm_eq_of_mem_sphere northPole]
+  have hRu : R (u : Ambient) = (northPole : Ambient) :=
+    Submodule.reflection_sub hnorm
+  let e := sphereLinearIsometryEquiv R
+  have hmap := MeasureTheory.integral_map_equiv e
+    (μ := sigma) (fun x : Sphere ↦ sphereHeight x ^ m)
+  rw [sigma_reflection_invariant ((u : Ambient) - (northPole : Ambient))] at hmap
+  have hpoint (x : Sphere) :
+      sphereHeight (e x) = @Inner.inner ℝ Ambient _ (u : Ambient) (x : Ambient) := by
+    rw [← CapLowerBound_inner_northPole_eq_height_moment (e x)]
+    change @Inner.inner ℝ Ambient _ (R (x : Ambient)) (northPole : Ambient) = _
+    rw [← hRu, R.inner_map_map]
+    exact (real_inner_comm (x : Ambient) (u : Ambient)).symm
+  calc
+    _ = ∫ x : Sphere, sphereHeight (e x) ^ m ∂sigma := by
+      apply integral_congr_ae
+      filter_upwards with x
+      rw [hpoint]
+    _ = ∫ x : Sphere, sphereHeight x ^ m ∂sigma := hmap.symm
+
+
+/-- Every unit direction has the same even projection moments. -/
+theorem sphere_projection_even_moment (u : Sphere) (r : ℕ) :
+    (∫ x : Sphere,
+      (@Inner.inner ℝ Ambient _ (u : Ambient) (x : Ambient)) ^ (2 * r) ∂sigma) =
+      1 / ((2 * r + 1 : ℕ) : ℝ) := by
+  rw [sphere_projection_power_eq_height]
+  exact sphereHeight_even_moment r
+
+/-- Every odd projection moment vanishes. -/
+theorem sphere_projection_odd_moment (u : Sphere) (r : ℕ) :
+    (∫ x : Sphere,
+      (@Inner.inner ℝ Ambient _ (u : Ambient) (x : Ambient)) ^ (2 * r + 1) ∂sigma) =
+      0 := by
+  rw [sphere_projection_power_eq_height]
+  exact sphereHeight_odd_moment r
+
+/-- Diagonal terms alone give the universal even-moment lower bound. -/
+theorem finite_even_projection_energy_ge_card {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (r : ℕ) :
+    (Fintype.card ι : ℝ) ≤
+      ∑ i : ι, ∑ j : ι,
+        (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ (2 * r) := by
+  have hdiag (i : ι) :
+      (@Inner.inner ℝ Ambient _ (X i : Ambient) (X i : Ambient)) ^ (2 * r) = 1 := by
+    rw [real_inner_self_eq_norm_sq, norm_eq_of_mem_sphere (X i)]
+    norm_num
+  calc
+    (Fintype.card ι : ℝ) = ∑ i : ι,
+        (@Inner.inner ℝ Ambient _ (X i : Ambient) (X i : Ambient)) ^ (2 * r) := by
+      simp_rw [hdiag]
+      simp
+    _ ≤ ∑ i : ι, ∑ j : ι,
+        (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ (2 * r) := by
+      apply Finset.sum_le_sum
+      intro i hi
+      exact Finset.single_le_sum (s := Finset.univ)
+        (f := fun j : ι ↦
+          (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ (2 * r))
+        (fun j _ ↦ by
+          change 0 ≤ (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ (2 * r)
+          rw [show 2 * r = r * 2 by omega, pow_mul]
+          exact sq_nonneg _) (Finset.mem_univ i)
+
+/-- Pair energy of an integer power of the inner-product kernel is a
+finite sum of tensor-moment products. -/
+theorem kernelPairEnergy_innerPow (m : ℕ) (μ ν : Measure Sphere)
+    [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m) μ ν =
+      ∑ p : Fin m → Fin 3,
+        sphereTensorMoment μ m p * sphereTensorMoment ν m p := by
+  unfold kernelPairEnergy
+  simp_rw [sphereInnerKernel_pow_eq_feature_sum]
+  have hfeatureμ (p : Fin m → Fin 3) := integrable_sphereTensorFeature μ m p
+  have hfeatureν (p : Fin m → Fin 3) := integrable_sphereTensorFeature ν m p
+  have hinner (x : Sphere) :
+      (∫ y : Sphere, ∑ p : Fin m → Fin 3,
+        sphereTensorFeature m p x * sphereTensorFeature m p y ∂ν) =
+      ∑ p : Fin m → Fin 3,
+        sphereTensorFeature m p x * sphereTensorMoment ν m p := by
+    rw [integral_finset_sum]
+    · simp_rw [integral_const_mul]
+      rfl
+    · intro p hp
+      exact (hfeatureν p).const_mul _
+  simp_rw [hinner]
+  rw [integral_finset_sum]
+  · simp_rw [integral_mul_const]
+    rfl
+  · intro p hp
+    exact (hfeatureμ p).mul_const _
+
+/-- Integer powers of the inner-product kernel are positive definite for
+finite positive measures. -/
+theorem measurePositiveDefinite_innerPow (m : ℕ) :
+    MeasurePositiveDefinite (fun x y ↦ sphereInnerKernel x y ^ m) := by
+  intro μ ν hμ hν
+  letI : IsFiniteMeasure μ := IsFiniteMeasure.mk (lt_top_iff_ne_top.mpr hμ)
+  letI : IsFiniteMeasure ν := IsFiniteMeasure.mk (lt_top_iff_ne_top.mpr hν)
+  rw [kernelPairEnergy_innerPow, kernelPairEnergy_innerPow,
+    kernelPairEnergy_innerPow, kernelPairEnergy_innerPow]
+  have hs : 0 ≤ ∑ p : Fin m → Fin 3,
+      (sphereTensorMoment μ m p - sphereTensorMoment ν m p) ^ 2 :=
+    Finset.sum_nonneg (fun p _ ↦ sq_nonneg _)
+  simp_rw [sub_pow_two, pow_two] at hs
+  simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib] at hs
+  have hid : (∑ p : Fin m → Fin 3,
+      2 * sphereTensorMoment μ m p * sphereTensorMoment ν m p) =
+      (∑ p : Fin m → Fin 3,
+        sphereTensorMoment μ m p * sphereTensorMoment ν m p) +
+      (∑ p : Fin m → Fin 3,
+        sphereTensorMoment ν m p * sphereTensorMoment μ m p) := by
+    rw [← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro p hp
+    ring
+  rw [hid] at hs
+  linarith
+
+/-- Counting measure of a finite spherical configuration. -/
+noncomputable def empiricalSphereMeasure {ι : Type} [Fintype ι]
+    (X : ι → Sphere) : Measure Sphere :=
+  ∑ i : ι, Measure.dirac (X i)
+
+instance empiricalSphereMeasure_isFinite {ι : Type} [Fintype ι]
+    (X : ι → Sphere) : IsFiniteMeasure (empiricalSphereMeasure X) := by
+  unfold empiricalSphereMeasure
+  infer_instance
+
+@[simp] theorem sphereTensorMoment_empiricalSphereMeasure {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (m : ℕ) (p : Fin m → Fin 3) :
+    sphereTensorMoment (empiricalSphereMeasure X) m p =
+      ∑ i : ι, sphereTensorFeature m p (X i) := by
+  unfold sphereTensorMoment empiricalSphereMeasure
+  rw [integral_finset_sum_measure]
+  · simp
+  · intro i hi
+    exact integrable_sphereTensorFeature (Measure.dirac (X i)) m p
+
+/-- Pair energy against two counting measures is the ordered double sum. -/
+theorem kernelPairEnergy_empiricalSphereMeasure {ι κ : Type}
+    [Fintype ι] [Fintype κ] (K : Sphere → Sphere → ℝ)
+    (X : ι → Sphere) (Y : κ → Sphere) :
+    kernelPairEnergy K (empiricalSphereMeasure X) (empiricalSphereMeasure Y) =
+      ∑ i : ι, ∑ j : κ, K (X i) (Y j) := by
+  unfold kernelPairEnergy empiricalSphereMeasure
+  rw [integral_finset_sum_measure]
+  · apply Finset.sum_congr rfl
+    intro i hi
+    rw [integral_dirac]
+    rw [integral_finset_sum_measure]
+    · simp
+    · intro j hj
+      exact integrable_dirac
+  · intro i hi
+    exact integrable_dirac
+
+theorem sphereInnerKernel_eq_inner (x y : Sphere) :
+    sphereInnerKernel x y =
+      @Inner.inner ℝ Ambient _ (x : Ambient) (y : Ambient) := by
+  simp [sphereInnerKernel, EuclideanSpace.inner_eq_star_dotProduct, dotProduct, mul_comm]
+
+theorem kernelPairEnergy_smul_left (K : Sphere → Sphere → ℝ)
+    (c : ENNReal) (μ ν : Measure Sphere) :
+    kernelPairEnergy K (c • μ) ν = c.toReal * kernelPairEnergy K μ ν := by
+  unfold kernelPairEnergy
+  rw [integral_smul_measure]
+  rfl
+
+theorem kernelPairEnergy_smul_right (K : Sphere → Sphere → ℝ)
+    (c : ENNReal) (μ ν : Measure Sphere) :
+    kernelPairEnergy K μ (c • ν) = c.toReal * kernelPairEnergy K μ ν := by
+  unfold kernelPairEnergy
+  simp_rw [integral_smul_measure]
+  simp only [smul_eq_mul]
+  rw [integral_const_mul]
+
+/-- Uniform height moment of integer degree. -/
+noncomputable def sphereHeightMoment (m : ℕ) : ℝ :=
+  ∫ x : Sphere, sphereHeight x ^ m ∂sigma
+
+theorem kernelPairEnergy_innerPow_empirical_sigma {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (m : ℕ) :
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+      (empiricalSphereMeasure X) sigma =
+      (Fintype.card ι : ℝ) * sphereHeightMoment m := by
+  unfold kernelPairEnergy empiricalSphereMeasure
+  rw [integral_finset_sum_measure]
+  · simp_rw [integral_dirac]
+    have hpoint (i : ι) :
+        (∫ y : Sphere, sphereInnerKernel (X i) y ^ m ∂sigma) =
+          sphereHeightMoment m := by
+      simpa only [sphereInnerKernel_eq_inner, sphereHeightMoment] using
+        sphere_projection_power_eq_height (X i) m
+    simp_rw [hpoint]
+    simp
+  · intro i hi
+    exact integrable_dirac
+
+theorem kernelPairEnergy_innerPow_sigma_sigma (m : ℕ) :
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m) sigma sigma =
+      sphereHeightMoment m := by
+  unfold kernelPairEnergy
+  have hpoint (x : Sphere) :
+      (∫ y : Sphere, sphereInnerKernel x y ^ m ∂sigma) =
+        sphereHeightMoment m := by
+    simpa only [sphereInnerKernel_eq_inner, sphereHeightMoment] using
+      sphere_projection_power_eq_height x m
+  simp_rw [hpoint]
+  simp
+
+/-- The mixed even-power energy of a configuration with surface area is
+its cardinality times the uniform projection moment. -/
+theorem kernelPairEnergy_even_empirical_sigma {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (r : ℕ) :
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ (2 * r))
+      (empiricalSphereMeasure X) sigma =
+      (Fintype.card ι : ℝ) / ((2 * r + 1 : ℕ) : ℝ) := by
+  unfold kernelPairEnergy empiricalSphereMeasure
+  rw [integral_finset_sum_measure]
+  · simp_rw [integral_dirac]
+    have hpoint (i : ι) :
+        (∫ y : Sphere, sphereInnerKernel (X i) y ^ (2 * r) ∂sigma) =
+          1 / ((2 * r + 1 : ℕ) : ℝ) := by
+      simpa only [sphereInnerKernel_eq_inner] using
+        sphere_projection_even_moment (X i) r
+    simp_rw [hpoint]
+    simp [div_eq_mul_inv]
+  · intro i hi
+    exact integrable_dirac
+
+/-- The uniform even-power self-energy is its projection moment. -/
+theorem kernelPairEnergy_even_sigma_sigma (r : ℕ) :
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ (2 * r)) sigma sigma =
+      1 / ((2 * r + 1 : ℕ) : ℝ) := by
+  unfold kernelPairEnergy
+  have hpoint (x : Sphere) :
+      (∫ y : Sphere, sphereInnerKernel x y ^ (2 * r) ∂sigma) =
+        1 / ((2 * r + 1 : ℕ) : ℝ) := by
+    simpa only [sphereInnerKernel_eq_inner] using
+      sphere_projection_even_moment x r
+  simp_rw [hpoint]
+  simp
+
+/-- Positivity of every integer power-moment pair sum, including odd
+powers, follows from the tensor feature representation. -/
+theorem finite_projection_power_energy_nonneg {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (m : ℕ) :
+    0 ≤ ∑ i : ι, ∑ j : ι,
+      (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ m := by
+  let μ := empiricalSphereMeasure X
+  let K : Sphere → Sphere → ℝ := fun x y ↦ sphereInnerKernel x y ^ m
+  have hpd := measurePositiveDefinite_innerPow m μ 0
+    (measure_ne_top μ Set.univ) (by simp)
+  have hμμ : kernelPairEnergy K μ μ =
+      ∑ i : ι, ∑ j : ι,
+        (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ m := by
+    change kernelPairEnergy K (empiricalSphereMeasure X) (empiricalSphereMeasure X) = _
+    rw [kernelPairEnergy_empiricalSphereMeasure]
+    simp [K, sphereInnerKernel_eq_inner]
+  have hzero1 : kernelPairEnergy K μ 0 = 0 := by simp [kernelPairEnergy]
+  have hzero2 : kernelPairEnergy K 0 μ = 0 := by simp [kernelPairEnergy]
+  have hzero3 : kernelPairEnergy K 0 0 = 0 := by simp [kernelPairEnergy]
+  rw [hzero1, hzero2, hzero3, hμμ] at hpd
+  linarith
+
+/-- Every even power-moment gap is nonnegative. This is the finite
+positive-definite-kernel step in Beck's argument. -/
+theorem even_projection_moment_gap_nonneg {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (r : ℕ) :
+    (Fintype.card ι : ℝ) ^ 2 / ((2 * r + 1 : ℕ) : ℝ) ≤
+      ∑ i : ι, ∑ j : ι,
+        (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ (2 * r) := by
+  let μ := empiricalSphereMeasure X
+  let ν : Measure Sphere := (Fintype.card ι : ENNReal) • sigma
+  let K : Sphere → Sphere → ℝ := fun x y ↦ sphereInnerKernel x y ^ (2 * r)
+  haveI : IsFiniteMeasure ν := IsFiniteMeasure.mk (by
+    dsimp [ν]
+    rw [sigma_apply_univ]
+    simp)
+  have hcomm : kernelPairEnergy K sigma μ = kernelPairEnergy K μ sigma := by
+    change kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ (2 * r)) sigma μ = _
+    rw [kernelPairEnergy_innerPow, kernelPairEnergy_innerPow]
+    apply Finset.sum_congr rfl
+    intro p hp
+    ring
+  have hμν : kernelPairEnergy K μ ν =
+      (Fintype.card ι : ℝ) ^ 2 / ((2 * r + 1 : ℕ) : ℝ) := by
+    change kernelPairEnergy K μ ((Fintype.card ι : ENNReal) • sigma) = _
+    rw [kernelPairEnergy_smul_right, kernelPairEnergy_even_empirical_sigma]
+    simp only [ENNReal.toReal_natCast]
+    ring
+  have hνμ : kernelPairEnergy K ν μ =
+      (Fintype.card ι : ℝ) ^ 2 / ((2 * r + 1 : ℕ) : ℝ) := by
+    change kernelPairEnergy K ((Fintype.card ι : ENNReal) • sigma) μ = _
+    rw [kernelPairEnergy_smul_left, hcomm, kernelPairEnergy_even_empirical_sigma]
+    simp only [ENNReal.toReal_natCast]
+    ring
+  have hνν : kernelPairEnergy K ν ν =
+      (Fintype.card ι : ℝ) ^ 2 / ((2 * r + 1 : ℕ) : ℝ) := by
+    change kernelPairEnergy K ((Fintype.card ι : ENNReal) • sigma)
+      ((Fintype.card ι : ENNReal) • sigma) = _
+    rw [kernelPairEnergy_smul_left, kernelPairEnergy_smul_right,
+      kernelPairEnergy_even_sigma_sigma]
+    simp only [ENNReal.toReal_natCast]
+    ring
+  have hμμ : kernelPairEnergy K μ μ =
+      ∑ i : ι, ∑ j : ι,
+        (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ (2 * r) := by
+    change kernelPairEnergy K (empiricalSphereMeasure X) (empiricalSphereMeasure X) = _
+    rw [kernelPairEnergy_empiricalSphereMeasure]
+    simp [K, sphereInnerKernel_eq_inner]
+  have hpd := measurePositiveDefinite_innerPow (2 * r) μ ν
+    (measure_ne_top μ Set.univ) (measure_ne_top ν Set.univ)
+  rw [hμν, hνμ, hνν, hμμ] at hpd
+  linarith
+
+/-- In unnormalized energy units, high even-degree gaps are at least `n/2`. -/
+theorem even_power_energy_gap_ge_half_card {n : ℕ} (hn : 0 < n)
+    (X : Fin n → Sphere) (r : ℕ) (hr : n ≤ r) :
+    (n : ℝ) / 2 ≤
+      kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ (2 * r))
+        (empiricalSphereMeasure X) (empiricalSphereMeasure X) -
+      kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ (2 * r))
+        ((n : ENNReal) • sigma) ((n : ENNReal) • sigma) := by
+  rw [kernelPairEnergy_empiricalSphereMeasure,
+    kernelPairEnergy_smul_left, kernelPairEnergy_smul_right,
+    kernelPairEnergy_even_sigma_sigma]
+  simp only [ENNReal.toReal_natCast]
+  simp_rw [sphereInnerKernel_eq_inner]
+  have hsum := finite_even_projection_energy_ge_card X r
+  simp only [Fintype.card_fin] at hsum
+  have hnreal : (0 : ℝ) < n := by exact_mod_cast hn
+  have hrreal : (n : ℝ) ≤ r := by exact_mod_cast hr
+  have hden : (0 : ℝ) < ((2 * r + 1 : ℕ) : ℝ) := by positivity
+  have hfrac : (n : ℝ) * ((n : ℝ) * (1 / ((2 * r + 1 : ℕ) : ℝ))) ≤
+      (n : ℝ) / 2 := by
+    have hden2 : (2 * (n : ℝ)) ≤ ((2 * r + 1 : ℕ) : ℝ) := by
+      push_cast
+      linarith
+    have hbase : (n : ℝ) / ((2 * r + 1 : ℕ) : ℝ) ≤ 1 / 2 := by
+      apply (div_le_div_iff₀ hden (by norm_num : (0 : ℝ) < 2)).2
+      linarith
+    have hmul := mul_le_mul_of_nonneg_left hbase hnreal.le
+    convert hmul using 1 <;> ring
+  linarith
+
+/-- The interior binomial partial kernel for regularized chordal distance. -/
+noncomputable def chordPartialKernel (ρ : ℝ) (M : ℕ) (x y : Sphere) : ℝ :=
+  Real.sqrt 2 * ∑ m ∈ Finset.range M,
+    Ring.choose (1 / 2 : ℝ) m * (-ρ * sphereInnerKernel x y) ^ m
+
+/-- The regularized chordal kernel, whose limit at `ρ=1` is distance. -/
+noncomputable def chordRegularizedKernel (ρ : ℝ) (x y : Sphere) : ℝ :=
+  Real.sqrt 2 * Real.sqrt (1 - ρ * sphereInnerKernel x y)
+
+theorem chordPartialKernel_tendsto {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : ρ < 1)
+    (x y : Sphere) :
+    Filter.Tendsto (fun M ↦ chordPartialKernel ρ M x y) Filter.atTop
+      (_root_.nhds (chordRegularizedKernel ρ x y)) := by
+  have hinner := sphereInnerKernel_abs_le_one x y
+  have hx : |-(ρ * sphereInnerKernel x y)| < 1 := by
+    rw [abs_neg, abs_mul, abs_of_nonneg hρ]
+    nlinarith [mul_le_mul_of_nonneg_left hinner hρ]
+  have hseries := ((summable_real_choose_mul_pow (1 / 2 : ℝ)
+    (-(ρ * sphereInnerKernel x y)) hx).hasSum).tendsto_sum_nat
+  have hlim := hseries.const_mul (Real.sqrt 2)
+  rw [tsum_real_choose_mul_pow_eq_rpow (1 / 2 : ℝ)
+    (-(ρ * sphereInnerKernel x y)) hx] at hlim
+  simpa [chordPartialKernel, chordRegularizedKernel,
+    Real.sqrt_eq_rpow, mul_assoc] using hlim
+
+/-- A uniform bound on every binomial partial kernel at fixed `ρ<1`. -/
+theorem chordPartialKernel_norm_le {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : ρ < 1)
+    (M : ℕ) (x y : Sphere) :
+    ‖chordPartialKernel ρ M x y‖ ≤
+      Real.sqrt 2 * (∑' m : ℕ, |Ring.choose (1 / 2 : ℝ) m * ρ ^ m|) := by
+  have hsum : Summable (fun m : ℕ ↦ Ring.choose (1 / 2 : ℝ) m * ρ ^ m) :=
+    summable_real_choose_mul_pow (1 / 2 : ℝ) ρ (by rw [abs_of_nonneg hρ]; exact hρ1)
+  have hmajor : HasSum (fun m : ℕ ↦ |Ring.choose (1 / 2 : ℝ) m * ρ ^ m|)
+      (∑' m : ℕ, |Ring.choose (1 / 2 : ℝ) m * ρ ^ m|) := hsum.norm.hasSum
+  have hinner : |sphereInnerKernel x y| ≤ 1 := sphereInnerKernel_abs_le_one x y
+  have hterm (m : ℕ) :
+      |Ring.choose (1 / 2 : ℝ) m * (-ρ * sphereInnerKernel x y) ^ m| ≤
+        |Ring.choose (1 / 2 : ℝ) m * ρ ^ m| := by
+    simp only [abs_mul, abs_pow, abs_neg, abs_of_nonneg hρ,
+      abs_of_nonneg (pow_nonneg hρ _), mul_pow]
+    apply mul_le_mul_of_nonneg_left _ (abs_nonneg _)
+    exact mul_le_of_le_one_right (pow_nonneg hρ _)
+      (pow_le_one₀ (abs_nonneg _) hinner)
+  rw [Real.norm_eq_abs, chordPartialKernel, abs_mul,
+    abs_of_nonneg (Real.sqrt_nonneg _)]
+  apply mul_le_mul_of_nonneg_left _ (Real.sqrt_nonneg _)
+  calc
+    |∑ m ∈ Finset.range M,
+      Ring.choose (1 / 2 : ℝ) m * (-ρ * sphereInnerKernel x y) ^ m| ≤
+      ∑ m ∈ Finset.range M,
+        |Ring.choose (1 / 2 : ℝ) m * (-ρ * sphereInnerKernel x y) ^ m| :=
+      Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ m ∈ Finset.range M,
+        |Ring.choose (1 / 2 : ℝ) m * ρ ^ m| :=
+      Finset.sum_le_sum (fun m hm ↦ hterm m)
+    _ ≤ _ := sum_le_hasSum (Finset.range M) (fun m hm ↦ abs_nonneg _) hmajor
+
+theorem continuous_chordPartialKernel_prod (ρ : ℝ) (M : ℕ) :
+    Continuous (fun p : Sphere × Sphere ↦ chordPartialKernel ρ M p.1 p.2) := by
+  unfold chordPartialKernel
+  apply continuous_const.mul
+  apply continuous_finset_sum
+  intro m hm
+  exact continuous_const.mul ((continuous_const.mul
+    continuous_sphereInnerKernel_prod).pow m)
+
+theorem continuous_chordRegularizedKernel_prod (ρ : ℝ) :
+    Continuous (fun p : Sphere × Sphere ↦ chordRegularizedKernel ρ p.1 p.2) := by
+  unfold chordRegularizedKernel
+  exact continuous_const.mul (Real.continuous_sqrt.comp
+    (continuous_const.sub (continuous_const.mul continuous_sphereInnerKernel_prod)))
+
+/-- At an interior regularization parameter, pair energies of partial
+binomial kernels converge to the regularized chordal pair energy. -/
+theorem kernelPairEnergy_chordPartial_tendsto {ρ : ℝ}
+    (hρ : 0 ≤ ρ) (hρ1 : ρ < 1)
+    (μ ν : Measure Sphere) [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
+    Filter.Tendsto (fun M ↦ kernelPairEnergy (chordPartialKernel ρ M) μ ν)
+      Filter.atTop (_root_.nhds (kernelPairEnergy (chordRegularizedKernel ρ) μ ν)) := by
+  simp_rw [kernelPairEnergy_eq_integral_prod μ ν
+    (continuous_chordPartialKernel_prod ρ _),
+    kernelPairEnergy_eq_integral_prod μ ν
+      (continuous_chordRegularizedKernel_prod ρ)]
+  apply MeasureTheory.tendsto_integral_filter_of_norm_le_const
+  · exact Filter.Eventually.of_forall fun M ↦
+      (continuous_chordPartialKernel_prod ρ M).aestronglyMeasurable
+  · refine ⟨Real.sqrt 2 *
+      (∑' m : ℕ, |Ring.choose (1 / 2 : ℝ) m * ρ ^ m|),
+      Filter.Eventually.of_forall fun M ↦ ?_⟩
+    exact Filter.Eventually.of_forall fun p ↦
+      chordPartialKernel_norm_le hρ hρ1 M p.1 p.2
+  · exact Filter.Eventually.of_forall fun p ↦
+      chordPartialKernel_tendsto hρ hρ1 p.1 p.2
+
+/-- Finite binomial kernel pair energies split into integer-power pair energies. -/
+theorem kernelPairEnergy_chordPartial (ρ : ℝ) (M : ℕ)
+    (μ ν : Measure Sphere) [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
+    kernelPairEnergy (chordPartialKernel ρ M) μ ν =
+      ∑ m ∈ Finset.range M,
+        (Real.sqrt 2 * Ring.choose (1 / 2 : ℝ) m * (-ρ) ^ m) *
+          kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m) μ ν := by
+  have hrewrite (x y : Sphere) : chordPartialKernel ρ M x y =
+      ∑ m ∈ Finset.range M,
+        (Real.sqrt 2 * Ring.choose (1 / 2 : ℝ) m * (-ρ) ^ m) *
+          sphereInnerKernel x y ^ m := by
+    unfold chordPartialKernel
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro m hm
+    rw [mul_pow]
+    ring
+  rw [kernelPairEnergy_eq_integral_prod μ ν (continuous_chordPartialKernel_prod ρ M)]
+  simp_rw [hrewrite]
+  rw [integral_finset_sum]
+  · apply Finset.sum_congr rfl
+    intro m hm
+    rw [integral_const_mul,
+      kernelPairEnergy_eq_integral_prod μ ν (continuous_sphereInnerKernel_prod.pow m)]
+  · intro m hm
+    exact (continuous_const.mul (continuous_sphereInnerKernel_prod.pow m)).integrable_of_hasCompactSupport
+      (HasCompactSupport.of_compactSpace _)
+
+/-- Mixed and uniform power energies agree after scaling surface area to
+the number of sample points. -/
+theorem kernelPairEnergy_innerPow_mixed_eq_uniform {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (m : ℕ) :
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+      (empiricalSphereMeasure X) ((Fintype.card ι : ENNReal) • sigma) =
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+      ((Fintype.card ι : ENNReal) • sigma)
+      ((Fintype.card ι : ENNReal) • sigma) := by
+  rw [kernelPairEnergy_smul_right,
+    kernelPairEnergy_innerPow_empirical_sigma,
+    kernelPairEnergy_smul_left, kernelPairEnergy_smul_right,
+    kernelPairEnergy_innerPow_sigma_sigma]
+  simp only [ENNReal.toReal_natCast]
+
+/-- Mixed and uniform partial-binomial energies agree term by term. -/
+theorem kernelPairEnergy_chordPartial_mixed_eq_uniform {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (ρ : ℝ) (M : ℕ) :
+    kernelPairEnergy (chordPartialKernel ρ M)
+      (empiricalSphereMeasure X) ((Fintype.card ι : ENNReal) • sigma) =
+    kernelPairEnergy (chordPartialKernel ρ M)
+      ((Fintype.card ι : ENNReal) • sigma)
+      ((Fintype.card ι : ENNReal) • sigma) := by
+  haveI : IsFiniteMeasure ((Fintype.card ι : ENNReal) • sigma) :=
+    IsFiniteMeasure.mk (by simp [sigma_apply_univ])
+  rw [kernelPairEnergy_chordPartial, kernelPairEnergy_chordPartial]
+  apply Finset.sum_congr rfl
+  intro m hm
+  rw [kernelPairEnergy_innerPow_mixed_eq_uniform X m]
+
+/-- Mixed and uniform energies also agree for the regularized chordal kernel. -/
+theorem kernelPairEnergy_chordRegularized_mixed_eq_uniform {ι : Type}
+    [Fintype ι] (X : ι → Sphere) {ρ : ℝ}
+    (hρ : 0 ≤ ρ) (hρ1 : ρ < 1) :
+    kernelPairEnergy (chordRegularizedKernel ρ)
+      (empiricalSphereMeasure X) ((Fintype.card ι : ENNReal) • sigma) =
+    kernelPairEnergy (chordRegularizedKernel ρ)
+      ((Fintype.card ι : ENNReal) • sigma)
+      ((Fintype.card ι : ENNReal) • sigma) := by
+  haveI : IsFiniteMeasure ((Fintype.card ι : ENNReal) • sigma) :=
+    IsFiniteMeasure.mk (by simp [sigma_apply_univ])
+  have h₁ := kernelPairEnergy_chordPartial_tendsto hρ hρ1
+    (empiricalSphereMeasure X) ((Fintype.card ι : ENNReal) • sigma)
+  have h₂ := kernelPairEnergy_chordPartial_tendsto hρ hρ1
+    ((Fintype.card ι : ENNReal) • sigma)
+    ((Fintype.card ι : ENNReal) • sigma)
+  have hseq : (fun M ↦ kernelPairEnergy (chordPartialKernel ρ M)
+      (empiricalSphereMeasure X) ((Fintype.card ι : ENNReal) • sigma)) =
+      (fun M ↦ kernelPairEnergy (chordPartialKernel ρ M)
+        ((Fintype.card ι : ENNReal) • sigma)
+        ((Fintype.card ι : ENNReal) • sigma)) := by
+    funext M
+    exact kernelPairEnergy_chordPartial_mixed_eq_uniform X ρ M
+  rw [hseq] at h₁
+  exact tendsto_nhds_unique h₁ h₂
+
+/-- Every integer power moment of a finite configuration dominates the
+uniform moment after matching total masses. -/
+theorem kernelPairEnergy_innerPow_uniform_le_empirical {ι : Type}
+    [Fintype ι] (X : ι → Sphere) (m : ℕ) :
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+      ((Fintype.card ι : ENNReal) • sigma)
+      ((Fintype.card ι : ENNReal) • sigma) ≤
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X) := by
+  let μ := empiricalSphereMeasure X
+  let ν : Measure Sphere := (Fintype.card ι : ENNReal) • sigma
+  haveI : IsFiniteMeasure ν := IsFiniteMeasure.mk (by simp [ν, sigma_apply_univ])
+  have hcomm : kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m) ν μ =
+      kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m) μ ν := by
+    rw [kernelPairEnergy_innerPow, kernelPairEnergy_innerPow]
+    apply Finset.sum_congr rfl
+    intro p hp
+    ring
+  have hmix := kernelPairEnergy_innerPow_mixed_eq_uniform X m
+  change kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m) μ ν =
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m) ν ν at hmix
+  have hpd := measurePositiveDefinite_innerPow m μ ν
+    (measure_ne_top μ Set.univ) (measure_ne_top ν Set.univ)
+  rw [hcomm, hmix] at hpd
+  linarith
+
+/-- Finite regularized distance deficit is the positive binomial sum
+of power-kernel gaps. -/
+theorem chordPartial_deficit_eq_sum {ι : Type} [Fintype ι]
+    (X : ι → Sphere) (ρ : ℝ) (M : ℕ) :
+    kernelPairEnergy (chordPartialKernel ρ M)
+      ((Fintype.card ι : ENNReal) • sigma)
+      ((Fintype.card ι : ENNReal) • sigma) -
+    kernelPairEnergy (chordPartialKernel ρ M)
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X) =
+    ∑ m ∈ Finset.range M,
+      Real.sqrt 2 * chordBinomialCoeff m * ρ ^ m *
+        (kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+          (empiricalSphereMeasure X) (empiricalSphereMeasure X) -
+        kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+          ((Fintype.card ι : ENNReal) • sigma)
+          ((Fintype.card ι : ENNReal) • sigma)) := by
+  haveI : IsFiniteMeasure ((Fintype.card ι : ENNReal) • sigma) :=
+    IsFiniteMeasure.mk (by simp [sigma_apply_univ])
+  rw [kernelPairEnergy_chordPartial, kernelPairEnergy_chordPartial,
+    ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro m hm
+  unfold chordBinomialCoeff
+  rw [neg_pow]
+  ring
+
+theorem kernelPairEnergy_innerPow_zero_uniform_eq_empirical {ι : Type}
+    [Fintype ι] (X : ι → Sphere) :
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ 0)
+      ((Fintype.card ι : ENNReal) • sigma)
+      ((Fintype.card ι : ENNReal) • sigma) =
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ 0)
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X) := by
+  rw [kernelPairEnergy_smul_left, kernelPairEnergy_smul_right,
+    kernelPairEnergy_innerPow_sigma_sigma,
+    kernelPairEnergy_empiricalSphereMeasure]
+  simp [sphereHeightMoment]
+
+/-- A finite block of high even powers survives in every interior
+regularized distance deficit. -/
+theorem chordPartial_deficit_even_block_lower {n : ℕ} (hn : 0 < n)
+    (X : Fin n → Sphere) {ρ : ℝ} (hρ : 0 ≤ ρ)
+    (M : ℕ) (hM : 4 * n ≤ M) :
+    Real.sqrt 2 * ((n : ℝ) / 2) *
+      (∑ r ∈ Finset.Ico n (2 * n),
+        chordBinomialCoeff (2 * r) * ρ ^ (2 * r)) ≤
+    kernelPairEnergy (chordPartialKernel ρ M)
+      ((n : ENNReal) • sigma) ((n : ENNReal) • sigma) -
+    kernelPairEnergy (chordPartialKernel ρ M)
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X) := by
+  have hformula := chordPartial_deficit_eq_sum X ρ M
+  simp only [Fintype.card_fin] at hformula
+  rw [hformula]
+  let gap : ℕ → ℝ := fun m ↦
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X) -
+    kernelPairEnergy (fun x y ↦ sphereInnerKernel x y ^ m)
+      ((n : ENNReal) • sigma) ((n : ENNReal) • sigma)
+  have hgap (m : ℕ) : 0 ≤ gap m := by
+    simpa only [Fintype.card_fin] using
+      (sub_nonneg.mpr (kernelPairEnergy_innerPow_uniform_le_empirical X m))
+  have hterm (m : ℕ) :
+      0 ≤ Real.sqrt 2 * chordBinomialCoeff m * ρ ^ m * gap m := by
+    by_cases hm : m = 0
+    · subst m
+      have hz := kernelPairEnergy_innerPow_zero_uniform_eq_empirical X
+      simp only [Fintype.card_fin] at hz
+      dsimp [gap]
+      rw [← hz]
+      simp
+    · have hm1 : 1 ≤ m := Nat.one_le_iff_ne_zero.mpr hm
+      exact mul_nonneg (mul_nonneg (mul_nonneg (Real.sqrt_nonneg _)
+        (chordBinomialCoeff_pos m hm1).le) (pow_nonneg hρ _)) (hgap m)
+  let s := (Finset.Ico n (2 * n)).image (fun r : ℕ ↦ 2 * r)
+  have hsubset : s ⊆ Finset.range M := by
+    intro m hm
+    rcases Finset.mem_image.mp hm with ⟨r, hr, rfl⟩
+    simp only [Finset.mem_Ico] at hr
+    simp only [Finset.mem_range]
+    omega
+  have hsum : (∑ m ∈ s,
+      Real.sqrt 2 * chordBinomialCoeff m * ρ ^ m * gap m) ≤
+      ∑ m ∈ Finset.range M,
+        Real.sqrt 2 * chordBinomialCoeff m * ρ ^ m * gap m :=
+    Finset.sum_le_sum_of_subset_of_nonneg hsubset
+      (fun m hm _ ↦ hterm m)
+  have hinj : Set.InjOn (fun r : ℕ ↦ 2 * r) (Finset.Ico n (2 * n)) := by
+    intro a ha b hb hab
+    change 2 * a = 2 * b at hab
+    omega
+  rw [Finset.sum_image hinj] at hsum
+  have hblock :
+      Real.sqrt 2 * ((n : ℝ) / 2) *
+        (∑ r ∈ Finset.Ico n (2 * n),
+          chordBinomialCoeff (2 * r) * ρ ^ (2 * r)) ≤
+      ∑ r ∈ Finset.Ico n (2 * n),
+        Real.sqrt 2 * chordBinomialCoeff (2 * r) * ρ ^ (2 * r) * gap (2 * r) := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_le_sum
+    intro r hr
+    have hrn : n ≤ r := (Finset.mem_Ico.mp hr).1
+    have hlarge := even_power_energy_gap_ge_half_card hn X r hrn
+    change (n : ℝ) / 2 ≤ gap (2 * r) at hlarge
+    have hcoeff : 0 ≤ Real.sqrt 2 * chordBinomialCoeff (2 * r) * ρ ^ (2 * r) := by
+      have hr1 : 1 ≤ 2 * r := by omega
+      exact mul_nonneg (mul_nonneg (Real.sqrt_nonneg _)
+        (chordBinomialCoeff_pos (2 * r) hr1).le) (pow_nonneg hρ _)
+    nlinarith [mul_le_mul_of_nonneg_left hlarge hcoeff]
+  exact hblock.trans hsum
+
+/-- The regularized chordal deficit retains the same high even block. -/
+theorem chordRegularized_deficit_even_block_lower {n : ℕ} (hn : 0 < n)
+    (X : Fin n → Sphere) {ρ : ℝ} (hρ : 0 ≤ ρ) (hρ1 : ρ < 1) :
+    Real.sqrt 2 * ((n : ℝ) / 2) *
+      (∑ r ∈ Finset.Ico n (2 * n),
+        chordBinomialCoeff (2 * r) * ρ ^ (2 * r)) ≤
+    kernelPairEnergy (chordRegularizedKernel ρ)
+      ((n : ENNReal) • sigma) ((n : ENNReal) • sigma) -
+    kernelPairEnergy (chordRegularizedKernel ρ)
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X) := by
+  haveI : IsFiniteMeasure ((n : ENNReal) • sigma) :=
+    IsFiniteMeasure.mk (by simp [sigma_apply_univ])
+  have hlim := (kernelPairEnergy_chordPartial_tendsto hρ hρ1
+    ((n : ENNReal) • sigma) ((n : ENNReal) • sigma)).sub
+    (kernelPairEnergy_chordPartial_tendsto hρ hρ1
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X))
+  apply ge_of_tendsto hlim
+  filter_upwards [Filter.eventually_ge_atTop (4 * n)] with M hM
+  exact chordPartial_deficit_even_block_lower hn X hρ M hM
+
+private noncomputable def CapLowerBound_beckRho (k : ℕ) : ℝ := (k : ℝ) / (k + 1)
+
+private theorem CapLowerBound_beckRho_nonneg (k : ℕ) : 0 ≤ CapLowerBound_beckRho k := by
+  unfold CapLowerBound_beckRho
+  positivity
+
+private theorem CapLowerBound_beckRho_lt_one (k : ℕ) : CapLowerBound_beckRho k < 1 := by
+  unfold CapLowerBound_beckRho
+  apply (div_lt_iff₀ (by positivity : 0 < (k : ℝ) + 1)).2
+  linarith
+
+private theorem CapLowerBound_beckRho_tendsto_one :
+    Filter.Tendsto CapLowerBound_beckRho Filter.atTop (_root_.nhds (1 : ℝ)) := by
+  have h := RCLike.tendsto_add_mul_div_add_mul_atTop_nhds
+    (𝕜 := ℝ) 0 1 1 (d := 1) one_ne_zero
+  simpa [CapLowerBound_beckRho, add_comm, mul_comm] using h
+
+private theorem CapLowerBound_chordRegularizedKernel_norm_le_two {ρ : ℝ}
+    (hρ : 0 ≤ ρ) (hρ1 : ρ ≤ 1) (x y : Sphere) :
+    ‖chordRegularizedKernel ρ x y‖ ≤ 2 := by
+  have hinner := sphereInnerKernel_abs_le_one x y
+  have hρinner : |ρ * sphereInnerKernel x y| ≤ 1 := by
+    rw [abs_mul, abs_of_nonneg hρ]
+    exact (mul_le_mul_of_nonneg_left hinner hρ).trans (by simpa using hρ1)
+  have hbase : 0 ≤ 1 - ρ * sphereInnerKernel x y := by
+    have := (abs_le.mp hρinner).2
+    linarith
+  have hbase2 : 1 - ρ * sphereInnerKernel x y ≤ 2 := by
+    have := (abs_le.mp hρinner).1
+    linarith
+  have hsqrt : 0 ≤ Real.sqrt (1 - ρ * sphereInnerKernel x y) := Real.sqrt_nonneg _
+  have hsq := Real.sq_sqrt hbase
+  have hsqrt2 := Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)
+  unfold chordRegularizedKernel
+  rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg (Real.sqrt_nonneg _) hsqrt)]
+  nlinarith [mul_nonneg (Real.sqrt_nonneg 2) hsqrt]
+
+private theorem CapLowerBound_continuous_chordRegularizedKernel_rho (x y : Sphere) :
+    Continuous (fun ρ : ℝ ↦ chordRegularizedKernel ρ x y) := by
+  unfold chordRegularizedKernel
+  exact continuous_const.mul (Real.continuous_sqrt.comp
+    (continuous_const.sub (continuous_id.mul continuous_const)))
+
+/-- Pair energies of regularized kernels converge as `ρ ↑ 1`. -/
+theorem kernelPairEnergy_chordRegularized_tendsto_one
+    (μ ν : Measure Sphere) [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
+    Filter.Tendsto (fun k ↦ kernelPairEnergy (chordRegularizedKernel (CapLowerBound_beckRho k)) μ ν)
+      Filter.atTop (_root_.nhds (kernelPairEnergy (chordRegularizedKernel 1) μ ν)) := by
+  simp_rw [kernelPairEnergy_eq_integral_prod μ ν
+    (continuous_chordRegularizedKernel_prod _)]
+  apply MeasureTheory.tendsto_integral_filter_of_norm_le_const
+  · exact Filter.Eventually.of_forall fun k ↦
+      (continuous_chordRegularizedKernel_prod (CapLowerBound_beckRho k)).aestronglyMeasurable
+  · refine ⟨2, Filter.Eventually.of_forall fun k ↦ ?_⟩
+    exact Filter.Eventually.of_forall fun p ↦
+      CapLowerBound_chordRegularizedKernel_norm_le_two (CapLowerBound_beckRho_nonneg k)
+        (CapLowerBound_beckRho_lt_one k).le p.1 p.2
+  · exact Filter.Eventually.of_forall fun p ↦
+      ((CapLowerBound_continuous_chordRegularizedKernel_rho p.1 p.2).tendsto 1).comp
+        CapLowerBound_beckRho_tendsto_one
+
+/-- At the endpoint the regularized kernel is chordal distance. -/
+theorem chordRegularizedKernel_one (x y : Sphere) :
+    chordRegularizedKernel 1 x y = dist x y := by
+  have hinner := sphereInnerKernel_abs_le_one x y
+  have hbase : 0 ≤ 1 - sphereInnerKernel x y := by
+    have := (abs_le.mp hinner).2
+    linarith
+  have hsq := sphere_dist_sq_coordinates x y
+  change dist x y ^ 2 = 2 - 2 * sphereInnerKernel x y at hsq
+  have hleft : 0 ≤ chordRegularizedKernel 1 x y := by
+    unfold chordRegularizedKernel
+    exact mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
+  have hleftsq : chordRegularizedKernel 1 x y ^ 2 =
+      2 - 2 * sphereInnerKernel x y := by
+    unfold chordRegularizedKernel
+    rw [mul_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [Real.sq_sqrt]
+    · ring
+    · simpa using hbase
+  nlinarith [show 0 ≤ dist x y from dist_nonneg]
+
+/-- Letting the interior regularization tend to one yields a lower
+bound for the actual chordal distance deficit. -/
+theorem distance_deficit_even_block_lower {n : ℕ} (hn : 0 < n)
+    (X : Fin n → Sphere) :
+    Real.sqrt 2 * ((n : ℝ) / 2) *
+      (∑ r ∈ Finset.Ico n (2 * n), chordBinomialCoeff (2 * r)) ≤
+    kernelPairEnergy (fun x y : Sphere ↦ dist x y)
+      ((n : ENNReal) • sigma) ((n : ENNReal) • sigma) -
+    kernelPairEnergy (fun x y : Sphere ↦ dist x y)
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X) := by
+  haveI : IsFiniteMeasure ((n : ENNReal) • sigma) :=
+    IsFiniteMeasure.mk (by simp [sigma_apply_univ])
+  have hcont : Continuous (fun ρ : ℝ ↦
+      Real.sqrt 2 * ((n : ℝ) / 2) *
+        (∑ r ∈ Finset.Ico n (2 * n),
+          chordBinomialCoeff (2 * r) * ρ ^ (2 * r))) := by
+    apply continuous_const.mul
+    apply continuous_finset_sum
+    intro r hr
+    exact continuous_const.mul (continuous_id.pow _)
+  have hL := (hcont.tendsto 1).comp CapLowerBound_beckRho_tendsto_one
+  have hR := (kernelPairEnergy_chordRegularized_tendsto_one
+    ((n : ENNReal) • sigma) ((n : ENNReal) • sigma)).sub
+    (kernelPairEnergy_chordRegularized_tendsto_one
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X))
+  have hbound := le_of_tendsto_of_tendsto' hL hR (fun k ↦
+    chordRegularized_deficit_even_block_lower hn X
+      (CapLowerBound_beckRho_nonneg k) (CapLowerBound_beckRho_lt_one k))
+  simp only [one_pow, mul_one] at hbound
+  simpa only [kernelPairEnergy, chordRegularizedKernel_one] using hbound
+
+/-- The uniform distance pair energy is the manuscript's constant. -/
+theorem kernelPairEnergy_distance_sigma_sigma :
+    kernelPairEnergy (fun x y : Sphere ↦ dist x y) sigma sigma =
+      continuousEnergy 1 := by
+  unfold kernelPairEnergy
+  have hpot := hasConstantSpherePotential (α := 1) (by norm_num)
+  have hpoint (x : Sphere) :
+      (∫ y : Sphere, dist x y ∂sigma) = continuousEnergy 1 := by
+    simpa [HasConstantSpherePotential, continuousEnergy, Real.rpow_one] using hpot x
+  simp_rw [hpoint]
+  simp
+
+/-- The empirical distance pair energy is exactly the ordered-pair energy. -/
+theorem kernelPairEnergy_distance_empirical {ι : Type} [Fintype ι]
+    (X : ι → Sphere) :
+    kernelPairEnergy (fun x y : Sphere ↦ dist x y)
+      (empiricalSphereMeasure X) (empiricalSphereMeasure X) = energy X 1 := by
+  rw [kernelPairEnergy_empiricalSphereMeasure]
+  simp [energy]
+
+/-- The chordal distance deficit has a concrete positive finite-block lower bound. -/
+theorem continuousEnergy_distance_deficit_even_block_lower {n : ℕ}
+    (hn : 0 < n) (X : Fin n → Sphere) :
+    Real.sqrt 2 * ((n : ℝ) / 2) *
+      (∑ r ∈ Finset.Ico n (2 * n), chordBinomialCoeff (2 * r)) ≤
+    (n : ℝ) ^ 2 * continuousEnergy 1 - energy X 1 := by
+  have h := distance_deficit_even_block_lower hn X
+  rw [kernelPairEnergy_smul_left, kernelPairEnergy_smul_right,
+    kernelPairEnergy_distance_sigma_sigma,
+    kernelPairEnergy_distance_empirical] at h
+  simp only [ENNReal.toReal_natCast] at h
+  convert h using 1; ring
+
+/-- A concrete square-discrepancy lower bound in elementary square-root form. -/
+theorem capDiscrepancySq_lower_sqrt {n : ℕ} (hn : 0 < n)
+    (X : Fin n → Sphere) :
+    1 / (256 * (n : ℝ) * Real.sqrt n) ≤ capDiscrepancySq X := by
+  have hnreal : (0 : ℝ) < n := by exact_mod_cast hn
+  have hsqrt : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.2 hnreal
+  have hsqrt2 : 1 ≤ Real.sqrt (2 : ℝ) := by
+    nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2), Real.sqrt_nonneg 2]
+  have hblock := chordBinomialCoeff_even_block_lower n hn
+  have henergy := continuousEnergy_distance_deficit_even_block_lower hn X
+  have hfactor : 0 ≤ Real.sqrt 2 * ((n : ℝ) / 2) := by positivity
+  have hcombined := (mul_le_mul_of_nonneg_left hblock hfactor).trans henergy
+  have hstol := stolarsky_identity n hn X
+  have hn2 : (n : ℝ) ^ 2 ≠ 0 := pow_ne_zero 2 hnreal.ne'
+  have hgap : (n : ℝ) ^ 2 * continuousEnergy 1 - energy X 1 =
+      4 * (n : ℝ) ^ 2 * capDiscrepancySq X := by
+    field_simp [hn2] at hstol
+    nlinarith [hstol]
+  rw [hgap] at hcombined
+  have hmul : 4 * (n : ℝ) ^ 2 *
+      (1 / (256 * (n : ℝ) * Real.sqrt n)) ≤
+      Real.sqrt 2 * ((n : ℝ) / 2) *
+        (1 / (32 * Real.sqrt n)) := by
+    calc
+      _ = (n : ℝ) / (64 * Real.sqrt n) := by
+        field_simp [hnreal.ne', hsqrt.ne']
+        ring
+      _ ≤ Real.sqrt 2 * (n : ℝ) / (64 * Real.sqrt n) := by
+        apply div_le_div_of_nonneg_right _ (by positivity)
+        nlinarith [mul_nonneg (sub_nonneg.mpr hsqrt2) hnreal.le]
+      _ = _ := by ring
+  have hmain := hmul.trans hcombined
+  nlinarith [sq_pos_of_pos hnreal]
+
+/-- Beck's exponent follows from the explicit square-discrepancy bound. -/
+theorem capDiscrepancy_lower_rpow {n : ℕ} (hn : 0 < n)
+    (X : Fin n → Sphere) :
+    (1 / 16 : ℝ) * (n : ℝ) ^ (-(3 : ℝ) / 4) ≤ capDiscrepancy X := by
+  have hnreal : (0 : ℝ) < n := by exact_mod_cast hn
+  have hpow : ((n : ℝ) ^ (-(3 : ℝ) / 4)) ^ 2 =
+      1 / ((n : ℝ) * Real.sqrt n) := by
+    calc
+      _ = (n : ℝ) ^ ((-(3 : ℝ) / 4) * 2) := by
+        rw [← Real.rpow_natCast ((n : ℝ) ^ (-(3 : ℝ) / 4)) 2]
+        exact (Real.rpow_mul hnreal.le (-(3 : ℝ) / 4) (2 : ℝ)).symm
+      _ = (n : ℝ) ^ (-(1 + (1 : ℝ) / 2)) := by congr 1; ring
+      _ = ((n : ℝ) ^ (1 + (1 : ℝ) / 2))⁻¹ := by
+        rw [Real.rpow_neg hnreal.le]
+      _ = ((n : ℝ) * Real.sqrt n)⁻¹ := by
+        rw [Real.rpow_add hnreal]
+        simp [Real.sqrt_eq_rpow]
+      _ = _ := by ring
+  have hsq : ((1 / 16 : ℝ) * (n : ℝ) ^ (-(3 : ℝ) / 4)) ^ 2 =
+      1 / (256 * (n : ℝ) * Real.sqrt n) := by
+    rw [mul_pow, hpow]
+    ring
+  have hlow := capDiscrepancySq_lower_sqrt hn X
+  rw [← hsq] at hlow
+  exact (Real.le_sqrt_of_sq_le hlow)
+
+/-- A concrete Beck constant for the actual unnormalized-`dt` cap discrepancy.
+The proof works even when some point labels coincide. -/
+theorem beckLowerBound : BeckLowerBound := by
+  refine ⟨1 / 16, by norm_num, ?_⟩
+  intro n hn X _
+  exact capDiscrepancy_lower_rpow (by omega) X
+
+/-- Above degree `n`, the even power-moment gap is at least `1/(2n)`. -/
+theorem even_projection_moment_gap_ge {n : ℕ} (hn : 0 < n)
+    (X : Fin n → Sphere) (r : ℕ) (hr : n ≤ r) :
+    (∑ i : Fin n, ∑ j : Fin n,
+      (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ (2 * r)) /
+        (n : ℝ) ^ 2 - 1 / ((2 * r + 1 : ℕ) : ℝ) ≥
+      1 / (2 * (n : ℝ)) := by
+  have hnreal : (0 : ℝ) < n := by exact_mod_cast hn
+  have hrreal : (n : ℝ) ≤ r := by exact_mod_cast hr
+  have hsum := finite_even_projection_energy_ge_card X r
+  simp only [Fintype.card_fin] at hsum
+  have hden : (0 : ℝ) < ((2 * r + 1 : ℕ) : ℝ) := by positivity
+  push_cast at hden ⊢
+  have hden' : (0 : ℝ) < (2 * (r : ℝ) + 1) := by linarith
+  have hn2 : (n : ℝ) ≠ 0 := ne_of_gt hnreal
+  have hr2 : 2 * (r : ℝ) + 1 ≠ 0 := ne_of_gt hden'
+  have hSdiv : (n : ℝ) / (n : ℝ) ^ 2 ≤
+      (∑ i : Fin n, ∑ j : Fin n,
+        (@Inner.inner ℝ Ambient _ (X i : Ambient) (X j : Ambient)) ^ (2 * r)) /
+        (n : ℝ) ^ 2 :=
+    (div_le_div_iff_of_pos_right (by positivity : 0 < (n : ℝ) ^ 2)).2 hsum
+  have hfrac : 1 / (2 * (r : ℝ) + 1) ≤ 1 / (2 * (n : ℝ)) := by
+    apply (div_le_div_iff₀ hden' (by positivity : 0 < 2 * (n : ℝ))).2
+    nlinarith
+  have hnorm : (n : ℝ) / (n : ℝ) ^ 2 = 1 / (n : ℝ) := by
+    field_simp
+    ring
+  rw [hnorm] at hSdiv
+  have hhalf : 1 / (n : ℝ) = 2 * (1 / (2 * (n : ℝ))) := by
+    field_simp
+  linarith
+
+end BEMOC.Definitive
+end
+/- End BEMOCFormalization.CapLowerBound -/
+
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Sobolev -/
 section
 
@@ -11959,6 +13507,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.Sobolev -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.Corollaries -/
 section
 
@@ -12048,6 +13597,10 @@ theorem cap_corollary_of_main_and_beck (hmain : MainTheorem 1)
     (hbeck : BeckLowerBound) : CapDiscrepancyCorollary :=
   cap_assembly constructionFacts hmain diamondStolarsky hbeck
 
+/-- Both geometric cap inputs are proved; only the energy theorem remains. -/
+theorem cap_corollary_of_main (hmain : MainTheorem 1) : CapDiscrepancyCorollary :=
+  cap_corollary_of_main_and_beck hmain beckLowerBound
+
 /-- Conditional transfer from the actual spectral WCE comparison to the paper's decay rate. -/
 theorem sobolev_assembly : SobolevAssembly := by
   intro Y s _hs1 _hs2 hcon hmain _hemb hcomp
@@ -12083,6 +13636,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.Corollaries -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.AngularGeometry -/
 section
 
@@ -12933,6 +14487,694 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.AngularGeometry -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
+/- Begin BEMOCFormalization.AngularDistance -/
+section
+
+namespace BEMOC.Definitive
+
+/-- Squared chordal distance in polar coordinates and a longitude difference. -/
+noncomputable def polarChordSquare (φ ψ θ : ℝ) : ℝ :=
+  2 - 2 * (Real.cos φ * Real.cos ψ +
+    Real.sin φ * Real.sin ψ * Real.cos θ)
+
+/-- The half-angle form of the cosine drop. -/
+theorem one_sub_cos_eq_two_sin_sq (x : ℝ) :
+    1 - Real.cos x = 2 * Real.sin (x / 2) ^ 2 := by
+  have hc := Real.cos_two_mul (x / 2)
+  have hs := Real.sin_sq_add_cos_sq (x / 2)
+  have htwo : 2 * (x / 2) = x := by ring
+  rw [htwo] at hc
+  nlinarith
+
+/-- Exact decomposition into latitudinal and longitudinal chord terms. -/
+theorem polarChordSquare_half_angle (φ ψ θ : ℝ) :
+    polarChordSquare φ ψ θ =
+      4 * Real.sin ((φ - ψ) / 2) ^ 2 +
+      4 * Real.sin φ * Real.sin ψ * Real.sin (θ / 2) ^ 2 := by
+  have hc := Real.cos_sub φ ψ
+  have hlat := one_sub_cos_eq_two_sin_sq (φ - ψ)
+  have hlon := one_sub_cos_eq_two_sin_sq θ
+  have hlonMul := congrArg (fun u : ℝ =>
+    2 * Real.sin φ * Real.sin ψ * u) hlon
+  unfold polarChordSquare
+  rw [hc] at hlat
+  nlinarith [hlonMul]
+
+/-- A half-angle sine square is comparable to the corresponding Euclidean square. -/
+theorem half_sine_square_bounds {x : ℝ} (hx : |x| ≤ Real.pi) :
+    x ^ 2 / 4 ≤ 4 * Real.sin (x / 2) ^ 2 ∧
+      4 * Real.sin (x / 2) ^ 2 ≤ x ^ 2 := by
+  have hxhalf : |x / 2| ≤ Real.pi / 2 := by
+    rw [abs_div, abs_of_pos (by norm_num : (0 : ℝ) < 2)]
+    exact div_le_div_of_nonneg_right hx (by norm_num)
+  have hsin := Real.mul_abs_le_abs_sin hxhalf
+  have hsinhi : |Real.sin (x / 2)| ≤ |x / 2| := Real.abs_sin_le_abs
+  have hπ : (0 : ℝ) < Real.pi := Real.pi_pos
+  have hcoef : (1 / 2 : ℝ) ≤ 2 / Real.pi := by
+    apply (div_le_div_iff₀ (by norm_num : (0 : ℝ) < 2) hπ).2
+    nlinarith [Real.pi_le_four]
+  have hhalfabs : (0 : ℝ) ≤ |x / 2| := abs_nonneg _
+  have hsinlo : |x / 2| / 2 ≤ |Real.sin (x / 2)| := by
+    calc
+      |x / 2| / 2 = (1 / 2 : ℝ) * |x / 2| := by ring
+      _ ≤ (2 / Real.pi) * |x / 2| :=
+        mul_le_mul_of_nonneg_right hcoef hhalfabs
+      _ ≤ |Real.sin (x / 2)| := hsin
+  have hlowSq : (|x / 2| / 2) ^ 2 ≤ |Real.sin (x / 2)| ^ 2 := by
+    nlinarith [mul_nonneg (sub_nonneg.mpr hsinlo)
+      (add_nonneg (abs_nonneg (Real.sin (x / 2)))
+        (by positivity : (0 : ℝ) ≤ |x / 2| / 2))]
+  have hhighSq : |Real.sin (x / 2)| ^ 2 ≤ |x / 2| ^ 2 := by
+    nlinarith [mul_nonneg (sub_nonneg.mpr hsinhi)
+      (add_nonneg (abs_nonneg (x / 2)) (abs_nonneg (Real.sin (x / 2))))]
+  constructor
+  · calc
+      x ^ 2 / 4 = 4 * (|x / 2| / 2) ^ 2 := by
+        simp only [div_pow, sq_abs]
+        ring
+      _ ≤ 4 * |Real.sin (x / 2)| ^ 2 :=
+        mul_le_mul_of_nonneg_left hlowSq (by norm_num)
+      _ = 4 * Real.sin (x / 2) ^ 2 := by rw [sq_abs]
+  · calc
+      4 * Real.sin (x / 2) ^ 2 = 4 * |Real.sin (x / 2)| ^ 2 := by rw [sq_abs]
+      _ ≤ 4 * |x / 2| ^ 2 :=
+        mul_le_mul_of_nonneg_left hhighSq (by norm_num)
+      _ = x ^ 2 := by rw [sq_abs]; ring
+
+/-- The squared chord lies between fixed multiples of the polar model distance. -/
+theorem polarChordSquare_comparison {φ ψ θ : ℝ}
+    (hφ : φ ∈ Set.Icc (0 : ℝ) Real.pi)
+    (hψ : ψ ∈ Set.Icc (0 : ℝ) Real.pi)
+    (hθ : |θ| ≤ Real.pi) :
+    (1 / 4 : ℝ) * ((φ - ψ) ^ 2 +
+      Real.sin φ * Real.sin ψ * θ ^ 2) ≤ polarChordSquare φ ψ θ ∧
+    polarChordSquare φ ψ θ ≤ (φ - ψ) ^ 2 +
+      Real.sin φ * Real.sin ψ * θ ^ 2 := by
+  have hdiff : |φ - ψ| ≤ Real.pi := by
+    rw [abs_le]
+    constructor <;> linarith [hφ.1, hφ.2, hψ.1, hψ.2]
+  obtain ⟨hlatlo, hlathi⟩ := half_sine_square_bounds hdiff
+  obtain ⟨hlonlo, hlonhi⟩ := half_sine_square_bounds hθ
+  have hsinφ : 0 ≤ Real.sin φ :=
+    Real.sin_nonneg_of_nonneg_of_le_pi hφ.1 hφ.2
+  have hsinψ : 0 ≤ Real.sin ψ :=
+    Real.sin_nonneg_of_nonneg_of_le_pi hψ.1 hψ.2
+  have hprod : 0 ≤ Real.sin φ * Real.sin ψ := mul_nonneg hsinφ hsinψ
+  rw [polarChordSquare_half_angle]
+  constructor
+  · have hlon := mul_le_mul_of_nonneg_left hlonlo hprod
+    nlinarith [hlatlo, hlon]
+  · have hlon := mul_le_mul_of_nonneg_left hlonhi hprod
+    nlinarith [hlathi, hlon]
+
+/-- Converting polar angles to their height and radius coordinates. -/
+theorem polarChordSquare_arccos {s t θ : ℝ}
+    (hs : s ∈ Set.Icc (-1 : ℝ) 1)
+    (ht : t ∈ Set.Icc (-1 : ℝ) 1) :
+    polarChordSquare (Real.arccos s) (Real.arccos t) θ =
+      2 - 2 * s * t - 2 * Real.sqrt (1 - s ^ 2) *
+        Real.sqrt (1 - t ^ 2) * Real.cos θ := by
+  rw [polarChordSquare, Real.cos_arccos hs.1 hs.2,
+    Real.cos_arccos ht.1 ht.2, Real.sin_arccos, Real.sin_arccos]
+  ring
+
+/-- Chord comparison stated directly in the manuscript's height coordinates. -/
+theorem heightChordSquare_comparison {s t θ : ℝ}
+    (hs : s ∈ Set.Icc (-1 : ℝ) 1)
+    (ht : t ∈ Set.Icc (-1 : ℝ) 1)
+    (hθ : |θ| ≤ Real.pi) :
+    (1 / 4 : ℝ) * ((Real.arccos s - Real.arccos t) ^ 2 +
+      Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2) * θ ^ 2) ≤
+      2 - 2 * s * t - 2 * Real.sqrt (1 - s ^ 2) *
+        Real.sqrt (1 - t ^ 2) * Real.cos θ ∧
+      2 - 2 * s * t - 2 * Real.sqrt (1 - s ^ 2) *
+        Real.sqrt (1 - t ^ 2) * Real.cos θ ≤
+      (Real.arccos s - Real.arccos t) ^ 2 +
+        Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2) * θ ^ 2 := by
+  have hφ : Real.arccos s ∈ Set.Icc (0 : ℝ) Real.pi :=
+    ⟨Real.arccos_nonneg _, Real.arccos_le_pi _⟩
+  have hψ : Real.arccos t ∈ Set.Icc (0 : ℝ) Real.pi :=
+    ⟨Real.arccos_nonneg _, Real.arccos_le_pi _⟩
+  have h := polarChordSquare_comparison hφ hψ hθ
+  rw [polarChordSquare_arccos hs ht,
+    Real.sin_arccos, Real.sin_arccos] at h
+  exact h
+
+/-- Angles in bands at most two labels apart differ by at most `45/M`. -/
+theorem ordered_polarBand_near_angle_gap {N : ℕ} (hN : 4 ≤ N)
+    (hM : 16 ≤ bandParameter N) (j k : RingIndex N)
+    (hle : j.val ≤ k.val) (hnear : k.val ≤ j.val + 2)
+    {φ ψ : ℝ} (hφ : φ ∈ polarBand N (j.val + 1))
+    (hψ : ψ ∈ polarBand N (k.val + 1)) :
+    |φ - ψ| ≤ 45 / bandParameter N := by
+  have hMr : (0 : ℝ) < bandParameter N := by
+    exact_mod_cast (by omega : 0 < bandParameter N)
+  change Real.arccos (boundary N j.val) ≤ φ ∧
+    φ ≤ Real.arccos (boundary N (j.val + 1)) at hφ
+  change Real.arccos (boundary N k.val) ≤ ψ ∧
+    ψ ≤ Real.arccos (boundary N (k.val + 1)) at hψ
+  have hbound := (polar_boundary_difference_bounds hN hM
+    (a := j.val) (b := k.val + 1) (by omega) (by
+      have hk := k.isLt
+      omega)).2
+  have hordered := (polar_boundary_difference_bounds hN hM
+    (a := j.val) (b := k.val) hle (by
+      have hk := k.isLt
+      omega)).1
+  have hwidth := polar_width_upper hN hM
+    (j := j.val + 1) (by omega) (by
+      have hj := j.isLt
+      omega)
+  have hgapr : ((k.val + 1 : ℕ) : ℝ) - j.val ≤ 3 := by
+    have hcast : (k.val : ℝ) + 1 ≤ (j.val : ℝ) + 3 := by
+      exact_mod_cast (by omega : k.val + 1 ≤ j.val + 3)
+    push_cast
+    linarith
+  have hbound45 : 15 * (((k.val + 1 : ℕ) : ℝ) - j.val) /
+      bandParameter N ≤ 45 / bandParameter N := by
+    apply (div_le_div_iff₀ hMr hMr).2
+    nlinarith
+  have hψφ : ψ - φ ≤ 45 / bandParameter N := by
+    calc
+      ψ - φ ≤ Real.arccos (boundary N (k.val + 1)) -
+          Real.arccos (boundary N j.val) := by linarith [hφ.1, hψ.2]
+      _ ≤ 15 * (((k.val + 1 : ℕ) : ℝ) - j.val) /
+          bandParameter N := hbound
+      _ ≤ 45 / bandParameter N := hbound45
+  have hφψ : φ - ψ ≤ 45 / bandParameter N := by
+    have hwidth' : Real.arccos (boundary N (j.val + 1)) -
+        Real.arccos (boundary N j.val) ≤ 15 / bandParameter N := by
+      simpa using hwidth
+    have h15 : (15 : ℝ) / bandParameter N ≤ 45 / bandParameter N := by
+      apply (div_le_div_iff₀ hMr hMr).2
+      nlinarith
+    have hangleOrder : Real.arccos (boundary N j.val) ≤
+        Real.arccos (boundary N k.val) := by
+      have hcast : (j.val : ℝ) ≤ k.val := by exact_mod_cast hle
+      have hnon : 0 ≤ ((k.val : ℝ) - j.val) /
+          (4 * bandParameter N) := by
+        exact div_nonneg (sub_nonneg.mpr hcast) (by positivity)
+      linarith [hordered]
+    calc
+      φ - ψ ≤ Real.arccos (boundary N (j.val + 1)) -
+          Real.arccos (boundary N k.val) := by linarith [hφ.2, hψ.1]
+      _ ≤ Real.arccos (boundary N (j.val + 1)) -
+          Real.arccos (boundary N j.val) := by linarith [hangleOrder]
+      _ ≤ 15 / bandParameter N := hwidth'
+      _ ≤ 45 / bandParameter N := h15
+  exact abs_le.mpr ⟨by linarith, hφψ⟩
+
+/-- Angles in bands at most two labels apart differ by at most `45/M`. -/
+theorem polarBand_near_angle_gap {N : ℕ} (hN : 4 ≤ N)
+    (hM : 16 ≤ bandParameter N) (j k : RingIndex N)
+    (hjk : |(j.val : ℤ) - k.val| ≤ 2)
+    {φ ψ : ℝ} (hφ : φ ∈ polarBand N (j.val + 1))
+    (hψ : ψ ∈ polarBand N (k.val + 1)) :
+    |φ - ψ| ≤ 45 / bandParameter N := by
+  rcases le_total j.val k.val with hle | hle
+  · have hnear : k.val ≤ j.val + 2 := by
+      have hnon : (j.val : ℤ) - k.val ≤ 0 := by omega
+      rw [abs_of_nonpos hnon] at hjk
+      omega
+    exact ordered_polarBand_near_angle_gap hN hM j k hle hnear hφ hψ
+  · have hnear : j.val ≤ k.val + 2 := by
+      have hnon : 0 ≤ (j.val : ℤ) - k.val := by omega
+      rw [abs_of_nonneg hnon] at hjk
+      omega
+    have h := ordered_polarBand_near_angle_gap hN hM k j hle hnear hψ hφ
+    simpa [abs_sub_comm] using h
+
+/-- Radius at any height in a noncap band is comparable to its population over `M`. -/
+theorem band_radius_comparison {N : ℕ} (hN : 4 ≤ N)
+    (hM : 16 ≤ bandParameter N) (j : RingIndex N)
+    (hjfirst : j.val ≠ 0)
+    (hjlast : j.val + 1 ≠ 2 * bandParameter N - 1)
+    {s : ℝ} (hs : s ∈ band N (j.val + 1)) :
+    (1 / 30 : ℝ) * population N (j.val + 1) / bandParameter N ≤
+      Real.sqrt (1 - s ^ 2) ∧
+    Real.sqrt (1 - s ^ 2) ≤
+      (population N (j.val + 1) : ℝ) / bandParameter N := by
+  have hj2 : 2 ≤ j.val + 1 := by omega
+  have hjtop : j.val + 1 < 2 * bandParameter N - 1 := by
+    have hj := j.isLt
+    omega
+  have hs' : boundary N (j.val + 1) ≤ s ∧
+      s ≤ boundary N j.val := by
+    simpa [band] using hs
+  have hangle : Real.arccos s ∈ polarBand N (j.val + 1) := by
+    change Real.arccos (boundary N j.val) ≤ Real.arccos s ∧
+      Real.arccos s ≤ Real.arccos (boundary N (j.val + 1))
+    exact ⟨Real.arccos_le_arccos hs'.2,
+      Real.arccos_le_arccos hs'.1⟩
+  have hcomp := polar_sin_comparison hN hM hj2 hjtop hangle
+  simpa only [Real.sin_arccos] using hcomp
+
+/-- Height membership becomes polar-angle membership under `arccos`. -/
+theorem arccos_mem_polarBand_of_mem_band {N j : ℕ} {s : ℝ}
+    (hs : s ∈ band N j) : Real.arccos s ∈ polarBand N j := by
+  rcases hs with ⟨hlo, hhi⟩
+  exact ⟨Real.arccos_le_arccos hhi,
+    Real.arccos_le_arccos hlo⟩
+
+/-- Nearby height bands have polar-angle gap at most `45/M`. -/
+theorem near_band_arccos_gap {N : ℕ} (hN : 4 ≤ N)
+    (hM : 16 ≤ bandParameter N) (j k : RingIndex N)
+    (hjk : |(j.val : ℤ) - k.val| ≤ 2)
+    {s t : ℝ} (hs : s ∈ band N (j.val + 1))
+    (ht : t ∈ band N (k.val + 1)) :
+    |Real.arccos s - Real.arccos t| ≤ 45 / bandParameter N :=
+  polarBand_near_angle_gap hN hM j k hjk
+    (arccos_mem_polarBand_of_mem_band hs)
+    (arccos_mem_polarBand_of_mem_band ht)
+
+/-- Separated height bands inherit the angular gap bounds. -/
+theorem separated_band_arccos_gap {N : ℕ} (hN : 4 ≤ N)
+    (hM : 16 ≤ bandParameter N) (j k : RingIndex N)
+    (hjk : 2 ≤ |(j.val : ℤ) - k.val|)
+    {s t : ℝ} (hs : s ∈ band N (j.val + 1))
+    (ht : t ∈ band N (k.val + 1)) :
+    (1 / 30 : ℝ) * |(j.val : ℝ) - k.val| / bandParameter N ≤
+      |Real.arccos s - Real.arccos t| ∧
+    |Real.arccos s - Real.arccos t| ≤
+      30 * |(j.val : ℝ) - k.val| / bandParameter N :=
+  polar_separation hN hM j k hjk
+    (arccos_mem_polarBand_of_mem_band hs)
+    (arccos_mem_polarBand_of_mem_band ht)
+
+end BEMOC.Definitive
+end
+/- End BEMOCFormalization.AngularDistance -/
+
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
+/- Begin BEMOCFormalization.SeparatedKernel -/
+section
+
+/-!
+# Algebraic estimates for the separated angular kernel
+
+The even angular expansion uses the polynomial squared radius `1-s²`.
+This avoids differentiating square roots at either pole.  The estimates
+below hold on the closed height square, including its boundary.
+-/
+
+namespace BEMOC.Definitive
+
+open Set
+
+/-- The polynomial ratio of the two squared radii to the squared axial distance. -/
+noncomputable def separatedRatio (s t : ℝ) : ℝ :=
+  4 * (1 - s ^ 2) * (1 - t ^ 2) / (2 - 2 * s * t) ^ 2
+
+theorem radiusSq_nonneg {s : ℝ} (hs : s ∈ Icc (-1 : ℝ) 1) :
+    0 ≤ 1 - s ^ 2 := by
+  rcases hs with ⟨hl, hr⟩
+  nlinarith
+
+theorem radiusSq_le_axial {s t : ℝ}
+    (ht : t ∈ Icc (-1 : ℝ) 1) :
+    1 - s ^ 2 ≤ 2 - 2 * s * t := by
+  have h := radiusSq_nonneg ht
+  nlinarith [sq_nonneg (s - t)]
+
+theorem radiusSq_right_le_axial {s t : ℝ}
+    (hs : s ∈ Icc (-1 : ℝ) 1) :
+    1 - t ^ 2 ≤ 2 - 2 * s * t := by
+  have h := radiusSq_le_axial (s := t) (t := s) hs
+  nlinarith
+
+theorem axial_le_four {s t : ℝ}
+    (hs : s ∈ Icc (-1 : ℝ) 1)
+    (ht : t ∈ Icc (-1 : ℝ) 1) :
+    2 - 2 * s * t ≤ 4 := by
+  have hst : -1 ≤ s * t := by
+    nlinarith [mul_nonneg (show 0 ≤ s + 1 by linarith [hs.1])
+      (show 0 ≤ t + 1 by linarith [ht.1]),
+      mul_nonneg (show 0 ≤ 1 - s by linarith [hs.2])
+      (show 0 ≤ 1 - t by linarith [ht.2])]
+  linarith
+
+theorem axial_pos_of_separated {s t : ℝ}
+    (h : 0 < 2 - 2 * s * t) : 0 < (2 - 2 * s * t) ^ 2 :=
+  sq_pos_of_pos h
+
+theorem separatedRatio_nonneg {s t : ℝ}
+    (hs : s ∈ Icc (-1 : ℝ) 1)
+    (ht : t ∈ Icc (-1 : ℝ) 1) :
+    0 ≤ separatedRatio s t := by
+  have hA := radiusSq_nonneg hs
+  have hB := radiusSq_nonneg ht
+  unfold separatedRatio
+  positivity
+
+/-- Under the manuscript's separation hypothesis the squared polynomial
+ratio is bounded strictly below one, including when a radius vanishes. -/
+theorem separatedRatio_le_sq_one_sub
+    {s t ε : ℝ} (hs : s ∈ Icc (-1 : ℝ) 1)
+    (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hU : 0 < 2 - 2 * s * t)
+    (_hε : 0 < ε) (hε1 : ε < 1)
+    (hsep : 2 * Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2) ≤
+      (1 - ε) * (2 - 2 * s * t)) :
+    separatedRatio s t ≤ (1 - ε) ^ 2 := by
+  have hA := radiusSq_nonneg hs
+  have hB := radiusSq_nonneg ht
+  have hV : 0 ≤ 2 * Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2) := by
+    positivity
+  have hright : 0 ≤ (1 - ε) * (2 - 2 * s * t) := by
+    have : 0 ≤ 1 - ε := by linarith
+    positivity
+  have hsq := (sq_le_sq₀ hV hright).mpr hsep
+  have hident :
+      (2 * Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2)) ^ 2 =
+        4 * (1 - s ^ 2) * (1 - t ^ 2) := by
+    rw [show
+      (2 * Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2)) ^ 2 =
+        4 * Real.sqrt (1 - s ^ 2) ^ 2 * Real.sqrt (1 - t ^ 2) ^ 2 by ring,
+      Real.sq_sqrt hA, Real.sq_sqrt hB]
+  rw [hident] at hsq
+  unfold separatedRatio
+  rw [div_le_iff₀ (sq_pos_of_pos hU)]
+  nlinarith
+
+theorem separatedRatio_lt_one
+    {s t ε : ℝ} (hs : s ∈ Icc (-1 : ℝ) 1)
+    (ht : t ∈ Icc (-1 : ℝ) 1)
+    (hU : 0 < 2 - 2 * s * t)
+    (hε : 0 < ε) (hε1 : ε < 1)
+    (hsep : 2 * Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2) ≤
+      (1 - ε) * (2 - 2 * s * t)) :
+    separatedRatio s t < 1 := by
+  have hq := separatedRatio_le_sq_one_sub hs ht hU hε hε1 hsep
+  have hε0 : 0 ≤ 1 - ε := by linarith
+  have hεlt : 1 - ε < 1 := by linarith
+  nlinarith
+
+/-- Exact endpoint-safe factorization after up to two derivatives hit each
+squared radius.  All exponents of the radii remain natural numbers. -/
+theorem separated_tail_factorization
+    {u v : ℝ} {m a b : ℕ} (hm : 2 ≤ m)
+    (ha : a ≤ 2) (hb : b ≤ 2) :
+    (4 : ℝ) ^ m * u ^ (m - a) * v ^ (m - b) =
+      16 * (4 * u * v) ^ (m - 2) * u ^ (2 - a) * v ^ (2 - b) := by
+  have hma : m - a = (m - 2) + (2 - a) := by omega
+  have hmb : m - b = (m - 2) + (2 - b) := by omega
+  have hfour : (4 : ℝ) ^ m = 16 * 4 ^ (m - 2) := by
+    calc
+      (4 : ℝ) ^ m = 4 ^ ((m - 2) + 2) := by congr 1; omega
+      _ = 16 * 4 ^ (m - 2) := by rw [pow_add]; ring
+  rw [hma, hmb, hfour, pow_add, pow_add]
+  simp only [mul_pow]
+  ring
+
+/-- The tail numerator is controlled by the square of the angular ratio,
+with no division by a vanishing radius. -/
+theorem separated_tail_radius_bound
+    {u v U : ℝ} {m a b : ℕ}
+    (hu : 0 ≤ u) (hv : 0 ≤ v) (hU : 0 ≤ U)
+    (huU : u ≤ U) (hvU : v ≤ U)
+    (hm : 2 ≤ m) (ha : a ≤ 2) (hb : b ≤ 2) :
+    (4 : ℝ) ^ m * u ^ (m - a) * v ^ (m - b) ≤
+      16 * (4 * u * v) ^ (m - 2) * U ^ (4 - a - b) := by
+  rw [separated_tail_factorization hm ha hb]
+  have hexp : 4 - a - b = (2 - a) + (2 - b) := by omega
+  calc
+    16 * (4 * u * v) ^ (m - 2) * u ^ (2 - a) * v ^ (2 - b) ≤
+        16 * (4 * u * v) ^ (m - 2) * U ^ (2 - a) * U ^ (2 - b) := by
+          gcongr
+    _ = 16 * (4 * u * v) ^ (m - 2) * U ^ (4 - a - b) := by
+      rw [hexp, pow_add]
+      ring
+
+/-- Polynomial losses from differentiating four times remain summable
+against every separated geometric ratio. -/
+theorem summable_separated_polynomial
+    (degree : ℕ) {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
+    Summable (fun m : ℕ ↦ ((m : ℝ) + 1) ^ degree * q ^ m) := by
+  have hnorm : ‖q‖ < 1 := by
+    rw [Real.norm_eq_abs, abs_of_nonneg hq0]
+    exact hq1
+  have hbase :
+      Summable (fun n : ℕ ↦ ‖((n : ℝ) ^ degree * q ^ n : ℝ)‖) :=
+    summable_norm_pow_mul_geometric_of_norm_lt_one degree hnorm
+  have hshift :
+      Summable (fun m : ℕ ↦ ‖(((m + 1 : ℕ) : ℝ) ^ degree *
+        q ^ (m + 1) : ℝ)‖) :=
+    hbase.comp_injective (fun _ _ h ↦ Nat.succ.inj h)
+  by_cases hq : q = 0
+  · subst q
+    apply summable_of_ne_finset_zero (s := {0})
+    intro m hm
+    simp only [Finset.mem_singleton] at hm
+    simp [hm]
+  · have hscaled := hshift.mul_left ‖q‖⁻¹
+    have heq :
+        (fun m : ℕ ↦ ‖q‖⁻¹ *
+            ‖(((m + 1 : ℕ) : ℝ) ^ degree * q ^ (m + 1) : ℝ)‖) =
+          fun m : ℕ ↦ ((m : ℝ) + 1) ^ degree * q ^ m := by
+      funext m
+      rw [norm_mul, norm_pow, Real.norm_eq_abs, abs_of_nonneg hq0,
+        pow_succ, Real.norm_natCast, Nat.cast_add, Nat.cast_one]
+      field_simp
+      rw [abs_of_nonneg hq0]
+      ring
+    simpa only [heq] using hscaled
+
+/-- For the manuscript range `0 < α < 2`, the binomial coefficients of
+`α/2` have a uniform bound.  The angular moments are bounded by one too. -/
+theorem abs_choose_le_one {β : ℝ} (hβ0 : 0 ≤ β) (hβ1 : β ≤ 1)
+    (n : ℕ) : |Ring.choose β n| ≤ 1 := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      have hrec :
+          ((n : ℝ) + 1) * Ring.choose β (n + 1) =
+            (β - n) * Ring.choose β n := by
+        have h := Ring.choose_smul_choose (R := ℝ) β (Nat.le_succ n)
+        simp only [Nat.choose_succ_self_right, nsmul_eq_mul, Nat.succ_sub,
+          Nat.sub_self, Ring.choose_one_right] at h
+        simpa [mul_comm] using h
+      have hn : 0 < (n : ℝ) + 1 := by positivity
+      have hfactor : |β - (n : ℝ)| ≤ (n : ℝ) + 1 := by
+        have hn0 : (0 : ℝ) ≤ n := by positivity
+        rw [abs_le]
+        constructor <;> linarith
+      have hnum : |(β - n) * Ring.choose β n| ≤ (n : ℝ) + 1 := by
+        rw [abs_mul]
+        calc
+          |β - (n : ℝ)| * |Ring.choose β n| ≤ |β - (n : ℝ)| * 1 := by
+            gcongr
+          _ ≤ (n : ℝ) + 1 := by simpa using hfactor
+      rw [← hrec] at hnum
+      rw [abs_mul, abs_of_pos hn] at hnum
+      nlinarith
+
+end BEMOC.Definitive
+end
+/- End BEMOCFormalization.SeparatedKernel -/
+
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
+/- Begin BEMOCFormalization.ScalarPowerSeries -/
+section
+
+open scoped ENNReal NNReal Topology
+namespace BEMOC.Definitive
+
+/-- A real scalar power series, defined by its coefficients. -/
+noncomputable def scalarPowerSeries (a : ℕ → ℝ) (z : ℝ) : ℝ :=
+  ∑' m : ℕ, a m * z ^ m
+
+private noncomputable def ScalarPowerSeries_scalarFormalSeries (a : ℕ → ℝ) :
+    FormalMultilinearSeries ℝ ℝ ℝ := FormalMultilinearSeries.ofScalars ℝ a
+
+private theorem ScalarPowerSeries_scalarFormalSeries_radius_ge_one (a : ℕ → ℝ)
+    (ha : ∀ m, |a m| ≤ 1) :
+    (1 : ℝ≥0∞) ≤ (ScalarPowerSeries_scalarFormalSeries a).radius := by
+  apply ENNReal.le_of_forall_nnreal_lt
+  intro q hq
+  have hq0 : (0 : ℝ) ≤ q := by positivity
+  have hq1 : (q : ℝ) < 1 := by
+    exact_mod_cast (ENNReal.coe_lt_coe.mp hq)
+  apply FormalMultilinearSeries.le_radius_of_summable_norm
+  have hgeom : Summable (fun m : ℕ => (q : ℝ) ^ m) :=
+    summable_geometric_of_lt_one hq0 hq1
+  apply Summable.of_nonneg_of_le
+    (fun m => mul_nonneg (norm_nonneg _) (pow_nonneg hq0 _))
+    (fun m => ?_) hgeom
+  rw [ScalarPowerSeries_scalarFormalSeries, FormalMultilinearSeries.ofScalars_norm]
+  exact mul_le_of_le_one_left (pow_nonneg hq0 _) (by simpa only [Real.norm_eq_abs] using ha m)
+
+private theorem ScalarPowerSeries_scalarPowerSeries_eq_formal_sum (a : ℕ → ℝ) :
+    scalarPowerSeries a = (ScalarPowerSeries_scalarFormalSeries a).sum := by
+  funext z
+  change (∑' m : ℕ, a m * z ^ m) = FormalMultilinearSeries.ofScalarsSum a z
+  simp only [FormalMultilinearSeries.ofScalars_sum_eq, smul_eq_mul]
+
+/-- Coefficients of the successive scalar derivative series. -/
+noncomputable def scalarDerivCoeff (a : ℕ → ℝ) : ℕ → ℕ → ℝ
+  | 0, m => a m
+  | k + 1, m => (m + 1 : ℝ) * scalarDerivCoeff a k (m + 1)
+
+/-- Shifted falling-factorial formula for the differentiated coefficients. -/
+theorem scalarDerivCoeff_eq_descFactorial (a : ℕ → ℝ) (k m : ℕ) :
+    scalarDerivCoeff a k m =
+      (((m + k).descFactorial k : ℕ) : ℝ) * a (m + k) := by
+  induction k generalizing m with
+  | zero => simp [scalarDerivCoeff]
+  | succ k ih =>
+      rw [scalarDerivCoeff, ih]
+      rw [show m + (k + 1) = m + 1 + k by omega, Nat.descFactorial_succ]
+      simp only [Nat.add_sub_cancel_right, Nat.cast_mul]
+      simp only [Nat.cast_add, Nat.cast_one]
+      ring
+
+private theorem ScalarPowerSeries_scalarDerivCoeff_bound (a : ℕ → ℝ) (ha : ∀ m, |a m| ≤ 1) :
+    ∀ k m, |scalarDerivCoeff a k m| ≤ ((m + k + 1 : ℕ) : ℝ) ^ k := by
+  intro k
+  induction k with
+  | zero =>
+      intro m
+      simpa only [scalarDerivCoeff, pow_zero, Nat.add_zero] using ha m
+  | succ k ih =>
+      intro m
+      have hm0 : (0 : ℝ) ≤ m + 1 := by positivity
+      have hbase := ih (m + 1)
+      simp only [scalarDerivCoeff, abs_mul, abs_of_nonneg hm0] at hbase ⊢
+      have hcast : ((m + 1 + k + 1 : ℕ) : ℝ) = (m + k + 2 : ℝ) := by push_cast; ring
+      rw [hcast] at hbase
+      have hmle : (m + 1 : ℝ) ≤ (m + k + 2 : ℝ) := by
+        have hk0 : (0 : ℝ) ≤ k := by positivity
+        linarith
+      have htarget : ((m + (k + 1) + 1 : ℕ) : ℝ) = (m + k + 2 : ℝ) := by
+        push_cast
+        ring
+      rw [htarget]
+      calc
+        (m + 1 : ℝ) * |scalarDerivCoeff a k (m + 1)| ≤
+          (m + 1) * (m + k + 2 : ℝ) ^ k := mul_le_mul_of_nonneg_left hbase hm0
+        _ ≤ (m + k + 2 : ℝ) ^ (k + 1) := by
+          rw [pow_succ]
+          have hpow0 : 0 ≤ (m + k + 2 : ℝ) ^ k := pow_nonneg (by positivity) _
+          nlinarith [mul_le_mul_of_nonneg_left hmle hpow0]
+
+private theorem ScalarPowerSeries_scalarFormalSeries_radius_ge_one_of_poly (a : ℕ → ℝ)
+    (k : ℕ) (ha : ∀ m, |a m| ≤ ((m + k + 1 : ℕ) : ℝ) ^ k) :
+    (1 : ℝ≥0∞) ≤ (ScalarPowerSeries_scalarFormalSeries a).radius := by
+  apply ENNReal.le_of_forall_nnreal_lt
+  intro q hq
+  have hq0 : (0 : ℝ) ≤ q := by positivity
+  have hq1 : (q : ℝ) < 1 := by exact_mod_cast (ENNReal.coe_lt_coe.mp hq)
+  apply FormalMultilinearSeries.le_radius_of_summable_norm
+  have hpoly := summable_separated_polynomial k hq0 hq1
+  have hmajor : Summable (fun m : ℕ =>
+      ((k + 1 : ℕ) : ℝ) ^ k * (((m : ℝ) + 1) ^ k * (q : ℝ) ^ m)) :=
+    hpoly.mul_left _
+  apply Summable.of_nonneg_of_le
+    (fun m => mul_nonneg (norm_nonneg _) (pow_nonneg hq0 _))
+    (fun m => ?_) hmajor
+  rw [ScalarPowerSeries_scalarFormalSeries, FormalMultilinearSeries.ofScalars_norm]
+  have hmle : ((m + k + 1 : ℕ) : ℝ) ≤ ((k + 1 : ℕ) : ℝ) * ((m : ℝ) + 1) := by
+    push_cast
+    nlinarith [mul_nonneg (show (0 : ℝ) ≤ k by positivity)
+      (show (0 : ℝ) ≤ m by positivity)]
+  have hcoeff : |a m| ≤ ((k + 1 : ℕ) : ℝ) ^ k * ((m : ℝ) + 1) ^ k := by
+    calc
+      |a m| ≤ ((m + k + 1 : ℕ) : ℝ) ^ k := ha m
+      _ ≤ (((k + 1 : ℕ) : ℝ) * ((m : ℝ) + 1)) ^ k := by gcongr
+      _ = _ := mul_pow _ _ _
+  simpa only [Real.norm_eq_abs, mul_assoc] using
+    (mul_le_mul_of_nonneg_right hcoeff (pow_nonneg hq0 m))
+
+private theorem ScalarPowerSeries_scalarPowerSeries_deriv_eq (a : ℕ → ℝ)
+    (hr : (1 : ℝ≥0∞) ≤ (ScalarPowerSeries_scalarFormalSeries a).radius)
+    (z : ℝ) (hz : |z| < 1) :
+    deriv (scalarPowerSeries a) z =
+      ∑' m : ℕ, (m + 1 : ℝ) * a (m + 1) * z ^ m := by
+  let p := ScalarPowerSeries_scalarFormalSeries a
+  have hr0 : (0 : ℝ≥0∞) < p.radius := lt_of_lt_of_le (by norm_num) hr
+  have hp := FormalMultilinearSeries.hasFPowerSeriesOnBall p hr0
+  have hzball : z ∈ EMetric.ball (0 : ℝ) p.radius := by
+    simp only [EMetric.mem_ball, edist_dist, dist_zero_right]
+    exact lt_of_lt_of_le (ENNReal.ofReal_lt_one.mpr (by simpa only [Real.norm_eq_abs] using hz)) hr
+  have hs := (hp.fderiv).hasSum hzball
+  have hs' := hs.map (ContinuousLinearMap.apply ℝ ℝ (1 : ℝ))
+    (ContinuousLinearMap.continuous _)
+  rw [ScalarPowerSeries_scalarPowerSeries_eq_formal_sum]
+  convert hs'.tsum_eq.symm using 1
+  · simpa only [zero_add, ContinuousLinearMap.apply_apply] using
+      (fderiv_deriv (f := p.sum) (x := z)).symm
+  · apply tsum_congr
+    intro m
+    simp [p, ScalarPowerSeries_scalarFormalSeries, FormalMultilinearSeries.apply_eq_pow_smul_coeff,
+      FormalMultilinearSeries.derivSeries_coeff_one, smul_eq_mul, nsmul_eq_mul, mul_comm, mul_left_comm, mul_assoc]
+
+/-- Bounded coefficients give a real-analytic series on the open unit interval. -/
+theorem scalarPowerSeries_analyticOnNhd (a : ℕ → ℝ)
+    (ha : ∀ m, |a m| ≤ 1) :
+    AnalyticOnNhd ℝ (scalarPowerSeries a) (Set.Ioo (-1 : ℝ) 1) := by
+  let p := ScalarPowerSeries_scalarFormalSeries a
+  have hr : (1 : ℝ≥0∞) ≤ p.radius := ScalarPowerSeries_scalarFormalSeries_radius_ge_one a ha
+  have hr0 : (0 : ℝ≥0∞) < p.radius := lt_of_lt_of_le (by norm_num) hr
+  have hp := (FormalMultilinearSeries.hasFPowerSeriesOnBall p hr0).analyticOnNhd
+  rw [ScalarPowerSeries_scalarPowerSeries_eq_formal_sum]
+  intro z hz
+  apply hp
+  have hzabs : |z| < 1 := abs_lt.mpr hz
+  simp only [EMetric.mem_ball, edist_dist, dist_zero_right]
+  apply lt_of_lt_of_le (b := (1 : ℝ≥0∞)) _ hr
+  exact ENNReal.ofReal_lt_one.mpr (by simpa only [Real.norm_eq_abs] using hzabs)
+
+/-- In particular, bounded coefficients give four continuous derivatives. -/
+theorem scalarPowerSeries_contDiffOn_four (a : ℕ → ℝ)
+    (ha : ∀ m, |a m| ≤ 1) :
+    ContDiffOn ℝ 4 (scalarPowerSeries a) (Set.Ioo (-1 : ℝ) 1) := by
+  exact (scalarPowerSeries_analyticOnNhd a ha).analyticOn.contDiffOn_of_completeSpace
+
+/-- Every iterated real derivative is the termwise differentiated scalar series. -/
+theorem scalarPowerSeries_iteratedDeriv_eq (a : ℕ → ℝ)
+    (ha : ∀ m, |a m| ≤ 1) (k : ℕ) (z : ℝ)
+    (hz : z ∈ Set.Ioo (-1 : ℝ) 1) :
+    iteratedDeriv k (scalarPowerSeries a) z =
+      scalarPowerSeries (scalarDerivCoeff a k) z := by
+  induction k generalizing z with
+  | zero => simp [scalarDerivCoeff, iteratedDeriv_zero]
+  | succ k ih =>
+      rw [iteratedDeriv_succ]
+      have heq : iteratedDeriv k (scalarPowerSeries a) =ᶠ[𝓝 z]
+          scalarPowerSeries (scalarDerivCoeff a k) :=
+        (isOpen_Ioo.eventually_mem hz).mono (fun y hy => ih y hy)
+      rw [heq.deriv_eq]
+      have hr : (1 : ℝ≥0∞) ≤
+          (ScalarPowerSeries_scalarFormalSeries (scalarDerivCoeff a k)).radius :=
+        ScalarPowerSeries_scalarFormalSeries_radius_ge_one_of_poly _ k (ScalarPowerSeries_scalarDerivCoeff_bound a ha k)
+      have hder := ScalarPowerSeries_scalarPowerSeries_deriv_eq (scalarDerivCoeff a k) hr z
+        (abs_lt.mpr hz)
+      rw [hder]
+      rfl
+
+/-- Termwise formula with the usual falling factorial, valid at every finite order. -/
+theorem scalarPowerSeries_iteratedDeriv_tsum (a : ℕ → ℝ)
+    (ha : ∀ m, |a m| ≤ 1) (k : ℕ) (z : ℝ)
+    (hz : z ∈ Set.Ioo (-1 : ℝ) 1) :
+    iteratedDeriv k (scalarPowerSeries a) z =
+      ∑' m : ℕ, (((m + k).descFactorial k : ℕ) : ℝ) * a (m + k) * z ^ m := by
+  rw [scalarPowerSeries_iteratedDeriv_eq a ha k z hz]
+  simp only [scalarPowerSeries, scalarDerivCoeff_eq_descFactorial]
+
+/-- A convenient fourth-derivative specialization for the separated kernel. -/
+theorem scalarPowerSeries_fourthDeriv_eq (a : ℕ → ℝ)
+    (ha : ∀ m, |a m| ≤ 1) (z : ℝ)
+    (hz : z ∈ Set.Ioo (-1 : ℝ) 1) :
+    iteratedDeriv 4 (scalarPowerSeries a) z =
+      ∑' m : ℕ, (((m + 4).descFactorial 4 : ℕ) : ℝ) * a (m + 4) * z ^ m := by
+  rw [scalarPowerSeries_iteratedDeriv_eq a ha 4 z hz]
+  simp only [scalarPowerSeries, scalarDerivCoeff_eq_descFactorial]
+
+end BEMOC.Definitive
+end
+/- End BEMOCFormalization.ScalarPowerSeries -/
+
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization.SobolevBasic -/
 section
 
@@ -13049,6 +15291,7 @@ end BEMOC.Definitive
 end
 /- End BEMOCFormalization.SobolevBasic -/
 
+run_cmd Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env fun _ => {}
 /- Begin BEMOCFormalization -/
 section
 

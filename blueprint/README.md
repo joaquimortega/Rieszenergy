@@ -48,6 +48,12 @@ Additional proof modules extracted or developed after scaffold review:
 | [SphereProjection](modules/SphereProjection.md) | First signed and absolute projection moments |
 | [SphereCapMeasure](modules/SphereCapMeasure.md) | Area `(1-t)/2` for every cap axis |
 | [SobolevBasic](modules/SobolevBasic.md) | Spectral unit-ball and real-supremum side conditions |
+| [AngularDistance](modules/AngularDistance.md) | Exact chord identity and bandwise angle/distance comparisons |
+| [SeparatedBinomialSeries](modules/SeparatedBinomialSeries.md) | General real binomial theorem and weighted convergence |
+| [SeparatedKernel](modules/SeparatedKernel.md) | Polynomial separation ratio, endpoint-safe factorization, and summable majorants |
+| [BinomialTail](modules/BinomialTail.md) | Positive square-root coefficients and quantitative tails |
+| [CapLowerBound](modules/CapLowerBound.md) | Universal Beck lower bound with explicit constant 1/16 |
+| [ScalarPowerSeries](modules/ScalarPowerSeries.md) | Analytic bounded-coefficient series and all finite derivatives |
 
 The Lean import graph is a DAG of definitions. The mathematical proof graph
 is stronger: for example `LongitudeBound α` will be *proved using*
@@ -98,3 +104,7 @@ longitude bound and the ordinary-dt Stolarsky identity have checked proofs.
 `AngularGeometry` proves the complete polar band contract, and `Taylor`
 now proves the mixed Taylor bound without extra calculus assumptions. See
 [AngularGeometry](modules/AngularGeometry.md) and [Taylor](modules/Taylor.md).
+
+`CapLowerBound` proves Beck's universal lower bound, including configurations
+with repeated points. `cap_corollary_of_main` now requires only the main
+energy theorem at α=1; no separate cap analytic hypothesis remains.

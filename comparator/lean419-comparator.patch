@@ -1,3 +1,53 @@
+diff --git a/Comparator/Axioms.lean b/Comparator/Axioms.lean
+index cde6d38..098482f 100644
+--- a/Comparator/Axioms.lean
++++ b/Comparator/Axioms.lean
+@@ -28,0 +29,3 @@ partial def loop : AxiomsM Unit := do
++  else
++    let some info := (← read).solution.constMap[target]?
++      | throw s!"Constant not found in solution '{target}'"
+@@ -30,2 +33 @@ partial def loop : AxiomsM Unit := do
+-  let some info := (← read).solution.constMap[target]?
+-    | throw s!"Constant not found in solution '{target}'"
++    runForUsedConsts info validateConst
+@@ -33,4 +35,2 @@ partial def loop : AxiomsM Unit := do
+-  runForUsedConsts info validateConst
+-
+-  modify fun s => { s with checked := s.checked.insert target }
+-  loop
++    modify fun s => { s with checked := s.checked.insert target }
++    loop
+diff --git a/Comparator/Compare.lean b/Comparator/Compare.lean
+index 9a258ee..4e711fe 100644
+--- a/Comparator/Compare.lean
++++ b/Comparator/Compare.lean
+@@ -40,0 +41,5 @@ partial def loop : CompareM Unit := do
++  else
++    let some challengeConst := (← read).challenge.constMap[target]?
++      | throw s!"Const not found in challenge '{target}'"
++    let some solutionConst := (← read).solution.constMap[target]?
++      | throw s!"Const not found in target '{target}'"
+@@ -42,4 +47,2 @@ partial def loop : CompareM Unit := do
+-  let some challengeConst := (← read).challenge.constMap[target]?
+-    | throw s!"Const not found in challenge '{target}'"
+-  let some solutionConst := (← read).solution.constMap[target]?
+-    | throw s!"Const not found in target '{target}'"
++    if challengeConst != solutionConst then
++      throw s!"Const does not match between challenge and target '{target}'"
+@@ -47,2 +50 @@ partial def loop : CompareM Unit := do
+-  if challengeConst != solutionConst then
+-    throw s!"Const does not match between challenge and target '{target}'"
++    addRelevantConsts solutionConst
+@@ -50,4 +52,2 @@ partial def loop : CompareM Unit := do
+-  addRelevantConsts solutionConst
+-
+-  modify fun s => { s with checked := s.checked.insert target }
+-  loop
++    modify fun s => { s with checked := s.checked.insert target }
++    loop
+@@ -78 +78 @@ def compareAt (challenge solution : ExportedEnv) (targets : Array Lean.Name) :
+-  Compare.loop.run { challenge, solution } |>.run'  { worklist, checked := {} }
++  Compare.loop.run { challenge, solution } |>.run' { worklist, checked := {} }
 diff --git a/Comparator/Parser.lean b/Comparator/Parser.lean
 index 9667a47..89f2fe3 100644
 --- a/Comparator/Parser.lean
@@ -6,30 +56,35 @@ index 9667a47..89f2fe3 100644
 -    return .regular n
 +    return .regular n.toUInt32
 diff --git a/Main.lean b/Main.lean
-index 7ac8c09..5706dc2 100644
+index 7ac8c09..51ba993 100644
 --- a/Main.lean
 +++ b/Main.lean
-@@ -47 +47 @@ def runSandBoxedWithStdout (spawnArgs : LandrunArgs) : M String := do
+@@ -7,0 +8 @@ import Comparator
++import Comparator.KernelReplay
+@@ -47 +48 @@ def runSandBoxedWithStdout (spawnArgs : LandrunArgs) : M String := do
 -    #[spawnArgs.cmd] ++
 +    #["--", spawnArgs.cmd] ++
-@@ -60 +60 @@ def runSandBoxed (spawnArgs : LandrunArgs) : M Unit := do
+@@ -60 +61 @@ def runSandBoxed (spawnArgs : LandrunArgs) : M Unit := do
 -    #[spawnArgs.cmd] ++
 +    #["--", spawnArgs.cmd] ++
-@@ -74,0 +75,4 @@ def safeLakeBuild (target : Lean.Name) : M Unit := do
+@@ -74,0 +76,4 @@ def safeLakeBuild (target : Lean.Name) : M Unit := do
 +  let args := if target == `comparator.SelfContained then
 +    #["env", "lean", "comparator/SelfContained.lean", "-o",
 +      ".lake/build/lib/lean/comparator/SelfContained.olean"]
 +    else #["build", target.toString (escape := false)]
-@@ -77,3 +81,2 @@ def safeLakeBuild (target : Lean.Name) : M Unit := do
+@@ -77,3 +82,2 @@ def safeLakeBuild (target : Lean.Name) : M Unit := do
 -    args := #["build", target.toString (escape := false)],
 -    envPass := #["PATH", "HOME", "LEAN_ABORT_ON_PANIC"]
 -    envOverride := #[("LEAN_ABORT_ON_PANIC", some "1")]
 +    args := args,
 +    envPass := #["PATH", "HOME", "LEAN_ABORT_ON_PANIC=1"]
-@@ -90,2 +93 @@ def safeExport (module : Lean.Name) (decls : Array Lean.Name) : M String := do
+@@ -90,2 +94 @@ def safeExport (module : Lean.Name) (decls : Array Lean.Name) : M String := do
 -    envPass := #["PATH", "HOME", "LEAN_PATH", "LEAN_ABORT_ON_PANIC"]
 -    envOverride := #[("LEAN_ABORT_ON_PANIC", some "1")]
 +    envPass := #["PATH", "HOME", "LEAN_PATH", "LEAN_ABORT_ON_PANIC=1"]
+@@ -102 +105 @@ def runKernel (solution : Comparator.ExportedEnv) : M Unit := do
+-  discard <| env.replay constMap
++  discard <| KernelReplay.replayKernel constMap env.toKernelEnv
 diff --git a/lean-toolchain b/lean-toolchain
 index 1efd365..7aca1d8 100644
 --- a/lean-toolchain

@@ -35,8 +35,13 @@ experimental backport: comparator `437574b` with the patch in this directory,
 format-2 lean4export `aca5d12` with its toolchain set to 4.19.0, and real
 landrun `811cfff`. The comparator patch adapts a Lean API type, preserves the
 exporter's `--` argument through current landrun, retains the caller's Lean
-environment, and compiles the standalone module directly without changing the
-project lakefile. Set `COMPARATOR_BIN`, `COMPARATOR_LEAN4EXPORT`, and
+environment, fixes the upstream comparison/axiom traversal's tail recursion,
+and compiles the standalone module directly without changing the project
+lakefile. `KernelReplay.lean` adapts Lean 4.19's kernel replay to call the
+kernel environment directly, avoiding frontend private-name registration
+collisions while still checking every declaration. The runner raises the
+process stack limit to 64 MiB for deep Mathlib expressions. Set
+`COMPARATOR_BIN`, `COMPARATOR_LEAN4EXPORT`, and
 `COMPARATOR_LANDRUN` to the paths printed by that build script, then run:
 
 ```sh
@@ -47,26 +52,53 @@ python3 scripts/run_comparator.py \
 
 `run_comparator.py` writes a temporary JSON config with only Lean's standard
 `propext`, `Quot.sound`, and `Classical.choice` axioms permitted, then invokes
-`lake env` on comparator. It requires the real `landrun`; upstream's fake
+`lake env` on comparator. Repeat `--theorem` to check multiple declarations
+in one challenge module. It requires the real `landrun`; upstream's fake
 landrun is only a development shim and provides no sandbox assurance. Follow
 upstream's `systemd-run` containment advice when checking untrusted solutions.
 Never use a custom axiom, `sorry`, `admit`, or `opaque` proof shortcut to fill a
 challenge or solution theorem.
 
-The actual cross-module check on clean commit `d621018` did **not** pass.
-Comparator built and exported both modules, then reported
-`Const does not match between challenge and target 'BEMOC.Definitive.point'`.
-The types matched; the first difference in the values was an automatically
-generated proof constant for `Nat.AtLeastTwo (0 + 2)`:
-`BEMOC.Definitive.boundary._proof_1` in the modular challenge versus
-`BEMOC.Definitive.parallelVector._proof_1` in the inlined solution. Both are
-internal proof terms created while elaborating numerals. Isolating each
-inlined module in a `section` and replacing the point fallback's `by norm_num`
-with an explicit proof did not remove this difference. The exporter merges
-the modules' elaboration contexts, so its generated private proof names differ
-from those of separately compiled modules. Comparator deliberately requires
-the transitive definitions to match exactly. A separate self-comparison also
-failed during old comparator kernel replay on duplicate normalized private
-Mathlib declaration names. No comparator certification is claimed.
+The full comparator check **passed** on the current 40-module proof
+checkpoint for these exact declarations:
+
+- `BEMOC.Definitive.main_theorem_of_block_estimates`
+- `BEMOC.Definitive.beckLowerBound`
+- `BEMOC.Definitive.cap_corollary_of_main`
+- `BEMOC.Definitive.longitude_bound`
+- `BEMOC.Definitive.mixedTaylorBound`
+
+It built and exported both the modular challenge and the Mathlib-only
+standalone solution under real landrun, matched the selected statements and
+their transitive definitions, checked the permitted axioms, and replayed the
+solution in the kernel: `Solution valid. Your solution is okay!`
+See the [verification record](checkpoint-verification.md) and
+[actual run log](verification-40-modules.txt). The standalone source has
+15,307 lines. Its source hash is recorded with the command.
+
+The main theorem in this check assumes the three latitude block bounds, and
+the cap corollary assumes the main energy theorem at α=1. Comparator confirms
+those exact conditional statements; it does not prove their remaining
+hypotheses. The universal Beck, longitude, and mixed Taylor results have
+checked proofs under only their stated parameter/domain assumptions.
+
+An earlier full check passed on the 19-module conditional scaffold at
+`d621018`. Negative controls rejected the upstream `simple_axiom_issue`
+example with `Illegal axiom detected: 'helper'`, and a pair of valid proofs
+of different statements with `Challenge and solution theorem statement do
+not match: 'comm'`.
+
+The source exporter resets Lean's module-local `auxLemmasExt` cache at each
+inlined module boundary. Without that reset, the first strict comparison
+failed at `BEMOC.Definitive.point`: separately compiled modules and the merged
+file gave the same numeral proof different generated names. The cache is
+explicitly local and absent from `.olean` files in Lean 4.19. The exporter
+also isolates file-level `open` state in sections and prefixes file-private
+declaration names to avoid collisions when multiple modules become one file.
 
 Upstream documentation: https://github.com/leanprover/comparator
+
+The adapted `KernelReplay.lean` retains Lean's copyright notice and is
+covered by [Apache 2.0](LICENSE-LeanReplay). That notice applies to the
+adapted tool source; it does not assign a license to the manuscript or the
+rest of this repository.

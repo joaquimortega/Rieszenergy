@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import resource
 import shutil
 import subprocess
 import sys
@@ -59,6 +60,12 @@ def main() -> None:
         [str(Path(landrun).parent), str(Path(exporter).parent), environment["PATH"]]
     )
     (ROOT / ".lake/build/lib/lean/comparator").mkdir(parents=True, exist_ok=True)
+    soft, hard = resource.getrlimit(resource.RLIMIT_STACK)
+    needed = 64 * 1024 * 1024
+    if hard != resource.RLIM_INFINITY and hard < needed:
+        raise SystemExit("Comparator needs at least a 64 MiB stack for Mathlib export comparison")
+    if soft < needed:
+        resource.setrlimit(resource.RLIMIT_STACK, (needed, hard))
     with tempfile.TemporaryDirectory(prefix="bemoc-comparator-") as directory:
         config_path = Path(directory) / "config.json"
         config_path.write_text(json.dumps(config, indent=2) + "\n")

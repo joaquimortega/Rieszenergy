@@ -2,6 +2,15 @@
 
 Checked progress: `cap_assembly : CapAssembly` and `sobolev_assembly : SobolevAssembly` are now proved, together with real-power normalization and square-root bounds. They use the actual discrepancy and spectral WCE definitions and retain their geometric/analytic hypotheses. `DefinitiveTargets` is still unproved.
 
+The strongest cap assembly is now `cap_corollary_of_main`. Its only input
+is `MainTheorem 1`: construction and exact cardinality come from
+`constructionFacts`, the ordinary-dt geometric identity from
+`diamondStolarsky`, and the universal lower bound from `beckLowerBound` in
+`CapLowerBound`. The lower constant supplied there is 1/16. Normalizing the
+energy bound by N² and taking a square root yields exponent −3/4; the proof
+retains a positive upper constant uniform in all ring phases. This is a
+conditional corollary until the main energy theorem is proved.
+
 <!-- LEAN_STATEMENTS -->
 
 ## Exact checked Lean source
@@ -9,6 +18,7 @@ Checked progress: `cap_assembly : CapAssembly` and `sobolev_assembly : SobolevAs
 ```lean
 import BEMOCFormalization.MainTheorem
 import BEMOCFormalization.CapDiscrepancy
+import BEMOCFormalization.CapLowerBound
 import BEMOCFormalization.Sobolev
 
 namespace BEMOC.Definitive
@@ -96,6 +106,10 @@ theorem cap_assembly : CapAssembly := by
 theorem cap_corollary_of_main_and_beck (hmain : MainTheorem 1)
     (hbeck : BeckLowerBound) : CapDiscrepancyCorollary :=
   cap_assembly constructionFacts hmain diamondStolarsky hbeck
+
+/-- Both geometric cap inputs are proved; only the energy theorem remains. -/
+theorem cap_corollary_of_main (hmain : MainTheorem 1) : CapDiscrepancyCorollary :=
+  cap_corollary_of_main_and_beck hmain beckLowerBound
 
 /-- Conditional transfer from the actual spectral WCE comparison to the paper's decay rate. -/
 theorem sobolev_assembly : SobolevAssembly := by

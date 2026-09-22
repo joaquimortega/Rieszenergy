@@ -8,7 +8,8 @@ The current development defines the new midpoint-only Diamond configuration
 and its energy, actual cap discrepancy, and spectral Sobolev worst-case error.
 It contains a modular, executable blueprint and checked analytic foundations,
 including negative type, constant surface potential, the full longitude bound,
-latitude block summation, and the actual Stolarsky invariance principle.
+latitude block summation, the actual Stolarsky invariance principle, and
+Beck's universal cap discrepancy lower bound with constant 1/16.
 **The unconditional main theorem and the two corollaries are not yet proved.**
 Named proposition definitions are open obligations, not accepted axioms or
 completed theorems.

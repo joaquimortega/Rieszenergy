@@ -1,0 +1,83 @@
+{
+  "challenge_module": "BEMOCFormalization",
+  "solution_module": "comparator.SelfContained",
+  "theorem_names": [
+    "BEMOC.Definitive.main_theorem_of_block_estimates",
+    "BEMOC.Definitive.beckLowerBound",
+    "BEMOC.Definitive.cap_corollary_of_main",
+    "BEMOC.Definitive.longitude_bound",
+    "BEMOC.Definitive.mixedTaylorBound"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}
+warning: mathlib: repository '././.lake/packages/mathlib' has local changes
+warning: batteries: repository '././.lake/packages/batteries' has local changes
+Building BEMOCFormalization
+warning: mathlib: repository '././.lake/packages/mathlib' has local changes
+warning: batteries: repository '././.lake/packages/batteries' has local changes
+ℹ [6660/6694] Replayed BEMOCFormalization.BandErrors
+info: ././././BEMOCFormalization/BandErrors.lean:89:2: Try this: ring_nf
+⚠ [6661/6694] Replayed BEMOCFormalization.Taylor
+warning: ././././BEMOCFormalization/Taylor.lean:133:43: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ././././BEMOCFormalization/Taylor.lean:404:47: Try this: ring_nf
+warning: ././././BEMOCFormalization/Taylor.lean:494:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/Taylor.lean:625:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/Taylor.lean:677:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ℹ [6667/6694] Replayed BEMOCFormalization.LatitudeIdentity
+info: ././././BEMOCFormalization/LatitudeIdentity.lean:224:2: Try this: ring_nf
+⚠ [6682/6694] Replayed BEMOCFormalization.CapDiscrepancy
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:173:4: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:175:4: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:325:4: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:357:6: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:360:6: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [6687/6694] Replayed BEMOCFormalization.Corollaries
+info: ././././BEMOCFormalization/Corollaries.lean:124:27: Try this: ring_nf
+warning: ././././BEMOCFormalization/Corollaries.lean:124:23: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Build completed successfully.
+Exporting #[BEMOC.Definitive.main_theorem_of_block_estimates, BEMOC.Definitive.beckLowerBound, BEMOC.Definitive.cap_corollary_of_main, BEMOC.Definitive.longitude_bound, BEMOC.Definitive.mixedTaylorBound] from BEMOCFormalization
+Building comparator.SelfContained
+warning: mathlib: repository '././.lake/packages/mathlib' has local changes
+warning: batteries: repository '././.lake/packages/batteries' has local changes
+Try this: ring_nf
+comparator/SelfContained.lean:3463:43: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+comparator/SelfContained.lean:3824:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:3955:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:4007:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+comparator/SelfContained.lean:11453:4: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:11455:4: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:11605:4: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:11637:6: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:11640:6: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+Try this: ring_nf
+comparator/SelfContained.lean:13632:23: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Exporting #[BEMOC.Definitive.main_theorem_of_block_estimates, BEMOC.Definitive.beckLowerBound, BEMOC.Definitive.cap_corollary_of_main, BEMOC.Definitive.longitude_bound, BEMOC.Definitive.mixedTaylorBound] from comparator.SelfContained
+Running kernel on solution.
+Solution valid.
+Your solution is okay!

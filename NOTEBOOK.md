@@ -196,3 +196,55 @@ r_j³/r_k^(5−α)≤1. Thus crude O(M²) pair counting after M^(−α) suffices
 without reproducing the sharper O(1) intermediate sum. This is a valid
 alternative proof route for the requested total bound; it must not be reported
 as a proof of the manuscript's stronger intermediate estimate.
+
+
+**N30 — Sobolev coefficient comparison without asymptotics (simplification).**
+For 1<s<2, the positive distance coefficients satisfy
+`a_(ℓ+1)/a_ℓ=(ℓ+1−s)/(ℓ+1+s)`. Bernoulli's inequality with
+`t=ℓ+1−s>0` shows that `a_ℓ(ℓ+1−s)^(2s)` is increasing for ℓ≥1.
+Consequently it is bounded below by `a_1(2−s)^(2s)>0`. Since
+`(ℓ+1−s)²≤1+ℓ(ℓ+1)`, this gives the one-sided comparison
+`(1+ℓ(ℓ+1))^(−s)≤C_s a_ℓ` needed for the upper WCE estimate.
+The scalar inequality is checked in the developing `SobolevKernel` module;
+the harmonic reconstruction and distance spectral identity remain separate
+obligations. A full Gamma asymptotic is unnecessary for this direction.
+
+**N31 — Center the polynomial test in the Sobolev lower proof (clarification).**
+The averaged test `f(x)=n⁻¹∑ᵢ⟨Xᵢ,x⟩^(2n)` has mean `(2n+1)⁻¹`.
+Its quadrature error is the even-moment gap, but its spectral norm includes
+a nonzero degree-zero term. Subtracting that constant preserves quadrature
+error and removes the term, allowing the positive-degree coefficient argument
+to match the gap exactly. Omitting the constant from the uncentered norm
+would be unjustified. This is a correction to the developing proof route,
+not an error claimed in the manuscript.
+
+
+**N32 — Beck lower bound without a black-box discrepancy theorem.** The
+positive-binomial proof of Bilyk–Brauchart, §2, supplies an elementary route
+from projection moments and Stolarsky to the actual cap discrepancy. The
+checked `capDiscrepancy_lower_rpow` proves the explicit bound
+`D(X) ≥ (1/16)n^(-3/4)` for every nonempty labelled configuration, allowing
+repetitions. The proof uses interior regularization before taking the endpoint
+limit, so convergence at the square-root cusp is not presumed. This supplies
+the universal lower half of the cap corollary independently of the still-open
+Diamond energy upper estimate.
+
+**N33 — Comparator compatibility resolved for the initial scaffold.** The
+strict comparison now passes for the conditional main theorem at `d621018`,
+with real landrun, only standard axioms, and kernel replay. The exporter
+resets the module-local auxiliary-lemma cache between inlined files. The
+Lean 4.19 backport also incorporates a traversal tail-recursion fix and
+uses the kernel environment directly during replay to avoid frontend private
+name collisions. Illegal-axiom and unequal-statement controls are rejected.
+Each larger proof checkpoint still needs its own exact comparison; the
+unconditional mathematical targets do not follow from this tooling repair.
+
+
+**N34 — Comparator validates the larger proof checkpoint.** The full check
+now passes for five named results from the 40-module development: the main
+assembly from block estimates, universal Beck lower bound, cap assembly
+from the main theorem, longitude bound, and mixed Taylor bound. Both source
+forms elaborate; matching definitions, permitted axioms and kernel replay
+pass. This strengthens the tool evidence in N33 while retaining the explicit
+conditional scope of the main and cap assemblies. See the recorded command,
+standalone hash and actual log in `comparator/`.

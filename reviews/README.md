@@ -35,3 +35,11 @@ A subsequent [proof-checkpoint alignment review](proof-checkpoint-review.md)
 independently checked the 32-module proof checkpoint. It found no concrete
 normalization mismatch and confirmed the documented boundary between checked
 foundations and the unfinished unconditional main theorem and corollaries.
+
+The [cap lower-bound review](cap-lower-bound-review.md) checks the actual
+discrepancy definition, ordered-pair convention, endpoint limit and constant
+1/16 in Beck's lower bound, together with the reduced corollary assembly.
+
+The [angular and scalar-series review](angular-series-review.md) checks
+AngularDistance, SeparatedKernel, and ScalarPowerSeries, including closed
+height endpoints and the open convergence interval for scalar derivatives.
