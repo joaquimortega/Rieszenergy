@@ -56,6 +56,13 @@ upstream's `systemd-run` containment advice when checking untrusted solutions.
 Never use a custom axiom, `sorry`, `admit`, or `opaque` proof shortcut to fill a
 challenge or solution theorem.
 
+The final full comparator check **passed** on eight unconditional declarations
+from the complete 104-module graph, including the genuine L² Sobolev and
+Laplacian model theorems. See the [final verification record](final-verification.md),
+[actual run log](verification-final.txt), and [source hashes](source-sha256.json).
+Both builds, strict statement and transitive-definition comparison, the
+permitted-axiom check, and kernel replay passed.
+
 A historical full comparator check **passed** on the 40-module proof
 checkpoint at commit `1eb5d8f` for these exact declarations:
 
@@ -91,8 +98,9 @@ inlined module boundary. Without that reset, the first strict comparison
 failed at `BEMOC.Definitive.point`: separately compiled modules and the merged
 file gave the same numeral proof different generated names. The cache is
 explicitly local and absent from `.olean` files in Lean 4.19. The exporter
-also isolates file-level `open` state in sections and prefixes file-private
-declaration names to avoid collisions when multiple modules become one file.
+also isolates file-level `open` state in sections. Private declaration names
+are preserved; three colliding private helper names were made distinct in the modular
+source so that no lexical private-name rewriting is needed.
 Each section is elaborated with its original module identity, preserving
 the names of automatically generated private proofs. The standalone module
 identity is saved before the sections and restored afterwards. This fixes

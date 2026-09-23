@@ -14,15 +14,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 IMPORT = re.compile(r"^import\s+(.+?)\s*$")
 LOCAL_PREFIX = "BEMOCFormalization."
-PRIVATE_DECL = re.compile(
-    r"^\s*private\s+(?:(?:noncomputable|unsafe|partial)\s+)*"
-    # A dotted declaration such as `private theorem Foo.bar` is qualified,
-    # so `Foo` is not a file-private declaration name to rewrite. In
-    # particular, rewriting that prefix would also corrupt later `Foo.bar`
-    # references and dot-notation methods.
-    r"(?:theorem|lemma|def|abbrev)\s+([A-Za-z_][A-Za-z0-9_']*)\b(?!\.)",
-    re.MULTILINE,
-)
 
 
 def source_for(module: str) -> Path:
@@ -81,11 +72,6 @@ def main() -> None:
     for module in ordered:
         source = source_for(module).read_text()
         body = "\n".join(line for line in source.splitlines() if not IMPORT.fullmatch(line))
-        # `private` names are scoped to a source file in Lean. A single merged
-        # file loses that boundary, so qualify each private name by its module.
-        for name in sorted(set(PRIVATE_DECL.findall(body)), key=len, reverse=True):
-            qualified = f"{module.rsplit('.', 1)[-1]}_{name}"
-            body = re.sub(rf"(?<![\w.]){re.escape(name)}\b", qualified, body)
         # File-level `open`, `open scoped`, variables, and options must not leak
         # into the following inlined module.
         # Auxiliary-lemma cache is `.local` to a Lean module and is not saved

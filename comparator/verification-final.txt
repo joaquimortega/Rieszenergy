@@ -1,0 +1,497 @@
+{
+  "challenge_module": "BEMOCFormalization",
+  "solution_module": "comparator.SelfContained",
+  "theorem_names": [
+    "BEMOC.Definitive.manuscript_targets",
+    "BEMOC.Definitive.diamond_energy_bound",
+    "BEMOC.Definitive.cap_corollary",
+    "BEMOC.Definitive.l2_sobolev_corollary",
+    "BEMOC.Definitive.l2_sobolev_optimality",
+    "BEMOC.Definitive.l2_sobolev_energy_comparison",
+    "BEMOC.Definitive.manuscript_sobolev_model",
+    "BEMOC.Definitive.spherePolynomialLaplacian_eigen_iff_unconditional"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}
+warning: mathlib: repository '././.lake/packages/mathlib' has local changes
+warning: batteries: repository '././.lake/packages/batteries' has local changes
+Building BEMOCFormalization
+warning: mathlib: repository '././.lake/packages/mathlib' has local changes
+warning: batteries: repository '././.lake/packages/batteries' has local changes
+ℹ [6659/6745] Replayed BEMOCFormalization.BandErrors
+info: ././././BEMOCFormalization/BandErrors.lean:89:2: Try this: ring_nf
+⚠ [6660/6745] Replayed BEMOCFormalization.Taylor
+warning: ././././BEMOCFormalization/Taylor.lean:133:43: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ././././BEMOCFormalization/Taylor.lean:404:47: Try this: ring_nf
+warning: ././././BEMOCFormalization/Taylor.lean:494:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/Taylor.lean:625:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/Taylor.lean:677:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ℹ [6666/6745] Replayed BEMOCFormalization.LatitudeIdentity
+info: ././././BEMOCFormalization/LatitudeIdentity.lean:224:2: Try this: ring_nf
+⚠ [6683/6745] Replayed BEMOCFormalization.AngularPowerIntegrals
+info: ././././BEMOCFormalization/AngularPowerIntegrals.lean:29:2: Try this: ring_nf
+info: ././././BEMOCFormalization/AngularPowerIntegrals.lean:39:2: Try this: ring_nf
+warning: ././././BEMOCFormalization/AngularPowerIntegrals.lean:105:42: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6684/6745] Replayed BEMOCFormalization.ComparableIntermediateScaling
+warning: ././././BEMOCFormalization/ComparableIntermediateScaling.lean:108:20: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6688/6745] Replayed BEMOCFormalization.CapDiscrepancy
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:173:4: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:175:4: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:325:4: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:357:6: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/CapDiscrepancy.lean:360:6: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [6692/6745] Replayed BEMOCFormalization.HarmonicBasis
+warning: ././././BEMOCFormalization/HarmonicBasis.lean:515:22: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ././././BEMOCFormalization/HarmonicBasis.lean:571:49: Try this: ring_nf
+warning: ././././BEMOCFormalization/HarmonicBasis.lean:571:45: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ℹ [6693/6745] Replayed BEMOCFormalization.HarmonicCasimir
+info: ././././BEMOCFormalization/HarmonicCasimir.lean:76:4: Try this: ring_nf
+⚠ [6702/6745] Replayed BEMOCFormalization.AngularIntegralZero
+warning: ././././BEMOCFormalization/AngularIntegralZero.lean:52:28: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/AngularIntegralZero.lean:101:62: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/AngularIntegralZero.lean:102:12: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6705/6745] Replayed BEMOCFormalization.SobolevKernel
+warning: ././././BEMOCFormalization/SobolevKernel.lean:207:22: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ././././BEMOCFormalization/SobolevKernel.lean:243:28: Try this: ring_nf
+info: ././././BEMOCFormalization/SobolevKernel.lean:244:53: Try this: ring_nf
+warning: ././././BEMOCFormalization/SobolevKernel.lean:243:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/SobolevKernel.lean:244:35: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/SobolevKernel.lean:244:49: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ℹ [6709/6745] Replayed BEMOCFormalization.HarmonicZonal
+info: ././././BEMOCFormalization/HarmonicZonal.lean:151:8: Try this: ring_nf
+ℹ [6723/6758] Replayed BEMOCFormalization.ComparableBlockEstimates
+info: ././././BEMOCFormalization/ComparableBlockEstimates.lean:416:16: Try this: ring_nf
+info: ././././BEMOCFormalization/ComparableBlockEstimates.lean:416:16: Try this: ring_nf
+info: ././././BEMOCFormalization/ComparableBlockEstimates.lean:510:16: Try this: ring_nf
+info: ././././BEMOCFormalization/ComparableBlockEstimates.lean:510:16: Try this: ring_nf
+info: ././././BEMOCFormalization/ComparableBlockEstimates.lean:679:16: Try this: ring_nf
+info: ././././BEMOCFormalization/ComparableBlockEstimates.lean:679:16: Try this: ring_nf
+⚠ [6724/6758] Replayed BEMOCFormalization.ComparableSeparatedBlocks
+info: ././././BEMOCFormalization/ComparableSeparatedBlocks.lean:22:48: Try this: ring_nf
+warning: ././././BEMOCFormalization/ComparableSeparatedBlocks.lean:22:44: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6725/6758] Replayed BEMOCFormalization.ComparableEndpointAssembly
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:52:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:52:47: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:56:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:56:41: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:59:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:59:41: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:75:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:75:47: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:77:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableEndpointAssembly.lean:77:46: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6726/6758] Replayed BEMOCFormalization.ComparableNearBlocks
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:138:34: unused variable `hP`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:157:23: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:323:58: this tactic is never executed
+note: this linter can be disabled with `set_option linter.unreachableTactic false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:323:40: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:323:58: 'ring' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:438:28: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:667:27: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:879:43: this tactic is never executed
+note: this linter can be disabled with `set_option linter.unreachableTactic false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:877:25: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:879:43: 'ring' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+info: ././././BEMOCFormalization/ComparableNearBlocks.lean:912:29: Try this: ring_nf
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:905:32: unused variable `hρ`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:906:5: unused variable `hL`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:912:25: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearBlocks.lean:1054:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6731/6758] Replayed BEMOCFormalization.PolarDerivatives
+info: ././././BEMOCFormalization/PolarDerivatives.lean:197:2: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:370:6: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:397:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:434:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:484:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:548:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:596:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:640:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:702:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:725:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:748:4: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:809:2: Try this: ring_nf
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:808:2: 'push_cast' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:940:18: unused variable `hK`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:940:31: unused variable `hR`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+info: ././././BEMOCFormalization/PolarDerivatives.lean:1254:29: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:1330:29: Try this: ring_nf
+info: ././././BEMOCFormalization/PolarDerivatives.lean:1429:29: Try this: ring_nf
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1438:54: unused variable `hα2`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1634:30: this tactic is never executed
+note: this linter can be disabled with `set_option linter.unreachableTactic false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1488:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1506:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1524:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1543:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1561:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1579:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1598:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1616:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1654:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1672:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1693:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/PolarDerivatives.lean:1634:30: 'simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+⚠ [6732/6758] Replayed BEMOCFormalization.ComparableHeightChainBounds
+info: ././././BEMOCFormalization/ComparableHeightChainBounds.lean:217:2: Try this: ring_nf
+info: ././././BEMOCFormalization/ComparableHeightChainBounds.lean:373:4: Try this: ring_nf
+warning: ././././BEMOCFormalization/ComparableHeightChainBounds.lean:379:6: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: ././././BEMOCFormalization/ComparableHeightChainBounds.lean:358:5: unused variable `hU`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [6733/6758] Replayed BEMOCFormalization.ComparableIntermediateClosure
+warning: ././././BEMOCFormalization/ComparableIntermediateClosure.lean:115:23: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableIntermediateClosure.lean:115:40: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6734/6758] Replayed BEMOCFormalization.ComparableNearTailClosure
+warning: ././././BEMOCFormalization/ComparableNearTailClosure.lean:57:22: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearTailClosure.lean:57:51: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearTailClosure.lean:177:29: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableNearTailClosure.lean:177:49: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6735/6758] Replayed BEMOCFormalization.ComparableAssembly
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:39:24: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:39:38: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:52:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:52:40: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:59:28: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:59:42: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:65:28: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:65:42: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:66:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ComparableAssembly.lean:66:40: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6736/6758] Replayed BEMOCFormalization.DistanceKernelExpansion
+warning: ././././BEMOCFormalization/DistanceKernelExpansion.lean:29:20: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/DistanceKernelExpansion.lean:29:34: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+info: ././././BEMOCFormalization/DistanceKernelExpansion.lean:166:60: Try this: ring_nf
+info: ././././BEMOCFormalization/DistanceKernelExpansion.lean:169:6: Try this: ring_nf
+ℹ [6738/6758] Replayed BEMOCFormalization.DistanceZonalCoefficients
+info: ././././BEMOCFormalization/DistanceZonalCoefficients.lean:60:4: Try this: ring_nf
+⚠ [6740/6758] Replayed BEMOCFormalization.SobolevLowerBound
+warning: ././././BEMOCFormalization/SobolevLowerBound.lean:309:26: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/SobolevLowerBound.lean:313:57: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+⚠ [6742/6758] Replayed BEMOCFormalization.ZonalPolynomials
+warning: ././././BEMOCFormalization/ZonalPolynomials.lean:194:74: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ZonalPolynomials.lean:197:43: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ZonalPolynomials.lean:197:57: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+warning: ././././BEMOCFormalization/ZonalPolynomials.lean:204:64: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [6752/6758] Built BEMOCFormalization.Longitude
+✔ [6753/6758] Built BEMOCFormalization.MainTheorem
+⚠ [6754/6758] Built BEMOCFormalization.Corollaries
+info: ././././BEMOCFormalization/Corollaries.lean:133:27: Try this: ring_nf
+warning: ././././BEMOCFormalization/Corollaries.lean:133:23: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+✔ [6755/6758] Built BEMOCFormalization.SobolevL2Corollary
+✔ [6756/6758] Built BEMOCFormalization.Manuscript
+✔ [6757/6758] Built BEMOCFormalization
+Build completed successfully.
+Exporting #[BEMOC.Definitive.manuscript_targets, BEMOC.Definitive.diamond_energy_bound, BEMOC.Definitive.cap_corollary, BEMOC.Definitive.l2_sobolev_corollary, BEMOC.Definitive.l2_sobolev_optimality, BEMOC.Definitive.l2_sobolev_energy_comparison, BEMOC.Definitive.manuscript_sobolev_model, BEMOC.Definitive.spherePolynomialLaplacian_eigen_iff_unconditional] from BEMOCFormalization
+Building comparator.SelfContained
+warning: mathlib: repository '././.lake/packages/mathlib' has local changes
+warning: batteries: repository '././.lake/packages/batteries' has local changes
+Try this: ring_nf
+comparator/SelfContained.lean:3493:43: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+comparator/SelfContained.lean:3854:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:3985:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:4037:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+comparator/SelfContained.lean:19344:44: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19790:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19790:47: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19794:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19794:41: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19797:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19797:41: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19813:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19813:47: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19815:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:19815:46: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+Try this: ring_nf
+comparator/SelfContained.lean:19928:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:20152:34: warning: unused variable `hP`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+comparator/SelfContained.lean:20171:23: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:20337:58: warning: this tactic is never executed
+note: this linter can be disabled with `set_option linter.unreachableTactic false`
+comparator/SelfContained.lean:20337:40: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:20337:58: warning: 'ring' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+comparator/SelfContained.lean:20452:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:20681:27: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:20893:43: warning: this tactic is never executed
+note: this linter can be disabled with `set_option linter.unreachableTactic false`
+comparator/SelfContained.lean:20891:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:20893:43: warning: 'ring' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+Try this: ring_nf
+comparator/SelfContained.lean:20919:32: warning: unused variable `hρ`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+comparator/SelfContained.lean:20920:5: warning: unused variable `hL`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+comparator/SelfContained.lean:20926:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:21068:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:22488:20: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+comparator/SelfContained.lean:23304:2: warning: 'push_cast' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+comparator/SelfContained.lean:23436:18: warning: unused variable `hK`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+comparator/SelfContained.lean:23436:31: warning: unused variable `hR`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+comparator/SelfContained.lean:23934:54: warning: unused variable `hα2`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+comparator/SelfContained.lean:24130:30: warning: this tactic is never executed
+note: this linter can be disabled with `set_option linter.unreachableTactic false`
+comparator/SelfContained.lean:23984:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24002:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24020:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24039:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24057:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24075:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24094:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24112:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24150:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24168:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24189:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24130:30: warning: 'simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+Try this: ring_nf
+Try this: ring_nf
+comparator/SelfContained.lean:24579:6: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:24558:5: warning: unused variable `hU`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+comparator/SelfContained.lean:24707:23: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24707:40: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24946:22: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:24946:51: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25066:29: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25066:49: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25145:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25145:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25158:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25158:40: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25165:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25165:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25171:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25171:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25172:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25172:40: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:25671:4: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:25673:4: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:25823:4: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:25855:6: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:25858:6: warning: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+comparator/SelfContained.lean:27936:22: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+comparator/SelfContained.lean:27992:45: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+comparator/SelfContained.lean:29097:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:29146:62: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:29147:12: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:29643:22: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+Try this: ring_nf
+comparator/SelfContained.lean:29679:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:29680:35: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:29680:49: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:31310:20: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:31310:34: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+Try this: ring_nf
+comparator/SelfContained.lean:33335:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:33339:57: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:34960:74: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:34963:43: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:34963:57: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+comparator/SelfContained.lean:34970:64: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Try this: ring_nf
+comparator/SelfContained.lean:36270:23: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Exporting #[BEMOC.Definitive.manuscript_targets, BEMOC.Definitive.diamond_energy_bound, BEMOC.Definitive.cap_corollary, BEMOC.Definitive.l2_sobolev_corollary, BEMOC.Definitive.l2_sobolev_optimality, BEMOC.Definitive.l2_sobolev_energy_comparison, BEMOC.Definitive.manuscript_sobolev_model, BEMOC.Definitive.spherePolynomialLaplacian_eigen_iff_unconditional] from comparator.SelfContained
+Running kernel on solution.
+Solution valid.
+Your solution is okay!

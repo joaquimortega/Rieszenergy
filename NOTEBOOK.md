@@ -287,8 +287,8 @@ This is a worktree/integration issue, not a manuscript correction.
 **N38 — Qualified private names need different handling in a merged source.**
 The exporter initially treated `private theorem SeparatedSeriesRectangle.swap`
 as if the public structure prefix were a private bare name. Renaming that
-prefix corrupted the standalone file. The exporter now excludes dotted
-private declarations from bare-name rewriting. The corrected 51-module
+prefix corrupted the standalone file. At that stage, the exporter excluded dotted
+private declarations from bare-name rewriting (later removed in N44). The corrected 51-module
 standalone elaborated successfully; the final graph receives its own full
 comparison. Module-local generated-lemma caches and file-local open states
 continue to be isolated as recorded in N33.
@@ -343,7 +343,29 @@ differed only in the module component of a generated private helper name:
 `BEMOCFormalization.HarmonicAddition` versus `comparator.SelfContained`.
 The exporter now elaborates each source section under its original module
 identity, then restores the standalone identity before writing its compiled
-module. It retains the cache reset and explicit private-name collision
-handling. A focused export reproduces the original proof expression exactly.
+module. At that stage it retained the cache reset and explicit private-name
+rewriting; N44 later removes the latter. A focused export reproduces the
+original proof expression exactly.
 No mathematical proof or comparator equality rule was changed; the full
 final comparison checks this export transformation separately.
+
+**N44 — Preserve explicit private names as well as generated names.**
+After N43, the standalone built but strict comparison reached a further
+difference in `finite_spectral_eval_cauchy_finset`: its proof referred to
+the exporter's renamed version of `finite_weighted_cauchy`. Only two bare
+private helper names actually collided across the complete source graph:
+`restrictPolynomial_add_apply` and `restrictPolynomial_mul_apply` in
+`HarmonicOrthogonality` and `HarmonicL2Laplacian`. The latter module's two
+helpers now have an `_l2` suffix, including their local uses. This permits
+the exporter to preserve every declaration name and remove lexical private
+renaming entirely, superseding the private-name rewriting described in N38
+and N43. Statements, proof steps, and comparator checks are unchanged.
+
+**N45 — Check private names against public names too.** The next standalone
+build identified a visibility collision between the private
+`Longitude.parallelPoint_dist_sq` helper and the public latitude-potential
+helper with the same user-facing name. The longitude helper and its sole
+local use are now named `longitude_parallelPoint_dist_sq`. A complete scan
+checks private names against both public and private declarations. This
+is another module-merging name repair; theorem types and proof steps are
+unchanged.

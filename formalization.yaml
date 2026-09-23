@@ -5,7 +5,7 @@ project:
   description: Lean formalization of the distance-power energy bound for deterministic Diamond points
     on S², optimal L² cap discrepancy, and genuine L² Sobolev quadrature bounds with universal optimality.
     All 104 active modules build. Continuous representatives and intrinsic weak Laplacian eigenspaces
-    are identified explicitly; final standalone comparator verification is pending.
+    are identified explicitly; full strict standalone comparator verification passed.
   authors:
   - Codex, under instructions from Joaquim Ortega-Cerdà
   license: 'Unspecified: no repository license grant has been supplied.'
@@ -57,7 +57,7 @@ classification:
 status:
   scope: Unconditional main theorem and both corollaries for all stated exponents, including genuine L²
     Sobolev classes, basis existence, representative and weak eigenspace identification, and universal
-    optimality. Full 104-module build passed; final standalone verification pending.
+    optimality. Full 104-module build and final strict standalone verification passed.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms:
@@ -157,9 +157,12 @@ status:
     - Classical.choice
     note: Matching universal lower rate for the genuine L² Sobolev WCE.
   open_targets: []
-  comparator_status: Historical full comparator PASS at 1eb5d8f (40 modules, conditional main/cap assemblies).
-    The 97-module standalone run detected a duplicate helper name, now repaired. Final
-    104-module unconditional theorem comparison is in progress.
+  comparator_status: Final full comparator PASS for eight unconditional declarations from the
+    104-module graph, including genuine L² Sobolev bounds and model identifications.
+    Statement and transitive-definition matching, permitted-axiom checking, and kernel
+    replay passed under the documented Lean 4.19 backport and real landrun.
+    Exact command, log, pins, and source hashes are in comparator/final-verification.md.
+    The historical conditional 40-module checkpoint remains documented separately.
 automation:
   methods:
   - method: agent

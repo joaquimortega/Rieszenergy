@@ -8,8 +8,8 @@ The theorem `BEMOC.Definitive.manuscript_targets` proves the energy bound,
 cap discrepancy, genuine L² Sobolev cubature bound and its matching universal
 lower bound, including existence of the harmonic basis. All 104 modules
 build, and `manuscript_sobolev_model` proves the required continuous-representative
-and intrinsic weak-Laplacian identifications. Final standalone comparator
-verification is in progress; see [verification status](LEAN_FORMALIZATION.md).
+and intrinsic weak-Laplacian identifications. Full standalone comparator
+verification passed; see the [verification record](comparator/final-verification.md).
 
 For every `0 < α < 2`, the energy theorem proves
 

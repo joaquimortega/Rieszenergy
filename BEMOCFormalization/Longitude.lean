@@ -618,7 +618,7 @@ theorem gcd_sum_bound {α : ℝ} (hα0 : 0 < α) : GcdSumBound α := by
 
 /-! ## Geometric angular kernel for the actual polygon vertices -/
 
-private theorem parallelPoint_dist_sq {s t θ φ : ℝ}
+private theorem longitude_parallelPoint_dist_sq {s t θ φ : ℝ}
     (hs : s ∈ Set.Icc (-1 : ℝ) 1) (ht : t ∈ Set.Icc (-1 : ℝ) 1) :
     dist (parallelPoint s θ hs) (parallelPoint t φ ht) ^ 2 =
       2 - 2 * s * t -
@@ -691,7 +691,7 @@ private theorem point_distance_power_eq_angularKernel
       (by omega) (by have hk := k.isLt; omega))
   rw [point_eq_parallelPoint hN φ ⟨j, i⟩,
     point_eq_parallelPoint hN φ ⟨k, l⟩]
-  have hd := parallelPoint_dist_sq hs ht (θ := θ) (φ := ψ)
+  have hd := longitude_parallelPoint_dist_sq hs ht (θ := θ) (φ := ψ)
   change dist (parallelPoint s θ hs) (parallelPoint t ψ ht) ^ α = _
   calc
     dist (parallelPoint s θ hs) (parallelPoint t ψ ht) ^ α =

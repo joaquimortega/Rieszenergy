@@ -21,7 +21,7 @@ subsequent lower-bound helper rename detected by standalone elaboration;
 the changed module and its dependents were rebuilt.
 The seven added model/assembly modules and updated root also passed the
 separate frozen build. Final independent main and Sobolev reviews pass.
-Standalone comparison is the remaining verification gate.
+Strict standalone comparison of eight final declarations also passes.
 
 | Result | Checked declaration / module |
 |---|---|
@@ -108,13 +108,16 @@ proofs avoid custom axioms and proof shortcuts; `legacy/` is excluded.
 
 ## Comparator and metadata
 
-The generated standalone source imports only Mathlib. The previous full
-comparator run passed on five selected results from checkpoint `1eb5d8f`
-(40 modules), including conditional main/cap assemblies. That historical
-check does not certify the final graph. The final 104-module source export,
-comparison of unconditional statements, permitted-axiom check, and kernel
-replay are being run separately. See [comparator/README.md](comparator/README.md)
-for the pinned Lean 4.19 backport and exact verification evidence.
+The generated standalone source imports only Mathlib. The final full
+comparator check passes on eight declarations covering the unconditional
+manuscript aggregate, finite-set energy formula, cap corollary, genuine L²
+Sobolev upper/lower bounds and energy comparison, and the model identifications.
+It matches the selected statements and their transitive definitions, checks
+the permitted axioms, and replays the solution in the kernel. See the
+[final record and actual log](comparator/final-verification.md). The historical
+40-module checkpoint at `1eb5d8f` remains a separate record of its conditional
+main/cap assemblies. Tool pins and Lean 4.19 adaptations are documented in
+[comparator/README.md](comparator/README.md).
 
 The metadata in `formalization.yaml` records theorem scope, proof techniques,
 source divergences, independent agent review, and comparator status. Independent

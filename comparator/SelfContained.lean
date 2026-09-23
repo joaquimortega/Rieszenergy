@@ -5588,29 +5588,29 @@ open scoped BigOperators
 namespace BEMOC.Definitive
 
 /-- The summable weight in a comparable latitude row. -/
-private noncomputable def LatitudeSummation_comparableWeight (α : ℝ) (d : ℕ) : ℝ :=
+private noncomputable def comparableWeight (α : ℝ) (d : ℕ) : ℝ :=
   ((d + 1 : ℕ) : ℝ) ^ (α - 3)
 
-private theorem LatitudeSummation_comparableWeight_summable {α : ℝ} (hα : α < 2) :
-    Summable (LatitudeSummation_comparableWeight α) := by
+private theorem comparableWeight_summable {α : ℝ} (hα : α < 2) :
+    Summable (comparableWeight α) := by
   have hbase : Summable (fun d : ℕ => (d : ℝ) ^ (α - 3)) :=
     Real.summable_nat_rpow.mpr (by linarith)
   change Summable (fun d : ℕ => ((d + 1 : ℕ) : ℝ) ^ (α - 3))
-  simpa [LatitudeSummation_comparableWeight, Nat.cast_add, Nat.cast_one] using
+  simpa [comparableWeight, Nat.cast_add, Nat.cast_one] using
     (summable_nat_add_iff (f := fun d : ℕ => (d : ℝ) ^ (α - 3)) 1).2 hbase
 
 /-- Each distance from a fixed band occurs at most twice. -/
-private def LatitudeSummation_distanceCode {n : ℕ} (j k : Fin n) : Fin n × Bool :=
+private def distanceCode {n : ℕ} (j k : Fin n) : Fin n × Bool :=
   (⟨Nat.dist j.val k.val, by
       rw [Nat.dist_eq_max_sub_min]
       omega⟩, decide (k.val ≤ j.val))
 
-private theorem LatitudeSummation_distanceCode_injective {n : ℕ} (j : Fin n) :
-    Function.Injective (LatitudeSummation_distanceCode j) := by
+private theorem distanceCode_injective {n : ℕ} (j : Fin n) :
+    Function.Injective (distanceCode j) := by
   intro k l hkl
   have hd := congrArg (fun z : Fin n × Bool => (z.1 : ℕ)) hkl
   have hs := congrArg (fun z : Fin n × Bool => z.2) hkl
-  dsimp [LatitudeSummation_distanceCode] at hd hs
+  dsimp [distanceCode] at hd hs
   by_cases hkj : k.val ≤ j.val <;> by_cases hlj : l.val ≤ j.val
   · rw [Nat.dist_eq_sub_of_le_right hkj,
       Nat.dist_eq_sub_of_le_right hlj] at hd
@@ -5621,7 +5621,7 @@ private theorem LatitudeSummation_distanceCode_injective {n : ℕ} (j : Fin n) :
       Nat.dist_eq_sub_of_le (by omega)] at hd
     exact Fin.ext (by omega)
 
-private theorem LatitudeSummation_real_abs_sub_eq_nat_dist (j k : ℕ) :
+private theorem real_abs_sub_eq_nat_dist (j k : ℕ) :
     |(j : ℝ) - k| = (Nat.dist j k : ℝ) := by
   rcases le_total j k with h | h
   · have hr : (j : ℝ) ≤ k := by exact_mod_cast h
@@ -5634,26 +5634,26 @@ private theorem LatitudeSummation_real_abs_sub_eq_nat_dist (j k : ℕ) :
 theorem comparable_row_weight_le {α : ℝ} (hα : α < 2)
     {n : ℕ} (j : Fin n) :
     (∑ k : Fin n, (1 + |(j.val : ℝ) - k.val|) ^ (α - 3)) ≤
-      2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d := by
+      2 * ∑' d : ℕ, comparableWeight α d := by
   classical
-  let w := LatitudeSummation_comparableWeight α
+  let w := comparableWeight α
   let g : Fin n × Bool → ℝ := fun z => w z.1
-  have hw : Summable w := LatitudeSummation_comparableWeight_summable hα
+  have hw : Summable w := comparableWeight_summable hα
   have hcode (k : Fin n) :
-      (1 + |(j.val : ℝ) - k.val|) ^ (α - 3) = g (LatitudeSummation_distanceCode j k) := by
-    rw [LatitudeSummation_real_abs_sub_eq_nat_dist]
-    simp [g, w, LatitudeSummation_comparableWeight, LatitudeSummation_distanceCode, add_comm]
+      (1 + |(j.val : ℝ) - k.val|) ^ (α - 3) = g (distanceCode j k) := by
+    rw [real_abs_sub_eq_nat_dist]
+    simp [g, w, comparableWeight, distanceCode, add_comm]
   calc
     (∑ k : Fin n, (1 + |(j.val : ℝ) - k.val|) ^ (α - 3)) =
-        ∑ z ∈ Finset.univ.image (LatitudeSummation_distanceCode j), g z := by
+        ∑ z ∈ Finset.univ.image (distanceCode j), g z := by
       rw [Finset.sum_image]
       · exact Finset.sum_congr rfl (fun k _ => hcode k)
       · intro a _ b _ hab
-        exact LatitudeSummation_distanceCode_injective j hab
+        exact distanceCode_injective j hab
     _ ≤ ∑ z : Fin n × Bool, g z := by
       apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
       intro z _ _
-      dsimp [g, w, LatitudeSummation_comparableWeight]
+      dsimp [g, w, comparableWeight]
       positivity
     _ = 2 * ∑ d : Fin n, w d := by
       rw [Fintype.sum_prod_type]
@@ -5664,11 +5664,11 @@ theorem comparable_row_weight_le {α : ℝ} (hα : α < 2)
       apply mul_le_mul_of_nonneg_left _ (by norm_num)
       rw [Fin.sum_univ_eq_sum_range]
       exact hw.sum_le_tsum (Finset.range n) (fun d _ => by
-        dsimp [w, LatitudeSummation_comparableWeight]
+        dsimp [w, comparableWeight]
         positivity)
 
 /-- The ordered contribution of pairs whose populations are comparable. -/
-private noncomputable def LatitudeSummation_comparablePart (α : ℝ) (N : ℕ) : ℝ :=
+private noncomputable def comparablePart (α : ℝ) (N : ℕ) : ℝ :=
   by
     classical
     exact ∑ j : RingIndex N,
@@ -5679,8 +5679,8 @@ private noncomputable def LatitudeSummation_comparablePart (α : ℝ) (N : ℕ) 
 /-- The comparable blocks sum at the claimed latitude scale in terms of `M`. -/
 theorem comparable_part_le {α : ℝ} (hα : α < 2)
     (hblocks : ComparableBlockBound α) {N : ℕ} (hN : 1024 ≤ N) :
-    LatitudeSummation_comparablePart α N ≤
-      hblocks.choose * (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) *
+    comparablePart α N ≤
+      hblocks.choose * (2 * ∑' d : ℕ, comparableWeight α d) *
         (N : ℝ) / (bandParameter N : ℝ) ^ α := by
   classical
   obtain ⟨hC, hbound⟩ := hblocks.choose_spec
@@ -5688,10 +5688,10 @@ theorem comparable_part_le {α : ℝ} (hα : α < 2)
     exact_mod_cast bandParameter_pos (by omega : 4 ≤ N)
   have hMpow : 0 ≤ (bandParameter N : ℝ) ^ α :=
     Real.rpow_nonneg hM.le _
-  have hweight : 0 ≤ 2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d := by
-    have hs := LatitudeSummation_comparableWeight_summable hα
-    have ht : 0 ≤ ∑' d : ℕ, LatitudeSummation_comparableWeight α d :=
-      tsum_nonneg (fun d => by unfold LatitudeSummation_comparableWeight; positivity)
+  have hweight : 0 ≤ 2 * ∑' d : ℕ, comparableWeight α d := by
+    have hs := comparableWeight_summable hα
+    have ht : 0 ≤ ∑' d : ℕ, comparableWeight α d :=
+      tsum_nonneg (fun d => by unfold comparableWeight; positivity)
     positivity
   have hrow (j : RingIndex N) :
       (∑ k ∈ Finset.univ.filter
@@ -5699,7 +5699,7 @@ theorem comparable_part_le {α : ℝ} (hα : α < 2)
         |kernelBlock α N (j.val + 1) (k.val + 1)|) ≤
       hblocks.choose * (population N (j.val + 1) : ℝ) /
         (bandParameter N : ℝ) ^ α *
-          (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) := by
+          (2 * ∑' d : ℕ, comparableWeight α d) := by
     let A : ℝ := hblocks.choose * (population N (j.val + 1) : ℝ) /
       (bandParameter N : ℝ) ^ α
     have hA : 0 ≤ A := by dsimp [A]; positivity
@@ -5720,25 +5720,25 @@ theorem comparable_part_le {α : ℝ} (hα : α < 2)
       _ = A * ∑ k : RingIndex N,
           (1 + |(j.val : ℝ) - k.val|) ^ (α - 3) := by
         rw [Finset.mul_sum]
-      _ ≤ A * (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) :=
+      _ ≤ A * (2 * ∑' d : ℕ, comparableWeight α d) :=
         mul_le_mul_of_nonneg_left (comparable_row_weight_le hα j) hA
       _ = _ := rfl
   calc
-    LatitudeSummation_comparablePart α N ≤
+    comparablePart α N ≤
         ∑ j : RingIndex N,
           hblocks.choose * (population N (j.val + 1) : ℝ) /
             (bandParameter N : ℝ) ^ α *
-              (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) := by
-      unfold LatitudeSummation_comparablePart
+              (2 * ∑' d : ℕ, comparableWeight α d) := by
+      unfold comparablePart
       exact Finset.sum_le_sum (fun j _ => hrow j)
-    _ = hblocks.choose * (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) *
+    _ = hblocks.choose * (2 * ∑' d : ℕ, comparableWeight α d) *
         (N : ℝ) / (bandParameter N : ℝ) ^ α := by
       have hpop := population_sum_eq N (by omega : 4 ≤ N)
       have hpopr : (∑ j : RingIndex N, (population N (j.val + 1) : ℝ)) = N := by
         exact_mod_cast hpop
       calc
         _ = ∑ j : RingIndex N,
-            (hblocks.choose * (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) /
+            (hblocks.choose * (2 * ∑' d : ℕ, comparableWeight α d) /
               (bandParameter N : ℝ) ^ α) *
               (population N (j.val + 1) : ℝ) := by
             apply Finset.sum_congr rfl
@@ -5747,7 +5747,7 @@ theorem comparable_part_le {α : ℝ} (hα : α < 2)
         _ = _ := by rw [← Finset.mul_sum, hpopr]; ring
 
 /-- An unequal same-side bound loses only one factor of `M⁻ᵅ` when summed crudely. -/
-private theorem LatitudeSummation_small_over_large_le_one {α a b : ℝ}
+private theorem small_over_large_le_one {α a b : ℝ}
     (hα : α < 2) (ha : 0 ≤ a) (hb : 1 ≤ b) (hab : a ≤ b) :
     a ^ (3 : ℕ) / b ^ (5 - α) ≤ 1 := by
   have hpow : a ^ (3 : ℕ) ≤ b ^ (3 : ℕ) := by gcongr
@@ -5762,7 +5762,7 @@ private theorem LatitudeSummation_small_over_large_le_one {α a b : ℝ}
   nlinarith
 
 /-- The three pointwise regimes are exhaustive for every ordered pair. -/
-private theorem LatitudeSummation_block_le_three_majorants {α : ℝ}
+private theorem block_le_three_majorants {α : ℝ}
     (hα : α < 2) (hsym : BlockSymmetry α)
     (hc : ComparableBlockBound α)
     (hs : SameSideBlockBound α) (ho : OppositeBlockBound α)
@@ -5821,7 +5821,7 @@ private theorem LatitudeSummation_block_le_three_majorants {α : ℝ}
       · have h := hs.choose_spec.2 N hN j k hsmall hside
         have hr : (population N (j.val + 1) : ℝ) ≤ population N (k.val + 1) := by
           exact_mod_cast (by omega : population N (j.val + 1) ≤ population N (k.val + 1))
-        have hratio := LatitudeSummation_small_over_large_le_one hα (by linarith : 0 ≤ (population N (j.val + 1) : ℝ)) hpk hr
+        have hratio := small_over_large_le_one hα (by linarith : 0 ≤ (population N (j.val + 1) : ℝ)) hpk hr
         have hbound : hs.choose * (population N (j.val + 1) : ℝ) ^ (3 : ℕ) /
             ((bandParameter N : ℝ) ^ α * (population N (k.val + 1) : ℝ) ^ (5 - α)) ≤
             hs.choose / (bandParameter N : ℝ) ^ α := by
@@ -5861,7 +5861,7 @@ private theorem LatitudeSummation_block_le_three_majorants {α : ℝ}
       · have h := hs.choose_spec.2 N hN k j hsmall hside
         have hr : (population N (k.val + 1) : ℝ) ≤ population N (j.val + 1) := by
           exact_mod_cast (by omega : population N (k.val + 1) ≤ population N (j.val + 1))
-        have hratio := LatitudeSummation_small_over_large_le_one hα (by linarith : 0 ≤ (population N (k.val + 1) : ℝ)) hpj hr
+        have hratio := small_over_large_le_one hα (by linarith : 0 ≤ (population N (k.val + 1) : ℝ)) hpj hr
         have hbound : hs.choose * (population N (k.val + 1) : ℝ) ^ (3 : ℕ) /
             ((bandParameter N : ℝ) ^ α * (population N (j.val + 1) : ℝ) ^ (5 - α)) ≤
             hs.choose / (bandParameter N : ℝ) ^ α := by
@@ -5894,13 +5894,13 @@ private theorem LatitudeSummation_block_le_three_majorants {α : ℝ}
         linarith
 
 /-- The sum of all comparable-shaped majorants, without a pair filter. -/
-private theorem LatitudeSummation_comparable_majorants_sum_le {α : ℝ} (hα : α < 2)
+private theorem comparable_majorants_sum_le {α : ℝ} (hα : α < 2)
     (hc : ComparableBlockBound α) {N : ℕ} (hN : 1024 ≤ N) :
     (∑ j : RingIndex N, ∑ k : RingIndex N,
       hc.choose * (population N (j.val + 1) : ℝ) /
         (bandParameter N : ℝ) ^ α *
           (1 + |(j.val : ℝ) - k.val|) ^ (α - 3)) ≤
-      hc.choose * (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) *
+      hc.choose * (2 * ∑' d : ℕ, comparableWeight α d) *
         (N : ℝ) / (bandParameter N : ℝ) ^ α := by
   have hM : 0 < (bandParameter N : ℝ) := by
     exact_mod_cast bandParameter_pos (by omega : 4 ≤ N)
@@ -5912,7 +5912,7 @@ private theorem LatitudeSummation_comparable_majorants_sum_le {α : ℝ} (hα : 
             (1 + |(j.val : ℝ) - k.val|) ^ (α - 3)) ≤
       hc.choose * (population N (j.val + 1) : ℝ) /
         (bandParameter N : ℝ) ^ α *
-          (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) := by
+          (2 * ∑' d : ℕ, comparableWeight α d) := by
     rw [← Finset.mul_sum]
     exact mul_le_mul_of_nonneg_left (comparable_row_weight_le hα j)
       (by positivity)
@@ -5920,7 +5920,7 @@ private theorem LatitudeSummation_comparable_majorants_sum_le {α : ℝ} (hα : 
     _ ≤ ∑ j : RingIndex N,
         hc.choose * (population N (j.val + 1) : ℝ) /
           (bandParameter N : ℝ) ^ α *
-            (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) :=
+            (2 * ∑' d : ℕ, comparableWeight α d) :=
       Finset.sum_le_sum (fun j _ => hrow j)
     _ = _ := by
       have hpop := population_sum_eq N (by omega : 4 ≤ N)
@@ -5928,7 +5928,7 @@ private theorem LatitudeSummation_comparable_majorants_sum_le {α : ℝ} (hα : 
         exact_mod_cast hpop
       calc
         _ = ∑ j : RingIndex N,
-            (hc.choose * (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) /
+            (hc.choose * (2 * ∑' d : ℕ, comparableWeight α d) /
               (bandParameter N : ℝ) ^ α) *
               (population N (j.val + 1) : ℝ) := by
             apply Finset.sum_congr rfl
@@ -5937,20 +5937,20 @@ private theorem LatitudeSummation_comparable_majorants_sum_le {α : ℝ} (hα : 
         _ = _ := by rw [← Finset.mul_sum, hpopr]; ring
 
 /-- The full absolute block sum is controlled by three explicit arithmetic terms. -/
-private theorem LatitudeSummation_block_abs_sum_le {α : ℝ} (hα : α < 2)
+private theorem block_abs_sum_le {α : ℝ} (hα : α < 2)
     (hsym : BlockSymmetry α) (hc : ComparableBlockBound α)
     (hs : SameSideBlockBound α) (ho : OppositeBlockBound α)
     {N : ℕ} (hN : 1024 ≤ N) :
     (∑ j : RingIndex N, ∑ k : RingIndex N,
       |kernelBlock α N (j.val + 1) (k.val + 1)|) ≤
-      hc.choose * (2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d) *
+      hc.choose * (2 * ∑' d : ℕ, comparableWeight α d) *
         (N : ℝ) / (bandParameter N : ℝ) ^ α +
       (2 * (bandParameter N : ℝ) - 1) ^ (2 : ℕ) *
         (hs.choose / (bandParameter N : ℝ) ^ α +
           ho.choose * (15 * (bandParameter N : ℝ)) ^ (6 : ℕ) /
             (bandParameter N : ℝ) ^ (8 : ℕ)) := by
   have hpoint (j k : RingIndex N) :=
-    LatitudeSummation_block_le_three_majorants hα hsym hc hs ho hN j k
+    block_le_three_majorants hα hsym hc hs ho hN j k
   calc
     _ ≤ ∑ j : RingIndex N, ∑ k : RingIndex N,
         (hc.choose * (population N (j.val + 1) : ℝ) /
@@ -5981,10 +5981,10 @@ private theorem LatitudeSummation_block_abs_sum_le {α : ℝ} (hα : α < 2)
       rw [hcard]
       ring
     _ ≤ _ := by
-      exact add_le_add_right (LatitudeSummation_comparable_majorants_sum_le hα hc hN) _
+      exact add_le_add_right (comparable_majorants_sum_le hα hc hN) _
 
 /-- Elementary conversion of the three finite-sum majorants to the `N` scale. -/
-private theorem LatitudeSummation_arithmetic_majorants_le_scale
+private theorem arithmetic_majorants_le_scale
     {α M X A B D : ℝ} (hα : α < 2) (hM : 1 ≤ M)
     (hXlo : M ^ (2 : ℕ) ≤ X) (hXhi : X ≤ 16 * M ^ (2 : ℕ))
     (hA : 0 ≤ A) (hB : 0 ≤ B) (hD : 0 ≤ D) :
@@ -6054,7 +6054,7 @@ theorem latitude_bound_of_blocks {α : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
     (hidentity : LatitudeIdentity α) (hsym : BlockSymmetry α)
     (hc : ComparableBlockBound α) (hs : SameSideBlockBound α)
     (ho : OppositeBlockBound α) : LatitudeBound α := by
-  let W : ℝ := 2 * ∑' d : ℕ, LatitudeSummation_comparableWeight α d
+  let W : ℝ := 2 * ∑' d : ℕ, comparableWeight α d
   let A : ℝ := hc.choose * W
   let B : ℝ := hs.choose
   let D : ℝ := ho.choose
@@ -6062,7 +6062,7 @@ theorem latitude_bound_of_blocks {α : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
   have hW : 0 ≤ W := by
     dsimp [W]
     exact mul_nonneg (by norm_num) (tsum_nonneg (fun d => by
-      unfold LatitudeSummation_comparableWeight
+      unfold comparableWeight
       positivity))
   have hA : 0 ≤ A := mul_nonneg hc.choose_spec.1.le hW
   have hB : 0 < B := hs.choose_spec.1
@@ -6097,8 +6097,8 @@ theorem latitude_bound_of_blocks {α : ℝ} (_hα0 : 0 < α) (hα2 : α < 2)
           |∑ k : RingIndex N, kernelBlock α N (j.val + 1) (k.val + 1)| :=
         Finset.abs_sum_le_sum_abs _ _
       _ ≤ _ := Finset.sum_le_sum (fun j _ => Finset.abs_sum_le_sum_abs _ _)
-  have hblocks := LatitudeSummation_block_abs_sum_le hα2 hsym hc hs ho hN
-  have harith := LatitudeSummation_arithmetic_majorants_le_scale hα2 hM hXlo hXhi
+  have hblocks := block_abs_sum_le hα2 hsym hc hs ho hN
+  have harith := arithmetic_majorants_le_scale hα2 hM hXlo hXhi
     hA hB.le hD.le
   change |latitudeError α N| ≤ C * scale α N
   calc
@@ -9758,15 +9758,15 @@ theorem periodic_generalGridDifference
 
 /-- The standard equivalence between finite labels and modular labels preserves
 their canonical natural-number representatives. -/
-private theorem GridMultiplicity_finEquiv_symm_val (q : ℕ) [NeZero q] (i : ZMod q) :
+private theorem finEquiv_symm_val (q : ℕ) [NeZero q] (i : ZMod q) :
     (((ZMod.finEquiv q).symm i : Fin q) : ℕ) = i.val := by
   cases q with
   | zero => exact (NeZero.ne 0 rfl).elim
   | succ q => rfl
 
-private theorem GridMultiplicity_finEquiv_val (q : ℕ) [NeZero q] (i : Fin q) :
+private theorem finEquiv_val (q : ℕ) [NeZero q] (i : Fin q) :
     (ZMod.finEquiv q i).val = i.val := by
-  have h := GridMultiplicity_finEquiv_symm_val q (ZMod.finEquiv q i)
+  have h := finEquiv_symm_val q (ZMod.finEquiv q i)
   simpa using h.symm
 
 /-- The generic finite aliasing identity, with arbitrary periodic real data. -/
@@ -9782,7 +9782,7 @@ theorem grid_multiplicity : BEMOC.Definitive.GridMultiplicity := by
           (((ZMod.finEquiv q).symm i).val / (q : ℝ) -
             ((ZMod.finEquiv r).symm j).val / (r : ℝ))) =
         F (generalGridDifferenceHom q r (i, j)) := by
-    rw [GridMultiplicity_finEquiv_symm_val q i, GridMultiplicity_finEquiv_symm_val r j]
+    rw [finEquiv_symm_val q i, finEquiv_symm_val r j]
     exact (periodic_generalGridDifference f hf φ i j).symm
   have hleft :
       (∑ i : Fin q, ∑ j : Fin r,
@@ -9816,7 +9816,7 @@ theorem grid_multiplicity : BEMOC.Definitive.GridMultiplicity := by
     change f (φ + 2 * Real.pi *
       (((ZMod.finEquiv L) k).val : ℝ) / L) =
       f (φ + 2 * Real.pi * (k.val : ℝ) / L)
-    rw [GridMultiplicity_finEquiv_val L k]
+    rw [finEquiv_val L k]
   rw [hleft, sum_generalGridDifference_eq_gcd_mul_sum, hright]
   simp [L, nsmul_eq_mul]
 
@@ -10009,7 +10009,7 @@ theorem gcdArithmeticWeight_nonneg (α : ℝ) (q r : ℕ) :
   unfold gcdArithmeticWeight
   positivity
 
-private theorem Longitude_sum_divisible_rpow_neg_eq
+private theorem sum_divisible_rpow_neg_eq
     {a : ℝ} {k X : ℕ} (hk : 1 ≤ k) :
     (∑ q ∈ Finset.Icc 1 X with k ∣ q, (q : ℝ) ^ (-a)) =
       (k : ℝ) ^ (-a) *
@@ -10057,13 +10057,13 @@ private theorem Longitude_sum_divisible_rpow_neg_eq
       _ = (k : ℝ) ^ (-a) * ((q / k : ℕ) : ℝ) ^ (-a) := by
         rw [Real.mul_rpow (by positivity) (by positivity)]
 
-private theorem Longitude_sum_divisible_rpow_neg_le
+private theorem sum_divisible_rpow_neg_le
     {a : ℝ} (ha0 : 0 < a) (ha1 : a < 1)
     {k X : ℕ} (hk : 1 ≤ k) (hkX : k ≤ X) :
     (∑ q ∈ Finset.Icc 1 X with k ∣ q, (q : ℝ) ^ (-a)) ≤
       negativePowerSumConstant a * (X : ℝ) ^ (1 - a) *
         (k : ℝ) ^ (-(1 : ℝ)) := by
-  rw [Longitude_sum_divisible_rpow_neg_eq hk]
+  rw [sum_divisible_rpow_neg_eq hk]
   have hXdiv : 1 ≤ X / k := Nat.one_le_div_iff hk |>.2 hkX
   have hsum := sum_Icc_rpow_neg_le ha0 ha1 hXdiv
   have hkpos : (0 : ℝ) < k := by exact_mod_cast (show 0 < k by omega)
@@ -10102,7 +10102,7 @@ private theorem Longitude_sum_divisible_rpow_neg_le
           congr 2
           ring
 
-private theorem Longitude_gcdArithmeticWeight_le_divisor_sum
+private theorem gcdArithmeticWeight_le_divisor_sum
     {α : ℝ} {q r X : ℕ}
     (hq : 1 ≤ q) (hqX : q ≤ X) (hr : 1 ≤ r) (_hrX : r ≤ X) :
     gcdArithmeticWeight α q r ≤
@@ -10135,7 +10135,7 @@ private theorem Longitude_gcdArithmeticWeight_le_divisor_sum
       split_ifs <;> positivity) hdmem
   simpa [hdvd] using hsingle
 
-private theorem Longitude_divisor_triple_sum_factorization
+private theorem divisor_triple_sum_factorization
     (α : ℝ) (X : ℕ) :
     (∑ q ∈ Finset.Icc 1 X, ∑ r ∈ Finset.Icc 1 X,
       ∑ k ∈ Finset.Icc 1 X,
@@ -10239,10 +10239,10 @@ theorem gcd_arithmetic_double_sum_le
     intro q hq
     apply Finset.sum_le_sum
     intro r hr
-    exact Longitude_gcdArithmeticWeight_le_divisor_sum
+    exact gcdArithmeticWeight_le_divisor_sum
       (Finset.mem_Icc.mp hq).1 (Finset.mem_Icc.mp hq).2
       (Finset.mem_Icc.mp hr).1 (Finset.mem_Icc.mp hr).2
-  rw [Longitude_divisor_triple_sum_factorization] at hmajor
+  rw [divisor_triple_sum_factorization] at hmajor
   have hterm (k : ℕ) (hk : k ∈ Finset.Icc 1 X) :
       (k : ℝ) ^ (1 + α) *
           (∑ q ∈ Finset.Icc 1 X with k ∣ q,
@@ -10258,7 +10258,7 @@ theorem gcd_arithmetic_double_sum_le
       (k : ℝ) ^ (-(1 : ℝ))
     have hD :
         D ≤ B := by
-      have hraw := Longitude_sum_divisible_rpow_neg_le ha0 ha1 hk1 hkX
+      have hraw := sum_divisible_rpow_neg_le ha0 ha1 hk1 hkX
       convert hraw using 1 ; dsimp [D, B, a, K₀] ; ring_nf
     have hD0 : 0 ≤ D := by
       dsimp [D]
@@ -10343,7 +10343,7 @@ theorem gcd_arithmetic_double_sum_le
           rw [hrpow]
 
 
-private theorem Longitude_gcdSum_eq_arithmeticWeight (α : ℝ) (T : ℕ) :
+private theorem gcdSum_eq_arithmeticWeight (α : ℝ) (T : ℕ) :
     gcdSum α T =
       ∑ u ∈ Finset.Icc 1 T, ∑ v ∈ Finset.Icc 1 T,
         gcdArithmeticWeight α u v := by
@@ -10360,19 +10360,19 @@ private theorem Longitude_gcdSum_eq_arithmeticWeight (α : ℝ) (T : ℕ) :
   rw [div_eq_mul_inv, mul_inv_rev]
   ring
 
-private theorem Longitude_gcd_sum_bound_lt_two {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
+private theorem gcd_sum_bound_lt_two {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
     GcdSumBound α := by
   refine ⟨gcdArithmeticConstant α, gcdArithmeticConstant_pos hα0 hα2, ?_⟩
   intro T
   by_cases hT : 1 ≤ T
-  · rw [Longitude_gcdSum_eq_arithmeticWeight]
+  · rw [gcdSum_eq_arithmeticWeight]
     exact gcd_arithmetic_double_sum_le hα0 hα2 hT
   · have : T = 0 := by omega
     subst T
     simp [gcdSum]
 
 
-private theorem Longitude_gcdArithmeticWeight_eq_ratio (α : ℝ) {q r : ℕ}
+private theorem gcdArithmeticWeight_eq_ratio (α : ℝ) {q r : ℕ}
     (hq : 0 < q) (hr : 0 < r) :
     gcdArithmeticWeight α q r =
       (Nat.gcd q r : ℝ) *
@@ -10390,11 +10390,11 @@ private theorem Longitude_gcdArithmeticWeight_eq_ratio (α : ℝ) {q r : ℕ}
   rw [Real.rpow_neg hq0.le, Real.rpow_neg hr0.le]
   ring
 
-private theorem Longitude_gcdArithmeticWeight_mono {α β : ℝ} (hβα : β ≤ α)
+private theorem gcdArithmeticWeight_mono {α β : ℝ} (hβα : β ≤ α)
     {q r : ℕ} (hq : 0 < q) (hr : 0 < r) :
     gcdArithmeticWeight α q r ≤ gcdArithmeticWeight β q r := by
-  rw [Longitude_gcdArithmeticWeight_eq_ratio α hq hr,
-      Longitude_gcdArithmeticWeight_eq_ratio β hq hr]
+  rw [gcdArithmeticWeight_eq_ratio α hq hr,
+      gcdArithmeticWeight_eq_ratio β hq hr]
   have hd0 : 0 < (Nat.gcd q r : ℝ) := by
     exact_mod_cast Nat.gcd_pos_of_pos_left r hq
   have hdq : Nat.gcd q r ≤ q := Nat.gcd_le_left r hq
@@ -10423,28 +10423,28 @@ private theorem Longitude_gcdArithmeticWeight_mono {α β : ℝ} (hβα : β ≤
       ((Nat.gcd q r : ℝ) / r) ^ (β / 2) := by
         gcongr
 
-private theorem Longitude_gcdSum_mono {α β : ℝ} (hβα : β ≤ α) (T : ℕ) :
+private theorem gcdSum_mono {α β : ℝ} (hβα : β ≤ α) (T : ℕ) :
     gcdSum α T ≤ gcdSum β T := by
-  rw [Longitude_gcdSum_eq_arithmeticWeight, Longitude_gcdSum_eq_arithmeticWeight]
+  rw [gcdSum_eq_arithmeticWeight, gcdSum_eq_arithmeticWeight]
   apply Finset.sum_le_sum
   intro q hq
   apply Finset.sum_le_sum
   intro r hr
-  exact Longitude_gcdArithmeticWeight_mono hβα (Finset.mem_Icc.mp hq).1
+  exact gcdArithmeticWeight_mono hβα (Finset.mem_Icc.mp hq).1
     (Finset.mem_Icc.mp hr).1
 
 theorem gcd_sum_bound {α : ℝ} (hα0 : 0 < α) : GcdSumBound α := by
   by_cases hα2 : α < 2
-  · exact Longitude_gcd_sum_bound_lt_two hα0 hα2
-  · have hone := Longitude_gcd_sum_bound_lt_two (α := 1) (by norm_num) (by norm_num)
+  · exact gcd_sum_bound_lt_two hα0 hα2
+  · have hone := gcd_sum_bound_lt_two (α := 1) (by norm_num) (by norm_num)
     obtain ⟨C, hC, hbound⟩ := hone
     refine ⟨C, hC, ?_⟩
     intro T
-    exact (Longitude_gcdSum_mono (β := 1) (by linarith) T).trans (hbound T)
+    exact (gcdSum_mono (β := 1) (by linarith) T).trans (hbound T)
 
 /-! ## Geometric angular kernel for the actual polygon vertices -/
 
-private theorem Longitude_parallelPoint_dist_sq {s t θ φ : ℝ}
+private theorem longitude_parallelPoint_dist_sq {s t θ φ : ℝ}
     (hs : s ∈ Set.Icc (-1 : ℝ) 1) (ht : t ∈ Set.Icc (-1 : ℝ) 1) :
     dist (parallelPoint s θ hs) (parallelPoint t φ ht) ^ 2 =
       2 - 2 * s * t -
@@ -10462,7 +10462,7 @@ private theorem Longitude_parallelPoint_dist_sq {s t θ φ : ℝ}
   rw [Real.sq_sqrt hrs, Real.sq_sqrt hrt]
   nlinarith [Real.sin_sq_add_cos_sq θ, Real.sin_sq_add_cos_sq φ]
 
-private theorem Longitude_angular_coefficients {s t : ℝ}
+private theorem angular_coefficients {s t : ℝ}
     (hs : s ∈ Set.Icc (-1 : ℝ) 1) (ht : t ∈ Set.Icc (-1 : ℝ) 1) :
     0 ≤ 2 * Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2) ∧
       2 * Real.sqrt (1 - s ^ 2) * Real.sqrt (1 - t ^ 2) ≤
@@ -10488,13 +10488,13 @@ private theorem Longitude_angular_coefficients {s t : ℝ}
         nlinarith [Real.sq_sqrt hrs, Real.sq_sqrt hrt, sq_nonneg (s - t)]
     nlinarith
 
-private noncomputable def Longitude_ringPairDiscreteEnergy (α : ℝ) (N : ℕ)
+private noncomputable def ringPairDiscreteEnergy (α : ℝ) (N : ℕ)
     (φ : Phases N) (j k : RingIndex N) : ℝ :=
   ∑ i : Fin (population N (j.val + 1)),
     ∑ l : Fin (population N (k.val + 1)),
       dist (point N φ ⟨j, i⟩) (point N φ ⟨k, l⟩) ^ α
 
-private theorem Longitude_point_distance_power_eq_angularKernel
+private theorem point_distance_power_eq_angularKernel
     {α : ℝ} {N : ℕ} (hN : 4 ≤ N) (φ : Phases N)
     (j k : RingIndex N) (i : Fin (population N (j.val + 1)))
     (l : Fin (population N (k.val + 1))) :
@@ -10517,7 +10517,7 @@ private theorem Longitude_point_distance_power_eq_angularKernel
       (by omega) (by have hk := k.isLt; omega))
   rw [point_eq_parallelPoint hN φ ⟨j, i⟩,
     point_eq_parallelPoint hN φ ⟨k, l⟩]
-  have hd := Longitude_parallelPoint_dist_sq hs ht (θ := θ) (φ := ψ)
+  have hd := longitude_parallelPoint_dist_sq hs ht (θ := θ) (φ := ψ)
   change dist (parallelPoint s θ hs) (parallelPoint t ψ ht) ^ α = _
   calc
     dist (parallelPoint s θ hs) (parallelPoint t ψ ht) ^ α =
@@ -10540,15 +10540,15 @@ private theorem Longitude_point_distance_power_eq_angularKernel
 
 
 
-private theorem Longitude_angularKernel_periodic (α A B : ℝ) :
+private theorem angularKernel_periodic (α A B : ℝ) :
     Function.Periodic (angularKernel α A B) (2 * Real.pi) := by
   intro θ
   unfold angularKernel
   rw [Real.cos_add_two_pi]
 
-private theorem Longitude_ringPairDiscreteEnergy_eq_grid {α : ℝ} {N : ℕ}
+private theorem ringPairDiscreteEnergy_eq_grid {α : ℝ} {N : ℕ}
     (hN : 4 ≤ N) (φ : Phases N) (j k : RingIndex N) :
-    Longitude_ringPairDiscreteEnergy α N φ j k =
+    ringPairDiscreteEnergy α N φ j k =
       (Nat.gcd (population N (j.val + 1))
         (population N (k.val + 1)) : ℝ) *
       ∑ u : Fin (Nat.lcm (population N (j.val + 1))
@@ -10569,13 +10569,13 @@ private theorem Longitude_ringPairDiscreteEnergy_eq_grid {α : ℝ} {N : ℕ}
   let B := 2 * radius N (j.val + 1) * radius N (k.val + 1)
   let G : ℝ → ℝ := angularKernel α A B
   have hgrid := Grid.grid_multiplicity q r hq hr G
-    (Longitude_angularKernel_periodic α A B) (φ j - φ k)
-  unfold Longitude_ringPairDiscreteEnergy
-  simp_rw [Longitude_point_distance_power_eq_angularKernel hN φ j k]
+    (angularKernel_periodic α A B) (φ j - φ k)
+  unfold ringPairDiscreteEnergy
+  simp_rw [point_distance_power_eq_angularKernel hN φ j k]
   simpa [q, r, A, B, G] using hgrid
 
 
-private theorem Longitude_generic_pair_grid_error_bound {α C A B phase : ℝ}
+private theorem generic_pair_grid_error_bound {α C A B phase : ℝ}
     {q r : ℕ} (hq : 0 < q) (hr : 0 < r)
     (htrap : ∀ A B : ℝ, 0 ≤ B → B ≤ A →
       ∀ L : ℕ, 1 ≤ L → ∀ φ : ℝ,
@@ -10638,7 +10638,7 @@ private theorem Longitude_generic_pair_grid_error_bound {α C A B phase : ℝ}
           ((L : ℝ) * (L : ℝ) ^ (-1 - α)) by ring, hpow]
 
 
-private theorem Longitude_gcd_mul_lcm_rpow_identity {α : ℝ} {q r : ℕ}
+private theorem gcd_mul_lcm_rpow_identity {α : ℝ} {q r : ℕ}
     (hq : 0 < q) (hr : 0 < r) :
     (Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) ^ (-α) =
       (Nat.gcd q r : ℝ) ^ (1 + α) /
@@ -10656,14 +10656,14 @@ private theorem Longitude_gcd_mul_lcm_rpow_identity {α : ℝ} {q r : ℕ}
     (Real.rpow_pos_of_pos hL α).ne']
   ring
 
-private theorem Longitude_gcd_weight_algebra {α : ℝ} {q r : ℕ}
+private theorem gcd_weight_algebra {α : ℝ} {q r : ℕ}
     (hq : 0 < q) (hr : 0 < r) :
     (Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) ^ (-α) *
         ((q : ℝ) * r) ^ (α / 2) =
       (Nat.gcd q r : ℝ) ^ (1 + α) /
         ((q : ℝ) * r) ^ (α / 2) := by
   have hprod : 0 < (q : ℝ) * r := by positivity
-  rw [Longitude_gcd_mul_lcm_rpow_identity hq hr]
+  rw [gcd_mul_lcm_rpow_identity hq hr]
   have hpow : ((q : ℝ) * r) ^ α =
       (((q : ℝ) * r) ^ (α / 2)) ^ 2 := by
     rw [← Real.rpow_mul_natCast hprod.le]
@@ -10676,7 +10676,7 @@ private theorem Longitude_gcd_weight_algebra {α : ℝ} {q r : ℕ}
   ring
 
 
-private theorem Longitude_generic_pair_weight_bound {α C B : ℝ} {M q r : ℕ}
+private theorem generic_pair_weight_bound {α C B : ℝ} {M q r : ℕ}
     (hα0 : 0 < α) (hC : 0 ≤ C) (hM : 0 < M)
     (hq : 0 < q) (hr : 0 < r) (hB : 0 ≤ B)
     (hBbound : B ≤ ((q : ℝ) * r) / (M : ℝ) ^ 2) :
@@ -10712,10 +10712,10 @@ private theorem Longitude_generic_pair_weight_bound {α C B : ℝ} {M q r : ℕ}
         C * (M : ℝ) ^ (-α) *
           ((Nat.gcd q r : ℝ) * (Nat.lcm q r : ℝ) ^ (-α) *
             ((q : ℝ) * r) ^ (α / 2)) by ring]
-      rw [Longitude_gcd_weight_algebra hq hr]
+      rw [gcd_weight_algebra hq hr]
 
 
-private theorem Longitude_ring_pair_B_bound {N : ℕ} (hN : 4 ≤ N)
+private theorem ring_pair_B_bound {N : ℕ} (hN : 4 ≤ N)
     (j k : RingIndex N) :
     2 * radius N (j.val + 1) * radius N (k.val + 1) ≤
       ((population N (j.val + 1) : ℝ) *
@@ -10744,7 +10744,7 @@ private theorem Longitude_ring_pair_B_bound {N : ℕ} (hN : 4 ≤ N)
   nlinarith
 
 
-private theorem Longitude_gcdArithmeticWeight_eq_div {α : ℝ} {q r : ℕ}
+private theorem gcdArithmeticWeight_eq_div {α : ℝ} {q r : ℕ}
     (hq : 0 < q) (hr : 0 < r) :
     gcdArithmeticWeight α q r =
       (Nat.gcd q r : ℝ) ^ (1 + α) /
@@ -10758,7 +10758,7 @@ private theorem Longitude_gcdArithmeticWeight_eq_div {α : ℝ} {q r : ℕ}
   field_simp [(Real.rpow_pos_of_pos (by exact_mod_cast hq : (0 : ℝ) < q) (α / 2)).ne',
     (Real.rpow_pos_of_pos (by exact_mod_cast hr : (0 : ℝ) < r) (α / 2)).ne']
 
-private theorem Longitude_ring_pair_error_bound {α C : ℝ}
+private theorem ring_pair_error_bound {α C : ℝ}
     (hα0 : 0 < α) (hC : 0 ≤ C)
     (htrap : ∀ A B : ℝ, 0 ≤ B → B ≤ A →
       ∀ L : ℕ, 1 ≤ L → ∀ φ : ℝ,
@@ -10769,7 +10769,7 @@ private theorem Longitude_ring_pair_error_bound {α C : ℝ}
     {N : ℕ} (hN : 4 ≤ N) (φ : Phases N) (j k : RingIndex N) :
     |(population N (j.val + 1) : ℝ) * population N (k.val + 1) *
         latitudeKernel α (height N (j.val + 1)) (height N (k.val + 1)) -
-      Longitude_ringPairDiscreteEnergy α N φ j k| ≤
+      ringPairDiscreteEnergy α N φ j k| ≤
     C * (bandParameter N : ℝ) ^ (-α) *
       gcdArithmeticWeight α (population N (j.val + 1))
         (population N (k.val + 1)) := by
@@ -10791,37 +10791,37 @@ private theorem Longitude_ring_pair_error_bound {α C : ℝ}
   have ht : t ∈ Set.Icc (-1 : ℝ) 1 :=
     Set.Ioo_subset_Icc_self (height_in_open_unit hN
       (by omega) (by have hk := k.isLt; omega))
-  have hcoeff : 0 ≤ B ∧ B ≤ A := Longitude_angular_coefficients hs ht
+  have hcoeff : 0 ≤ B ∧ B ≤ A := angular_coefficients hs ht
   have hmean : latitudeKernel α s t =
       (2 * Real.pi)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi,
         angularKernel α A B θ := by rfl
-  have hgrid := Longitude_ringPairDiscreteEnergy_eq_grid (α := α) hN φ j k
-  have hraw := Longitude_generic_pair_grid_error_bound hq hr htrap hcoeff.1 hcoeff.2
+  have hgrid := ringPairDiscreteEnergy_eq_grid (α := α) hN φ j k
+  have hraw := generic_pair_grid_error_bound hq hr htrap hcoeff.1 hcoeff.2
     (phase := φ j - φ k)
   dsimp [q, r, A, B, s, t] at hraw
   rw [← hmean, ← hgrid] at hraw
   have hBbound : B ≤ ((q : ℝ) * r) / (M : ℝ) ^ 2 :=
-    Longitude_ring_pair_B_bound hN j k
-  have hweight := Longitude_generic_pair_weight_bound hα0 hC hM hq hr
+    ring_pair_B_bound hN j k
+  have hweight := generic_pair_weight_bound hα0 hC hM hq hr
     hcoeff.1 hBbound
   change |(q : ℝ) * r * latitudeKernel α s t -
-    Longitude_ringPairDiscreteEnergy α N φ j k| ≤ _
-  rw [Longitude_gcdArithmeticWeight_eq_div hq hr]
+    ringPairDiscreteEnergy α N φ j k| ≤ _
+  rw [gcdArithmeticWeight_eq_div hq hr]
   exact hraw.trans hweight
 
 
-private theorem Longitude_diamondEnergy_eq_sum_ringPairDiscreteEnergy
+private theorem diamondEnergy_eq_sum_ringPairDiscreteEnergy
     (α : ℝ) (N : ℕ) (φ : Phases N) :
     diamondEnergy α N φ =
       ∑ j : RingIndex N, ∑ k : RingIndex N,
-        Longitude_ringPairDiscreteEnergy α N φ j k := by
-  unfold diamondEnergy energy Longitude_ringPairDiscreteEnergy
+        ringPairDiscreteEnergy α N φ j k := by
+  unfold diamondEnergy energy ringPairDiscreteEnergy
   simp only [Fintype.sum_sigma]
   apply Finset.sum_congr rfl
   intro j hj
   rw [Finset.sum_comm]
 
-private theorem Longitude_population_sum_le_three {N : ℕ} (hN : 4 ≤ N)
+private theorem population_sum_le_three {N : ℕ} (hN : 4 ≤ N)
     (g : ℕ → ℝ) (hg : ∀ q, 0 ≤ g q) :
     (∑ j : RingIndex N, g (population N (j.val + 1))) ≤
       3 * ∑ q ∈ Finset.Icc 1 (15 * bandParameter N), g q := by
@@ -10851,7 +10851,7 @@ private theorem Longitude_population_sum_le_three {N : ℕ} (hN : 4 ≤ N)
         (hg q)
     _ = 3 * ∑ q ∈ T, g q := by rw [Finset.mul_sum]
 
-private theorem Longitude_population_double_gcd_sum_le
+private theorem population_double_gcd_sum_le
     {α : ℝ} {N : ℕ} (hN : 4 ≤ N) :
     (∑ j : RingIndex N, ∑ k : RingIndex N,
       gcdArithmeticWeight α (population N (j.val + 1))
@@ -10864,7 +10864,7 @@ private theorem Longitude_population_double_gcd_sum_le
           (population N (k.val + 1))) ≤
         3 * ∑ v ∈ Finset.Icc 1 T,
           gcdArithmeticWeight α (population N (j.val + 1)) v := by
-    exact Longitude_population_sum_le_three hN
+    exact population_sum_le_three hN
       (fun v ↦ gcdArithmeticWeight α (population N (j.val + 1)) v)
       (fun v ↦ gcdArithmeticWeight_nonneg α _ v)
   calc
@@ -10885,29 +10885,29 @@ private theorem Longitude_population_double_gcd_sum_le
       apply mul_le_mul_of_nonneg_left
       · apply Finset.sum_le_sum
         intro v hv
-        exact Longitude_population_sum_le_three hN
+        exact population_sum_le_three hN
           (fun u ↦ gcdArithmeticWeight α u v)
           (fun u ↦ gcdArithmeticWeight_nonneg α u v)
       · norm_num
     _ = 9 * gcdSum α T := by
-      rw [Longitude_gcdSum_eq_arithmeticWeight]
+      rw [gcdSum_eq_arithmeticWeight]
       rw [Finset.sum_comm]
       simp_rw [Finset.mul_sum]
       ring_nf
 
-private theorem Longitude_longitudeError_eq_sum_pair_errors
+private theorem longitudeError_eq_sum_pair_errors
     (α : ℝ) (N : ℕ) (φ : Phases N) :
     longitudeError α N φ =
       ∑ j : RingIndex N, ∑ k : RingIndex N,
         ((population N (j.val + 1) : ℝ) * population N (k.val + 1) *
           latitudeKernel α (height N (j.val + 1))
             (height N (k.val + 1)) -
-          Longitude_ringPairDiscreteEnergy α N φ j k) := by
+          ringPairDiscreteEnergy α N φ j k) := by
   unfold longitudeError ringEnergy
-  rw [Longitude_diamondEnergy_eq_sum_ringPairDiscreteEnergy]
+  rw [diamondEnergy_eq_sum_ringPairDiscreteEnergy]
   simp_rw [Finset.sum_sub_distrib]
 
-private theorem Longitude_M_power_le_scale {α : ℝ} (hα2 : α < 2)
+private theorem M_power_le_scale {α : ℝ} (hα2 : α < 2)
     {N : ℕ} (hN : 4 ≤ N) :
     (bandParameter N : ℝ) ^ (2 - α) ≤ scale α N := by
   let M := bandParameter N
@@ -10929,7 +10929,7 @@ private theorem Longitude_M_power_le_scale {α : ℝ} (hα2 : α < 2)
       exact Real.rpow_natCast (M : ℝ) 2
     _ ≤ (N : ℝ) ^ (1 - α / 2) := hpow
 
-private theorem Longitude_longitude_error_le_gcd_sum {α C : ℝ}
+private theorem longitude_error_le_gcd_sum {α C : ℝ}
     (hα0 : 0 < α) (hC : 0 ≤ C)
     (htrap : ∀ A B : ℝ, 0 ≤ B → B ≤ A →
       ∀ L : ℕ, 1 ≤ L → ∀ φ : ℝ,
@@ -10945,14 +10945,14 @@ private theorem Longitude_longitude_error_le_gcd_sum {α C : ℝ}
     (population N (j.val + 1) : ℝ) * population N (k.val + 1) *
       latitudeKernel α (height N (j.val + 1))
         (height N (k.val + 1)) -
-      Longitude_ringPairDiscreteEnergy α N φ j k
+      ringPairDiscreteEnergy α N φ j k
   let W : RingIndex N → RingIndex N → ℝ := fun j k ↦
     gcdArithmeticWeight α (population N (j.val + 1))
       (population N (k.val + 1))
   have hpair (j k : RingIndex N) :
       |E j k| ≤ C * (bandParameter N : ℝ) ^ (-α) * W j k :=
-    Longitude_ring_pair_error_bound hα0 hC htrap hN φ j k
-  rw [Longitude_longitudeError_eq_sum_pair_errors]
+    ring_pair_error_bound hα0 hC htrap hN φ j k
+  rw [longitudeError_eq_sum_pair_errors]
   change |∑ j : RingIndex N, ∑ k : RingIndex N, E j k| ≤ _
   calc
     |∑ j : RingIndex N, ∑ k : RingIndex N, E j k| ≤
@@ -10977,7 +10977,7 @@ private theorem Longitude_longitude_error_le_gcd_sum {α C : ℝ}
     _ ≤ C * (bandParameter N : ℝ) ^ (-α) *
           (9 * gcdSum α (15 * bandParameter N)) := by
       apply mul_le_mul_of_nonneg_left
-        (Longitude_population_double_gcd_sum_le hN)
+        (population_double_gcd_sum_le hN)
       positivity
 
 /-- The angular discretization error for the actual Diamond configuration is
@@ -10992,9 +10992,9 @@ theorem longitude_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
   have hM : 0 < M := bandParameter_pos hN
   have hMr : (0 : ℝ) < M := by exact_mod_cast hM
   have hscale : (M : ℝ) ^ (2 - α) ≤ scale α N :=
-    Longitude_M_power_le_scale hα2 hN
+    M_power_le_scale hα2 hN
   have hsum := hgcd (15 * M)
-  have hraw := Longitude_longitude_error_le_gcd_sum hα0 hCt.le htrap hN φ
+  have hraw := longitude_error_le_gcd_sum hα0 hCt.le htrap hN φ
   have hpow : (M : ℝ) ^ (-α) * (M : ℝ) ^ 2 =
       (M : ℝ) ^ (2 - α) := by
     calc
@@ -11145,22 +11145,22 @@ theorem hasDerivAt_realBinomialTerm (β : ℝ) (n : ℕ) (x : ℝ) :
   convert (hasDerivAt_pow n x).const_mul (Ring.choose β n) using 1 ;
     simp [realBinomialTerm, realBinomialTermD] ; ring
 
-private def SeparatedBinomialSeries_realBinomialDerivativeMajorant (β ρ : ℝ) (n : ℕ) : ℝ :=
+private def realBinomialDerivativeMajorant (β ρ : ℝ) (n : ℕ) : ℝ :=
   if n = 0 then 0 else |β * Ring.choose (β - 1) (n - 1) * ρ ^ (n - 1)|
 
-private theorem SeparatedBinomialSeries_summable_realBinomialDerivativeMajorant (β ρ : ℝ) (hρ : |ρ| < 1) :
-    Summable (SeparatedBinomialSeries_realBinomialDerivativeMajorant β ρ) := by
+private theorem summable_realBinomialDerivativeMajorant (β ρ : ℝ) (hρ : |ρ| < 1) :
+    Summable (realBinomialDerivativeMajorant β ρ) := by
   rw [← summable_nat_add_iff 1]
-  simpa [SeparatedBinomialSeries_realBinomialDerivativeMajorant, abs_mul, mul_assoc] using
+  simpa [realBinomialDerivativeMajorant, abs_mul, mul_assoc] using
     ((summable_real_choose_mul_pow (β - 1) ρ hρ).mul_left β).norm
 
-private theorem SeparatedBinomialSeries_norm_realBinomialTermD_le (β ρ : ℝ) {n : ℕ} {y : ℝ}
+private theorem norm_realBinomialTermD_le (β ρ : ℝ) {n : ℕ} {y : ℝ}
     (hρ : 0 ≤ ρ) (hy : |y| ≤ ρ) :
-    ‖realBinomialTermD β n y‖ ≤ SeparatedBinomialSeries_realBinomialDerivativeMajorant β ρ n := by
+    ‖realBinomialTermD β n y‖ ≤ realBinomialDerivativeMajorant β ρ n := by
   cases n with
-  | zero => simp [realBinomialTermD, SeparatedBinomialSeries_realBinomialDerivativeMajorant]
+  | zero => simp [realBinomialTermD, realBinomialDerivativeMajorant]
   | succ n =>
-      unfold realBinomialTermD SeparatedBinomialSeries_realBinomialDerivativeMajorant
+      unfold realBinomialTermD realBinomialDerivativeMajorant
       simp only [Nat.add_sub_cancel, if_false (by omega : n + 1 ≠ 0), Nat.cast_add,
         Nat.cast_one]
       change
@@ -11179,16 +11179,16 @@ theorem hasDerivAt_tsum_realBinomialTerm (β x : ℝ) (hx : |x| < 1) :
   obtain ⟨ρ, hxρ, hρ1⟩ := exists_between hx
   have hρpos : 0 < ρ := (abs_nonneg x).trans_lt hxρ
   apply hasDerivAt_tsum_of_isPreconnected
-    (u := SeparatedBinomialSeries_realBinomialDerivativeMajorant β ρ) (t := Set.Ioo (-ρ) ρ)
+    (u := realBinomialDerivativeMajorant β ρ) (t := Set.Ioo (-ρ) ρ)
     (g := realBinomialTerm β) (g' := realBinomialTermD β) (y₀ := 0)
-  · exact SeparatedBinomialSeries_summable_realBinomialDerivativeMajorant β ρ
+  · exact summable_realBinomialDerivativeMajorant β ρ
       (by rw [abs_of_pos hρpos]; exact hρ1)
   · exact isOpen_Ioo
   · exact isPreconnected_Ioo
   · intro n y _
     exact hasDerivAt_realBinomialTerm β n y
   · intro n y hy
-    exact SeparatedBinomialSeries_norm_realBinomialTermD_le β ρ hρpos.le
+    exact norm_realBinomialTermD_le β ρ hρpos.le
       (le_of_lt (abs_lt.2 hy))
   · exact ⟨neg_lt_zero.mpr hρpos, hρpos⟩
   · simpa [realBinomialTerm] using
@@ -11284,7 +11284,7 @@ theorem realBinomialSum_zero (β : ℝ) : realBinomialSum β 0 = 1 := by
     have hnpos : 0 < n := Nat.pos_of_ne_zero hn
     simp [realBinomialTerm, zero_pow hnpos.ne']
 
-private theorem SeparatedBinomialSeries_hasDerivAt_realBinomialSum_mul_negRpow (β x : ℝ) (hx : |x| < 1) :
+private theorem hasDerivAt_realBinomialSum_mul_negRpow (β x : ℝ) (hx : |x| < 1) :
     HasDerivAt
       (fun y ↦ realBinomialSum β y * (1 + y) ^ (-β))
       0 x := by
@@ -11309,11 +11309,11 @@ theorem tsum_real_choose_mul_pow_eq_rpow (β x : ℝ) (hx : |x| < 1) :
   let H : ℝ → ℝ := fun y ↦ realBinomialSum β y * (1 + y) ^ (-β)
   have hdiff : DifferentiableOn ℝ H (Set.Ioo (-1) 1) := by
     intro y hy
-    exact (SeparatedBinomialSeries_hasDerivAt_realBinomialSum_mul_negRpow β y
+    exact (hasDerivAt_realBinomialSum_mul_negRpow β y
       (abs_lt.2 hy)).differentiableAt.differentiableWithinAt
   have hzero : Set.Ioo (-1 : ℝ) 1 |>.EqOn (deriv H) 0 := by
     intro y hy
-    exact (SeparatedBinomialSeries_hasDerivAt_realBinomialSum_mul_negRpow β y (abs_lt.2 hy)).deriv
+    exact (hasDerivAt_realBinomialSum_mul_negRpow β y (abs_lt.2 hy)).deriv
   have hconst :
       H x = H 0 :=
     isOpen_Ioo.is_const_of_deriv_eq_zero isPreconnected_Ioo hdiff hzero
@@ -11381,7 +11381,7 @@ theorem summable_angularBinomialTerm (β q θ : ℝ) (hq : |q| < 1) :
 
 /-- Normal convergence on the angular interval, in the exact form needed
 by the interval-integral sum theorem. -/
-private theorem SeparatedAngularExpansion_summable_restricted_angularBinomialTerm_norm
+private theorem summable_restricted_angularBinomialTerm_norm
     (β q : ℝ) (hq : |q| < 1) :
     Summable (fun n : ℕ ↦
       ‖(⟨angularBinomialTerm β q n,
@@ -11422,7 +11422,7 @@ theorem tsum_intervalIntegral_angularBinomialTerm
     ⟨angularBinomialTerm β q n, continuous_angularBinomialTerm β q n⟩
   simpa [f] using
     intervalIntegral.tsum_intervalIntegral_eq_of_summable_norm
-      (SeparatedAngularExpansion_summable_restricted_angularBinomialTerm_norm β q hq)
+      (summable_restricted_angularBinomialTerm_norm β q hq)
 
 /-- Pointwise evaluation of the angular generalized-binomial series. -/
 theorem tsum_angularBinomialTerm_eq_rpow
@@ -11630,7 +11630,7 @@ theorem angularKernelB_even_pow_eq
       (4 : ℝ) ^ m * (1 - s ^ 2) ^ m * (1 - t ^ 2) ^ m := by
   rw [pow_mul, angularKernelB_sq_eq_four_radiusSq hs ht, mul_pow, mul_pow]
 
-private theorem SeparatedAngularExpansion_rpow_mul_div_even_pow
+private theorem rpow_mul_div_even_pow
     {A B β : ℝ} (hA : 0 < A) (m : ℕ) :
     A ^ β * (B / A) ^ (2 * m) =
       A ^ (β - 2 * (m : ℝ)) * B ^ (2 * m) := by
@@ -11708,7 +11708,7 @@ theorem latitudeKernel_eq_separatedEvenPowerSeries
           normalizedCosineMoment (2 * m)) *
           (angularKernelA s t ^ (α / 2) *
             (angularKernelB s t / angularKernelA s t) ^ (2 * m)) by ring]
-  rw [SeparatedAngularExpansion_rpow_mul_div_even_pow hA m,
+  rw [rpow_mul_div_even_pow hA m,
     angularKernelB_even_pow_eq hs ht m]
   ring
 
@@ -11939,7 +11939,7 @@ theorem hasDerivAt_unequalRadiusPowerD1 (m : ℕ) (s : ℝ) :
       rw [hm]
       ring
 
-private theorem SeparatedSummandDerivatives_hasDerivAt_angularKernelA_left (s t : ℝ) :
+private theorem hasDerivAt_angularKernelA_left (s t : ℝ) :
     HasDerivAt (fun y ↦ angularKernelA y t) (-2 * t) s := by
   unfold angularKernelA
   convert (hasDerivAt_const s 2).sub
@@ -11949,7 +11949,7 @@ private theorem SeparatedSummandDerivatives_hasDerivAt_angularKernelA_left (s t 
     ring
   · ring
 
-private theorem SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right (s t : ℝ) :
+private theorem hasDerivAt_angularKernelA_right (s t : ℝ) :
     HasDerivAt (fun y ↦ angularKernelA s y) (-2 * s) t := by
   unfold angularKernelA
   convert (hasDerivAt_const t 2).sub
@@ -11966,7 +11966,7 @@ theorem hasDerivAt_unequalAPow_left
   convert
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e) (Or.inl hA.ne')).comp s
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_left s t) using 1
+        (hasDerivAt_angularKernelA_left s t) using 1
 
 theorem hasDerivAt_unequalAPowS_left
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -11975,7 +11975,7 @@ theorem hasDerivAt_unequalAPowS_left
   convert
     ((Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e - 1) (Or.inl hA.ne')).comp s
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_left s t)).const_mul (e * (-2 * t))
+        (hasDerivAt_angularKernelA_left s t)).const_mul (e * (-2 * t))
       using 1
   · funext y
     simp only [Function.comp_apply]
@@ -11989,7 +11989,7 @@ theorem hasDerivAt_unequalAPow_right
   convert
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e) (Or.inl hA.ne')).comp t
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right s t) using 1
+        (hasDerivAt_angularKernelA_right s t) using 1
 
 theorem hasDerivAt_unequalAPowT_right
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
@@ -11998,7 +11998,7 @@ theorem hasDerivAt_unequalAPowT_right
   convert
     ((Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e - 1) (Or.inl hA.ne')).comp t
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right s t)).const_mul (e * (-2 * s))
+        (hasDerivAt_angularKernelA_right s t)).const_mul (e * (-2 * s))
       using 1
   · funext y
     simp only [Function.comp_apply]
@@ -12012,7 +12012,7 @@ theorem hasDerivAt_unequalAPowS_right
   have hp :=
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e - 1) (Or.inl hA.ne')).comp t
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right s t)
+        (hasDerivAt_angularKernelA_right s t)
   have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) t := by
     convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 ; ring
   convert (hp.mul hlin).const_mul e using 1
@@ -12029,7 +12029,7 @@ theorem hasDerivAt_unequalAPowSS_right
   have hp :=
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e - 2) (Or.inl hA.ne')).comp t
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right s t)
+        (hasDerivAt_angularKernelA_right s t)
   have hsq : HasDerivAt (fun y : ℝ ↦ (-2 * y) ^ 2)
       (2 * (-2 * t) * (-2)) t := by
     convert
@@ -12049,11 +12049,11 @@ theorem hasDerivAt_unequalAPowST_right
   have hp2 :=
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e - 2) (Or.inl hA.ne')).comp t
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right s t)
+        (hasDerivAt_angularKernelA_right s t)
   have hp1 :=
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e - 1) (Or.inl hA.ne')).comp t
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right s t)
+        (hasDerivAt_angularKernelA_right s t)
   have hlin : HasDerivAt (fun y : ℝ ↦ -2 * y) (-2) t := by
     convert (hasDerivAt_const t (-2)).mul (hasDerivAt_id t) using 1 ; ring
   convert
@@ -12073,11 +12073,11 @@ theorem hasDerivAt_unequalAPowSST_right
   have hp3 :=
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e - 3) (Or.inl hA.ne')).comp t
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right s t)
+        (hasDerivAt_angularKernelA_right s t)
   have hp2 :=
     (Real.hasDerivAt_rpow_const (x := angularKernelA s t)
       (p := e - 2) (Or.inl hA.ne')).comp t
-        (SeparatedSummandDerivatives_hasDerivAt_angularKernelA_right s t)
+        (hasDerivAt_angularKernelA_right s t)
   have hsq : HasDerivAt (fun y : ℝ ↦ (-2 * y) ^ 2)
       (2 * (-2 * t) * (-2)) t := by
     convert
@@ -12512,7 +12512,7 @@ structure SeparatedSeriesRectangle
   ratio_le : ∀ s ∈ Icc a b, ∀ t ∈ Icc c d,
     separatedRatio s t ≤ q
 
-private theorem SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add (s t : ℝ) :
+private theorem angularKernelA_eq_radiusSq_add (s t : ℝ) :
     angularKernelA s t = (1 - s ^ 2) + (1 - t ^ 2) + (s - t) ^ 2 := by
   unfold angularKernelA
   ring
@@ -12698,7 +12698,7 @@ theorem summable_shifted_evenAngularDerivativeCoefficient_mul_pow
 
 /-! ## Uniform bounds for the finite Leibniz formula -/
 
-private theorem SeparatedSeriesBounds_angularKernelA_le_four_of_mem
+private theorem angularKernelA_le_four_of_mem
     {s t : ℝ} (hs : s ∈ Icc (-1 : ℝ) 1)
     (ht : t ∈ Icc (-1 : ℝ) 1) :
     angularKernelA s t ≤ 4 := by
@@ -12716,7 +12716,7 @@ private theorem SeparatedSeriesBounds_angularKernelA_le_four_of_mem
       _ ≤ s * t := neg_abs_le _
   linarith
 
-private theorem SeparatedSeriesBounds_abs_height_le_one_of_mem
+private theorem abs_height_le_one_of_mem
     {s : ℝ} (hs : s ∈ Icc (-1 : ℝ) 1) :
     |s| ≤ 1 :=
   abs_le.mpr hs
@@ -12766,7 +12766,7 @@ theorem abs_latitude_even_falling_four_le
           (5 * ((m : ℝ) + 1)) := by gcongr
     _ = 625 * ((m : ℝ) + 1) ^ (4 : ℕ) := by ring
 
-private theorem SeparatedSeriesBounds_latitude_common_factor_eq
+private theorem latitude_common_factor_eq
     {α A u v : ℝ} (hA : 0 < A) (m : ℕ) (hm : 2 ≤ m) :
     (4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) *
         A ^ (α / 2 - 2 * (m : ℝ)) =
@@ -12786,7 +12786,7 @@ private theorem SeparatedSeriesBounds_latitude_common_factor_eq
   field_simp [pow_ne_zero _ hA.ne']
   ring
 
-private theorem SeparatedSeriesBounds_abs_unequalRadiusPower_le
+private theorem abs_unequalRadiusPower_le
     {A s : ℝ} {m : ℕ} (hm : 2 ≤ m)
     (hs : s ∈ Icc (-1 : ℝ) 1)
     (huA : 1 - s ^ 2 ≤ A) :
@@ -12803,7 +12803,7 @@ private theorem SeparatedSeriesBounds_abs_unequalRadiusPower_le
       gcongr
     _ = A ^ 2 * (1 - s ^ 2) ^ (m - 2) := by ring
 
-private theorem SeparatedSeriesBounds_abs_unequalRadiusPowerD1_le
+private theorem abs_unequalRadiusPowerD1_le
     {A s : ℝ} {m : ℕ} (hm : 2 ≤ m)
     (hs : s ∈ Icc (-1 : ℝ) 1)
     (huA : 1 - s ^ 2 ≤ A) :
@@ -12811,7 +12811,7 @@ private theorem SeparatedSeriesBounds_abs_unequalRadiusPowerD1_le
       2 * ((m : ℝ) + 1) * A * (1 - s ^ 2) ^ (m - 2) := by
   have hu0 : 0 ≤ 1 - s ^ 2 := by nlinarith [hs.1, hs.2]
   have hA0 : 0 ≤ A := hu0.trans huA
-  have hsabs := SeparatedSeriesBounds_abs_height_le_one_of_mem hs
+  have hsabs := abs_height_le_one_of_mem hs
   have hmcast : (0 : ℝ) ≤ m := by positivity
   have hmle : (m : ℝ) ≤ (m : ℝ) + 1 := by linarith
   have hpow :
@@ -12833,7 +12833,7 @@ private theorem SeparatedSeriesBounds_abs_unequalRadiusPowerD1_le
     _ = 2 * ((m : ℝ) + 1) * A *
           (1 - s ^ 2) ^ (m - 2) := by ring
 
-private theorem SeparatedSeriesBounds_abs_unequalRadiusPowerD2_le
+private theorem abs_unequalRadiusPowerD2_le
     {A s : ℝ} {m : ℕ} (hm : 2 ≤ m)
     (hs : s ∈ Icc (-1 : ℝ) 1)
     (huA : 1 - s ^ 2 ≤ A) (hA4 : A ≤ 4) :
@@ -12842,7 +12842,7 @@ private theorem SeparatedSeriesBounds_abs_unequalRadiusPowerD2_le
         (1 - s ^ 2) ^ (m - 2) := by
   have hu0 : 0 ≤ 1 - s ^ 2 := by nlinarith [hs.1, hs.2]
   have hA0 : 0 ≤ A := hu0.trans huA
-  have hsabs := SeparatedSeriesBounds_abs_height_le_one_of_mem hs
+  have hsabs := abs_height_le_one_of_mem hs
   have hmcast : (0 : ℝ) ≤ m := by positivity
   have hm1 :
       |(m : ℝ) - 1| ≤ (m : ℝ) + 1 := by
@@ -12890,7 +12890,7 @@ private theorem SeparatedSeriesBounds_abs_unequalRadiusPowerD2_le
           mul_le_mul_of_nonneg_right hcoef hupow
         _ = _ := by ring
 
-private theorem SeparatedSeriesBounds_rpow_sub_nat_le_four_pow_mul
+private theorem rpow_sub_nat_le_four_pow_mul
     {A e : ℝ} (hA : 0 < A) (hA4 : A ≤ 4)
     {r k : ℕ} (hrk : r ≤ k) :
     A ^ (e - r) ≤
@@ -12905,13 +12905,13 @@ private theorem SeparatedSeriesBounds_rpow_sub_nat_le_four_pow_mul
   exact (mul_le_mul_of_nonneg_left hpow
     (Real.rpow_nonneg hA.le (e - k))).trans_eq (by ring)
 
-private theorem SeparatedSeriesBounds_abs_unequalAPow_le
+private theorem abs_unequalAPow_le
     {e s t : ℝ} (hA : 0 < angularKernelA s t) :
     |unequalAPow e s t| = angularKernelA s t ^ e := by
   unfold unequalAPow
   exact abs_of_pos (Real.rpow_pos_of_pos hA _)
 
-private theorem SeparatedSeriesBounds_abs_unequalAPowS_le
+private theorem abs_unequalAPowS_le
     {α s t : ℝ} {m : ℕ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (ht : t ∈ Icc (-1 : ℝ) 1)
@@ -12922,7 +12922,7 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowS_le
           (α / 2 - 2 * (m : ℝ) - 1) := by
   have he := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
   norm_num at he
-  have ht1 := SeparatedSeriesBounds_abs_height_le_one_of_mem ht
+  have ht1 := abs_height_le_one_of_mem ht
   have hw : 0 ≤ (m : ℝ) + 1 := by positivity
   unfold unequalAPowS
   rw [abs_mul, abs_mul,
@@ -12940,7 +12940,7 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowS_le
           (2 * 1) := by gcongr
     _ = _ := by ring
 
-private theorem SeparatedSeriesBounds_abs_unequalAPowT_le
+private theorem abs_unequalAPowT_le
     {α s t : ℝ} {m : ℕ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (hs : s ∈ Icc (-1 : ℝ) 1)
@@ -12955,10 +12955,10 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowT_le
   have hA' : 0 < angularKernelA t s := by rwa [hAsym]
   simpa [unequalAPowT, unequalAPowS, mul_comm, mul_left_comm,
     mul_assoc, hAsym] using
-    (SeparatedSeriesBounds_abs_unequalAPowS_le (α := α) (s := t) (t := s) (m := m)
+    (abs_unequalAPowS_le (α := α) (s := t) (t := s) (m := m)
       hα0 hα2 hs hA')
 
-private theorem SeparatedSeriesBounds_abs_unequalAPowSS_le
+private theorem abs_unequalAPowSS_le
     {α s t : ℝ} {m : ℕ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (ht : t ∈ Icc (-1 : ℝ) 1)
@@ -12970,7 +12970,7 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowSS_le
   have he0 := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
   have he1 := abs_latitude_even_exponent_sub_le hα0 hα2 m 1 (by omega)
   norm_num at he0 he1
-  have ht1 := SeparatedSeriesBounds_abs_height_le_one_of_mem ht
+  have ht1 := abs_height_le_one_of_mem ht
   unfold unequalAPowSS
   simp only [abs_mul, abs_pow, abs_neg,
     abs_of_pos (Real.rpow_pos_of_pos hA _)]
@@ -12985,7 +12985,7 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowSS_le
           (2 * 1) ^ 2 := by gcongr
     _ = _ := by ring
 
-private theorem SeparatedSeriesBounds_abs_unequalAPowTT_le
+private theorem abs_unequalAPowTT_le
     {α s t : ℝ} {m : ℕ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (hs : s ∈ Icc (-1 : ℝ) 1)
@@ -13000,10 +13000,10 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowTT_le
   have hA' : 0 < angularKernelA t s := by rwa [hAsym]
   simpa [unequalAPowTT, unequalAPowSS, mul_comm, mul_left_comm,
     mul_assoc, hAsym] using
-    (SeparatedSeriesBounds_abs_unequalAPowSS_le (α := α) (s := t) (t := s) (m := m)
+    (abs_unequalAPowSS_le (α := α) (s := t) (t := s) (m := m)
       hα0 hα2 hs hA')
 
-private theorem SeparatedSeriesBounds_abs_unequalAPowST_le
+private theorem abs_unequalAPowST_le
     {α s t : ℝ} {m : ℕ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
@@ -13018,12 +13018,12 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowST_le
   have he0 := abs_latitude_even_exponent_sub_le hα0 hα2 m 0 (by omega)
   have he1 := abs_latitude_even_exponent_sub_le hα0 hα2 m 1 (by omega)
   norm_num at he0 he1
-  have hs1 := SeparatedSeriesBounds_abs_height_le_one_of_mem hs
-  have ht1 := SeparatedSeriesBounds_abs_height_le_one_of_mem ht
-  have hA4 := SeparatedSeriesBounds_angularKernelA_le_four_of_mem hs ht
+  have hs1 := abs_height_le_one_of_mem hs
+  have ht1 := abs_height_le_one_of_mem ht
+  have hA4 := angularKernelA_le_four_of_mem hs ht
   have hp12 : A ^ (e - 1) ≤ 4 * A ^ (e - 2) := by
     simpa [A, e] using
-      (SeparatedSeriesBounds_rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
+      (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
         hA hA4 (r := 1) (k := 2) (by omega))
   have hA2nonneg : 0 ≤ A ^ (e - 2) := Real.rpow_nonneg hA.le _
   have hw : 1 ≤ w := by
@@ -13068,7 +13068,7 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowST_le
           convert this using 1 ; ring
         _ ≤ _ := mul_le_mul_of_nonneg_right hcoeff hA2nonneg
 
-private theorem SeparatedSeriesBounds_abs_unequalAPowSST_le
+private theorem abs_unequalAPowSST_le
     {α s t : ℝ} {m : ℕ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
@@ -13084,12 +13084,12 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowSST_le
   have he1 := abs_latitude_even_exponent_sub_le hα0 hα2 m 1 (by omega)
   have he2 := abs_latitude_even_exponent_sub_le hα0 hα2 m 2 (by omega)
   norm_num at he0 he1 he2
-  have hs1 := SeparatedSeriesBounds_abs_height_le_one_of_mem hs
-  have ht1 := SeparatedSeriesBounds_abs_height_le_one_of_mem ht
-  have hA4 := SeparatedSeriesBounds_angularKernelA_le_four_of_mem hs ht
+  have hs1 := abs_height_le_one_of_mem hs
+  have ht1 := abs_height_le_one_of_mem ht
+  have hA4 := angularKernelA_le_four_of_mem hs ht
   have hp23 : A ^ (e - 2) ≤ 4 * A ^ (e - 3) := by
     simpa [A, e] using
-      (SeparatedSeriesBounds_rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
+      (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
         hA hA4 (r := 2) (k := 3) (by omega))
   have hA3nonneg : 0 ≤ A ^ (e - 3) := Real.rpow_nonneg hA.le _
   have hw : 1 ≤ w := by
@@ -13140,7 +13140,7 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowSST_le
           convert this using 1 ; ring
         _ ≤ _ := mul_le_mul_of_nonneg_right hcoef hA3nonneg
 
-private theorem SeparatedSeriesBounds_abs_unequalAPowSTT_le
+private theorem abs_unequalAPowSTT_le
     {α s t : ℝ} {m : ℕ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
@@ -13155,10 +13155,10 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowSTT_le
   have hA' : 0 < angularKernelA t s := by rwa [hAsym]
   simpa [unequalAPowSTT, unequalAPowSST, mul_comm, mul_left_comm,
     mul_assoc, hAsym] using
-    (SeparatedSeriesBounds_abs_unequalAPowSST_le (α := α) (s := t) (t := s) (m := m)
+    (abs_unequalAPowSST_le (α := α) (s := t) (t := s) (m := m)
       hα0 hα2 ht hs hA')
 
-private theorem SeparatedSeriesBounds_abs_unequalAPowSSTT_le
+private theorem abs_unequalAPowSSTT_le
     {α s t : ℝ} {m : ℕ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (hs : s ∈ Icc (-1 : ℝ) 1) (ht : t ∈ Icc (-1 : ℝ) 1)
@@ -13175,16 +13175,16 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowSSTT_le
   have he2 := abs_latitude_even_exponent_sub_le hα0 hα2 m 2 (by omega)
   have he3 := abs_latitude_even_exponent_sub_le hα0 hα2 m 3 (by omega)
   norm_num at he0 he1 he2 he3
-  have hs1 := SeparatedSeriesBounds_abs_height_le_one_of_mem hs
-  have ht1 := SeparatedSeriesBounds_abs_height_le_one_of_mem ht
-  have hA4 := SeparatedSeriesBounds_angularKernelA_le_four_of_mem hs ht
+  have hs1 := abs_height_le_one_of_mem hs
+  have ht1 := abs_height_le_one_of_mem ht
+  have hA4 := angularKernelA_le_four_of_mem hs ht
   have hp34 : A ^ (e - 3) ≤ 4 * A ^ (e - 4) := by
     simpa [A, e] using
-      (SeparatedSeriesBounds_rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
+      (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
         hA hA4 (r := 3) (k := 4) (by omega))
   have hp24 : A ^ (e - 2) ≤ 16 * A ^ (e - 4) := by
     convert
-      (SeparatedSeriesBounds_rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
+      (rpow_sub_nat_le_four_pow_mul (A := A) (e := e)
         hA hA4 (r := 2) (k := 4) (by omega)) using 1 ;
       norm_num [A, e]
   have hA4nonneg : 0 ≤ A ^ (e - 4) := Real.rpow_nonneg hA.le _
@@ -13254,7 +13254,7 @@ private theorem SeparatedSeriesBounds_abs_unequalAPowSSTT_le
           convert this using 1 ; ring
         _ ≤ _ := mul_le_mul_of_nonneg_right hcoef hA4nonneg
 
-private theorem SeparatedSeriesBounds_rpow_sub_nat_mul_pow
+private theorem rpow_sub_nat_mul_pow
     {A e : ℝ} (hA : 0 < A) (k : ℕ) :
     A ^ (e - k) * A ^ k = A ^ e := by
   rw [← Real.rpow_natCast]
@@ -13293,7 +13293,7 @@ theorem abs_separatedEvenPowerSummandDSSTT_le
     have hv0' : 0 ≤ 1 - t ^ 2 := by
       nlinarith [htSphere.1, htSphere.2]
     dsimp [u, A]
-    rw [SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add]
+    rw [angularKernelA_eq_radiusSq_add]
     calc
       1 - s ^ 2 ≤ (1 - s ^ 2) + (1 - t ^ 2) :=
         le_add_of_nonneg_right hv0'
@@ -13303,29 +13303,29 @@ theorem abs_separatedEvenPowerSummandDSSTT_le
     have hu0' : 0 ≤ 1 - s ^ 2 := by
       nlinarith [hsSphere.1, hsSphere.2]
     dsimp [v, A]
-    rw [SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add]
+    rw [angularKernelA_eq_radiusSq_add]
     calc
       1 - t ^ 2 ≤ (1 - s ^ 2) + (1 - t ^ 2) :=
         le_add_of_nonneg_left hu0'
       _ ≤ (1 - s ^ 2) + (1 - t ^ 2) + (s - t) ^ 2 :=
         le_add_of_nonneg_right (sq_nonneg (s - t))
-  have hA4 : A ≤ 4 := SeparatedSeriesBounds_angularKernelA_le_four_of_mem hsSphere htSphere
+  have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hsSphere htSphere
   have hw : 1 ≤ w := by
     dsimp [w]
     have : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
     linarith
   have hP0 :
       |unequalAPow e s t| = A ^ e := by
-    exact SeparatedSeriesBounds_abs_unequalAPow_le hA
+    exact abs_unequalAPow_le hA
   have hP1s :
       |unequalAPowS e s t| ≤ 10 * w * A ^ (e - 1) := by
-    exact SeparatedSeriesBounds_abs_unequalAPowS_le hα0 hα2 htSphere hA
+    exact abs_unequalAPowS_le hα0 hα2 htSphere hA
   have hP1t :
       |unequalAPowT e s t| ≤ 10 * w * A ^ (e - 1) := by
-    exact SeparatedSeriesBounds_abs_unequalAPowT_le hα0 hα2 hsSphere hA
+    exact abs_unequalAPowT_le hα0 hα2 hsSphere hA
   have hP2ss :
       |unequalAPowSS e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) := by
-    have hbase := SeparatedSeriesBounds_abs_unequalAPowSS_le
+    have hbase := abs_unequalAPowSS_le
       (α := α) (m := m) hα0 hα2 htSphere hA
     simpa [e, w, A] using hbase.trans (by
       have hp : 0 ≤ ((m : ℝ) + 1) ^ 2 *
@@ -13333,10 +13333,10 @@ theorem abs_separatedEvenPowerSummandDSSTT_le
       nlinarith)
   have hP2st :
       |unequalAPowST e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) :=
-    SeparatedSeriesBounds_abs_unequalAPowST_le hα0 hα2 hsSphere htSphere hA
+    abs_unequalAPowST_le hα0 hα2 hsSphere htSphere hA
   have hP2tt :
       |unequalAPowTT e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) := by
-    have hbase := SeparatedSeriesBounds_abs_unequalAPowTT_le
+    have hbase := abs_unequalAPowTT_le
       (α := α) (m := m) hα0 hα2 hsSphere hA
     simpa [e, w, A] using hbase.trans (by
       have hp : 0 ≤ ((m : ℝ) + 1) ^ 2 *
@@ -13344,35 +13344,35 @@ theorem abs_separatedEvenPowerSummandDSSTT_le
       nlinarith)
   have hP3sst :
       |unequalAPowSST e s t| ≤ 2048 * w ^ 3 * A ^ (e - 3) :=
-    SeparatedSeriesBounds_abs_unequalAPowSST_le hα0 hα2 hsSphere htSphere hA
+    abs_unequalAPowSST_le hα0 hα2 hsSphere htSphere hA
   have hP3stt :
       |unequalAPowSTT e s t| ≤ 2048 * w ^ 3 * A ^ (e - 3) :=
-    SeparatedSeriesBounds_abs_unequalAPowSTT_le hα0 hα2 hsSphere htSphere hA
+    abs_unequalAPowSTT_le hα0 hα2 hsSphere htSphere hA
   have hP4 :
       |unequalAPowSSTT e s t| ≤ 32768 * w ^ 4 * A ^ (e - 4) :=
-    SeparatedSeriesBounds_abs_unequalAPowSSTT_le hα0 hα2 hsSphere htSphere hA
+    abs_unequalAPowSSTT_le hα0 hα2 hsSphere htSphere hA
   have hU0 :
       |unequalRadiusPower m s| ≤ A ^ 2 * u ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPower_le hm hsSphere huA
+    abs_unequalRadiusPower_le hm hsSphere huA
   have hU1 :
       |unequalRadiusPowerD1 m s| ≤
         2 * w * A * u ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPowerD1_le hm hsSphere huA
+    abs_unequalRadiusPowerD1_le hm hsSphere huA
   have hU2 :
       |unequalRadiusPowerD2 m s| ≤
         16 * w ^ 2 * u ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPowerD2_le hm hsSphere huA hA4
+    abs_unequalRadiusPowerD2_le hm hsSphere huA hA4
   have hV0 :
       |unequalRadiusPower m t| ≤ A ^ 2 * v ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPower_le hm htSphere hvA
+    abs_unequalRadiusPower_le hm htSphere hvA
   have hV1 :
       |unequalRadiusPowerD1 m t| ≤
         2 * w * A * v ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPowerD1_le hm htSphere hvA
+    abs_unequalRadiusPowerD1_le hm htSphere hvA
   have hV2 :
       |unequalRadiusPowerD2 m t| ≤
         16 * w ^ 2 * v ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPowerD2_le hm htSphere hvA hA4
+    abs_unequalRadiusPowerD2_le hm htSphere hvA hA4
   let X :=
     unequalAPowSS e s t * unequalRadiusPower m s +
       2 * unequalAPowS e s t * unequalRadiusPowerD1 m s +
@@ -13386,26 +13386,26 @@ theorem abs_separatedEvenPowerSummandDSSTT_le
       2 * unequalAPowSTT e s t * unequalRadiusPowerD1 m s +
       unequalAPowTT e s t * unequalRadiusPowerD2 m s
   have hAe21 : A ^ (e - 2) * A ^ 2 = A ^ e :=
-    SeparatedSeriesBounds_rpow_sub_nat_mul_pow hA 2
+    rpow_sub_nat_mul_pow hA 2
   have hAe11 : A ^ (e - 1) * A = A ^ e := by
-    simpa using SeparatedSeriesBounds_rpow_sub_nat_mul_pow hA 1
+    simpa using rpow_sub_nat_mul_pow hA 1
   have hAe32 : A ^ (e - 3) * A ^ 2 = A ^ (e - 1) := by
-    have h := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 2
+    have h := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 2
     have hexp : e - 3 = (e - 1) - (2 : ℝ) := by ring
     rw [hexp]
     exact h
   have hAe21' : A ^ (e - 2) * A = A ^ (e - 1) := by
-    have h := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
+    have h := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
     have hexp : e - 2 = (e - 1) - (1 : ℝ) := by ring
     rw [hexp]
     simpa using h
   have hAe42 : A ^ (e - 4) * A ^ 2 = A ^ (e - 2) := by
-    have h := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 2
+    have h := rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 2
     have hexp : e - 4 = (e - 2) - (2 : ℝ) := by ring
     rw [hexp]
     exact h
   have hAe31 : A ^ (e - 3) * A = A ^ (e - 2) := by
-    have h := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 1
+    have h := rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 1
     have hexp : e - 3 = (e - 2) - (1 : ℝ) := by ring
     rw [hexp]
     simpa using h
@@ -13555,7 +13555,7 @@ theorem abs_separatedEvenPowerSummandDSSTT_le
         convert mul_le_mul_of_nonneg_right
           (show (98304 : ℝ) ≤ 262144 by norm_num) hp using 1 <;> ring
   have hcommon :=
-    SeparatedSeriesBounds_latitude_common_factor_eq (α := α) (A := A) (u := u) (v := v)
+    latitude_common_factor_eq (α := α) (A := A) (u := u) (v := v)
       hA m hm
   have hQ := hq
   have hQ0 := separatedRatio_nonneg hsSphere htSphere
@@ -13661,7 +13661,7 @@ theorem abs_separatedEvenPowerDSSTTSeriesTerm_zero_le
     |separatedEvenPowerDSSTTSeriesTerm α 0 s t| ≤
       32768 * angularKernelA s t ^ (α / 2 - 4) := by
   have h :=
-    SeparatedSeriesBounds_abs_unequalAPowSSTT_le
+    abs_unequalAPowSSTT_le
       (α := α) (m := 0) hα0 hα2 hs ht hA
   unfold separatedEvenPowerDSSTTSeriesTerm
     separatedEvenPowerSummandDSSTT
@@ -13698,13 +13698,13 @@ theorem abs_separatedEvenPowerSummandDSSTT_one_le
   have hv0 : 0 ≤ 1 - t ^ 2 := by nlinarith [ht.1, ht.2]
   have huA : 1 - s ^ 2 ≤ A := by
     dsimp [A]
-    rw [SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add]
+    rw [angularKernelA_eq_radiusSq_add]
     nlinarith [hv0, sq_nonneg (s - t)]
   have hvA : 1 - t ^ 2 ≤ A := by
     dsimp [A]
-    rw [SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add]
+    rw [angularKernelA_eq_radiusSq_add]
     nlinarith [hu0, sq_nonneg (s - t)]
-  have hA4 : A ≤ 4 := SeparatedSeriesBounds_angularKernelA_le_four_of_mem hs ht
+  have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hs ht
   have hsabs : |s| ≤ 1 := abs_le.2 hs
   have htabs : |t| ≤ 1 := abs_le.2 ht
   have hU : |U| ≤ A := by
@@ -13737,20 +13737,20 @@ theorem abs_separatedEvenPowerSummandDSSTT_one_le
   have hV2 : |V2| ≤ 2 := by
     dsimp [V2, unequalRadiusPowerD2]
     norm_num
-  have hP0 : |unequalAPow e s t| = A ^ e := SeparatedSeriesBounds_abs_unequalAPow_le hA
+  have hP0 : |unequalAPow e s t| = A ^ e := abs_unequalAPow_le hA
   have hP1s :
       |unequalAPowS e s t| ≤ 20 * A ^ (e - 1) := by
     convert
-      (SeparatedSeriesBounds_abs_unequalAPowS_le (α := α) (m := 1)
+      (abs_unequalAPowS_le (α := α) (m := 1)
         hα0 hα2 ht hA) using 1 <;> norm_num [e, A]
   have hP1t :
       |unequalAPowT e s t| ≤ 20 * A ^ (e - 1) := by
     convert
-      (SeparatedSeriesBounds_abs_unequalAPowT_le (α := α) (m := 1)
+      (abs_unequalAPowT_le (α := α) (m := 1)
         hα0 hα2 hs hA) using 1 <;> norm_num [e, A]
   have hP2ss :
       |unequalAPowSS e s t| ≤ 1024 * A ^ (e - 2) := by
-    have hh := SeparatedSeriesBounds_abs_unequalAPowSS_le
+    have hh := abs_unequalAPowSS_le
       (α := α) (m := 1) hα0 hα2 ht hA
     simpa [e, A] using hh.trans (by
       have hp : 0 ≤ A ^ (e - 2) := by positivity
@@ -13758,11 +13758,11 @@ theorem abs_separatedEvenPowerSummandDSSTT_one_le
   have hP2st :
       |unequalAPowST e s t| ≤ 1024 * A ^ (e - 2) := by
     convert
-      (SeparatedSeriesBounds_abs_unequalAPowST_le (α := α) (m := 1)
+      (abs_unequalAPowST_le (α := α) (m := 1)
         hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A]
   have hP2tt :
       |unequalAPowTT e s t| ≤ 1024 * A ^ (e - 2) := by
-    have hh := SeparatedSeriesBounds_abs_unequalAPowTT_le
+    have hh := abs_unequalAPowTT_le
       (α := α) (m := 1) hα0 hα2 hs hA
     simpa [e, A] using hh.trans (by
       have hp : 0 ≤ A ^ (e - 2) := by positivity
@@ -13770,35 +13770,35 @@ theorem abs_separatedEvenPowerSummandDSSTT_one_le
   have hP3sst :
       |unequalAPowSST e s t| ≤ 16384 * A ^ (e - 3) := by
     convert
-      (SeparatedSeriesBounds_abs_unequalAPowSST_le (α := α) (m := 1)
+      (abs_unequalAPowSST_le (α := α) (m := 1)
         hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A]
   have hP3stt :
       |unequalAPowSTT e s t| ≤ 16384 * A ^ (e - 3) := by
     convert
-      (SeparatedSeriesBounds_abs_unequalAPowSTT_le (α := α) (m := 1)
+      (abs_unequalAPowSTT_le (α := α) (m := 1)
         hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A]
   have hP4 :
       |unequalAPowSSTT e s t| ≤ 524288 * A ^ (e - 4) := by
     convert
-      (SeparatedSeriesBounds_abs_unequalAPowSSTT_le (α := α) (m := 1)
+      (abs_unequalAPowSSTT_le (α := α) (m := 1)
         hα0 hα2 hs ht hA) using 1 <;> norm_num [e, A]
   have h43 : A ^ (e - 4) * A = A ^ (e - 3) := by
-    have hh := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 3) hA 1
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 3) hA 1
     norm_num at hh
     rw [show e - 4 = (e - 3) - (1 : ℝ) by ring]
     exact hh
   have h32 : A ^ (e - 3) * A = A ^ (e - 2) := by
-    have hh := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 1
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 2) hA 1
     norm_num at hh
     rw [show e - 3 = (e - 2) - (1 : ℝ) by ring]
     exact hh
   have h21 : A ^ (e - 2) * A = A ^ (e - 1) := by
-    have hh := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
     norm_num at hh
     rw [show e - 2 = (e - 1) - (1 : ℝ) by ring]
     exact hh
   have h10 : A ^ (e - 1) * A = A ^ e := by
-    simpa using SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e) hA 1
+    simpa using rpow_sub_nat_mul_pow (A := A) (e := e) hA 1
   have he1 : A ^ (e - 1) ≤ 4 * A ^ (e - 2) := by
     rw [← h21]
     calc
@@ -14006,27 +14006,27 @@ theorem abs_separatedEvenPower_lowerDerivatives_le
     nlinarith [htSphere.1, htSphere.2]
   have huA : u ≤ A := by
     dsimp [u, A]
-    rw [SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add]
+    rw [angularKernelA_eq_radiusSq_add]
     nlinarith [show 0 ≤ 1 - t ^ 2 by
       nlinarith [htSphere.1, htSphere.2], sq_nonneg (s - t)]
   have hvA : v ≤ A := by
     dsimp [v, A]
-    rw [SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add]
+    rw [angularKernelA_eq_radiusSq_add]
     nlinarith [show 0 ≤ 1 - s ^ 2 by
       nlinarith [hsSphere.1, hsSphere.2], sq_nonneg (s - t)]
-  have hA4 : A ≤ 4 := SeparatedSeriesBounds_angularKernelA_le_four_of_mem hsSphere htSphere
+  have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hsSphere htSphere
   have hw : 1 ≤ w := by
     dsimp [w]
     have : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
     linarith
   have hP0 : |unequalAPow e s t| = A ^ e :=
-    SeparatedSeriesBounds_abs_unequalAPow_le hA
+    abs_unequalAPow_le hA
   have hP1 :
       |unequalAPowS e s t| ≤ 10 * w * A ^ (e - 1) :=
-    SeparatedSeriesBounds_abs_unequalAPowS_le hα0 hα2 htSphere hA
+    abs_unequalAPowS_le hα0 hα2 htSphere hA
   have hP2 :
       |unequalAPowSS e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) := by
-    have hb := SeparatedSeriesBounds_abs_unequalAPowSS_le
+    have hb := abs_unequalAPowSS_le
       (α := α) (m := m) hα0 hα2 htSphere hA
     simpa [e, w, A] using hb.trans (by
       have hp : 0 ≤ ((m : ℝ) + 1) ^ 2 *
@@ -14034,33 +14034,33 @@ theorem abs_separatedEvenPower_lowerDerivatives_le
       nlinarith)
   have hP2st :
       |unequalAPowST e s t| ≤ 256 * w ^ 2 * A ^ (e - 2) :=
-    SeparatedSeriesBounds_abs_unequalAPowST_le hα0 hα2 hsSphere htSphere hA
+    abs_unequalAPowST_le hα0 hα2 hsSphere htSphere hA
   have hP3 :
       |unequalAPowSST e s t| ≤ 2048 * w ^ 3 * A ^ (e - 3) :=
-    SeparatedSeriesBounds_abs_unequalAPowSST_le hα0 hα2 hsSphere htSphere hA
+    abs_unequalAPowSST_le hα0 hα2 hsSphere htSphere hA
   have hU0 : |unequalRadiusPower m s| ≤ A ^ 2 * u ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPower_le hm hsSphere huA
+    abs_unequalRadiusPower_le hm hsSphere huA
   have hU1 : |unequalRadiusPowerD1 m s| ≤
       2 * w * A * u ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPowerD1_le hm hsSphere huA
+    abs_unequalRadiusPowerD1_le hm hsSphere huA
   have hU2 : |unequalRadiusPowerD2 m s| ≤
       16 * w ^ 2 * u ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPowerD2_le hm hsSphere huA hA4
+    abs_unequalRadiusPowerD2_le hm hsSphere huA hA4
   have hV0 : |unequalRadiusPower m t| ≤ A ^ 2 * v ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPower_le hm htSphere hvA
+    abs_unequalRadiusPower_le hm htSphere hvA
   have hV1 : |unequalRadiusPowerD1 m t| ≤
       2 * w * A * v ^ (m - 2) :=
-    SeparatedSeriesBounds_abs_unequalRadiusPowerD1_le hm htSphere hvA
+    abs_unequalRadiusPowerD1_le hm htSphere hvA
   have hAe21 : A ^ (e - 2) * A ^ 2 = A ^ e :=
-    SeparatedSeriesBounds_rpow_sub_nat_mul_pow hA 2
+    rpow_sub_nat_mul_pow hA 2
   have hAe11 : A ^ (e - 1) * A = A ^ e := by
-    simpa using SeparatedSeriesBounds_rpow_sub_nat_mul_pow hA 1
+    simpa using rpow_sub_nat_mul_pow hA 1
   have hAe32 : A ^ (e - 3) * A ^ 2 = A ^ (e - 1) := by
-    have hh := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 2
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 2
     rw [show e - 3 = (e - 1) - (2 : ℝ) by ring]
     exact hh
   have hAe21' : A ^ (e - 2) * A = A ^ (e - 1) := by
-    have hh := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
+    have hh := rpow_sub_nat_mul_pow (A := A) (e := e - 1) hA 1
     rw [show e - 2 = (e - 1) - (1 : ℝ) by ring]
     simpa using hh
   let X :=
@@ -14128,7 +14128,7 @@ theorem abs_separatedEvenPower_lowerDerivatives_le
         have hPt : |unequalAPowT e s t| ≤
             10 * w * A ^ (e - 1) := by
           simpa [e, w, A] using
-            (SeparatedSeriesBounds_abs_unequalAPowT_le (α := α) (m := m)
+            (abs_unequalAPowT_le (α := α) (m := m)
               hα0 hα2 hsSphere hA)
         gcongr
       _ = 3232 * w ^ 3 * A ^ (e - 1) * u ^ (m - 2) := by
@@ -14156,7 +14156,7 @@ theorem abs_separatedEvenPower_lowerDerivatives_le
         gcongr
       _ = 12 * w * A ^ (e + 1) * u ^ (m - 2) := by
         have h1 : A ^ (e - 1) * A ^ 2 = A ^ (e + 1) := by
-          have hh := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e + 1) hA 2
+          have hh := rpow_sub_nat_mul_pow (A := A) (e := e + 1) hA 2
           rw [show e - 1 = (e + 1) - (2 : ℝ) by ring]
           exact hh
         have h2 : A ^ e * A = A ^ (e + 1) := by
@@ -14179,7 +14179,7 @@ theorem abs_separatedEvenPower_lowerDerivatives_le
     have hPt : |unequalAPowT e s t| ≤
         10 * w * A ^ (e - 1) := by
       simpa [e, w, A] using
-        (SeparatedSeriesBounds_abs_unequalAPowT_le (α := α) (m := m)
+        (abs_unequalAPowT_le (α := α) (m := m)
           hα0 hα2 hsSphere hA)
     calc
       |_ + _| ≤
@@ -14204,7 +14204,7 @@ theorem abs_separatedEvenPower_lowerDerivatives_le
         have hp : 0 ≤ w ^ 2 * A ^ e * u ^ (m - 2) := by positivity
         nlinarith
   have hcommon :=
-    SeparatedSeriesBounds_latitude_common_factor_eq (α := α) (A := A) (u := u) (v := v)
+    latitude_common_factor_eq (α := α) (A := A) (u := u) (v := v)
       hA m hm
   have hQ := hq
   have hQ0 := separatedRatio_nonneg hsSphere htSphere
@@ -14321,7 +14321,7 @@ theorem abs_separatedEvenPower_lowerDerivatives_le
       _ = 6144 * w ^ 3 * A *
           ((4 : ℝ) ^ m * u ^ (m - 2) * v ^ (m - 2) * A ^ e) := by
         have h13 : A ^ (e - 1) * A ^ 2 = A ^ (e + 1) := by
-          have hh := SeparatedSeriesBounds_rpow_sub_nat_mul_pow (A := A) (e := e + 1) hA 2
+          have hh := rpow_sub_nat_mul_pow (A := A) (e := e + 1) hA 2
           rw [show e - 1 = (e + 1) - (2 : ℝ) by ring]
           exact hh
         calc
@@ -14516,16 +14516,16 @@ theorem abs_separatedEvenPowerSummand_le
     nlinarith [htSphere.1, htSphere.2]
   have huA : u ≤ A := by
     dsimp [u, A]
-    rw [SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add]
+    rw [angularKernelA_eq_radiusSq_add]
     nlinarith [show 0 ≤ 1 - t ^ 2 by
       nlinarith [htSphere.1, htSphere.2], sq_nonneg (s - t)]
   have hvA : v ≤ A := by
     dsimp [v, A]
-    rw [SeparatedSeriesBounds_angularKernelA_eq_radiusSq_add]
+    rw [angularKernelA_eq_radiusSq_add]
     nlinarith [show 0 ≤ 1 - s ^ 2 by
       nlinarith [hsSphere.1, hsSphere.2], sq_nonneg (s - t)]
-  have hA4 : A ≤ 4 := SeparatedSeriesBounds_angularKernelA_le_four_of_mem hsSphere htSphere
-  have hcommon := SeparatedSeriesBounds_latitude_common_factor_eq
+  have hA4 : A ≤ 4 := angularKernelA_le_four_of_mem hsSphere htSphere
+  have hcommon := latitude_common_factor_eq
     (α := α) (A := A) (u := u) (v := v) hA m hm
   have hQ := hq
   have hQ0 : 0 ≤ separatedRatio s t :=
@@ -15294,12 +15294,12 @@ namespace BEMOC.Definitive
 noncomputable def scalarPowerSeries (a : ℕ → ℝ) (z : ℝ) : ℝ :=
   ∑' m : ℕ, a m * z ^ m
 
-private noncomputable def ScalarPowerSeries_scalarFormalSeries (a : ℕ → ℝ) :
+private noncomputable def scalarFormalSeries (a : ℕ → ℝ) :
     FormalMultilinearSeries ℝ ℝ ℝ := FormalMultilinearSeries.ofScalars ℝ a
 
-private theorem ScalarPowerSeries_scalarFormalSeries_radius_ge_one (a : ℕ → ℝ)
+private theorem scalarFormalSeries_radius_ge_one (a : ℕ → ℝ)
     (ha : ∀ m, |a m| ≤ 1) :
-    (1 : ℝ≥0∞) ≤ (ScalarPowerSeries_scalarFormalSeries a).radius := by
+    (1 : ℝ≥0∞) ≤ (scalarFormalSeries a).radius := by
   apply ENNReal.le_of_forall_nnreal_lt
   intro q hq
   have hq0 : (0 : ℝ) ≤ q := by positivity
@@ -15311,11 +15311,11 @@ private theorem ScalarPowerSeries_scalarFormalSeries_radius_ge_one (a : ℕ → 
   apply Summable.of_nonneg_of_le
     (fun m => mul_nonneg (norm_nonneg _) (pow_nonneg hq0 _))
     (fun m => ?_) hgeom
-  rw [ScalarPowerSeries_scalarFormalSeries, FormalMultilinearSeries.ofScalars_norm]
+  rw [scalarFormalSeries, FormalMultilinearSeries.ofScalars_norm]
   exact mul_le_of_le_one_left (pow_nonneg hq0 _) (by simpa only [Real.norm_eq_abs] using ha m)
 
-private theorem ScalarPowerSeries_scalarPowerSeries_eq_formal_sum (a : ℕ → ℝ) :
-    scalarPowerSeries a = (ScalarPowerSeries_scalarFormalSeries a).sum := by
+private theorem scalarPowerSeries_eq_formal_sum (a : ℕ → ℝ) :
+    scalarPowerSeries a = (scalarFormalSeries a).sum := by
   funext z
   change (∑' m : ℕ, a m * z ^ m) = FormalMultilinearSeries.ofScalarsSum a z
   simp only [FormalMultilinearSeries.ofScalars_sum_eq, smul_eq_mul]
@@ -15338,7 +15338,7 @@ theorem scalarDerivCoeff_eq_descFactorial (a : ℕ → ℝ) (k m : ℕ) :
       simp only [Nat.cast_add, Nat.cast_one]
       ring
 
-private theorem ScalarPowerSeries_scalarDerivCoeff_bound (a : ℕ → ℝ) (ha : ∀ m, |a m| ≤ 1) :
+private theorem scalarDerivCoeff_bound (a : ℕ → ℝ) (ha : ∀ m, |a m| ≤ 1) :
     ∀ k m, |scalarDerivCoeff a k m| ≤ ((m + k + 1 : ℕ) : ℝ) ^ k := by
   intro k
   induction k with
@@ -15367,9 +15367,9 @@ private theorem ScalarPowerSeries_scalarDerivCoeff_bound (a : ℕ → ℝ) (ha :
           have hpow0 : 0 ≤ (m + k + 2 : ℝ) ^ k := pow_nonneg (by positivity) _
           nlinarith [mul_le_mul_of_nonneg_left hmle hpow0]
 
-private theorem ScalarPowerSeries_scalarFormalSeries_radius_ge_one_of_poly (a : ℕ → ℝ)
+private theorem scalarFormalSeries_radius_ge_one_of_poly (a : ℕ → ℝ)
     (k : ℕ) (ha : ∀ m, |a m| ≤ ((m + k + 1 : ℕ) : ℝ) ^ k) :
-    (1 : ℝ≥0∞) ≤ (ScalarPowerSeries_scalarFormalSeries a).radius := by
+    (1 : ℝ≥0∞) ≤ (scalarFormalSeries a).radius := by
   apply ENNReal.le_of_forall_nnreal_lt
   intro q hq
   have hq0 : (0 : ℝ) ≤ q := by positivity
@@ -15382,7 +15382,7 @@ private theorem ScalarPowerSeries_scalarFormalSeries_radius_ge_one_of_poly (a : 
   apply Summable.of_nonneg_of_le
     (fun m => mul_nonneg (norm_nonneg _) (pow_nonneg hq0 _))
     (fun m => ?_) hmajor
-  rw [ScalarPowerSeries_scalarFormalSeries, FormalMultilinearSeries.ofScalars_norm]
+  rw [scalarFormalSeries, FormalMultilinearSeries.ofScalars_norm]
   have hmle : ((m + k + 1 : ℕ) : ℝ) ≤ ((k + 1 : ℕ) : ℝ) * ((m : ℝ) + 1) := by
     push_cast
     nlinarith [mul_nonneg (show (0 : ℝ) ≤ k by positivity)
@@ -15395,12 +15395,12 @@ private theorem ScalarPowerSeries_scalarFormalSeries_radius_ge_one_of_poly (a : 
   simpa only [Real.norm_eq_abs, mul_assoc] using
     (mul_le_mul_of_nonneg_right hcoeff (pow_nonneg hq0 m))
 
-private theorem ScalarPowerSeries_scalarPowerSeries_deriv_eq (a : ℕ → ℝ)
-    (hr : (1 : ℝ≥0∞) ≤ (ScalarPowerSeries_scalarFormalSeries a).radius)
+private theorem scalarPowerSeries_deriv_eq (a : ℕ → ℝ)
+    (hr : (1 : ℝ≥0∞) ≤ (scalarFormalSeries a).radius)
     (z : ℝ) (hz : |z| < 1) :
     deriv (scalarPowerSeries a) z =
       ∑' m : ℕ, (m + 1 : ℝ) * a (m + 1) * z ^ m := by
-  let p := ScalarPowerSeries_scalarFormalSeries a
+  let p := scalarFormalSeries a
   have hr0 : (0 : ℝ≥0∞) < p.radius := lt_of_lt_of_le (by norm_num) hr
   have hp := FormalMultilinearSeries.hasFPowerSeriesOnBall p hr0
   have hzball : z ∈ EMetric.ball (0 : ℝ) p.radius := by
@@ -15409,24 +15409,24 @@ private theorem ScalarPowerSeries_scalarPowerSeries_deriv_eq (a : ℕ → ℝ)
   have hs := (hp.fderiv).hasSum hzball
   have hs' := hs.map (ContinuousLinearMap.apply ℝ ℝ (1 : ℝ))
     (ContinuousLinearMap.continuous _)
-  rw [ScalarPowerSeries_scalarPowerSeries_eq_formal_sum]
+  rw [scalarPowerSeries_eq_formal_sum]
   convert hs'.tsum_eq.symm using 1
   · simpa only [zero_add, ContinuousLinearMap.apply_apply] using
       (fderiv_deriv (f := p.sum) (x := z)).symm
   · apply tsum_congr
     intro m
-    simp [p, ScalarPowerSeries_scalarFormalSeries, FormalMultilinearSeries.apply_eq_pow_smul_coeff,
+    simp [p, scalarFormalSeries, FormalMultilinearSeries.apply_eq_pow_smul_coeff,
       FormalMultilinearSeries.derivSeries_coeff_one, smul_eq_mul, nsmul_eq_mul, mul_comm, mul_left_comm, mul_assoc]
 
 /-- Bounded coefficients give a real-analytic series on the open unit interval. -/
 theorem scalarPowerSeries_analyticOnNhd (a : ℕ → ℝ)
     (ha : ∀ m, |a m| ≤ 1) :
     AnalyticOnNhd ℝ (scalarPowerSeries a) (Set.Ioo (-1 : ℝ) 1) := by
-  let p := ScalarPowerSeries_scalarFormalSeries a
-  have hr : (1 : ℝ≥0∞) ≤ p.radius := ScalarPowerSeries_scalarFormalSeries_radius_ge_one a ha
+  let p := scalarFormalSeries a
+  have hr : (1 : ℝ≥0∞) ≤ p.radius := scalarFormalSeries_radius_ge_one a ha
   have hr0 : (0 : ℝ≥0∞) < p.radius := lt_of_lt_of_le (by norm_num) hr
   have hp := (FormalMultilinearSeries.hasFPowerSeriesOnBall p hr0).analyticOnNhd
-  rw [ScalarPowerSeries_scalarPowerSeries_eq_formal_sum]
+  rw [scalarPowerSeries_eq_formal_sum]
   intro z hz
   apply hp
   have hzabs : |z| < 1 := abs_lt.mpr hz
@@ -15455,9 +15455,9 @@ theorem scalarPowerSeries_iteratedDeriv_eq (a : ℕ → ℝ)
         (isOpen_Ioo.eventually_mem hz).mono (fun y hy => ih y hy)
       rw [heq.deriv_eq]
       have hr : (1 : ℝ≥0∞) ≤
-          (ScalarPowerSeries_scalarFormalSeries (scalarDerivCoeff a k)).radius :=
-        ScalarPowerSeries_scalarFormalSeries_radius_ge_one_of_poly _ k (ScalarPowerSeries_scalarDerivCoeff_bound a ha k)
-      have hder := ScalarPowerSeries_scalarPowerSeries_deriv_eq (scalarDerivCoeff a k) hr z
+          (scalarFormalSeries (scalarDerivCoeff a k)).radius :=
+        scalarFormalSeries_radius_ge_one_of_poly _ k (scalarDerivCoeff_bound a ha k)
+      have hder := scalarPowerSeries_deriv_eq (scalarDerivCoeff a k) hr z
         (abs_lt.mpr hz)
       rw [hder]
       rfl
@@ -15672,7 +15672,7 @@ theorem separatedSmoothExtension_eq_seriesSum_on_rectangle
   have hsplit := hfull.sum_add_tsum_nat_add 2
   simpa [separatedEvenPowerSeriesTerm, Finset.sum_range_succ] using hsplit.symm
 
-private theorem SeparatedMixedFourth_iteratedDeriv_two_separatedSmoothExtension_left
+private theorem iteratedDeriv_two_separatedSmoothExtension_left
     {α a b c d L q s t : ℝ}
     (hα0 : 0 < α) (hα2 : α < 2)
     (hgeo : SeparatedSeriesRectangle a b c d L q)
@@ -15701,7 +15701,7 @@ private theorem SeparatedMixedFourth_iteratedDeriv_two_separatedSmoothExtension_
   exact (hasDerivAt_separatedEvenPowerDSSeriesSum_left
     hα0 hα2 hgeo hs ht).deriv
 
-private theorem SeparatedMixedFourth_separatedSmoothExtension_symm (α s t : ℝ) :
+private theorem separatedSmoothExtension_symm (α s t : ℝ) :
     separatedSmoothExtension α (s,t) = separatedSmoothExtension α (t,s) := by
   have hU : angularKernelA s t = angularKernelA t s := by
     unfold angularKernelA
@@ -15753,13 +15753,13 @@ theorem mixedFourth_separatedSmoothExtension_eq_seriesSum_swap
     funext u
     congr 1
     funext v
-    exact SeparatedMixedFourth_separatedSmoothExtension_symm α u v
+    exact separatedSmoothExtension_symm α u v
   let J : ℝ → ℝ := fun u ↦ iteratedDeriv 2
     (fun v ↦ separatedSmoothExtension α (v,u)) t
   have hJ : J =ᶠ[𝓝 s]
       (fun u ↦ separatedEvenPowerDSSSeriesSum α t u) := by
     filter_upwards [isOpen_Ioo.mem_nhds hs] with u hu
-    exact SeparatedMixedFourth_iteratedDeriv_two_separatedSmoothExtension_left
+    exact iteratedDeriv_two_separatedSmoothExtension_left
       hα0 hα2 hgeo' ht ⟨hu.1.le, hu.2.le⟩
   have hDSST :
       deriv (fun u ↦ separatedEvenPowerDSSSeriesSum α t u) =ᶠ[𝓝 s]
@@ -15923,7 +15923,7 @@ theorem continuousOn_mixedFourth_of_contDiffOn
       hW hG p.1 p.2 hp)
 
 /-- Radial contraction keeps a physical height strictly inside the polar interval. -/
-private theorem SeparatedBoundaryTransfer_contracted_height_mem_open (n : ℕ) {x : ℝ}
+private theorem contracted_height_mem_open (n : ℕ) {x : ℝ}
     (hx : x ∈ Icc (-1 : ℝ) 1) :
     (1 - 1 / ((n : ℝ) + 1)) * x ∈ Ioo (-1 : ℝ) 1 := by
   have hn : (0 : ℝ) < (n : ℝ) + 1 := by positivity
@@ -15937,7 +15937,7 @@ private theorem SeparatedBoundaryTransfer_contracted_height_mem_open (n : ℕ) {
   have hhi := mul_nonneg hc0 (show 0 ≤ 1 - x by linarith [hx.2])
   constructor <;> nlinarith
 
-private theorem SeparatedBoundaryTransfer_tendsto_contracted_height (x : ℝ) :
+private theorem tendsto_contracted_height (x : ℝ) :
     Tendsto (fun n : ℕ => (1 - 1 / ((n : ℝ) + 1)) * x)
       atTop (𝓝 x) := by
   have hc : Tendsto (fun n : ℕ => 1 - 1 / ((n : ℝ) + 1))
@@ -15946,7 +15946,7 @@ private theorem SeparatedBoundaryTransfer_tendsto_contracted_height (x : ℝ) :
       (tendsto_const_nhds.sub tendsto_one_div_add_atTop_nhds_zero_nat)
   simpa only [one_mul] using hc.mul_const x
 
-private theorem SeparatedBoundaryTransfer_continuousAt_separatedRatio_of_mem_open
+private theorem continuousAt_separatedRatio_of_mem_open
     {p : ℝ × ℝ} (hp : p ∈ separatedOpen) :
     ContinuousAt (fun x : ℝ × ℝ => separatedRatio x.1 x.2) p := by
   have hnum : ContinuousAt (fun x : ℝ × ℝ =>
@@ -15975,13 +15975,13 @@ theorem separatedSmoothExtension_boundary_transfer
   let c : ℕ → ℝ := fun n => 1 - 1 / ((n : ℝ) + 1)
   let p : ℕ → ℝ × ℝ := fun n => (c n * s, c n * t)
   have hptend : Tendsto p atTop (𝓝 (s, t)) := by
-    exact (SeparatedBoundaryTransfer_tendsto_contracted_height s).prodMk_nhds
-      (SeparatedBoundaryTransfer_tendsto_contracted_height t)
+    exact (tendsto_contracted_height s).prodMk_nhds
+      (tendsto_contracted_height t)
   have hopen : ∀ᶠ n : ℕ in atTop, p n ∈ separatedOpen :=
     hptend.eventually (isOpen_separatedOpen.mem_nhds hp)
   have hratlim : Tendsto (fun n => separatedRatio (p n).1 (p n).2)
       atTop (𝓝 (separatedRatio s t)) :=
-    (SeparatedBoundaryTransfer_continuousAt_separatedRatio_of_mem_open hp).tendsto.comp hptend
+    (continuousAt_separatedRatio_of_mem_open hp).tendsto.comp hptend
   have hq' : separatedRatio s t < q' := lt_of_le_of_lt hq hqq'
   have hratio : ∀ᶠ n : ℕ in atTop,
       separatedRatio (p n).1 (p n).2 ≤ q' :=
@@ -15991,8 +15991,8 @@ theorem separatedSmoothExtension_boundary_transfer
         C * (2 - 2 * (p n).1 * (p n).2) ^ (α / 2 - 4) := by
     filter_upwards [hopen, hratio] with n hnopen hnratio
     exact hinterior (p n).1
-      (SeparatedBoundaryTransfer_contracted_height_mem_open n hs)
-      (p n).2 (SeparatedBoundaryTransfer_contracted_height_mem_open n ht)
+      (contracted_height_mem_open n hs)
+      (p n).2 (contracted_height_mem_open n ht)
       hnopen hnratio
   have hG : ContDiffOn ℝ 4 (separatedSmoothExtension α) separatedOpen :=
     separatedSmoothExtension_contDiffOn hα0 hα2
@@ -16191,7 +16191,7 @@ theorem northern_unequal_index_gap {N j k : ℕ}
   omega
 
 /-- Northern boundaries are nonnegative. -/
-private theorem UnequalBlockEstimates_north_boundary_nonneg_local {N j : ℕ} (hN : 4 ≤ N)
+private theorem north_boundary_nonneg_local {N j : ℕ} (hN : 4 ≤ N)
     (hj : j < bandParameter N) : 0 ≤ boundary N j := by
   have hNlow : 4 * (bandParameter N : ℝ) ^ 2 ≤ N := by
     exact_mod_cast (bandParameter_bounds N).1
@@ -16238,7 +16238,7 @@ theorem northern_unequal_rectangle_gap {N j k : ℕ} (hN : 4 ≤ N)
   have hprev : k - 1 < bandParameter N := by omega
   have hupper : t ≤ boundary N (k - 1) := ht.2
   have hlower : boundary N k ≤ t := ht.1
-  have hk0 : 0 ≤ boundary N k := UnequalBlockEstimates_north_boundary_nonneg_local hN hkM
+  have hk0 : 0 ≤ boundary N k := north_boundary_nonneg_local hN hkM
   have ht0 : 0 ≤ t := hk0.trans hlower
   have hprod : x * boundary N k ≤ s * t :=
     mul_le_mul hsx hlower hk0 (le_trans hxt hsx)
@@ -16357,7 +16357,7 @@ theorem northern_unequal_rectangle_separated {N j k : ℕ} (hN : 4 ≤ N)
     lt_of_le_of_lt ht.2
       (lt_of_lt_of_le hprev (boundary_le_one hN hkk))
   have ht0 : 0 ≤ t :=
-    (UnequalBlockEstimates_north_boundary_nonneg_local hN hkM).trans ht.1
+    (north_boundary_nonneg_local hN hkM).trans ht.1
   have hs1 : s ≤ 1 := (occupied_band_mem_unit hN hj1 (by omega) hs).2
   have hst : s * t ≤ t := by nlinarith [mul_nonneg (sub_nonneg.mpr hs1) ht0]
   have hpos : 0 < 2 - 2 * s * t := by linarith
@@ -16559,7 +16559,7 @@ theorem northern_unequal_radial_lower {N j k : ℕ} (hN : 1024 ≤ N)
       exact_mod_cast (bandParameter_bounds N).2
     nlinarith
   have ht0 : 0 ≤ t :=
-    (UnequalBlockEstimates_north_boundary_nonneg_local hN4 hkM).trans ht.1
+    (north_boundary_nonneg_local hN4 hkM).trans ht.1
   have hs1 : s ≤ 1 := (occupied_band_mem_unit hN4 hj1 (by omega) hs).2
   have hst : s * t ≤ t := by nlinarith [mul_nonneg (sub_nonneg.mpr hs1) ht0]
   have hkp : k - 1 < bandParameter N := by omega
@@ -19831,7 +19831,7 @@ namespace BEMOC.Definitive
 
 open MeasureTheory
 
-private lemma AngularPowerIntegrals_angular_kernel_intervalIntegrable {α δ : ℝ} (hδ : 0 < δ) (a b : ℝ) :
+private lemma angular_kernel_intervalIntegrable {α δ : ℝ} (hδ : 0 < δ) (a b : ℝ) :
     IntervalIntegrable (fun θ : ℝ => (δ ^ 2 + θ ^ 2) ^ ((α - 4) / 2))
       volume a b := by
   apply Continuous.intervalIntegrable
@@ -19841,7 +19841,7 @@ private lemma AngularPowerIntegrals_angular_kernel_intervalIntegrable {α δ : �
     have : 0 < δ ^ 2 + θ ^ 2 := by positivity
     exact Or.inl this.ne'
 
-private lemma AngularPowerIntegrals_angular_kernel_pointwise_low {α δ θ : ℝ}
+private lemma angular_kernel_pointwise_low {α δ θ : ℝ}
     (hα : α < 2) (hδ : 0 < δ) (_hθ : 0 ≤ θ) :
     (δ ^ 2 + θ ^ 2) ^ ((α - 4) / 2) ≤ δ ^ (α - 4) := by
   have hbase : δ ^ 2 ≤ δ ^ 2 + θ ^ 2 := by nlinarith [sq_nonneg θ]
@@ -19851,7 +19851,7 @@ private lemma AngularPowerIntegrals_angular_kernel_pointwise_low {α δ θ : ℝ
   rw [← Real.rpow_natCast, ← Real.rpow_mul hδ.le]
   ring
 
-private lemma AngularPowerIntegrals_angular_kernel_pointwise_high {α δ θ : ℝ}
+private lemma angular_kernel_pointwise_high {α δ θ : ℝ}
     (hα : α < 2) (_hδ : 0 < δ) (hθ : 0 < θ) :
     (δ ^ 2 + θ ^ 2) ^ ((α - 4) / 2) ≤ θ ^ (α - 4) := by
   have hbase : θ ^ 2 ≤ δ ^ 2 + θ ^ 2 := by nlinarith [sq_nonneg δ]
@@ -19861,19 +19861,19 @@ private lemma AngularPowerIntegrals_angular_kernel_pointwise_high {α δ θ : �
   rw [← Real.rpow_natCast, ← Real.rpow_mul hθ.le]
   ring
 
-private lemma AngularPowerIntegrals_angular_power_integral_bound_to {α δ b : ℝ}
+private lemma angular_power_integral_bound_to {α δ b : ℝ}
     (hα : α < 2) (hδ : 0 < δ) (hb : 0 ≤ b) :
     (∫ θ in (0 : ℝ)..b, (δ ^ 2 + θ ^ 2) ^ ((α - 4) / 2)) ≤
       (1 + 1 / (3 - α)) * δ ^ (α - 3) := by
   let f : ℝ → ℝ := fun θ => (δ ^ 2 + θ ^ 2) ^ ((α - 4) / 2)
   have hf : ∀ a c : ℝ, IntervalIntegrable f volume a c :=
-    fun a c => AngularPowerIntegrals_angular_kernel_intervalIntegrable hδ a c
+    fun a c => angular_kernel_intervalIntegrable hδ a c
   have hden : 0 < 3 - α := by linarith
   by_cases hbd : b ≤ δ
   · have hmono : (∫ θ in (0 : ℝ)..b, f θ) ≤ ∫ _θ in (0 : ℝ)..b, δ ^ (α - 4) :=
       intervalIntegral.integral_mono_on hb (hf 0 b) intervalIntegrable_const (by
         intro θ hθ
-        exact AngularPowerIntegrals_angular_kernel_pointwise_low hα hδ hθ.1)
+        exact angular_kernel_pointwise_low hα hδ hθ.1)
     simp only [intervalIntegral.integral_const, sub_zero, smul_eq_mul] at hmono
     have hp : 0 ≤ δ ^ (α - 4) := le_of_lt (Real.rpow_pos_of_pos hδ _)
     have hmul : b * δ ^ (α - 4) ≤ δ * δ ^ (α - 4) :=
@@ -19891,7 +19891,7 @@ private lemma AngularPowerIntegrals_angular_power_integral_bound_to {α δ b : �
           ∫ _θ in (0 : ℝ)..δ, δ ^ (α - 4) :=
         intervalIntegral.integral_mono_on hδ.le (hf 0 δ) intervalIntegrable_const (by
           intro θ hθ
-          exact AngularPowerIntegrals_angular_kernel_pointwise_low hα hδ hθ.1)
+          exact angular_kernel_pointwise_low hα hδ hθ.1)
       simp only [intervalIntegral.integral_const, sub_zero, smul_eq_mul] at hmono
       have heq : δ * δ ^ (α - 4) = δ ^ (α - 3) := by
         calc
@@ -19907,7 +19907,7 @@ private lemma AngularPowerIntegrals_angular_power_integral_bound_to {α δ b : �
             intro h
             linarith [h.1]))) (by
             intro θ hθ
-            exact AngularPowerIntegrals_angular_kernel_pointwise_high hα hδ (lt_of_lt_of_le hδ hθ.1))
+            exact angular_kernel_pointwise_high hα hδ (lt_of_lt_of_le hδ hθ.1))
       have hint : (∫ θ in δ..b, θ ^ (α - 4)) =
           (δ ^ (α - 3) - b ^ (α - 3)) / (3 - α) := by
         rw [integral_rpow (Or.inr ⟨by linarith, by
@@ -19932,7 +19932,7 @@ theorem angular_inverse_power_integral_bound {α δ R : ℝ}
     (_hα0 : 0 < α) (hα2 : α < 2) (hδ : 0 < δ) (hR : 0 < R) :
     (∫ θ in (0 : ℝ)..Real.pi, (δ ^ 2 + (R * θ) ^ 2) ^ ((α - 4) / 2)) ≤
       (1 + 1 / (3 - α)) * δ ^ (α - 3) / R := by
-  have hscaled := AngularPowerIntegrals_angular_power_integral_bound_to hα2 hδ
+  have hscaled := angular_power_integral_bound_to hα2 hδ
     (show 0 ≤ R * Real.pi by positivity)
   have hsubst : R * (∫ θ in (0 : ℝ)..Real.pi,
       (δ ^ 2 + (R * θ) ^ 2) ^ ((α - 4) / 2)) =
@@ -22499,23 +22499,23 @@ section
 namespace BEMOC.Definitive
 
 /-- Squared chordal distance in the polar variables. -/
-private noncomputable def PolarDerivatives_polarChordSq (θ φ ψ : ℝ) : ℝ :=
+private noncomputable def polarChordSq (θ φ ψ : ℝ) : ℝ :=
   2 - 2 * (Real.cos φ * Real.cos ψ + Real.sin φ * Real.sin ψ * Real.cos θ)
 
-private lemma PolarDerivatives_polarChordSq_eq_sum_sq (θ φ ψ : ℝ) :
-    PolarDerivatives_polarChordSq θ φ ψ =
+private lemma polarChordSq_eq_sum_sq (θ φ ψ : ℝ) :
+    polarChordSq θ φ ψ =
       (Real.sin φ * Real.cos θ - Real.sin ψ) ^ 2 +
       (Real.sin φ * Real.sin θ) ^ 2 +
       (Real.cos φ - Real.cos ψ) ^ 2 := by
-  unfold PolarDerivatives_polarChordSq
+  unfold polarChordSq
   nlinarith [Real.sin_sq_add_cos_sq φ, Real.sin_sq_add_cos_sq ψ,
     Real.sin_sq_add_cos_sq θ]
 
-private lemma PolarDerivatives_polarChordSq_nonneg (θ φ ψ : ℝ) : 0 ≤ PolarDerivatives_polarChordSq θ φ ψ := by
-  rw [PolarDerivatives_polarChordSq_eq_sum_sq]
+private lemma polarChordSq_nonneg (θ φ ψ : ℝ) : 0 ≤ polarChordSq θ φ ψ := by
+  rw [polarChordSq_eq_sum_sq]
   positivity
 
-private lemma PolarDerivatives_polarChordSq_le_six (θ φ ψ : ℝ) : PolarDerivatives_polarChordSq θ φ ψ ≤ 6 := by
+private lemma polarChordSq_le_six (θ φ ψ : ℝ) : polarChordSq θ φ ψ ≤ 6 := by
   have hc : |Real.cos φ * Real.cos ψ| ≤ 1 := by
     rw [abs_mul]
     exact mul_le_one₀ (Real.abs_cos_le_one _) (abs_nonneg _) (Real.abs_cos_le_one _)
@@ -22524,51 +22524,51 @@ private lemma PolarDerivatives_polarChordSq_le_six (θ φ ψ : ℝ) : PolarDeriv
     exact mul_le_one₀
       (mul_le_one₀ (Real.abs_sin_le_one _) (abs_nonneg _) (Real.abs_sin_le_one _))
       (abs_nonneg _) (Real.abs_cos_le_one _)
-  unfold PolarDerivatives_polarChordSq
+  unfold polarChordSq
   have hc' := (abs_le.mp hc).1
   have hs' := (abs_le.mp hs).1
   linarith
 
-private lemma PolarDerivatives_hasDerivAt_polarChordSq_phi (θ φ ψ : ℝ) :
-    HasDerivAt (fun u => PolarDerivatives_polarChordSq θ u ψ)
+private lemma hasDerivAt_polarChordSq_phi (θ φ ψ : ℝ) :
+    HasDerivAt (fun u => polarChordSq θ u ψ)
       (2 * (Real.sin φ * Real.cos ψ - Real.cos φ * Real.sin ψ * Real.cos θ)) φ := by
-  unfold PolarDerivatives_polarChordSq
+  unfold polarChordSq
   convert (((Real.hasDerivAt_cos φ).mul_const (Real.cos ψ)).add
     (((Real.hasDerivAt_sin φ).mul_const (Real.sin ψ)).mul_const (Real.cos θ))
     |>.const_mul 2 |>.const_sub 2) using 1
   ring
 
-private lemma PolarDerivatives_hasDerivAt_polarChordSq_psi (θ φ ψ : ℝ) :
-    HasDerivAt (fun v => PolarDerivatives_polarChordSq θ φ v)
+private lemma hasDerivAt_polarChordSq_psi (θ φ ψ : ℝ) :
+    HasDerivAt (fun v => polarChordSq θ φ v)
       (2 * (Real.cos φ * Real.sin ψ - Real.sin φ * Real.cos ψ * Real.cos θ)) ψ := by
-  unfold PolarDerivatives_polarChordSq
+  unfold polarChordSq
   convert (((Real.hasDerivAt_cos ψ).const_mul (Real.cos φ)).add
     (((Real.hasDerivAt_sin ψ).const_mul (Real.sin φ)).mul_const (Real.cos θ))
     |>.const_mul 2 |>.const_sub 2) using 1
   ring
 
-private lemma PolarDerivatives_hasDerivAt_polarKernel_phi (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma hasDerivAt_polarKernel_phi (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     HasDerivAt (fun u => polarKernel α θ u ψ)
-      ((α / 2) * (PolarDerivatives_polarChordSq θ φ ψ) ^ (α / 2 - 1) *
+      ((α / 2) * (polarChordSq θ φ ψ) ^ (α / 2 - 1) *
         (2 * (Real.sin φ * Real.cos ψ - Real.cos φ * Real.sin ψ * Real.cos θ))) φ := by
-  change HasDerivAt (fun u => (PolarDerivatives_polarChordSq θ u ψ) ^ (α / 2)) _ φ
+  change HasDerivAt (fun u => (polarChordSq θ u ψ) ^ (α / 2)) _ φ
   convert (Real.hasDerivAt_rpow_const (p := α / 2) (Or.inl hA.ne')).comp φ
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ) using 1
+    (hasDerivAt_polarChordSq_phi θ φ ψ) using 1
 
-private lemma PolarDerivatives_three_square_cauchy (a b c d e f : ℝ) :
+private lemma three_square_cauchy (a b c d e f : ℝ) :
     (a * d + b * e + c * f) ^ 2 ≤
       (a ^ 2 + b ^ 2 + c ^ 2) * (d ^ 2 + e ^ 2 + f ^ 2) := by
   nlinarith [sq_nonneg (a * e - b * d), sq_nonneg (a * f - c * d),
     sq_nonneg (b * f - c * e)]
 
-private lemma PolarDerivatives_polarChordSq_le_four (θ φ ψ : ℝ) : PolarDerivatives_polarChordSq θ φ ψ ≤ 4 := by
+private lemma polarChordSq_le_four (θ φ ψ : ℝ) : polarChordSq θ φ ψ ≤ 4 := by
   have hx : (Real.sin φ * Real.cos θ) ^ 2 +
       (Real.sin φ * Real.sin θ) ^ 2 + (Real.cos φ) ^ 2 = 1 := by
     nlinarith [Real.sin_sq_add_cos_sq θ, Real.sin_sq_add_cos_sq φ]
   have hy : (Real.sin ψ) ^ 2 + (0 : ℝ) ^ 2 + (Real.cos ψ) ^ 2 = 1 := by
     nlinarith [Real.sin_sq_add_cos_sq ψ]
-  have hc := PolarDerivatives_three_square_cauchy
+  have hc := three_square_cauchy
     (Real.sin φ * Real.cos θ) (Real.sin φ * Real.sin θ) (Real.cos φ)
     (Real.sin ψ) 0 (Real.cos ψ)
   rw [hx, hy, one_mul] at hc
@@ -22576,10 +22576,10 @@ private lemma PolarDerivatives_polarChordSq_le_four (θ φ ψ : ℝ) : PolarDeri
       Real.sin φ * Real.sin θ * 0 + Real.cos φ * Real.cos ψ =
       Real.cos φ * Real.cos ψ + Real.sin φ * Real.sin ψ * Real.cos θ := by ring
   rw [hdot] at hc
-  unfold PolarDerivatives_polarChordSq
+  unfold polarChordSq
   nlinarith
 
-private lemma PolarDerivatives_abs_polarChordSq_cross_le_two (θ φ ψ : ℝ) :
+private lemma abs_polarChordSq_cross_le_two (θ φ ψ : ℝ) :
     |2 * (Real.sin φ * Real.sin ψ +
       Real.cos φ * Real.cos ψ * Real.cos θ)| ≤ 2 := by
   have hx : (Real.sin φ) ^ 2 + (Real.cos φ * Real.cos θ) ^ 2 +
@@ -22587,7 +22587,7 @@ private lemma PolarDerivatives_abs_polarChordSq_cross_le_two (θ φ ψ : ℝ) :
     nlinarith [Real.sin_sq_add_cos_sq θ, Real.sin_sq_add_cos_sq φ]
   have hy : (Real.sin ψ) ^ 2 + (Real.cos ψ) ^ 2 + (0 : ℝ) ^ 2 = 1 := by
     nlinarith [Real.sin_sq_add_cos_sq ψ]
-  have hc := PolarDerivatives_three_square_cauchy (Real.sin φ) (Real.cos φ * Real.cos θ)
+  have hc := three_square_cauchy (Real.sin φ) (Real.cos φ * Real.cos θ)
     (Real.cos φ * Real.sin θ) (Real.sin ψ) (Real.cos ψ) 0
   rw [hx, hy, one_mul] at hc
   have hdot : Real.sin φ * Real.sin ψ + Real.cos φ * Real.cos θ * Real.cos ψ +
@@ -22600,109 +22600,109 @@ private lemma PolarDerivatives_abs_polarChordSq_cross_le_two (θ φ ψ : ℝ) :
       Real.cos φ * Real.cos ψ * Real.cos θ)]
   simpa [abs_mul] using (mul_le_mul_of_nonneg_left hbound (by norm_num : (0 : ℝ) ≤ 2))
 
-private noncomputable def PolarDerivatives_polarChordPhi (θ φ ψ : ℝ) : ℝ :=
+private noncomputable def polarChordPhi (θ φ ψ : ℝ) : ℝ :=
   2 * (Real.sin φ * Real.cos ψ - Real.cos φ * Real.sin ψ * Real.cos θ)
 
-private noncomputable def PolarDerivatives_polarChordPsi (θ φ ψ : ℝ) : ℝ :=
+private noncomputable def polarChordPsi (θ φ ψ : ℝ) : ℝ :=
   2 * (Real.cos φ * Real.sin ψ - Real.sin φ * Real.cos ψ * Real.cos θ)
 
-private noncomputable def PolarDerivatives_polarChordCross (θ φ ψ : ℝ) : ℝ :=
+private noncomputable def polarChordCross (θ φ ψ : ℝ) : ℝ :=
   -2 * (Real.sin φ * Real.sin ψ + Real.cos φ * Real.cos ψ * Real.cos θ)
 
-private lemma PolarDerivatives_abs_polarChordCross_le_two (θ φ ψ : ℝ) :
-    |PolarDerivatives_polarChordCross θ φ ψ| ≤ 2 := by
-  simpa [PolarDerivatives_polarChordCross, abs_neg] using PolarDerivatives_abs_polarChordSq_cross_le_two θ φ ψ
+private lemma abs_polarChordCross_le_two (θ φ ψ : ℝ) :
+    |polarChordCross θ φ ψ| ≤ 2 := by
+  simpa [polarChordCross, abs_neg] using abs_polarChordSq_cross_le_two θ φ ψ
 
-private lemma PolarDerivatives_hasDerivAt_polarChordPhi_phi (θ φ ψ : ℝ) :
-    HasDerivAt (fun u => PolarDerivatives_polarChordPhi θ u ψ) (2 - PolarDerivatives_polarChordSq θ φ ψ) φ := by
-  unfold PolarDerivatives_polarChordPhi PolarDerivatives_polarChordSq
+private lemma hasDerivAt_polarChordPhi_phi (θ φ ψ : ℝ) :
+    HasDerivAt (fun u => polarChordPhi θ u ψ) (2 - polarChordSq θ φ ψ) φ := by
+  unfold polarChordPhi polarChordSq
   convert (((Real.hasDerivAt_sin φ).mul_const (Real.cos ψ)).sub
     (((Real.hasDerivAt_cos φ).mul_const (Real.sin ψ)).mul_const (Real.cos θ))
     |>.const_mul 2) using 1
   ring
 
-private lemma PolarDerivatives_hasDerivAt_polarChordPhi_psi (θ φ ψ : ℝ) :
-    HasDerivAt (fun v => PolarDerivatives_polarChordPhi θ φ v) (PolarDerivatives_polarChordCross θ φ ψ) ψ := by
-  unfold PolarDerivatives_polarChordPhi PolarDerivatives_polarChordCross
+private lemma hasDerivAt_polarChordPhi_psi (θ φ ψ : ℝ) :
+    HasDerivAt (fun v => polarChordPhi θ φ v) (polarChordCross θ φ ψ) ψ := by
+  unfold polarChordPhi polarChordCross
   convert (((Real.hasDerivAt_cos ψ).const_mul (Real.sin φ)).sub
     (((Real.hasDerivAt_sin ψ).const_mul (Real.cos φ)).mul_const (Real.cos θ))
     |>.const_mul 2) using 1
   ring
 
-private lemma PolarDerivatives_hasDerivAt_polarChordPsi_phi (θ φ ψ : ℝ) :
-    HasDerivAt (fun u => PolarDerivatives_polarChordPsi θ u ψ) (PolarDerivatives_polarChordCross θ φ ψ) φ := by
-  unfold PolarDerivatives_polarChordPsi PolarDerivatives_polarChordCross
+private lemma hasDerivAt_polarChordPsi_phi (θ φ ψ : ℝ) :
+    HasDerivAt (fun u => polarChordPsi θ u ψ) (polarChordCross θ φ ψ) φ := by
+  unfold polarChordPsi polarChordCross
   convert (((Real.hasDerivAt_cos φ).mul_const (Real.sin ψ)).sub
     (((Real.hasDerivAt_sin φ).mul_const (Real.cos ψ)).mul_const (Real.cos θ))
     |>.const_mul 2) using 1
   ring
 
-private lemma PolarDerivatives_hasDerivAt_polarChordPsi_psi (θ φ ψ : ℝ) :
-    HasDerivAt (fun v => PolarDerivatives_polarChordPsi θ φ v) (2 - PolarDerivatives_polarChordSq θ φ ψ) ψ := by
-  unfold PolarDerivatives_polarChordPsi PolarDerivatives_polarChordSq
+private lemma hasDerivAt_polarChordPsi_psi (θ φ ψ : ℝ) :
+    HasDerivAt (fun v => polarChordPsi θ φ v) (2 - polarChordSq θ φ ψ) ψ := by
+  unfold polarChordPsi polarChordSq
   convert (((Real.hasDerivAt_sin ψ).const_mul (Real.cos φ)).sub
     (((Real.hasDerivAt_cos ψ).const_mul (Real.sin φ)).mul_const (Real.cos θ))
     |>.const_mul 2) using 1
   ring
 
-private lemma PolarDerivatives_hasDerivAt_polarChordCross_phi (θ φ ψ : ℝ) :
-    HasDerivAt (fun u => PolarDerivatives_polarChordCross θ u ψ) (-PolarDerivatives_polarChordPsi θ φ ψ) φ := by
-  unfold PolarDerivatives_polarChordCross PolarDerivatives_polarChordPsi
+private lemma hasDerivAt_polarChordCross_phi (θ φ ψ : ℝ) :
+    HasDerivAt (fun u => polarChordCross θ u ψ) (-polarChordPsi θ φ ψ) φ := by
+  unfold polarChordCross polarChordPsi
   convert (((Real.hasDerivAt_sin φ).mul_const (Real.sin ψ)).add
     (((Real.hasDerivAt_cos φ).mul_const (Real.cos ψ)).mul_const (Real.cos θ))
     |>.const_mul (-2)) using 1
   ring
 
-private lemma PolarDerivatives_hasDerivAt_polarChordCross_psi (θ φ ψ : ℝ) :
-    HasDerivAt (fun v => PolarDerivatives_polarChordCross θ φ v) (-PolarDerivatives_polarChordPhi θ φ ψ) ψ := by
-  unfold PolarDerivatives_polarChordCross PolarDerivatives_polarChordPhi
+private lemma hasDerivAt_polarChordCross_psi (θ φ ψ : ℝ) :
+    HasDerivAt (fun v => polarChordCross θ φ v) (-polarChordPhi θ φ ψ) ψ := by
+  unfold polarChordCross polarChordPhi
   convert (((Real.hasDerivAt_sin ψ).const_mul (Real.sin φ)).add
     (((Real.hasDerivAt_cos ψ).const_mul (Real.cos φ)).mul_const (Real.cos θ))
     |>.const_mul (-2)) using 1
   ring
 
-private lemma PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (q θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun u => PolarDerivatives_polarChordSq θ u ψ ^ q)
-      (q * PolarDerivatives_polarChordSq θ φ ψ ^ (q - 1) * PolarDerivatives_polarChordPhi θ φ ψ) φ := by
+private lemma hasDerivAt_polarChordSq_rpow_phi (q θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun u => polarChordSq θ u ψ ^ q)
+      (q * polarChordSq θ φ ψ ^ (q - 1) * polarChordPhi θ φ ψ) φ := by
   convert (Real.hasDerivAt_rpow_const (p := q) (Or.inl hA.ne')).comp φ
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ) using 1
+    (hasDerivAt_polarChordSq_phi θ φ ψ) using 1
 
-private lemma PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (q θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun v => PolarDerivatives_polarChordSq θ φ v ^ q)
-      (q * PolarDerivatives_polarChordSq θ φ ψ ^ (q - 1) * PolarDerivatives_polarChordPsi θ φ ψ) ψ := by
+private lemma hasDerivAt_polarChordSq_rpow_psi (q θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun v => polarChordSq θ φ v ^ q)
+      (q * polarChordSq θ φ ψ ^ (q - 1) * polarChordPsi θ φ ψ) ψ := by
   convert (Real.hasDerivAt_rpow_const (p := q) (Or.inl hA.ne')).comp ψ
-    (PolarDerivatives_hasDerivAt_polarChordSq_psi θ φ ψ) using 1
+    (hasDerivAt_polarChordSq_psi θ φ ψ) using 1
 
-private lemma PolarDerivatives_abs_two_sub_polarChordSq_le (θ φ ψ : ℝ) :
-    |2 - PolarDerivatives_polarChordSq θ φ ψ| ≤ 2 := by
-  have h₀ := PolarDerivatives_polarChordSq_nonneg θ φ ψ
-  have h₄ := PolarDerivatives_polarChordSq_le_four θ φ ψ
+private lemma abs_two_sub_polarChordSq_le (θ φ ψ : ℝ) :
+    |2 - polarChordSq θ φ ψ| ≤ 2 := by
+  have h₀ := polarChordSq_nonneg θ φ ψ
+  have h₄ := polarChordSq_le_four θ φ ψ
   rw [abs_le]
   constructor <;> linarith
 
-private lemma PolarDerivatives_polarChordSq_symm (θ φ ψ : ℝ) :
-    PolarDerivatives_polarChordSq θ φ ψ = PolarDerivatives_polarChordSq θ ψ φ := by
-  unfold PolarDerivatives_polarChordSq
+private lemma polarChordSq_symm (θ φ ψ : ℝ) :
+    polarChordSq θ φ ψ = polarChordSq θ ψ φ := by
+  unfold polarChordSq
   ring
 
-private lemma PolarDerivatives_polarKernel_symm (α θ φ ψ : ℝ) :
+private lemma polarKernel_symm (α θ φ ψ : ℝ) :
     polarKernel α θ φ ψ = polarKernel α θ ψ φ := by
   unfold polarKernel
   ring
 
-private lemma PolarDerivatives_polarChordSq_phi_sq_le (θ φ ψ : ℝ) :
+private lemma polarChordSq_phi_sq_le (θ φ ψ : ℝ) :
     (Real.sin φ * Real.cos ψ - Real.cos φ * Real.sin ψ * Real.cos θ) ^ 2 ≤
-      PolarDerivatives_polarChordSq θ φ ψ := by
+      polarChordSq θ φ ψ := by
   let a := Real.sin φ * Real.cos θ - Real.sin ψ
   let b := Real.sin φ * Real.sin θ
   let c := Real.cos φ - Real.cos ψ
   let d := Real.cos φ * Real.cos θ
   let e := Real.cos φ * Real.sin θ
   let f := -Real.sin φ
-  have hz : a ^ 2 + b ^ 2 + c ^ 2 = PolarDerivatives_polarChordSq θ φ ψ := by
-    simpa [a, b, c] using (PolarDerivatives_polarChordSq_eq_sum_sq θ φ ψ).symm
+  have hz : a ^ 2 + b ^ 2 + c ^ 2 = polarChordSq θ φ ψ := by
+    simpa [a, b, c] using (polarChordSq_eq_sum_sq θ φ ψ).symm
   have hw : d ^ 2 + e ^ 2 + f ^ 2 = 1 := by
     dsimp [d, e, f]
     nlinarith [Real.sin_sq_add_cos_sq φ, Real.sin_sq_add_cos_sq θ]
@@ -22711,27 +22711,27 @@ private lemma PolarDerivatives_polarChordSq_phi_sq_le (θ φ ψ : ℝ) :
     dsimp [a, b, c, d, e, f]
     nlinarith [congrArg (fun x : ℝ => Real.sin φ * Real.cos φ * x)
       (Real.sin_sq_add_cos_sq θ)]
-  have h := PolarDerivatives_three_square_cauchy a b c d e f
+  have h := three_square_cauchy a b c d e f
   rw [hz, hw, mul_one, hdot] at h
   exact h
 
-private lemma PolarDerivatives_abs_polarChordPhi_le (θ φ ψ : ℝ) :
-    |PolarDerivatives_polarChordPhi θ φ ψ| ≤ 2 * Real.sqrt (PolarDerivatives_polarChordSq θ φ ψ) := by
-  rw [PolarDerivatives_polarChordPhi, abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
+private lemma abs_polarChordPhi_le (θ φ ψ : ℝ) :
+    |polarChordPhi θ φ ψ| ≤ 2 * Real.sqrt (polarChordSq θ φ ψ) := by
+  rw [polarChordPhi, abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
   exact mul_le_mul_of_nonneg_left
-    (Real.abs_le_sqrt (PolarDerivatives_polarChordSq_phi_sq_le θ φ ψ)) (by norm_num)
+    (Real.abs_le_sqrt (polarChordSq_phi_sq_le θ φ ψ)) (by norm_num)
 
-private lemma PolarDerivatives_polarChordSq_psi_sq_le (θ φ ψ : ℝ) :
+private lemma polarChordSq_psi_sq_le (θ φ ψ : ℝ) :
     (Real.cos φ * Real.sin ψ - Real.sin φ * Real.cos ψ * Real.cos θ) ^ 2 ≤
-      PolarDerivatives_polarChordSq θ φ ψ := by
+      polarChordSq θ φ ψ := by
   let a := Real.sin φ * Real.cos θ - Real.sin ψ
   let b := Real.sin φ * Real.sin θ
   let c := Real.cos φ - Real.cos ψ
   let d := -Real.cos ψ
   let e := (0 : ℝ)
   let f := Real.sin ψ
-  have hz : a ^ 2 + b ^ 2 + c ^ 2 = PolarDerivatives_polarChordSq θ φ ψ := by
-    simpa [a, b, c] using (PolarDerivatives_polarChordSq_eq_sum_sq θ φ ψ).symm
+  have hz : a ^ 2 + b ^ 2 + c ^ 2 = polarChordSq θ φ ψ := by
+    simpa [a, b, c] using (polarChordSq_eq_sum_sq θ φ ψ).symm
   have hw : d ^ 2 + e ^ 2 + f ^ 2 = 1 := by
     dsimp [d, e, f]
     nlinarith [Real.sin_sq_add_cos_sq ψ]
@@ -22739,70 +22739,70 @@ private lemma PolarDerivatives_polarChordSq_psi_sq_le (θ φ ψ : ℝ) :
       Real.cos φ * Real.sin ψ - Real.sin φ * Real.cos ψ * Real.cos θ := by
     dsimp [a, b, c, d, e, f]
     ring
-  have h := PolarDerivatives_three_square_cauchy a b c d e f
+  have h := three_square_cauchy a b c d e f
   rw [hz, hw, mul_one, hdot] at h
   exact h
 
-private lemma PolarDerivatives_abs_polarChordPsi_le (θ φ ψ : ℝ) :
-    |PolarDerivatives_polarChordPsi θ φ ψ| ≤ 2 * Real.sqrt (PolarDerivatives_polarChordSq θ φ ψ) := by
-  rw [PolarDerivatives_polarChordPsi, abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
+private lemma abs_polarChordPsi_le (θ φ ψ : ℝ) :
+    |polarChordPsi θ φ ψ| ≤ 2 * Real.sqrt (polarChordSq θ φ ψ) := by
+  rw [polarChordPsi, abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
   exact mul_le_mul_of_nonneg_left
-    (Real.abs_le_sqrt (PolarDerivatives_polarChordSq_psi_sq_le θ φ ψ)) (by norm_num)
+    (Real.abs_le_sqrt (polarChordSq_psi_sq_le θ φ ψ)) (by norm_num)
 
-private lemma PolarDerivatives_hasDerivAt_polarKernel_psi (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma hasDerivAt_polarKernel_psi (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     HasDerivAt (fun v => polarKernel α θ φ v)
-      ((α / 2) * (PolarDerivatives_polarChordSq θ φ ψ) ^ (α / 2 - 1) *
+      ((α / 2) * (polarChordSq θ φ ψ) ^ (α / 2 - 1) *
         (2 * (Real.cos φ * Real.sin ψ - Real.sin φ * Real.cos ψ * Real.cos θ))) ψ := by
-  change HasDerivAt (fun v => (PolarDerivatives_polarChordSq θ φ v) ^ (α / 2)) _ ψ
+  change HasDerivAt (fun v => (polarChordSq θ φ v) ^ (α / 2)) _ ψ
   convert (Real.hasDerivAt_rpow_const (p := α / 2) (Or.inl hA.ne')).comp ψ
-    (PolarDerivatives_hasDerivAt_polarChordSq_psi θ φ ψ) using 1
+    (hasDerivAt_polarChordSq_psi θ φ ψ) using 1
 
-private lemma PolarDerivatives_abs_deriv_polarKernel_phi_le (α θ φ ψ : ℝ) (hα : 0 ≤ α)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma abs_deriv_polarKernel_phi_le (α θ φ ψ : ℝ) (hα : 0 ≤ α)
+    (hA : 0 < polarChordSq θ φ ψ) :
     |deriv (fun u => polarKernel α θ u ψ) φ| ≤
-      α * (PolarDerivatives_polarChordSq θ φ ψ) ^ ((α - 1) / 2) := by
-  let A := PolarDerivatives_polarChordSq θ φ ψ
+      α * (polarChordSq θ φ ψ) ^ ((α - 1) / 2) := by
+  let A := polarChordSq θ φ ψ
   let E := Real.sin φ * Real.cos ψ - Real.cos φ * Real.sin ψ * Real.cos θ
-  have hE : |E| ≤ Real.sqrt A := Real.abs_le_sqrt (PolarDerivatives_polarChordSq_phi_sq_le θ φ ψ)
+  have hE : |E| ≤ Real.sqrt A := Real.abs_le_sqrt (polarChordSq_phi_sq_le θ φ ψ)
   have hApow : 0 ≤ A ^ (α / 2 - 1) := (Real.rpow_pos_of_pos hA _).le
   have hsqrt : A ^ (α / 2 - 1) * Real.sqrt A = A ^ ((α - 1) / 2) := by
     rw [Real.sqrt_eq_rpow, ← Real.rpow_add hA]
     congr 1
     ring
-  rw [(PolarDerivatives_hasDerivAt_polarKernel_phi α θ φ ψ hA).deriv]
+  rw [(hasDerivAt_polarKernel_phi α θ φ ψ hA).deriv]
   dsimp [A, E] at *
   have hα2 : 0 ≤ α / 2 := by positivity
   rw [abs_mul, abs_mul, abs_mul, abs_of_nonneg hα2, abs_of_nonneg hApow,
     abs_of_nonneg (show (0 : ℝ) ≤ 2 by norm_num)]
   calc
-    α / 2 * PolarDerivatives_polarChordSq θ φ ψ ^ (α / 2 - 1) * (2 * |E|) =
-        α * (PolarDerivatives_polarChordSq θ φ ψ ^ (α / 2 - 1) * |E|) := by ring
-    _ ≤ α * (PolarDerivatives_polarChordSq θ φ ψ ^ (α / 2 - 1) * Real.sqrt (PolarDerivatives_polarChordSq θ φ ψ)) := by
+    α / 2 * polarChordSq θ φ ψ ^ (α / 2 - 1) * (2 * |E|) =
+        α * (polarChordSq θ φ ψ ^ (α / 2 - 1) * |E|) := by ring
+    _ ≤ α * (polarChordSq θ φ ψ ^ (α / 2 - 1) * Real.sqrt (polarChordSq θ φ ψ)) := by
       gcongr
     _ = _ := by rw [hsqrt]
 
-private lemma PolarDerivatives_abs_deriv_polarKernel_psi_le (α θ φ ψ : ℝ) (hα : 0 ≤ α)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma abs_deriv_polarKernel_psi_le (α θ φ ψ : ℝ) (hα : 0 ≤ α)
+    (hA : 0 < polarChordSq θ φ ψ) :
     |deriv (fun v => polarKernel α θ φ v) ψ| ≤
-      α * (PolarDerivatives_polarChordSq θ φ ψ) ^ ((α - 1) / 2) := by
-  let A := PolarDerivatives_polarChordSq θ φ ψ
+      α * (polarChordSq θ φ ψ) ^ ((α - 1) / 2) := by
+  let A := polarChordSq θ φ ψ
   let E := Real.cos φ * Real.sin ψ - Real.sin φ * Real.cos ψ * Real.cos θ
-  have hE : |E| ≤ Real.sqrt A := Real.abs_le_sqrt (PolarDerivatives_polarChordSq_psi_sq_le θ φ ψ)
+  have hE : |E| ≤ Real.sqrt A := Real.abs_le_sqrt (polarChordSq_psi_sq_le θ φ ψ)
   have hApow : 0 ≤ A ^ (α / 2 - 1) := (Real.rpow_pos_of_pos hA _).le
   have hsqrt : A ^ (α / 2 - 1) * Real.sqrt A = A ^ ((α - 1) / 2) := by
     rw [Real.sqrt_eq_rpow, ← Real.rpow_add hA]
     congr 1
     ring
-  rw [(PolarDerivatives_hasDerivAt_polarKernel_psi α θ φ ψ hA).deriv]
+  rw [(hasDerivAt_polarKernel_psi α θ φ ψ hA).deriv]
   dsimp [A, E] at *
   have hα2 : 0 ≤ α / 2 := by positivity
   rw [abs_mul, abs_mul, abs_mul, abs_of_nonneg hα2, abs_of_nonneg hApow,
     abs_of_nonneg (show (0 : ℝ) ≤ 2 by norm_num)]
   calc
-    α / 2 * PolarDerivatives_polarChordSq θ φ ψ ^ (α / 2 - 1) * (2 * |E|) =
-        α * (PolarDerivatives_polarChordSq θ φ ψ ^ (α / 2 - 1) * |E|) := by ring
-    _ ≤ α * (PolarDerivatives_polarChordSq θ φ ψ ^ (α / 2 - 1) * Real.sqrt (PolarDerivatives_polarChordSq θ φ ψ)) := by
+    α / 2 * polarChordSq θ φ ψ ^ (α / 2 - 1) * (2 * |E|) =
+        α * (polarChordSq θ φ ψ ^ (α / 2 - 1) * |E|) := by ring
+    _ ≤ α * (polarChordSq θ φ ψ ^ (α / 2 - 1) * Real.sqrt (polarChordSq θ φ ψ)) := by
       gcongr
     _ = _ := by rw [hsqrt]
 
@@ -22828,386 +22828,386 @@ theorem polar_derivative_bound_one {α : ℝ} (hα : 0 ≤ α) :
     rw [abs_of_pos hpow]
     nlinarith
   · simpa only [iteratedDeriv_zero, iteratedDeriv_one, Nat.cast_zero, Nat.cast_one,
-      sub_zero, PolarDerivatives_polarChordSq] using
-      (PolarDerivatives_abs_deriv_polarKernel_psi_le α θ φ ψ hα hA).trans
+      sub_zero, polarChordSq] using
+      (abs_deriv_polarKernel_psi_le α θ φ ψ hα hA).trans
         (by
           apply mul_le_mul_of_nonneg_right
           · linarith
           · positivity)
   · simpa only [iteratedDeriv_zero, iteratedDeriv_one, Nat.cast_zero, Nat.cast_one,
-      sub_zero, PolarDerivatives_polarChordSq] using
-      (PolarDerivatives_abs_deriv_polarKernel_phi_le α θ φ ψ hα hA).trans
+      sub_zero, polarChordSq] using
+      (abs_deriv_polarKernel_phi_le α θ φ ψ hα hA).trans
         (by
           apply mul_le_mul_of_nonneg_right
           · linarith
           · positivity)
   · omega
 
-private def PolarDerivatives_rpowFalling (p : ℝ) : ℕ → ℝ
+private def rpowFalling (p : ℝ) : ℕ → ℝ
   | 0 => 1
-  | n + 1 => (p - n) * PolarDerivatives_rpowFalling p n
+  | n + 1 => (p - n) * rpowFalling p n
 
-private lemma PolarDerivatives_iteratedDeriv_rpow_of_pos (p : ℝ) (n : ℕ) {x : ℝ} (hx : 0 < x) :
+private lemma iteratedDeriv_rpow_of_pos (p : ℝ) (n : ℕ) {x : ℝ} (hx : 0 < x) :
     iteratedDeriv n (fun y : ℝ => y ^ p) x =
-      PolarDerivatives_rpowFalling p n * x ^ (p - n) := by
+      rpowFalling p n * x ^ (p - n) := by
   induction n generalizing x with
-  | zero => simp [iteratedDeriv_zero, PolarDerivatives_rpowFalling]
+  | zero => simp [iteratedDeriv_zero, rpowFalling]
   | succ n ih =>
       rw [iteratedDeriv_succ]
       have heq : iteratedDeriv n (fun y : ℝ => y ^ p) =ᶠ[nhds x]
-          fun y => PolarDerivatives_rpowFalling p n * y ^ (p - n) := by
+          fun y => rpowFalling p n * y ^ (p - n) := by
         filter_upwards [eventually_gt_nhds hx] with y hy
         exact ih hy
       rw [heq.deriv_eq]
       rw [((Real.hasDerivAt_rpow_const
-        (p := p - n) (Or.inl hx.ne')).const_mul (PolarDerivatives_rpowFalling p n)).deriv]
-      simp only [PolarDerivatives_rpowFalling]
+        (p := p - n) (Or.inl hx.ne')).const_mul (rpowFalling p n)).deriv]
+      simp only [rpowFalling]
       push_cast
       ring
 
-private lemma PolarDerivatives_abs_iteratedDeriv_rpow_le (p : ℝ) (n : ℕ) {x : ℝ}
+private lemma abs_iteratedDeriv_rpow_le (p : ℝ) (n : ℕ) {x : ℝ}
     (hx : 0 < x) (hn : n ≤ 4) :
     |iteratedDeriv n (fun y : ℝ => y ^ p) x| ≤
-      (∑ k ∈ Finset.range 5, |PolarDerivatives_rpowFalling p k|) * x ^ (p - n) := by
-  rw [PolarDerivatives_iteratedDeriv_rpow_of_pos p n hx, abs_mul,
+      (∑ k ∈ Finset.range 5, |rpowFalling p k|) * x ^ (p - n) := by
+  rw [iteratedDeriv_rpow_of_pos p n hx, abs_mul,
     abs_of_pos (Real.rpow_pos_of_pos hx _)]
   exact mul_le_mul_of_nonneg_right
-    (Finset.single_le_sum (fun k _ => abs_nonneg (PolarDerivatives_rpowFalling p k))
+    (Finset.single_le_sum (fun k _ => abs_nonneg (rpowFalling p k))
       (Finset.mem_range.mpr (by omega)))
     (Real.rpow_pos_of_pos hx _).le
 
-private noncomputable def PolarDerivatives_polarJet20 (p θ φ ψ : ℝ) : ℝ :=
-  p * (p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 +
-    p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * (2 - PolarDerivatives_polarChordSq θ φ ψ)
+private noncomputable def polarJet20 (p θ φ ψ : ℝ) : ℝ :=
+  p * (p - 1) * polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ ^ 2 +
+    p * polarChordSq θ φ ψ ^ (p - 1) * (2 - polarChordSq θ φ ψ)
 
-private lemma PolarDerivatives_hasDerivAt_polarJet10_phi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma hasDerivAt_polarJet10_phi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     HasDerivAt
-      (fun u => p * PolarDerivatives_polarChordSq θ u ψ ^ (p - 1) * PolarDerivatives_polarChordPhi θ u ψ)
-      (PolarDerivatives_polarJet20 p θ φ ψ) φ := by
-  have hpow : HasDerivAt (fun u => PolarDerivatives_polarChordSq θ u ψ ^ (p - 1))
-      ((p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ) φ := by
+      (fun u => p * polarChordSq θ u ψ ^ (p - 1) * polarChordPhi θ u ψ)
+      (polarJet20 p θ φ ψ) φ := by
+  have hpow : HasDerivAt (fun u => polarChordSq θ u ψ ^ (p - 1))
+      ((p - 1) * polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ) φ := by
     convert (Real.hasDerivAt_rpow_const (p := p - 1) (Or.inl hA.ne')).comp φ
-      (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ) using 1
-    simp only [PolarDerivatives_polarChordPhi]
+      (hasDerivAt_polarChordSq_phi θ φ ψ) using 1
+    simp only [polarChordPhi]
     ring
-  convert ((hpow.const_mul p).mul (PolarDerivatives_hasDerivAt_polarChordPhi_phi θ φ ψ)) using 1
-  unfold PolarDerivatives_polarJet20
+  convert ((hpow.const_mul p).mul (hasDerivAt_polarChordPhi_phi θ φ ψ)) using 1
+  unfold polarJet20
   ring
 
-private lemma PolarDerivatives_iteratedDeriv_two_polarKernel_phi_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_two_polarKernel_phi_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 2 (fun u => polarKernel α θ u ψ) φ =
-      PolarDerivatives_polarJet20 (α / 2) θ φ ψ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet20 (α / 2) θ φ ψ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => deriv (fun v => polarKernel α θ v ψ) u) =ᶠ[nhds φ]
-      fun u => (α / 2) * PolarDerivatives_polarChordSq θ u ψ ^ (α / 2 - 1) *
-        PolarDerivatives_polarChordPhi θ u ψ := by
+      fun u => (α / 2) * polarChordSq θ u ψ ^ (α / 2 - 1) *
+        polarChordPhi θ u ψ := by
     filter_upwards [hpos] with u hu
-    rw [(PolarDerivatives_hasDerivAt_polarKernel_phi α θ u ψ hu).deriv]
-    simp [PolarDerivatives_polarChordPhi]
+    rw [(hasDerivAt_polarKernel_phi α θ u ψ hu).deriv]
+    simp [polarChordPhi]
   rw [show (2 : ℕ) = 1 + 1 by norm_num, iteratedDeriv_succ, iteratedDeriv_one]
   rw [heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet10_phi (α / 2) θ φ ψ hA).deriv
+  exact (hasDerivAt_polarJet10_phi (α / 2) θ φ ψ hA).deriv
 
-private noncomputable def PolarDerivatives_polarJet11 (p θ φ ψ : ℝ) : ℝ :=
-  p * (p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ +
-    p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordCross θ φ ψ
+private noncomputable def polarJet11 (p θ φ ψ : ℝ) : ℝ :=
+  p * (p - 1) * polarChordSq θ φ ψ ^ (p - 2) *
+      polarChordPhi θ φ ψ * polarChordPsi θ φ ψ +
+    p * polarChordSq θ φ ψ ^ (p - 1) * polarChordCross θ φ ψ
 
-private lemma PolarDerivatives_hasDerivAt_polarJet01_phi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma hasDerivAt_polarJet01_phi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     HasDerivAt
-      (fun u => p * PolarDerivatives_polarChordSq θ u ψ ^ (p - 1) * PolarDerivatives_polarChordPsi θ u ψ)
-      (PolarDerivatives_polarJet11 p θ φ ψ) φ := by
-  have hpow : HasDerivAt (fun u => PolarDerivatives_polarChordSq θ u ψ ^ (p - 1))
-      ((p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ) φ := by
+      (fun u => p * polarChordSq θ u ψ ^ (p - 1) * polarChordPsi θ u ψ)
+      (polarJet11 p θ φ ψ) φ := by
+  have hpow : HasDerivAt (fun u => polarChordSq θ u ψ ^ (p - 1))
+      ((p - 1) * polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ) φ := by
     convert (Real.hasDerivAt_rpow_const (p := p - 1) (Or.inl hA.ne')).comp φ
-      (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ) using 1
-    simp only [PolarDerivatives_polarChordPhi]
+      (hasDerivAt_polarChordSq_phi θ φ ψ) using 1
+    simp only [polarChordPhi]
     ring
-  convert ((hpow.const_mul p).mul (PolarDerivatives_hasDerivAt_polarChordPsi_phi θ φ ψ)) using 1
-  unfold PolarDerivatives_polarJet11
+  convert ((hpow.const_mul p).mul (hasDerivAt_polarChordPsi_phi θ φ ψ)) using 1
+  unfold polarJet11
   ring
 
-private lemma PolarDerivatives_iteratedDeriv_one_one_polarKernel_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_one_one_polarKernel_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 1
       (fun u => iteratedDeriv 1 (fun v => polarKernel α θ u v) ψ) φ =
-      PolarDerivatives_polarJet11 (α / 2) θ φ ψ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet11 (α / 2) θ φ ψ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => iteratedDeriv 1 (fun v => polarKernel α θ u v) ψ) =ᶠ[nhds φ]
-      fun u => (α / 2) * PolarDerivatives_polarChordSq θ u ψ ^ (α / 2 - 1) *
-        PolarDerivatives_polarChordPsi θ u ψ := by
+      fun u => (α / 2) * polarChordSq θ u ψ ^ (α / 2 - 1) *
+        polarChordPsi θ u ψ := by
     filter_upwards [hpos] with u hu
-    rw [iteratedDeriv_one, (PolarDerivatives_hasDerivAt_polarKernel_psi α θ u ψ hu).deriv]
-    simp [PolarDerivatives_polarChordPsi]
+    rw [iteratedDeriv_one, (hasDerivAt_polarKernel_psi α θ u ψ hu).deriv]
+    simp [polarChordPsi]
   rw [iteratedDeriv_one, heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet01_phi (α / 2) θ φ ψ hA).deriv
+  exact (hasDerivAt_polarJet01_phi (α / 2) θ φ ψ hA).deriv
 
-private noncomputable def PolarDerivatives_polarJet30 (p θ φ ψ : ℝ) : ℝ :=
-  p * (p - 1) * (p - 2) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) *
-      PolarDerivatives_polarChordPhi θ φ ψ ^ 3 +
-    3 * p * (p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      PolarDerivatives_polarChordPhi θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ) -
-    p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordPhi θ φ ψ
+private noncomputable def polarJet30 (p θ φ ψ : ℝ) : ℝ :=
+  p * (p - 1) * (p - 2) * polarChordSq θ φ ψ ^ (p - 3) *
+      polarChordPhi θ φ ψ ^ 3 +
+    3 * p * (p - 1) * polarChordSq θ φ ψ ^ (p - 2) *
+      polarChordPhi θ φ ψ * (2 - polarChordSq θ φ ψ) -
+    p * polarChordSq θ φ ψ ^ (p - 1) * polarChordPhi θ φ ψ
 
-private lemma PolarDerivatives_hasDerivAt_polarJet20_phi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun u => PolarDerivatives_polarJet20 p θ u ψ) (PolarDerivatives_polarJet30 p θ φ ψ) φ := by
-  let a := PolarDerivatives_polarChordSq θ φ ψ
-  let x := PolarDerivatives_polarChordPhi θ φ ψ
+private lemma hasDerivAt_polarJet20_phi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun u => polarJet20 p θ u ψ) (polarJet30 p θ φ ψ) φ := by
+  let a := polarChordSq θ φ ψ
+  let x := polarChordPhi θ φ ψ
   let b := 2 - a
-  have ha := PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ
-  have ha' : HasDerivAt (fun u => PolarDerivatives_polarChordSq θ u ψ) x φ := by
-    simpa [x, PolarDerivatives_polarChordPhi] using ha
-  have hx := PolarDerivatives_hasDerivAt_polarChordPhi_phi θ φ ψ
-  have hp2 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 2) θ φ ψ hA
-  have hp1 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 1) θ φ ψ hA
+  have ha := hasDerivAt_polarChordSq_phi θ φ ψ
+  have ha' : HasDerivAt (fun u => polarChordSq θ u ψ) x φ := by
+    simpa [x, polarChordPhi] using ha
+  have hx := hasDerivAt_polarChordPhi_phi θ φ ψ
+  have hp2 := hasDerivAt_polarChordSq_rpow_phi (p - 2) θ φ ψ hA
+  have hp1 := hasDerivAt_polarChordSq_rpow_phi (p - 1) θ φ ψ hA
   have hterm1 := ((hp2.mul (hx.pow 2)).const_mul (p * (p - 1)))
   have hterm2 := (((hp1.const_mul p).mul (ha'.const_sub 2)))
   have hsum := hterm1.add hterm2
   convert hsum using 1
   · ext u
-    simp only [PolarDerivatives_polarJet20]
+    simp only [polarJet20]
     ring
-  · unfold PolarDerivatives_polarJet30
+  · unfold polarJet30
     dsimp [a, x, b] at *
     ring
 
-private lemma PolarDerivatives_iteratedDeriv_three_polarKernel_phi_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_three_polarKernel_phi_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 3 (fun u => polarKernel α θ u ψ) φ =
-      PolarDerivatives_polarJet30 (α / 2) θ φ ψ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet30 (α / 2) θ φ ψ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => iteratedDeriv 2 (fun v => polarKernel α θ v ψ) u) =ᶠ[nhds φ]
-      fun u => PolarDerivatives_polarJet20 (α / 2) θ u ψ := by
+      fun u => polarJet20 (α / 2) θ u ψ := by
     filter_upwards [hpos] with u hu
-    exact PolarDerivatives_iteratedDeriv_two_polarKernel_phi_eq α θ u ψ hu
+    exact iteratedDeriv_two_polarKernel_phi_eq α θ u ψ hu
   rw [show (3 : ℕ) = 2 + 1 by norm_num, iteratedDeriv_succ, heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet20_phi (α / 2) θ φ ψ hA).deriv
+  exact (hasDerivAt_polarJet20_phi (α / 2) θ φ ψ hA).deriv
 
-private lemma PolarDerivatives_iteratedDeriv_two_polarKernel_psi_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_two_polarKernel_psi_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 2 (fun v => polarKernel α θ φ v) ψ =
-      PolarDerivatives_polarJet20 (α / 2) θ ψ φ := by
+      polarJet20 (α / 2) θ ψ φ := by
   have hfun : (fun v => polarKernel α θ φ v) =
       (fun v => polarKernel α θ v φ) := by
     funext v
-    exact PolarDerivatives_polarKernel_symm α θ φ v
+    exact polarKernel_symm α θ φ v
   rw [hfun]
-  exact PolarDerivatives_iteratedDeriv_two_polarKernel_phi_eq α θ ψ φ
-    (by rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ])
+  exact iteratedDeriv_two_polarKernel_phi_eq α θ ψ φ
+    (by rwa [← polarChordSq_symm θ φ ψ])
 
-private lemma PolarDerivatives_iteratedDeriv_three_polarKernel_psi_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_three_polarKernel_psi_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 3 (fun v => polarKernel α θ φ v) ψ =
-      PolarDerivatives_polarJet30 (α / 2) θ ψ φ := by
+      polarJet30 (α / 2) θ ψ φ := by
   have hfun : (fun v => polarKernel α θ φ v) =
       (fun v => polarKernel α θ v φ) := by
     funext v
-    exact PolarDerivatives_polarKernel_symm α θ φ v
+    exact polarKernel_symm α θ φ v
   rw [hfun]
-  exact PolarDerivatives_iteratedDeriv_three_polarKernel_phi_eq α θ ψ φ
-    (by rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ])
+  exact iteratedDeriv_three_polarKernel_phi_eq α θ ψ φ
+    (by rwa [← polarChordSq_symm θ φ ψ])
 
-private noncomputable def PolarDerivatives_polarJet21 (p θ φ ψ : ℝ) : ℝ :=
-  p * (p - 1) * (p - 2) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) *
-      PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordPsi θ φ ψ +
-    p * (p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      (2 * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordCross θ φ ψ +
-        PolarDerivatives_polarChordPsi θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ)) -
-    p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordPsi θ φ ψ
+private noncomputable def polarJet21 (p θ φ ψ : ℝ) : ℝ :=
+  p * (p - 1) * (p - 2) * polarChordSq θ φ ψ ^ (p - 3) *
+      polarChordPhi θ φ ψ ^ 2 * polarChordPsi θ φ ψ +
+    p * (p - 1) * polarChordSq θ φ ψ ^ (p - 2) *
+      (2 * polarChordPhi θ φ ψ * polarChordCross θ φ ψ +
+        polarChordPsi θ φ ψ * (2 - polarChordSq θ φ ψ)) -
+    p * polarChordSq θ φ ψ ^ (p - 1) * polarChordPsi θ φ ψ
 
-private lemma PolarDerivatives_hasDerivAt_polarJet11_phi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun u => PolarDerivatives_polarJet11 p θ u ψ) (PolarDerivatives_polarJet21 p θ φ ψ) φ := by
-  have hp2 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 2) θ φ ψ hA
-  have hp1 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 1) θ φ ψ hA
-  have hx := PolarDerivatives_hasDerivAt_polarChordPhi_phi θ φ ψ
-  have hy := PolarDerivatives_hasDerivAt_polarChordPsi_phi θ φ ψ
-  have hz := PolarDerivatives_hasDerivAt_polarChordCross_phi θ φ ψ
+private lemma hasDerivAt_polarJet11_phi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun u => polarJet11 p θ u ψ) (polarJet21 p θ φ ψ) φ := by
+  have hp2 := hasDerivAt_polarChordSq_rpow_phi (p - 2) θ φ ψ hA
+  have hp1 := hasDerivAt_polarChordSq_rpow_phi (p - 1) θ φ ψ hA
+  have hx := hasDerivAt_polarChordPhi_phi θ φ ψ
+  have hy := hasDerivAt_polarChordPsi_phi θ φ ψ
+  have hz := hasDerivAt_polarChordCross_phi θ φ ψ
   have hterm1 := (((hp2.mul hx).mul hy).const_mul (p * (p - 1)))
   have hterm2 := ((hp1.mul hz).const_mul p)
   have hsum := hterm1.add hterm2
   convert hsum using 1
   · ext u
-    simp only [PolarDerivatives_polarJet11]
+    simp only [polarJet11]
     ring
-  · unfold PolarDerivatives_polarJet21
+  · unfold polarJet21
     ring
 
-private lemma PolarDerivatives_iteratedDeriv_two_one_polarKernel_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_two_one_polarKernel_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 2
       (fun u => iteratedDeriv 1 (fun v => polarKernel α θ u v) ψ) φ =
-      PolarDerivatives_polarJet21 (α / 2) θ φ ψ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet21 (α / 2) θ φ ψ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => iteratedDeriv 1
       (fun w => iteratedDeriv 1 (fun v => polarKernel α θ w v) ψ) u) =ᶠ[nhds φ]
-      fun u => PolarDerivatives_polarJet11 (α / 2) θ u ψ := by
+      fun u => polarJet11 (α / 2) θ u ψ := by
     filter_upwards [hpos] with u hu
-    exact PolarDerivatives_iteratedDeriv_one_one_polarKernel_eq α θ u ψ hu
+    exact iteratedDeriv_one_one_polarKernel_eq α θ u ψ hu
   rw [show (2 : ℕ) = 1 + 1 by norm_num, iteratedDeriv_succ, heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet11_phi (α / 2) θ φ ψ hA).deriv
+  exact (hasDerivAt_polarJet11_phi (α / 2) θ φ ψ hA).deriv
 
-private noncomputable def PolarDerivatives_polarJet40 (p θ φ ψ : ℝ) : ℝ :=
+private noncomputable def polarJet40 (p θ φ ψ : ℝ) : ℝ :=
   p * (p - 1) * (p - 2) * (p - 3) *
-      PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 4 +
+      polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 4 +
     6 * p * (p - 1) * (p - 2) *
-      PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 *
-        (2 - PolarDerivatives_polarChordSq θ φ ψ) +
-    3 * p * (p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ 2 -
-    4 * p * (p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      PolarDerivatives_polarChordPhi θ φ ψ ^ 2 -
-    p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * (2 - PolarDerivatives_polarChordSq θ φ ψ)
+      polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 *
+        (2 - polarChordSq θ φ ψ) +
+    3 * p * (p - 1) * polarChordSq θ φ ψ ^ (p - 2) *
+      (2 - polarChordSq θ φ ψ) ^ 2 -
+    4 * p * (p - 1) * polarChordSq θ φ ψ ^ (p - 2) *
+      polarChordPhi θ φ ψ ^ 2 -
+    p * polarChordSq θ φ ψ ^ (p - 1) * (2 - polarChordSq θ φ ψ)
 
-private lemma PolarDerivatives_hasDerivAt_polarJet30_phi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun u => PolarDerivatives_polarJet30 p θ u ψ) (PolarDerivatives_polarJet40 p θ φ ψ) φ := by
-  have ha : HasDerivAt (fun u => PolarDerivatives_polarChordSq θ u ψ) (PolarDerivatives_polarChordPhi θ φ ψ) φ := by
-    simpa [PolarDerivatives_polarChordPhi] using PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ
-  have hx := PolarDerivatives_hasDerivAt_polarChordPhi_phi θ φ ψ
-  have hp3 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 3) θ φ ψ hA
-  have hp2 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 2) θ φ ψ hA
-  have hp1 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 1) θ φ ψ hA
+private lemma hasDerivAt_polarJet30_phi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun u => polarJet30 p θ u ψ) (polarJet40 p θ φ ψ) φ := by
+  have ha : HasDerivAt (fun u => polarChordSq θ u ψ) (polarChordPhi θ φ ψ) φ := by
+    simpa [polarChordPhi] using hasDerivAt_polarChordSq_phi θ φ ψ
+  have hx := hasDerivAt_polarChordPhi_phi θ φ ψ
+  have hp3 := hasDerivAt_polarChordSq_rpow_phi (p - 3) θ φ ψ hA
+  have hp2 := hasDerivAt_polarChordSq_rpow_phi (p - 2) θ φ ψ hA
+  have hp1 := hasDerivAt_polarChordSq_rpow_phi (p - 1) θ φ ψ hA
   have ht1 := ((hp3.mul (hx.pow 3)).const_mul (p * (p - 1) * (p - 2)))
   have ht2 := (((hp2.mul hx).mul (ha.const_sub 2)).const_mul (3 * p * (p - 1)))
   have ht3 := ((hp1.mul hx).const_mul p)
   have hsum := (ht1.add ht2).sub ht3
   convert hsum using 1
   · ext u
-    simp only [PolarDerivatives_polarJet30]
+    simp only [polarJet30]
     ring
-  · unfold PolarDerivatives_polarJet40
+  · unfold polarJet40
     ring
 
-private lemma PolarDerivatives_iteratedDeriv_four_polarKernel_phi_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_four_polarKernel_phi_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 4 (fun u => polarKernel α θ u ψ) φ =
-      PolarDerivatives_polarJet40 (α / 2) θ φ ψ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet40 (α / 2) θ φ ψ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => iteratedDeriv 3 (fun v => polarKernel α θ v ψ) u) =ᶠ[nhds φ]
-      fun u => PolarDerivatives_polarJet30 (α / 2) θ u ψ := by
+      fun u => polarJet30 (α / 2) θ u ψ := by
     filter_upwards [hpos] with u hu
-    exact PolarDerivatives_iteratedDeriv_three_polarKernel_phi_eq α θ u ψ hu
+    exact iteratedDeriv_three_polarKernel_phi_eq α θ u ψ hu
   rw [show (4 : ℕ) = 3 + 1 by norm_num, iteratedDeriv_succ, heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet30_phi (α / 2) θ φ ψ hA).deriv
+  exact (hasDerivAt_polarJet30_phi (α / 2) θ φ ψ hA).deriv
 
-private lemma PolarDerivatives_iteratedDeriv_four_polarKernel_psi_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_four_polarKernel_psi_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 4 (fun v => polarKernel α θ φ v) ψ =
-      PolarDerivatives_polarJet40 (α / 2) θ ψ φ := by
+      polarJet40 (α / 2) θ ψ φ := by
   have hfun : (fun v => polarKernel α θ φ v) =
       (fun v => polarKernel α θ v φ) := by
     funext v
-    exact PolarDerivatives_polarKernel_symm α θ φ v
+    exact polarKernel_symm α θ φ v
   rw [hfun]
-  exact PolarDerivatives_iteratedDeriv_four_polarKernel_phi_eq α θ ψ φ
-    (by rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ])
+  exact iteratedDeriv_four_polarKernel_phi_eq α θ ψ φ
+    (by rwa [← polarChordSq_symm θ φ ψ])
 
-private lemma PolarDerivatives_hasDerivAt_polarJet20_psi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun v => PolarDerivatives_polarJet20 p θ φ v) (PolarDerivatives_polarJet21 p θ φ ψ) ψ := by
-  have ha : HasDerivAt (fun v => PolarDerivatives_polarChordSq θ φ v) (PolarDerivatives_polarChordPsi θ φ ψ) ψ := by
-    simpa [PolarDerivatives_polarChordPsi] using PolarDerivatives_hasDerivAt_polarChordSq_psi θ φ ψ
-  have hx := PolarDerivatives_hasDerivAt_polarChordPhi_psi θ φ ψ
-  have hp2 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (p - 2) θ φ ψ hA
-  have hp1 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (p - 1) θ φ ψ hA
+private lemma hasDerivAt_polarJet20_psi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun v => polarJet20 p θ φ v) (polarJet21 p θ φ ψ) ψ := by
+  have ha : HasDerivAt (fun v => polarChordSq θ φ v) (polarChordPsi θ φ ψ) ψ := by
+    simpa [polarChordPsi] using hasDerivAt_polarChordSq_psi θ φ ψ
+  have hx := hasDerivAt_polarChordPhi_psi θ φ ψ
+  have hp2 := hasDerivAt_polarChordSq_rpow_psi (p - 2) θ φ ψ hA
+  have hp1 := hasDerivAt_polarChordSq_rpow_psi (p - 1) θ φ ψ hA
   have ht1 := ((hp2.mul (hx.pow 2)).const_mul (p * (p - 1)))
   have ht2 := ((hp1.const_mul p).mul (ha.const_sub 2))
   have hsum := ht1.add ht2
   convert hsum using 1
   · ext v
-    simp only [PolarDerivatives_polarJet20]
+    simp only [polarJet20]
     ring
-  · unfold PolarDerivatives_polarJet21
+  · unfold polarJet21
     ring
 
-private lemma PolarDerivatives_iteratedDeriv_one_two_polarKernel_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_one_two_polarKernel_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 1
       (fun u => iteratedDeriv 2 (fun v => polarKernel α θ u v) ψ) φ =
-      PolarDerivatives_polarJet21 (α / 2) θ ψ φ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet21 (α / 2) θ ψ φ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => iteratedDeriv 2 (fun v => polarKernel α θ u v) ψ) =ᶠ[nhds φ]
-      fun u => PolarDerivatives_polarJet20 (α / 2) θ ψ u := by
+      fun u => polarJet20 (α / 2) θ ψ u := by
     filter_upwards [hpos] with u hu
-    exact PolarDerivatives_iteratedDeriv_two_polarKernel_psi_eq α θ u ψ hu
+    exact iteratedDeriv_two_polarKernel_psi_eq α θ u ψ hu
   rw [iteratedDeriv_one, heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet20_psi (α / 2) θ ψ φ
-    (by rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ])).deriv
+  exact (hasDerivAt_polarJet20_psi (α / 2) θ ψ φ
+    (by rwa [← polarChordSq_symm θ φ ψ])).deriv
 
-private noncomputable def PolarDerivatives_polarJet31 (p θ φ ψ : ℝ) : ℝ :=
-  p * (p - 1) * (p - 2) * (p - 3) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) *
-      PolarDerivatives_polarChordPhi θ φ ψ ^ 3 * PolarDerivatives_polarChordPsi θ φ ψ +
-    3 * p * (p - 1) * (p - 2) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) *
-      (PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordCross θ φ ψ +
-        PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ *
-          (2 - PolarDerivatives_polarChordSq θ φ ψ)) +
-    p * (p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      (3 * PolarDerivatives_polarChordCross θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ) -
-        4 * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ) -
-    p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordCross θ φ ψ
+private noncomputable def polarJet31 (p θ φ ψ : ℝ) : ℝ :=
+  p * (p - 1) * (p - 2) * (p - 3) * polarChordSq θ φ ψ ^ (p - 4) *
+      polarChordPhi θ φ ψ ^ 3 * polarChordPsi θ φ ψ +
+    3 * p * (p - 1) * (p - 2) * polarChordSq θ φ ψ ^ (p - 3) *
+      (polarChordPhi θ φ ψ ^ 2 * polarChordCross θ φ ψ +
+        polarChordPhi θ φ ψ * polarChordPsi θ φ ψ *
+          (2 - polarChordSq θ φ ψ)) +
+    p * (p - 1) * polarChordSq θ φ ψ ^ (p - 2) *
+      (3 * polarChordCross θ φ ψ * (2 - polarChordSq θ φ ψ) -
+        4 * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ) -
+    p * polarChordSq θ φ ψ ^ (p - 1) * polarChordCross θ φ ψ
 
-private noncomputable def PolarDerivatives_polarJet22 (p θ φ ψ : ℝ) : ℝ :=
-  p * (p - 1) * (p - 2) * (p - 3) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) *
-      PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordPsi θ φ ψ ^ 2 +
-    p * (p - 1) * (p - 2) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) *
-      ((2 - PolarDerivatives_polarChordSq θ φ ψ) *
-          (PolarDerivatives_polarChordPhi θ φ ψ ^ 2 + PolarDerivatives_polarChordPsi θ φ ψ ^ 2) +
-        4 * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ *
-          PolarDerivatives_polarChordCross θ φ ψ) +
-    p * (p - 1) * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      (2 * PolarDerivatives_polarChordCross θ φ ψ ^ 2 +
-        (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ 2 -
-        2 * (PolarDerivatives_polarChordPhi θ φ ψ ^ 2 + PolarDerivatives_polarChordPsi θ φ ψ ^ 2)) -
-    p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * (2 - PolarDerivatives_polarChordSq θ φ ψ)
+private noncomputable def polarJet22 (p θ φ ψ : ℝ) : ℝ :=
+  p * (p - 1) * (p - 2) * (p - 3) * polarChordSq θ φ ψ ^ (p - 4) *
+      polarChordPhi θ φ ψ ^ 2 * polarChordPsi θ φ ψ ^ 2 +
+    p * (p - 1) * (p - 2) * polarChordSq θ φ ψ ^ (p - 3) *
+      ((2 - polarChordSq θ φ ψ) *
+          (polarChordPhi θ φ ψ ^ 2 + polarChordPsi θ φ ψ ^ 2) +
+        4 * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ *
+          polarChordCross θ φ ψ) +
+    p * (p - 1) * polarChordSq θ φ ψ ^ (p - 2) *
+      (2 * polarChordCross θ φ ψ ^ 2 +
+        (2 - polarChordSq θ φ ψ) ^ 2 -
+        2 * (polarChordPhi θ φ ψ ^ 2 + polarChordPsi θ φ ψ ^ 2)) -
+    p * polarChordSq θ φ ψ ^ (p - 1) * (2 - polarChordSq θ φ ψ)
 
-private lemma PolarDerivatives_hasDerivAt_polarJet30_psi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun v => PolarDerivatives_polarJet30 p θ φ v) (PolarDerivatives_polarJet31 p θ φ ψ) ψ := by
-  have ha : HasDerivAt (fun v => PolarDerivatives_polarChordSq θ φ v) (PolarDerivatives_polarChordPsi θ φ ψ) ψ := by
-    simpa [PolarDerivatives_polarChordPsi] using PolarDerivatives_hasDerivAt_polarChordSq_psi θ φ ψ
-  have hx := PolarDerivatives_hasDerivAt_polarChordPhi_psi θ φ ψ
-  have hp3 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (p - 3) θ φ ψ hA
-  have hp2 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (p - 2) θ φ ψ hA
-  have hp1 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (p - 1) θ φ ψ hA
+private lemma hasDerivAt_polarJet30_psi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun v => polarJet30 p θ φ v) (polarJet31 p θ φ ψ) ψ := by
+  have ha : HasDerivAt (fun v => polarChordSq θ φ v) (polarChordPsi θ φ ψ) ψ := by
+    simpa [polarChordPsi] using hasDerivAt_polarChordSq_psi θ φ ψ
+  have hx := hasDerivAt_polarChordPhi_psi θ φ ψ
+  have hp3 := hasDerivAt_polarChordSq_rpow_psi (p - 3) θ φ ψ hA
+  have hp2 := hasDerivAt_polarChordSq_rpow_psi (p - 2) θ φ ψ hA
+  have hp1 := hasDerivAt_polarChordSq_rpow_psi (p - 1) θ φ ψ hA
   have ht1 := ((hp3.mul (hx.pow 3)).const_mul (p * (p - 1) * (p - 2)))
   have ht2 := (((hp2.mul hx).mul (ha.const_sub 2)).const_mul (3 * p * (p - 1)))
   have ht3 := ((hp1.mul hx).const_mul p)
   have hsum := (ht1.add ht2).sub ht3
   convert hsum using 1
   · ext v
-    simp only [PolarDerivatives_polarJet30]
+    simp only [polarJet30]
     ring
-  · unfold PolarDerivatives_polarJet31
+  · unfold polarJet31
     ring
 
-private lemma PolarDerivatives_hasDerivAt_polarJet21_phi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun u => PolarDerivatives_polarJet21 p θ u ψ) (PolarDerivatives_polarJet31 p θ φ ψ) φ := by
-  have ha : HasDerivAt (fun u => PolarDerivatives_polarChordSq θ u ψ) (PolarDerivatives_polarChordPhi θ φ ψ) φ := by
-    simpa [PolarDerivatives_polarChordPhi] using PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ
-  have hx := PolarDerivatives_hasDerivAt_polarChordPhi_phi θ φ ψ
-  have hy := PolarDerivatives_hasDerivAt_polarChordPsi_phi θ φ ψ
-  have hz := PolarDerivatives_hasDerivAt_polarChordCross_phi θ φ ψ
-  have hp3 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 3) θ φ ψ hA
-  have hp2 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 2) θ φ ψ hA
-  have hp1 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_phi (p - 1) θ φ ψ hA
+private lemma hasDerivAt_polarJet21_phi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun u => polarJet21 p θ u ψ) (polarJet31 p θ φ ψ) φ := by
+  have ha : HasDerivAt (fun u => polarChordSq θ u ψ) (polarChordPhi θ φ ψ) φ := by
+    simpa [polarChordPhi] using hasDerivAt_polarChordSq_phi θ φ ψ
+  have hx := hasDerivAt_polarChordPhi_phi θ φ ψ
+  have hy := hasDerivAt_polarChordPsi_phi θ φ ψ
+  have hz := hasDerivAt_polarChordCross_phi θ φ ψ
+  have hp3 := hasDerivAt_polarChordSq_rpow_phi (p - 3) θ φ ψ hA
+  have hp2 := hasDerivAt_polarChordSq_rpow_phi (p - 2) θ φ ψ hA
+  have hp1 := hasDerivAt_polarChordSq_rpow_phi (p - 1) θ φ ψ hA
   have ht1 := (((hp3.mul (hx.pow 2)).mul hy).const_mul (p * (p - 1) * (p - 2)))
   have ht2 := ((hp2.mul (((hx.mul hz).const_mul 2).add
     (hy.mul (ha.const_sub 2)))).const_mul (p * (p - 1)))
@@ -23215,22 +23215,22 @@ private lemma PolarDerivatives_hasDerivAt_polarJet21_phi (p θ φ ψ : ℝ)
   have hsum := (ht1.add ht2).sub ht3
   convert hsum using 1
   · ext u
-    simp only [PolarDerivatives_polarJet21]
+    simp only [polarJet21]
     ring
-  · unfold PolarDerivatives_polarJet31
+  · unfold polarJet31
     ring
 
-private lemma PolarDerivatives_hasDerivAt_polarJet21_psi (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    HasDerivAt (fun v => PolarDerivatives_polarJet21 p θ φ v) (PolarDerivatives_polarJet22 p θ φ ψ) ψ := by
-  have ha : HasDerivAt (fun v => PolarDerivatives_polarChordSq θ φ v) (PolarDerivatives_polarChordPsi θ φ ψ) ψ := by
-    simpa [PolarDerivatives_polarChordPsi] using PolarDerivatives_hasDerivAt_polarChordSq_psi θ φ ψ
-  have hx := PolarDerivatives_hasDerivAt_polarChordPhi_psi θ φ ψ
-  have hy := PolarDerivatives_hasDerivAt_polarChordPsi_psi θ φ ψ
-  have hz := PolarDerivatives_hasDerivAt_polarChordCross_psi θ φ ψ
-  have hp3 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (p - 3) θ φ ψ hA
-  have hp2 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (p - 2) θ φ ψ hA
-  have hp1 := PolarDerivatives_hasDerivAt_polarChordSq_rpow_psi (p - 1) θ φ ψ hA
+private lemma hasDerivAt_polarJet21_psi (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    HasDerivAt (fun v => polarJet21 p θ φ v) (polarJet22 p θ φ ψ) ψ := by
+  have ha : HasDerivAt (fun v => polarChordSq θ φ v) (polarChordPsi θ φ ψ) ψ := by
+    simpa [polarChordPsi] using hasDerivAt_polarChordSq_psi θ φ ψ
+  have hx := hasDerivAt_polarChordPhi_psi θ φ ψ
+  have hy := hasDerivAt_polarChordPsi_psi θ φ ψ
+  have hz := hasDerivAt_polarChordCross_psi θ φ ψ
+  have hp3 := hasDerivAt_polarChordSq_rpow_psi (p - 3) θ φ ψ hA
+  have hp2 := hasDerivAt_polarChordSq_rpow_psi (p - 2) θ φ ψ hA
+  have hp1 := hasDerivAt_polarChordSq_rpow_psi (p - 1) θ φ ψ hA
   have ht1 := (((hp3.mul (hx.pow 2)).mul hy).const_mul (p * (p - 1) * (p - 2)))
   have ht2 := ((hp2.mul (((hx.mul hz).const_mul 2).add
     (hy.mul (ha.const_sub 2)))).const_mul (p * (p - 1)))
@@ -23238,61 +23238,61 @@ private lemma PolarDerivatives_hasDerivAt_polarJet21_psi (p θ φ ψ : ℝ)
   have hsum := (ht1.add ht2).sub ht3
   convert hsum using 1
   · ext v
-    simp only [PolarDerivatives_polarJet21]
+    simp only [polarJet21]
     ring
-  · unfold PolarDerivatives_polarJet22
+  · unfold polarJet22
     ring
 
-private lemma PolarDerivatives_iteratedDeriv_three_one_polarKernel_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_three_one_polarKernel_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 3
       (fun u => iteratedDeriv 1 (fun v => polarKernel α θ u v) ψ) φ =
-      PolarDerivatives_polarJet31 (α / 2) θ φ ψ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet31 (α / 2) θ φ ψ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => iteratedDeriv 2
       (fun w => iteratedDeriv 1 (fun v => polarKernel α θ w v) ψ) u) =ᶠ[nhds φ]
-      fun u => PolarDerivatives_polarJet21 (α / 2) θ u ψ := by
+      fun u => polarJet21 (α / 2) θ u ψ := by
     filter_upwards [hpos] with u hu
-    exact PolarDerivatives_iteratedDeriv_two_one_polarKernel_eq α θ u ψ hu
+    exact iteratedDeriv_two_one_polarKernel_eq α θ u ψ hu
   rw [show (3 : ℕ) = 2 + 1 by norm_num, iteratedDeriv_succ, heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet21_phi (α / 2) θ φ ψ hA).deriv
+  exact (hasDerivAt_polarJet21_phi (α / 2) θ φ ψ hA).deriv
 
-private lemma PolarDerivatives_iteratedDeriv_one_three_polarKernel_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_one_three_polarKernel_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 1
       (fun u => iteratedDeriv 3 (fun v => polarKernel α θ u v) ψ) φ =
-      PolarDerivatives_polarJet31 (α / 2) θ ψ φ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet31 (α / 2) θ ψ φ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => iteratedDeriv 3 (fun v => polarKernel α θ u v) ψ) =ᶠ[nhds φ]
-      fun u => PolarDerivatives_polarJet30 (α / 2) θ ψ u := by
+      fun u => polarJet30 (α / 2) θ ψ u := by
     filter_upwards [hpos] with u hu
-    exact PolarDerivatives_iteratedDeriv_three_polarKernel_psi_eq α θ u ψ hu
+    exact iteratedDeriv_three_polarKernel_psi_eq α θ u ψ hu
   rw [iteratedDeriv_one, heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet30_psi (α / 2) θ ψ φ
-    (by rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ])).deriv
+  exact (hasDerivAt_polarJet30_psi (α / 2) θ ψ φ
+    (by rwa [← polarChordSq_symm θ φ ψ])).deriv
 
-private lemma PolarDerivatives_iteratedDeriv_two_two_polarKernel_eq (α θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
+private lemma iteratedDeriv_two_two_polarKernel_eq (α θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
     iteratedDeriv 2
       (fun u => iteratedDeriv 2 (fun v => polarKernel α θ u v) ψ) φ =
-      PolarDerivatives_polarJet22 (α / 2) θ ψ φ := by
-  have hpos : ∀ᶠ u in nhds φ, 0 < PolarDerivatives_polarChordSq θ u ψ :=
-    (PolarDerivatives_hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
+      polarJet22 (α / 2) θ ψ φ := by
+  have hpos : ∀ᶠ u in nhds φ, 0 < polarChordSq θ u ψ :=
+    (hasDerivAt_polarChordSq_phi θ φ ψ).continuousAt.eventually
       (isOpen_Ioi.mem_nhds hA)
   have heq : (fun u => iteratedDeriv 1
       (fun w => iteratedDeriv 2 (fun v => polarKernel α θ w v) ψ) u) =ᶠ[nhds φ]
-      fun u => PolarDerivatives_polarJet21 (α / 2) θ ψ u := by
+      fun u => polarJet21 (α / 2) θ ψ u := by
     filter_upwards [hpos] with u hu
-    exact PolarDerivatives_iteratedDeriv_one_two_polarKernel_eq α θ u ψ hu
+    exact iteratedDeriv_one_two_polarKernel_eq α θ u ψ hu
   rw [show (2 : ℕ) = 1 + 1 by norm_num, iteratedDeriv_succ, heq.deriv_eq]
-  exact (PolarDerivatives_hasDerivAt_polarJet21_psi (α / 2) θ ψ φ
-    (by rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ])).deriv
+  exact (hasDerivAt_polarJet21_psi (α / 2) θ ψ φ
+    (by rwa [← polarChordSq_symm θ φ ψ])).deriv
 
-private lemma PolarDerivatives_abs_pow_le_chord_rpow {a x : ℝ} (ha : 0 < a)
+private lemma abs_pow_le_chord_rpow {a x : ℝ} (ha : 0 < a)
     (hx : |x| ≤ 2 * Real.sqrt a) (i : ℕ) :
     |x| ^ i ≤ 2 ^ i * a ^ ((i : ℝ) / 2) := by
   have h := pow_le_pow_left₀ (abs_nonneg x) hx i
@@ -23304,15 +23304,15 @@ private lemma PolarDerivatives_abs_pow_le_chord_rpow {a x : ℝ} (ha : 0 < a)
   push_cast
   ring
 
-private lemma PolarDerivatives_abs_chord_monomial_le {a x y : ℝ} (ha : 0 < a) (ha4 : a ≤ 4)
+private lemma abs_chord_monomial_le {a x y : ℝ} (ha : 0 < a) (ha4 : a ≤ 4)
     (hx : |x| ≤ 2 * Real.sqrt a) (hy : |y| ≤ 2 * Real.sqrt a)
     (p d : ℝ) (k r i j : ℕ) (hd0 : 0 ≤ d)
     (hbalance : p - (k : ℝ) + (i : ℝ) / 2 + (j : ℝ) / 2 =
       p - (r : ℝ) / 2 + d) :
     |a ^ (p - k) * x ^ i * y ^ j| ≤
       2 ^ (i + j) * 4 ^ d * a ^ (p - (r : ℝ) / 2) := by
-  have hx' := PolarDerivatives_abs_pow_le_chord_rpow ha hx i
-  have hy' := PolarDerivatives_abs_pow_le_chord_rpow ha hy j
+  have hx' := abs_pow_le_chord_rpow ha hx i
+  have hy' := abs_pow_le_chord_rpow ha hy j
   have hpow : 0 ≤ a ^ (p - k) := (Real.rpow_pos_of_pos ha _).le
   have had : a ^ d ≤ (4 : ℝ) ^ d :=
     Real.rpow_le_rpow ha.le ha4 hd0
@@ -23340,7 +23340,7 @@ private lemma PolarDerivatives_abs_chord_monomial_le {a x y : ℝ} (ha : 0 < a) 
       have h := mul_le_mul_of_nonneg_left had hmult
       nlinarith
 
-private lemma PolarDerivatives_abs_chord_monomial_full_le {a x y z b : ℝ}
+private lemma abs_chord_monomial_full_le {a x y z b : ℝ}
     (ha : 0 < a) (ha4 : a ≤ 4)
     (hx : |x| ≤ 2 * Real.sqrt a) (hy : |y| ≤ 2 * Real.sqrt a)
     (hz : |z| ≤ 2) (hb : |b| ≤ 2)
@@ -23349,7 +23349,7 @@ private lemma PolarDerivatives_abs_chord_monomial_full_le {a x y z b : ℝ}
       p - (r : ℝ) / 2 + d) :
     |a ^ (p - k) * x ^ i * y ^ j * z ^ l * b ^ t| ≤
       2 ^ (i + j + l + t) * 4 ^ d * a ^ (p - (r : ℝ) / 2) := by
-  have hbase := PolarDerivatives_abs_chord_monomial_le ha ha4 hx hy p d k r i j hd0 hbalance
+  have hbase := abs_chord_monomial_le ha ha4 hx hy p d k r i j hd0 hbalance
   have hz' : |z| ^ l ≤ (2 : ℝ) ^ l :=
     pow_le_pow_left₀ (abs_nonneg z) hz l
   have hb' : |b| ^ t ≤ (2 : ℝ) ^ t :=
@@ -23361,7 +23361,7 @@ private lemma PolarDerivatives_abs_chord_monomial_full_le {a x y z b : ℝ}
       gcongr
     _ = _ := by rw [pow_add, pow_add]; ring
 
-private lemma PolarDerivatives_abs_chord_monomial_le_64 {a x y z b : ℝ}
+private lemma abs_chord_monomial_le_64 {a x y z b : ℝ}
     (ha : 0 < a) (ha4 : a ≤ 4)
     (hx : |x| ≤ 2 * Real.sqrt a) (hy : |y| ≤ 2 * Real.sqrt a)
     (hz : |z| ≤ 2) (hb : |b| ≤ 2)
@@ -23371,7 +23371,7 @@ private lemma PolarDerivatives_abs_chord_monomial_le_64 {a x y z b : ℝ}
       p - (r : ℝ) / 2 + d) :
     |a ^ (p - k) * x ^ i * y ^ j * z ^ l * b ^ t| ≤
       64 * a ^ (p - (r : ℝ) / 2) := by
-  have h := PolarDerivatives_abs_chord_monomial_full_le ha ha4 hx hy hz hb p d k r i j l t
+  have h := abs_chord_monomial_full_le ha ha4 hx hy hz hb p d k r i j l t
     hd0 hbalance
   have h2 : (2 : ℝ) ^ (i + j + l + t) ≤ 16 := by
     have h := pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hdeg
@@ -23388,20 +23388,20 @@ private lemma PolarDerivatives_abs_chord_monomial_le_64 {a x y z b : ℝ}
     have h' := mul_le_mul_of_nonneg_right hc hR
     nlinarith)
 
-private noncomputable def PolarDerivatives_polarCoeffBudget (p : ℝ) : ℝ :=
+private noncomputable def polarCoeffBudget (p : ℝ) : ℝ :=
   1 + |p| + |p * (p - 1)| + |p * (p - 1) * (p - 2)| +
     |p * (p - 1) * (p - 2) * (p - 3)|
 
-private lemma PolarDerivatives_polarCoeffBudget_pos (p : ℝ) : 0 < PolarDerivatives_polarCoeffBudget p := by
-  unfold PolarDerivatives_polarCoeffBudget
+private lemma polarCoeffBudget_pos (p : ℝ) : 0 < polarCoeffBudget p := by
+  unfold polarCoeffBudget
   positivity
 
-private lemma PolarDerivatives_polarCoeffBudget_bounds (p : ℝ) :
-    |p| ≤ PolarDerivatives_polarCoeffBudget p ∧
-    |p * (p - 1)| ≤ PolarDerivatives_polarCoeffBudget p ∧
-    |p * (p - 1) * (p - 2)| ≤ PolarDerivatives_polarCoeffBudget p ∧
-    |p * (p - 1) * (p - 2) * (p - 3)| ≤ PolarDerivatives_polarCoeffBudget p := by
-  unfold PolarDerivatives_polarCoeffBudget
+private lemma polarCoeffBudget_bounds (p : ℝ) :
+    |p| ≤ polarCoeffBudget p ∧
+    |p * (p - 1)| ≤ polarCoeffBudget p ∧
+    |p * (p - 1) * (p - 2)| ≤ polarCoeffBudget p ∧
+    |p * (p - 1) * (p - 2) * (p - 3)| ≤ polarCoeffBudget p := by
+  unfold polarCoeffBudget
   constructor
   · nlinarith [abs_nonneg (p * (p - 1)),
       abs_nonneg (p * (p - 1) * (p - 2)),
@@ -23416,22 +23416,22 @@ private lemma PolarDerivatives_polarCoeffBudget_bounds (p : ℝ) :
   · nlinarith [abs_nonneg p, abs_nonneg (p * (p - 1)),
       abs_nonneg (p * (p - 1) * (p - 2))]
 
-private lemma PolarDerivatives_abs_polar_monomial_le_64 (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ)
+private lemma abs_polar_monomial_le_64 (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ)
     (d : ℝ) (k r i j l t : ℕ)
     (hd0 : 0 ≤ d) (hd1 : d ≤ 1) (hdeg : i + j + l + t ≤ 4)
     (hbalance : p - (k : ℝ) + (i : ℝ) / 2 + (j : ℝ) / 2 =
       p - (r : ℝ) / 2 + d) :
-    |PolarDerivatives_polarChordSq θ φ ψ ^ (p - k) * PolarDerivatives_polarChordPhi θ φ ψ ^ i *
-      PolarDerivatives_polarChordPsi θ φ ψ ^ j * PolarDerivatives_polarChordCross θ φ ψ ^ l *
-      (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ t| ≤
-      64 * PolarDerivatives_polarChordSq θ φ ψ ^ (p - (r : ℝ) / 2) :=
-  PolarDerivatives_abs_chord_monomial_le_64 hA (PolarDerivatives_polarChordSq_le_four θ φ ψ)
-    (PolarDerivatives_abs_polarChordPhi_le θ φ ψ) (PolarDerivatives_abs_polarChordPsi_le θ φ ψ)
-    (PolarDerivatives_abs_polarChordCross_le_two θ φ ψ) (PolarDerivatives_abs_two_sub_polarChordSq_le θ φ ψ)
+    |polarChordSq θ φ ψ ^ (p - k) * polarChordPhi θ φ ψ ^ i *
+      polarChordPsi θ φ ψ ^ j * polarChordCross θ φ ψ ^ l *
+      (2 - polarChordSq θ φ ψ) ^ t| ≤
+      64 * polarChordSq θ φ ψ ^ (p - (r : ℝ) / 2) :=
+  abs_chord_monomial_le_64 hA (polarChordSq_le_four θ φ ψ)
+    (abs_polarChordPhi_le θ φ ψ) (abs_polarChordPsi_le θ φ ψ)
+    (abs_polarChordCross_le_two θ φ ψ) (abs_two_sub_polarChordSq_le θ φ ψ)
     p d k r i j l t hd0 hd1 hdeg hbalance
 
-private lemma PolarDerivatives_abs_coeff_mul_le {c t M K R : ℝ}
+private lemma abs_coeff_mul_le {c t M K R : ℝ}
     (hc : |c| ≤ M) (ht : |t| ≤ K * R)
     (hM : 0 ≤ M) (hK : 0 ≤ K) (hR : 0 ≤ R) :
     |c * t| ≤ M * K * R := by
@@ -23440,18 +23440,18 @@ private lemma PolarDerivatives_abs_coeff_mul_le {c t M K R : ℝ}
     |c| * |t| ≤ M * (K * R) := by gcongr
     _ = M * K * R := by ring
 
-private lemma PolarDerivatives_abs_scaled_coeff_mul_le {c t M R : ℝ} (n : ℕ)
+private lemma abs_scaled_coeff_mul_le {c t M R : ℝ} (n : ℕ)
     (hc : |c| ≤ M) (ht : |t| ≤ 64 * R)
     (hM : 0 ≤ M) (hR : 0 ≤ R) :
     |((n : ℝ) * c) * t| ≤ (n : ℝ) * 64 * M * R := by
   have hcoeff : |(n : ℝ) * c| ≤ (n : ℝ) * M := by
     rw [abs_mul, abs_of_nonneg (Nat.cast_nonneg n)]
     exact mul_le_mul_of_nonneg_left hc (Nat.cast_nonneg n)
-  have h := PolarDerivatives_abs_coeff_mul_le hcoeff ht
+  have h := abs_coeff_mul_le hcoeff ht
     (mul_nonneg (Nat.cast_nonneg n) hM) (by norm_num : (0 : ℝ) ≤ 64) hR
   nlinarith
 
-private lemma PolarDerivatives_abs_sum_five_le (a b c d e : ℝ) :
+private lemma abs_sum_five_le (a b c d e : ℝ) :
     |a + b + c + d + e| ≤ |a| + |b| + |c| + |d| + |e| := by
   have h1 := abs_add_le (a + b + c + d) e
   have h2 := abs_add_le (a + b + c) d
@@ -23459,288 +23459,288 @@ private lemma PolarDerivatives_abs_sum_five_le (a b c d e : ℝ) :
   have h4 := abs_add_le a b
   linarith
 
-private lemma PolarDerivatives_abs_sum_six_le (a b c d e f : ℝ) :
+private lemma abs_sum_six_le (a b c d e f : ℝ) :
     |a + b + c + d + e + f| ≤
       |a| + |b| + |c| + |d| + |e| + |f| := by
   have h1 := abs_add_le (a + b + c + d + e) f
-  have h2 := PolarDerivatives_abs_sum_five_le a b c d e
+  have h2 := abs_sum_five_le a b c d e
   linarith
 
-private lemma PolarDerivatives_abs_sum_nine_le (a b c d e f g h i : ℝ) :
+private lemma abs_sum_nine_le (a b c d e f g h i : ℝ) :
     |a + b + c + d + e + f + g + h + i| ≤
       |a| + |b| + |c| + |d| + |e| + |f| + |g| + |h| + |i| := by
   have h1 := abs_add_le (a + b + c + d + e + f + g + h) i
   have h2 := abs_add_le (a + b + c + d + e + f + g) h
   have h3 := abs_add_le (a + b + c + d + e + f) g
-  have h4 := PolarDerivatives_abs_sum_six_le a b c d e f
+  have h4 := abs_sum_six_le a b c d e f
   linarith
 
-private lemma PolarDerivatives_abs_add_sub_le (a b c : ℝ) :
+private lemma abs_add_sub_le (a b c : ℝ) :
     |a + b - c| ≤ |a| + |b| + |c| := by
   have h1 : |a + b - c| ≤ |a + b| + |c| := by
     simpa only [sub_eq_add_neg, abs_neg] using abs_add_le (a + b) (-c)
   have h2 := abs_add_le a b
   linarith
 
-private lemma PolarDerivatives_abs_add_add_sub_le (a b c d : ℝ) :
+private lemma abs_add_add_sub_le (a b c d : ℝ) :
     |a + b + c - d| ≤ |a| + |b| + |c| + |d| := by
-  have h1 := PolarDerivatives_abs_add_sub_le (a + b) c d
+  have h1 := abs_add_sub_le (a + b) c d
   have h2 := abs_add_le a b
   linarith
 
-private lemma PolarDerivatives_abs_polarJet20_le (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    |PolarDerivatives_polarJet20 p θ φ ψ| ≤
-      8 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) := by
-  let a := PolarDerivatives_polarChordSq θ φ ψ
-  let x := PolarDerivatives_polarChordPhi θ φ ψ
-  let y := PolarDerivatives_polarChordPsi θ φ ψ
-  let z := PolarDerivatives_polarChordCross θ φ ψ
+private lemma abs_polarJet20_le (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    |polarJet20 p θ φ ψ| ≤
+      8 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 1) := by
+  let a := polarChordSq θ φ ψ
+  let x := polarChordPhi θ φ ψ
+  let y := polarChordPsi θ φ ψ
+  let z := polarChordCross θ φ ψ
   let b := 2 - a
-  let M := PolarDerivatives_polarCoeffBudget p
+  let M := polarCoeffBudget p
   let R := a ^ (p - 1)
-  have ha4 : a ≤ 4 := PolarDerivatives_polarChordSq_le_four θ φ ψ
-  have hx : |x| ≤ 2 * Real.sqrt a := PolarDerivatives_abs_polarChordPhi_le θ φ ψ
-  have hy : |y| ≤ 2 * Real.sqrt a := PolarDerivatives_abs_polarChordPsi_le θ φ ψ
-  have hz : |z| ≤ 2 := PolarDerivatives_abs_polarChordCross_le_two θ φ ψ
-  have hb : |b| ≤ 2 := PolarDerivatives_abs_two_sub_polarChordSq_le θ φ ψ
-  have hM : 0 ≤ M := (PolarDerivatives_polarCoeffBudget_pos p).le
+  have ha4 : a ≤ 4 := polarChordSq_le_four θ φ ψ
+  have hx : |x| ≤ 2 * Real.sqrt a := abs_polarChordPhi_le θ φ ψ
+  have hy : |y| ≤ 2 * Real.sqrt a := abs_polarChordPsi_le θ φ ψ
+  have hz : |z| ≤ 2 := abs_polarChordCross_le_two θ φ ψ
+  have hb : |b| ≤ 2 := abs_two_sub_polarChordSq_le θ φ ψ
+  have hM : 0 ≤ M := (polarCoeffBudget_pos p).le
   have hR : 0 ≤ R := (Real.rpow_pos_of_pos hA _).le
   have hc1 : |p * (p - 1)| ≤ M := by
-    dsimp [M, PolarDerivatives_polarCoeffBudget]
+    dsimp [M, polarCoeffBudget]
     nlinarith [abs_nonneg p, abs_nonneg (p * (p - 1) * (p - 2)),
       abs_nonneg (p * (p - 1) * (p - 2) * (p - 3))]
   have hc2 : |p| ≤ M := by
-    dsimp [M, PolarDerivatives_polarCoeffBudget]
+    dsimp [M, polarCoeffBudget]
     nlinarith [abs_nonneg (p * (p - 1)),
       abs_nonneg (p * (p - 1) * (p - 2)),
       abs_nonneg (p * (p - 1) * (p - 2) * (p - 3))]
   have ht1 : |a ^ (p - 2) * x ^ 2| ≤ 4 * R := by
-    have h := PolarDerivatives_abs_chord_monomial_full_le hA ha4 hx hy hz hb p 0 2 2 2 0 0 0
+    have h := abs_chord_monomial_full_le hA ha4 hx hy hz hb p 0 2 2 2 0 0 0
       (by norm_num) (by ring)
     norm_num at h
     simpa [R, a] using h
   have ht2 : |a ^ (p - 1) * b| ≤ 2 * R := by
-    have h := PolarDerivatives_abs_chord_monomial_full_le hA ha4 hx hy hz hb p 0 1 2 0 0 0 1
+    have h := abs_chord_monomial_full_le hA ha4 hx hy hz hb p 0 1 2 0 0 0 1
       (by norm_num) (by ring)
     norm_num at h
     simpa [R, a] using h
-  have h1 := PolarDerivatives_abs_coeff_mul_le hc1 ht1 hM (by norm_num : (0 : ℝ) ≤ 4) hR
-  have h2 := PolarDerivatives_abs_coeff_mul_le hc2 ht2 hM (by norm_num : (0 : ℝ) ≤ 2) hR
-  have hform : PolarDerivatives_polarJet20 p θ φ ψ =
+  have h1 := abs_coeff_mul_le hc1 ht1 hM (by norm_num : (0 : ℝ) ≤ 4) hR
+  have h2 := abs_coeff_mul_le hc2 ht2 hM (by norm_num : (0 : ℝ) ≤ 2) hR
+  have hform : polarJet20 p θ φ ψ =
       (p * (p - 1)) * (a ^ (p - 2) * x ^ 2) + p * (a ^ (p - 1) * b) := by
-    unfold PolarDerivatives_polarJet20
+    unfold polarJet20
     ring
   rw [hform]
   exact (abs_add_le _ _).trans (by dsimp [M, R, a] at *; nlinarith [h1, h2])
 
-private lemma PolarDerivatives_abs_polarJet11_le (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    |PolarDerivatives_polarJet11 p θ φ ψ| ≤
-      128 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) := by
-  let M := PolarDerivatives_polarCoeffBudget p
-  let R := PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1)
-  obtain ⟨hc1, hc2, _, _⟩ := PolarDerivatives_polarCoeffBudget_bounds p
-  have hM : 0 ≤ M := (PolarDerivatives_polarCoeffBudget_pos p).le
+private lemma abs_polarJet11_le (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    |polarJet11 p θ φ ψ| ≤
+      128 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 1) := by
+  let M := polarCoeffBudget p
+  let R := polarChordSq θ φ ψ ^ (p - 1)
+  obtain ⟨hc1, hc2, _, _⟩ := polarCoeffBudget_bounds p
+  have hM : 0 ≤ M := (polarCoeffBudget_pos p).le
   have hR : 0 ≤ R := (Real.rpow_pos_of_pos hA _).le
-  have ht1 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 2 2 1 1 0 0
+  have ht1 : |polarChordSq θ φ ψ ^ (p - 2) *
+      polarChordPhi θ φ ψ * polarChordPsi θ φ ψ| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 2 2 1 1 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht2 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordCross θ φ ψ| ≤
+  have ht2 : |polarChordSq θ φ ψ ^ (p - 1) * polarChordCross θ φ ψ| ≤
       64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 1 2 0 0 1 0
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 1 2 0 0 1 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have h1 := PolarDerivatives_abs_coeff_mul_le hc2 ht1 hM (by norm_num : (0 : ℝ) ≤ 64) hR
-  have h2 := PolarDerivatives_abs_coeff_mul_le hc1 ht2 hM (by norm_num : (0 : ℝ) ≤ 64) hR
-  have hform : PolarDerivatives_polarJet11 p θ φ ψ =
-      (p * (p - 1)) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-        PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ) +
-      p * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordCross θ φ ψ) := by
-    unfold PolarDerivatives_polarJet11
+  have h1 := abs_coeff_mul_le hc2 ht1 hM (by norm_num : (0 : ℝ) ≤ 64) hR
+  have h2 := abs_coeff_mul_le hc1 ht2 hM (by norm_num : (0 : ℝ) ≤ 64) hR
+  have hform : polarJet11 p θ φ ψ =
+      (p * (p - 1)) * (polarChordSq θ φ ψ ^ (p - 2) *
+        polarChordPhi θ φ ψ * polarChordPsi θ φ ψ) +
+      p * (polarChordSq θ φ ψ ^ (p - 1) * polarChordCross θ φ ψ) := by
+    unfold polarJet11
     ring
   rw [hform]
   exact (abs_add_le _ _).trans (by dsimp [M, R] at *; nlinarith [h1, h2])
 
-private lemma PolarDerivatives_abs_polarJet30_le (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    |PolarDerivatives_polarJet30 p θ φ ψ| ≤
-      512 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3 / 2) := by
-  let M := PolarDerivatives_polarCoeffBudget p
-  let R := PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3 / 2)
-  obtain ⟨hc1, hc2, hc3, _⟩ := PolarDerivatives_polarCoeffBudget_bounds p
-  have hM : 0 ≤ M := (PolarDerivatives_polarCoeffBudget_pos p).le
+private lemma abs_polarJet30_le (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    |polarJet30 p θ φ ψ| ≤
+      512 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 3 / 2) := by
+  let M := polarCoeffBudget p
+  let R := polarChordSq θ φ ψ ^ (p - 3 / 2)
+  obtain ⟨hc1, hc2, hc3, _⟩ := polarCoeffBudget_bounds p
+  have hM : 0 ≤ M := (polarCoeffBudget_pos p).le
   have hR : 0 ≤ R := (Real.rpow_pos_of_pos hA _).le
-  have ht1 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 3| ≤
+  have ht1 : |polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 3| ≤
       64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 3 3 3 0 0 0
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 3 3 3 0 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have ht2 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ *
-      (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 2 3 1 0 0 1
+  have ht2 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ *
+      (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 2 3 1 0 0 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht3 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordPhi θ φ ψ| ≤
+  have ht3 : |polarChordSq θ φ ψ ^ (p - 1) * polarChordPhi θ φ ψ| ≤
       64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 1 3 1 0 0 0
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 1 3 1 0 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have h1 := PolarDerivatives_abs_coeff_mul_le hc3 ht1 hM (by norm_num : (0 : ℝ) ≤ 64) hR
+  have h1 := abs_coeff_mul_le hc3 ht1 hM (by norm_num : (0 : ℝ) ≤ 64) hR
   have hc2' : |3 * (p * (p - 1))| ≤ 3 * M := by
     rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 3)]
     gcongr
-  have h2 := PolarDerivatives_abs_coeff_mul_le hc2' ht2
+  have h2 := abs_coeff_mul_le hc2' ht2
     (by positivity : 0 ≤ 3 * M) (by norm_num : (0 : ℝ) ≤ 64) hR
-  have h3 := PolarDerivatives_abs_coeff_mul_le hc1 ht3 hM (by norm_num : (0 : ℝ) ≤ 64) hR
-  have hform : PolarDerivatives_polarJet30 p θ φ ψ =
+  have h3 := abs_coeff_mul_le hc1 ht3 hM (by norm_num : (0 : ℝ) ≤ 64) hR
+  have hform : polarJet30 p θ φ ψ =
       (p * (p - 1) * (p - 2)) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 3) +
+        (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 3) +
       (3 * (p * (p - 1))) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ *
-          (2 - PolarDerivatives_polarChordSq θ φ ψ)) -
-      p * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordPhi θ φ ψ) := by
-    unfold PolarDerivatives_polarJet30
+        (polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ *
+          (2 - polarChordSq θ φ ψ)) -
+      p * (polarChordSq θ φ ψ ^ (p - 1) * polarChordPhi θ φ ψ) := by
+    unfold polarJet30
     ring
   rw [hform]
-  exact (PolarDerivatives_abs_add_sub_le _ _ _).trans (by dsimp [M, R] at *; nlinarith [h1, h2, h3])
+  exact (abs_add_sub_le _ _ _).trans (by dsimp [M, R] at *; nlinarith [h1, h2, h3])
 
-private lemma PolarDerivatives_abs_polarJet21_le (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    |PolarDerivatives_polarJet21 p θ φ ψ| ≤
-      512 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3 / 2) := by
-  let M := PolarDerivatives_polarCoeffBudget p
-  let R := PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3 / 2)
-  obtain ⟨hc1, hc2, hc3, _⟩ := PolarDerivatives_polarCoeffBudget_bounds p
-  have hM : 0 ≤ M := (PolarDerivatives_polarCoeffBudget_pos p).le
+private lemma abs_polarJet21_le (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    |polarJet21 p θ φ ψ| ≤
+      512 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 3 / 2) := by
+  let M := polarCoeffBudget p
+  let R := polarChordSq θ φ ψ ^ (p - 3 / 2)
+  obtain ⟨hc1, hc2, hc3, _⟩ := polarCoeffBudget_bounds p
+  have hM : 0 ≤ M := (polarCoeffBudget_pos p).le
   have hR : 0 ≤ R := (Real.rpow_pos_of_pos hA _).le
-  have ht1 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 *
-      PolarDerivatives_polarChordPsi θ φ ψ| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 3 3 2 1 0 0
+  have ht1 : |polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 *
+      polarChordPsi θ φ ψ| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 3 3 2 1 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have ht2 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ *
-      PolarDerivatives_polarChordCross θ φ ψ| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 2 3 1 0 1 0
+  have ht2 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ *
+      polarChordCross θ φ ψ| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 2 3 1 0 1 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht3 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPsi θ φ ψ *
-      (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 2 3 0 1 0 1
+  have ht3 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordPsi θ φ ψ *
+      (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 2 3 0 1 0 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht4 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordPsi θ φ ψ| ≤
+  have ht4 : |polarChordSq θ φ ψ ^ (p - 1) * polarChordPsi θ φ ψ| ≤
       64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 1 3 0 1 0 0
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 1 3 0 1 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
   have hc2' : |2 * (p * (p - 1))| ≤ 2 * M := by
     rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 2)]
     gcongr
-  have h1 := PolarDerivatives_abs_coeff_mul_le hc3 ht1 hM (by norm_num : (0 : ℝ) ≤ 64) hR
-  have h2 := PolarDerivatives_abs_coeff_mul_le hc2' ht2
+  have h1 := abs_coeff_mul_le hc3 ht1 hM (by norm_num : (0 : ℝ) ≤ 64) hR
+  have h2 := abs_coeff_mul_le hc2' ht2
     (by positivity : 0 ≤ 2 * M) (by norm_num : (0 : ℝ) ≤ 64) hR
-  have h3 := PolarDerivatives_abs_coeff_mul_le hc2 ht3 hM (by norm_num : (0 : ℝ) ≤ 64) hR
-  have h4 := PolarDerivatives_abs_coeff_mul_le hc1 ht4 hM (by norm_num : (0 : ℝ) ≤ 64) hR
-  have hform : PolarDerivatives_polarJet21 p θ φ ψ =
+  have h3 := abs_coeff_mul_le hc2 ht3 hM (by norm_num : (0 : ℝ) ≤ 64) hR
+  have h4 := abs_coeff_mul_le hc1 ht4 hM (by norm_num : (0 : ℝ) ≤ 64) hR
+  have hform : polarJet21 p θ φ ψ =
       (p * (p - 1) * (p - 2)) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 *
-          PolarDerivatives_polarChordPsi θ φ ψ) +
+        (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 *
+          polarChordPsi θ φ ψ) +
       (2 * (p * (p - 1))) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ *
-          PolarDerivatives_polarChordCross θ φ ψ) +
+        (polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ *
+          polarChordCross θ φ ψ) +
       (p * (p - 1)) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPsi θ φ ψ *
-          (2 - PolarDerivatives_polarChordSq θ φ ψ)) -
-      p * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordPsi θ φ ψ) := by
-    unfold PolarDerivatives_polarJet21
+        (polarChordSq θ φ ψ ^ (p - 2) * polarChordPsi θ φ ψ *
+          (2 - polarChordSq θ φ ψ)) -
+      p * (polarChordSq θ φ ψ ^ (p - 1) * polarChordPsi θ φ ψ) := by
+    unfold polarJet21
     ring
   rw [hform]
-  exact (PolarDerivatives_abs_add_add_sub_le _ _ _ _).trans
+  exact (abs_add_add_sub_le _ _ _ _).trans
     (by dsimp [M, R] at *; nlinarith [h1, h2, h3, h4])
 
-private lemma PolarDerivatives_abs_polarJet40_le (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    |PolarDerivatives_polarJet40 p θ φ ψ| ≤
-      2048 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) := by
-  let M := PolarDerivatives_polarCoeffBudget p
-  let R := PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2)
-  obtain ⟨hc1, hc2, hc3, hc4⟩ := PolarDerivatives_polarCoeffBudget_bounds p
-  have hM : 0 ≤ M := (PolarDerivatives_polarCoeffBudget_pos p).le
+private lemma abs_polarJet40_le (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    |polarJet40 p θ φ ψ| ≤
+      2048 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 2) := by
+  let M := polarCoeffBudget p
+  let R := polarChordSq θ φ ψ ^ (p - 2)
+  obtain ⟨hc1, hc2, hc3, hc4⟩ := polarCoeffBudget_bounds p
+  have hM : 0 ≤ M := (polarCoeffBudget_pos p).le
   have hR : 0 ≤ R := (Real.rpow_pos_of_pos hA _).le
   have hMR : 0 ≤ M * R := mul_nonneg hM hR
-  have ht1 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 4| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 4 4 4 0 0 0
+  have ht1 : |polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 4| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 4 4 4 0 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have ht2 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 *
-      (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 2 0 0 1
+  have ht2 : |polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 *
+      (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 2 0 0 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have ht3 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) *
-      (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ 2| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 2 4 0 0 0 2
+  have ht3 : |polarChordSq θ φ ψ ^ (p - 2) *
+      (2 - polarChordSq θ φ ψ) ^ 2| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 2 4 0 0 0 2
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have ht4 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2| ≤
+  have ht4 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ ^ 2| ≤
       64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 2 4 2 0 0 0
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 2 4 2 0 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have ht5 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) *
-      (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 1 4 0 0 0 1
+  have ht5 : |polarChordSq θ φ ψ ^ (p - 1) *
+      (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 1 4 0 0 0 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R] using h
-  have h1 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc4 ht1 hM hR
-  have h2 := PolarDerivatives_abs_scaled_coeff_mul_le 6 hc3 ht2 hM hR
-  have h3 := PolarDerivatives_abs_scaled_coeff_mul_le 3 hc2 ht3 hM hR
-  have h4 := PolarDerivatives_abs_scaled_coeff_mul_le 4 hc2 ht4 hM hR
-  have h5 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc1 ht5 hM hR
-  have hform : PolarDerivatives_polarJet40 p θ φ ψ =
+  have h1 := abs_scaled_coeff_mul_le 1 hc4 ht1 hM hR
+  have h2 := abs_scaled_coeff_mul_le 6 hc3 ht2 hM hR
+  have h3 := abs_scaled_coeff_mul_le 3 hc2 ht3 hM hR
+  have h4 := abs_scaled_coeff_mul_le 4 hc2 ht4 hM hR
+  have h5 := abs_scaled_coeff_mul_le 1 hc1 ht5 hM hR
+  have hform : polarJet40 p θ φ ψ =
       ((1 : ℝ) * (p * (p - 1) * (p - 2) * (p - 3))) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 4) +
+        (polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 4) +
       (6 * (p * (p - 1) * (p - 2))) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 *
-          (2 - PolarDerivatives_polarChordSq θ φ ψ)) +
+        (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 *
+          (2 - polarChordSq θ φ ψ)) +
       (3 * (p * (p - 1))) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ 2) +
+        (polarChordSq θ φ ψ ^ (p - 2) * (2 - polarChordSq θ φ ψ) ^ 2) +
       -(4 * (p * (p - 1)) *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2)) +
+        (polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ ^ 2)) +
       -((1 : ℝ) * p *
-        (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * (2 - PolarDerivatives_polarChordSq θ φ ψ))) := by
-    unfold PolarDerivatives_polarJet40
+        (polarChordSq θ φ ψ ^ (p - 1) * (2 - polarChordSq θ φ ψ))) := by
+    unfold polarJet40
     ring
   rw [hform]
-  have htri := PolarDerivatives_abs_sum_five_le
+  have htri := abs_sum_five_le
     ((1 : ℝ) * (p * (p - 1) * (p - 2) * (p - 3)) *
-      (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 4))
+      (polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 4))
     (6 * (p * (p - 1) * (p - 2)) *
-      (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 *
-        (2 - PolarDerivatives_polarChordSq θ φ ψ)))
+      (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 *
+        (2 - polarChordSq θ φ ψ)))
     (3 * (p * (p - 1)) *
-      (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ 2))
+      (polarChordSq θ φ ψ ^ (p - 2) * (2 - polarChordSq θ φ ψ) ^ 2))
     (-(4 * (p * (p - 1)) *
-      (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2)))
+      (polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ ^ 2)))
     (-((1 : ℝ) * p *
-      (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * (2 - PolarDerivatives_polarChordSq θ φ ψ))))
+      (polarChordSq θ φ ψ ^ (p - 1) * (2 - polarChordSq θ φ ψ))))
   simp only [abs_neg] at htri
   refine htri.trans ?_
   calc
@@ -23748,75 +23748,75 @@ private lemma PolarDerivatives_abs_polarJet40_le (p θ φ ψ : ℝ)
       have hs := add_le_add (add_le_add (add_le_add (add_le_add h1 h2) h3) h4) h5
       norm_num only [Nat.cast_ofNat, one_mul] at hs
       convert hs using 1 <;> ring
-    _ ≤ 2048 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) := by
+    _ ≤ 2048 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 2) := by
       dsimp [M, R] at *
       nlinarith [hMR]
 
 
 set_option maxHeartbeats 1000000 in
-private lemma PolarDerivatives_abs_polarJet31_le (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    |PolarDerivatives_polarJet31 p θ φ ψ| ≤
-      2048 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) := by
-  let M := PolarDerivatives_polarCoeffBudget p
-  let R := PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2)
-  obtain ⟨hc1, hc2, hc3, hc4⟩ := PolarDerivatives_polarCoeffBudget_bounds p
-  have hM : 0 ≤ M := (PolarDerivatives_polarCoeffBudget_pos p).le
+private lemma abs_polarJet31_le (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    |polarJet31 p θ φ ψ| ≤
+      2048 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 2) := by
+  let M := polarCoeffBudget p
+  let R := polarChordSq θ φ ψ ^ (p - 2)
+  obtain ⟨hc1, hc2, hc3, hc4⟩ := polarCoeffBudget_bounds p
+  have hM : 0 ≤ M := (polarCoeffBudget_pos p).le
   have hR : 0 ≤ R := (Real.rpow_pos_of_pos hA _).le
   have hMR : 0 ≤ M * R := mul_nonneg hM hR
-  have ht1 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 3 * PolarDerivatives_polarChordPsi θ φ ψ| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 4 4 3 1 0 0
+  have ht1 : |polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 3 * polarChordPsi θ φ ψ| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 4 4 3 1 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht2 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordCross θ φ ψ| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 2 0 1 0
+  have ht2 : |polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 * polarChordCross θ φ ψ| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 2 0 1 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht3 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 1 1 0 1
+  have ht3 : |polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ * (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 1 1 0 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht4 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordCross θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 2 4 0 0 1 1
+  have ht4 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordCross θ φ ψ * (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 2 4 0 0 1 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht5 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 2 4 1 1 0 0
+  have ht5 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 2 4 1 1 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht6 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordCross θ φ ψ| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 1 4 0 0 1 0
+  have ht6 : |polarChordSq θ φ ψ ^ (p - 1) * polarChordCross θ φ ψ| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 1 4 0 0 1 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have h1 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc4 ht1 hM hR
-  have h2 := PolarDerivatives_abs_scaled_coeff_mul_le 3 hc3 ht2 hM hR
-  have h3 := PolarDerivatives_abs_scaled_coeff_mul_le 3 hc3 ht3 hM hR
-  have h4 := PolarDerivatives_abs_scaled_coeff_mul_le 3 hc2 ht4 hM hR
-  have h5 := PolarDerivatives_abs_scaled_coeff_mul_le 4 hc2 ht5 hM hR
-  have h6 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc1 ht6 hM hR
-  have hform : PolarDerivatives_polarJet31 p θ φ ψ =
-    (1 * (p * (p - 1) * (p - 2) * (p - 3))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 3 * PolarDerivatives_polarChordPsi θ φ ψ) +
-    (3 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordCross θ φ ψ) +
-    (3 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ)) +
-    (3 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordCross θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ)) +
-    (-((4 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ))) +
-    (-((1 * p) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordCross θ φ ψ))) := by
-    unfold PolarDerivatives_polarJet31
+  have h1 := abs_scaled_coeff_mul_le 1 hc4 ht1 hM hR
+  have h2 := abs_scaled_coeff_mul_le 3 hc3 ht2 hM hR
+  have h3 := abs_scaled_coeff_mul_le 3 hc3 ht3 hM hR
+  have h4 := abs_scaled_coeff_mul_le 3 hc2 ht4 hM hR
+  have h5 := abs_scaled_coeff_mul_le 4 hc2 ht5 hM hR
+  have h6 := abs_scaled_coeff_mul_le 1 hc1 ht6 hM hR
+  have hform : polarJet31 p θ φ ψ =
+    (1 * (p * (p - 1) * (p - 2) * (p - 3))) * (polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 3 * polarChordPsi θ φ ψ) +
+    (3 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 * polarChordCross θ φ ψ) +
+    (3 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ * (2 - polarChordSq θ φ ψ)) +
+    (3 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordCross θ φ ψ * (2 - polarChordSq θ φ ψ)) +
+    (-((4 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ))) +
+    (-((1 * p) * (polarChordSq θ φ ψ ^ (p - 1) * polarChordCross θ φ ψ))) := by
+    unfold polarJet31
     ring
   rw [hform]
-  have htri := PolarDerivatives_abs_sum_six_le
-    ((1 * (p * (p - 1) * (p - 2) * (p - 3))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 3 * PolarDerivatives_polarChordPsi θ φ ψ))
-    ((3 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordCross θ φ ψ))
-    ((3 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ)))
-    ((3 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordCross θ φ ψ * (2 - PolarDerivatives_polarChordSq θ φ ψ)))
-    ((-((4 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ))))
-    ((-((1 * p) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * PolarDerivatives_polarChordCross θ φ ψ))))
+  have htri := abs_sum_six_le
+    ((1 * (p * (p - 1) * (p - 2) * (p - 3))) * (polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 3 * polarChordPsi θ φ ψ))
+    ((3 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 * polarChordCross θ φ ψ))
+    ((3 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ * (2 - polarChordSq θ φ ψ)))
+    ((3 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordCross θ φ ψ * (2 - polarChordSq θ φ ψ)))
+    ((-((4 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ))))
+    ((-((1 * p) * (polarChordSq θ φ ψ ^ (p - 1) * polarChordCross θ φ ψ))))
   simp only [abs_neg] at htri
   refine htri.trans ?_
   calc
@@ -23824,98 +23824,98 @@ private lemma PolarDerivatives_abs_polarJet31_le (p θ φ ψ : ℝ)
       have hs := (add_le_add (add_le_add (add_le_add (add_le_add (add_le_add h1 h2) h3) h4) h5) h6)
       norm_num only [Nat.cast_ofNat, one_mul] at hs
       convert hs using 1 <;> ring
-    _ ≤ 2048 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) := by
+    _ ≤ 2048 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 2) := by
       dsimp [M, R] at *
       nlinarith [hMR]
 
 set_option maxHeartbeats 1000000 in
-private lemma PolarDerivatives_abs_polarJet22_le (p θ φ ψ : ℝ)
-    (hA : 0 < PolarDerivatives_polarChordSq θ φ ψ) :
-    |PolarDerivatives_polarJet22 p θ φ ψ| ≤
-      2048 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) := by
-  let M := PolarDerivatives_polarCoeffBudget p
-  let R := PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2)
-  obtain ⟨hc1, hc2, hc3, hc4⟩ := PolarDerivatives_polarCoeffBudget_bounds p
-  have hM : 0 ≤ M := (PolarDerivatives_polarCoeffBudget_pos p).le
+private lemma abs_polarJet22_le (p θ φ ψ : ℝ)
+    (hA : 0 < polarChordSq θ φ ψ) :
+    |polarJet22 p θ φ ψ| ≤
+      2048 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 2) := by
+  let M := polarCoeffBudget p
+  let R := polarChordSq θ φ ψ ^ (p - 2)
+  obtain ⟨hc1, hc2, hc3, hc4⟩ := polarCoeffBudget_bounds p
+  have hM : 0 ≤ M := (polarCoeffBudget_pos p).le
   have hR : 0 ≤ R := (Real.rpow_pos_of_pos hA _).le
   have hMR : 0 ≤ M * R := mul_nonneg hM hR
-  have ht1 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordPsi θ φ ψ ^ 2| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 4 4 2 2 0 0
+  have ht1 : |polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 2 * polarChordPsi θ φ ψ ^ 2| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 4 4 2 2 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht2 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 2 0 0 1
+  have ht2 : |polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 * (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 2 0 0 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht3 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPsi θ φ ψ ^ 2 * (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 0 2 0 1
+  have ht3 : |polarChordSq θ φ ψ ^ (p - 3) * polarChordPsi θ φ ψ ^ 2 * (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 0 2 0 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht4 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ * PolarDerivatives_polarChordCross θ φ ψ| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 1 1 1 0
+  have ht4 : |polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ * polarChordCross θ φ ψ| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 3 4 1 1 1 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht5 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordCross θ φ ψ ^ 2| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 2 4 0 0 2 0
+  have ht5 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordCross θ φ ψ ^ 2| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 2 4 0 0 2 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht6 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ 2| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 0 2 4 0 0 0 2
+  have ht6 : |polarChordSq θ φ ψ ^ (p - 2) * (2 - polarChordSq θ φ ψ) ^ 2| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 0 2 4 0 0 0 2
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht7 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 2 4 2 0 0 0
+  have ht7 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ ^ 2| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 2 4 2 0 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht8 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPsi θ φ ψ ^ 2| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 2 4 0 2 0 0
+  have ht8 : |polarChordSq θ φ ψ ^ (p - 2) * polarChordPsi θ φ ψ ^ 2| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 2 4 0 2 0 0
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have ht9 : |PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * (2 - PolarDerivatives_polarChordSq θ φ ψ)| ≤ 64 * R := by
-    have h := PolarDerivatives_abs_polar_monomial_le_64 p θ φ ψ hA 1 1 4 0 0 0 1
+  have ht9 : |polarChordSq θ φ ψ ^ (p - 1) * (2 - polarChordSq θ φ ψ)| ≤ 64 * R := by
+    have h := abs_polar_monomial_le_64 p θ φ ψ hA 1 1 4 0 0 0 1
       (by norm_num) (by norm_num) (by norm_num) (by ring)
     norm_num at h
     simpa [R, mul_assoc] using h
-  have h1 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc4 ht1 hM hR
-  have h2 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc3 ht2 hM hR
-  have h3 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc3 ht3 hM hR
-  have h4 := PolarDerivatives_abs_scaled_coeff_mul_le 4 hc3 ht4 hM hR
-  have h5 := PolarDerivatives_abs_scaled_coeff_mul_le 2 hc2 ht5 hM hR
-  have h6 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc2 ht6 hM hR
-  have h7 := PolarDerivatives_abs_scaled_coeff_mul_le 2 hc2 ht7 hM hR
-  have h8 := PolarDerivatives_abs_scaled_coeff_mul_le 2 hc2 ht8 hM hR
-  have h9 := PolarDerivatives_abs_scaled_coeff_mul_le 1 hc1 ht9 hM hR
-  have hform : PolarDerivatives_polarJet22 p θ φ ψ =
-    (1 * (p * (p - 1) * (p - 2) * (p - 3))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordPsi θ φ ψ ^ 2) +
-    (1 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * (2 - PolarDerivatives_polarChordSq θ φ ψ)) +
-    (1 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPsi θ φ ψ ^ 2 * (2 - PolarDerivatives_polarChordSq θ φ ψ)) +
-    (4 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ * PolarDerivatives_polarChordCross θ φ ψ) +
-    (2 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordCross θ φ ψ ^ 2) +
-    (1 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ 2) +
-    (-((2 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2))) +
-    (-((2 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPsi θ φ ψ ^ 2))) +
-    (-((1 * p) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * (2 - PolarDerivatives_polarChordSq θ φ ψ)))) := by
-    unfold PolarDerivatives_polarJet22
+  have h1 := abs_scaled_coeff_mul_le 1 hc4 ht1 hM hR
+  have h2 := abs_scaled_coeff_mul_le 1 hc3 ht2 hM hR
+  have h3 := abs_scaled_coeff_mul_le 1 hc3 ht3 hM hR
+  have h4 := abs_scaled_coeff_mul_le 4 hc3 ht4 hM hR
+  have h5 := abs_scaled_coeff_mul_le 2 hc2 ht5 hM hR
+  have h6 := abs_scaled_coeff_mul_le 1 hc2 ht6 hM hR
+  have h7 := abs_scaled_coeff_mul_le 2 hc2 ht7 hM hR
+  have h8 := abs_scaled_coeff_mul_le 2 hc2 ht8 hM hR
+  have h9 := abs_scaled_coeff_mul_le 1 hc1 ht9 hM hR
+  have hform : polarJet22 p θ φ ψ =
+    (1 * (p * (p - 1) * (p - 2) * (p - 3))) * (polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 2 * polarChordPsi θ φ ψ ^ 2) +
+    (1 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 * (2 - polarChordSq θ φ ψ)) +
+    (1 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPsi θ φ ψ ^ 2 * (2 - polarChordSq θ φ ψ)) +
+    (4 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ * polarChordCross θ φ ψ) +
+    (2 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordCross θ φ ψ ^ 2) +
+    (1 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * (2 - polarChordSq θ φ ψ) ^ 2) +
+    (-((2 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ ^ 2))) +
+    (-((2 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordPsi θ φ ψ ^ 2))) +
+    (-((1 * p) * (polarChordSq θ φ ψ ^ (p - 1) * (2 - polarChordSq θ φ ψ)))) := by
+    unfold polarJet22
     ring
   rw [hform]
-  have htri := PolarDerivatives_abs_sum_nine_le
-    ((1 * (p * (p - 1) * (p - 2) * (p - 3))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 4) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * PolarDerivatives_polarChordPsi θ φ ψ ^ 2))
-    ((1 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2 * (2 - PolarDerivatives_polarChordSq θ φ ψ)))
-    ((1 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPsi θ φ ψ ^ 2 * (2 - PolarDerivatives_polarChordSq θ φ ψ)))
-    ((4 * (p * (p - 1) * (p - 2))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 3) * PolarDerivatives_polarChordPhi θ φ ψ * PolarDerivatives_polarChordPsi θ φ ψ * PolarDerivatives_polarChordCross θ φ ψ))
-    ((2 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordCross θ φ ψ ^ 2))
-    ((1 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * (2 - PolarDerivatives_polarChordSq θ φ ψ) ^ 2))
-    ((-((2 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPhi θ φ ψ ^ 2))))
-    ((-((2 * (p * (p - 1))) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) * PolarDerivatives_polarChordPsi θ φ ψ ^ 2))))
-    ((-((1 * p) * (PolarDerivatives_polarChordSq θ φ ψ ^ (p - 1) * (2 - PolarDerivatives_polarChordSq θ φ ψ)))))
+  have htri := abs_sum_nine_le
+    ((1 * (p * (p - 1) * (p - 2) * (p - 3))) * (polarChordSq θ φ ψ ^ (p - 4) * polarChordPhi θ φ ψ ^ 2 * polarChordPsi θ φ ψ ^ 2))
+    ((1 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ ^ 2 * (2 - polarChordSq θ φ ψ)))
+    ((1 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPsi θ φ ψ ^ 2 * (2 - polarChordSq θ φ ψ)))
+    ((4 * (p * (p - 1) * (p - 2))) * (polarChordSq θ φ ψ ^ (p - 3) * polarChordPhi θ φ ψ * polarChordPsi θ φ ψ * polarChordCross θ φ ψ))
+    ((2 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordCross θ φ ψ ^ 2))
+    ((1 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * (2 - polarChordSq θ φ ψ) ^ 2))
+    ((-((2 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordPhi θ φ ψ ^ 2))))
+    ((-((2 * (p * (p - 1))) * (polarChordSq θ φ ψ ^ (p - 2) * polarChordPsi θ φ ψ ^ 2))))
+    ((-((1 * p) * (polarChordSq θ φ ψ ^ (p - 1) * (2 - polarChordSq θ φ ψ)))))
   simp only [abs_neg] at htri
   refine htri.trans ?_
   calc
@@ -23923,7 +23923,7 @@ private lemma PolarDerivatives_abs_polarJet22_le (p θ φ ψ : ℝ)
       have hs := (add_le_add (add_le_add (add_le_add (add_le_add (add_le_add (add_le_add (add_le_add (add_le_add h1 h2) h3) h4) h5) h6) h7) h8) h9)
       norm_num only [Nat.cast_ofNat, one_mul] at hs
       convert hs using 1 <;> ring
-    _ ≤ 2048 * PolarDerivatives_polarCoeffBudget p * PolarDerivatives_polarChordSq θ φ ψ ^ (p - 2) := by
+    _ ≤ 2048 * polarCoeffBudget p * polarChordSq θ φ ψ ^ (p - 2) := by
       dsimp [M, R] at *
       nlinarith [hMR]
 
@@ -23933,9 +23933,9 @@ set_option maxHeartbeats 2000000
 /-- Uniform polar derivative estimates through total order four, away from coincident points. -/
 theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
     PolarDerivativeBound α := by
-  let M := PolarDerivatives_polarCoeffBudget (α / 2)
+  let M := polarCoeffBudget (α / 2)
   let C := 4096 * M + α + 1
-  have hM : 0 < M := PolarDerivatives_polarCoeffBudget_pos _
+  have hM : 0 < M := polarCoeffBudget_pos _
   have hC : 0 < C := by dsimp [C]; positivity
   refine ⟨C, hC, ?_⟩
   intro m n hmn θ φ ψ hA
@@ -23964,17 +23964,17 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
   interval_cases m <;> interval_cases n
   · exact hsmall 0 0 (by omega)
   · exact hsmall 0 1 (by omega)
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ ψ φ := by
-      rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ]
-    have hj := PolarDerivatives_abs_polarJet20_le (α / 2) θ ψ φ hpos
-    have heq := PolarDerivatives_iteratedDeriv_two_polarKernel_psi_eq α θ φ ψ hA
+  · have hpos : 0 < polarChordSq θ ψ φ := by
+      rwa [← polarChordSq_symm θ φ ψ]
+    have hj := abs_polarJet20_le (α / 2) θ ψ φ hpos
+    have heq := iteratedDeriv_two_polarKernel_psi_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 0 (fun u => iteratedDeriv 2 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (0 : ℝ) - (2 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet20 (α / 2) θ ψ φ| := by
+        _ = |polarJet20 (α / 2) θ ψ φ| := by
           simpa only [iteratedDeriv_zero] using congrArg abs heq
         _ ≤ 8 * M * A ^ ((α - (0 : ℝ) - (2 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ ψ φ = A := by
-            change PolarDerivatives_polarChordSq θ ψ φ = PolarDerivatives_polarChordSq θ φ ψ; exact PolarDerivatives_polarChordSq_symm θ ψ φ
+          have hpow : polarChordSq θ ψ φ = A := by
+            change polarChordSq θ ψ φ = polarChordSq θ φ ψ; exact polarChordSq_symm θ ψ φ
           have hexp : ((α - (0 : ℝ) - (2 : ℝ)) / 2) = α / 2 - 1 := by ring
           rw [hexp]
           simpa only [hpow, M] using hj
@@ -23982,17 +23982,17 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
           exact mul_le_mul_of_nonneg_right (hCdom 8 (by norm_num))
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ ψ φ := by
-      rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ]
-    have hj := PolarDerivatives_abs_polarJet30_le (α / 2) θ ψ φ hpos
-    have heq := PolarDerivatives_iteratedDeriv_three_polarKernel_psi_eq α θ φ ψ hA
+  · have hpos : 0 < polarChordSq θ ψ φ := by
+      rwa [← polarChordSq_symm θ φ ψ]
+    have hj := abs_polarJet30_le (α / 2) θ ψ φ hpos
+    have heq := iteratedDeriv_three_polarKernel_psi_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 0 (fun u => iteratedDeriv 3 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (0 : ℝ) - (3 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet30 (α / 2) θ ψ φ| := by
+        _ = |polarJet30 (α / 2) θ ψ φ| := by
           simpa only [iteratedDeriv_zero] using congrArg abs heq
         _ ≤ 512 * M * A ^ ((α - (0 : ℝ) - (3 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ ψ φ = A := by
-            change PolarDerivatives_polarChordSq θ ψ φ = PolarDerivatives_polarChordSq θ φ ψ; exact PolarDerivatives_polarChordSq_symm θ ψ φ
+          have hpow : polarChordSq θ ψ φ = A := by
+            change polarChordSq θ ψ φ = polarChordSq θ φ ψ; exact polarChordSq_symm θ ψ φ
           have hexp : ((α - (0 : ℝ) - (3 : ℝ)) / 2) = α / 2 - 3 / 2 := by ring
           rw [hexp]
           simpa only [hpow, M] using hj
@@ -24000,17 +24000,17 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
           exact mul_le_mul_of_nonneg_right (hCdom 512 (by norm_num))
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ ψ φ := by
-      rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ]
-    have hj := PolarDerivatives_abs_polarJet40_le (α / 2) θ ψ φ hpos
-    have heq := PolarDerivatives_iteratedDeriv_four_polarKernel_psi_eq α θ φ ψ hA
+  · have hpos : 0 < polarChordSq θ ψ φ := by
+      rwa [← polarChordSq_symm θ φ ψ]
+    have hj := abs_polarJet40_le (α / 2) θ ψ φ hpos
+    have heq := iteratedDeriv_four_polarKernel_psi_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 0 (fun u => iteratedDeriv 4 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (0 : ℝ) - (4 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet40 (α / 2) θ ψ φ| := by
+        _ = |polarJet40 (α / 2) θ ψ φ| := by
           simpa only [iteratedDeriv_zero] using congrArg abs heq
         _ ≤ 2048 * M * A ^ ((α - (0 : ℝ) - (4 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ ψ φ = A := by
-            change PolarDerivatives_polarChordSq θ ψ φ = PolarDerivatives_polarChordSq θ φ ψ; exact PolarDerivatives_polarChordSq_symm θ ψ φ
+          have hpow : polarChordSq θ ψ φ = A := by
+            change polarChordSq θ ψ φ = polarChordSq θ φ ψ; exact polarChordSq_symm θ ψ φ
           have hexp : ((α - (0 : ℝ) - (4 : ℝ)) / 2) = α / 2 - 2 := by ring
           rw [hexp]
           simpa only [hpow, M] using hj
@@ -24019,16 +24019,16 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
   · exact hsmall 1 0 (by omega)
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ φ ψ := by
+  · have hpos : 0 < polarChordSq θ φ ψ := by
       exact hA
-    have hj := PolarDerivatives_abs_polarJet11_le (α / 2) θ φ ψ hpos
-    have heq := PolarDerivatives_iteratedDeriv_one_one_polarKernel_eq α θ φ ψ hA
+    have hj := abs_polarJet11_le (α / 2) θ φ ψ hpos
+    have heq := iteratedDeriv_one_one_polarKernel_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 1 (fun u => iteratedDeriv 1 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (1 : ℝ) - (1 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet11 (α / 2) θ φ ψ| := by
+        _ = |polarJet11 (α / 2) θ φ ψ| := by
           exact congrArg abs heq
         _ ≤ 128 * M * A ^ ((α - (1 : ℝ) - (1 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ φ ψ = A := by
+          have hpow : polarChordSq θ φ ψ = A := by
             rfl
           have hexp : ((α - (1 : ℝ) - (1 : ℝ)) / 2) = α / 2 - 1 := by ring
           rw [hexp]
@@ -24037,17 +24037,17 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
           exact mul_le_mul_of_nonneg_right (hCdom 128 (by norm_num))
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ ψ φ := by
-      rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ]
-    have hj := PolarDerivatives_abs_polarJet21_le (α / 2) θ ψ φ hpos
-    have heq := PolarDerivatives_iteratedDeriv_one_two_polarKernel_eq α θ φ ψ hA
+  · have hpos : 0 < polarChordSq θ ψ φ := by
+      rwa [← polarChordSq_symm θ φ ψ]
+    have hj := abs_polarJet21_le (α / 2) θ ψ φ hpos
+    have heq := iteratedDeriv_one_two_polarKernel_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 1 (fun u => iteratedDeriv 2 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (1 : ℝ) - (2 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet21 (α / 2) θ ψ φ| := by
+        _ = |polarJet21 (α / 2) θ ψ φ| := by
           exact congrArg abs heq
         _ ≤ 512 * M * A ^ ((α - (1 : ℝ) - (2 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ ψ φ = A := by
-            change PolarDerivatives_polarChordSq θ ψ φ = PolarDerivatives_polarChordSq θ φ ψ; exact PolarDerivatives_polarChordSq_symm θ ψ φ
+          have hpow : polarChordSq θ ψ φ = A := by
+            change polarChordSq θ ψ φ = polarChordSq θ φ ψ; exact polarChordSq_symm θ ψ φ
           have hexp : ((α - (1 : ℝ) - (2 : ℝ)) / 2) = α / 2 - 3 / 2 := by ring
           rw [hexp]
           simpa only [hpow, M] using hj
@@ -24055,17 +24055,17 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
           exact mul_le_mul_of_nonneg_right (hCdom 512 (by norm_num))
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ ψ φ := by
-      rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ]
-    have hj := PolarDerivatives_abs_polarJet31_le (α / 2) θ ψ φ hpos
-    have heq := PolarDerivatives_iteratedDeriv_one_three_polarKernel_eq α θ φ ψ hA
+  · have hpos : 0 < polarChordSq θ ψ φ := by
+      rwa [← polarChordSq_symm θ φ ψ]
+    have hj := abs_polarJet31_le (α / 2) θ ψ φ hpos
+    have heq := iteratedDeriv_one_three_polarKernel_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 1 (fun u => iteratedDeriv 3 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (1 : ℝ) - (3 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet31 (α / 2) θ ψ φ| := by
+        _ = |polarJet31 (α / 2) θ ψ φ| := by
           exact congrArg abs heq
         _ ≤ 2048 * M * A ^ ((α - (1 : ℝ) - (3 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ ψ φ = A := by
-            change PolarDerivatives_polarChordSq θ ψ φ = PolarDerivatives_polarChordSq θ φ ψ; exact PolarDerivatives_polarChordSq_symm θ ψ φ
+          have hpow : polarChordSq θ ψ φ = A := by
+            change polarChordSq θ ψ φ = polarChordSq θ φ ψ; exact polarChordSq_symm θ ψ φ
           have hexp : ((α - (1 : ℝ) - (3 : ℝ)) / 2) = α / 2 - 2 := by ring
           rw [hexp]
           simpa only [hpow, M] using hj
@@ -24074,16 +24074,16 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
   · omega
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ φ ψ := by
+  · have hpos : 0 < polarChordSq θ φ ψ := by
       exact hA
-    have hj := PolarDerivatives_abs_polarJet20_le (α / 2) θ φ ψ hpos
-    have heq := PolarDerivatives_iteratedDeriv_two_polarKernel_phi_eq α θ φ ψ hA
+    have hj := abs_polarJet20_le (α / 2) θ φ ψ hpos
+    have heq := iteratedDeriv_two_polarKernel_phi_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 2 (fun u => iteratedDeriv 0 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (2 : ℝ) - (0 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet20 (α / 2) θ φ ψ| := by
+        _ = |polarJet20 (α / 2) θ φ ψ| := by
           simpa only [iteratedDeriv_zero] using congrArg abs heq
         _ ≤ 8 * M * A ^ ((α - (2 : ℝ) - (0 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ φ ψ = A := by
+          have hpow : polarChordSq θ φ ψ = A := by
             rfl
           have hexp : ((α - (2 : ℝ) - (0 : ℝ)) / 2) = α / 2 - 1 := by ring
           rw [hexp]
@@ -24092,16 +24092,16 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
           exact mul_le_mul_of_nonneg_right (hCdom 8 (by norm_num))
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ φ ψ := by
+  · have hpos : 0 < polarChordSq θ φ ψ := by
       exact hA
-    have hj := PolarDerivatives_abs_polarJet21_le (α / 2) θ φ ψ hpos
-    have heq := PolarDerivatives_iteratedDeriv_two_one_polarKernel_eq α θ φ ψ hA
+    have hj := abs_polarJet21_le (α / 2) θ φ ψ hpos
+    have heq := iteratedDeriv_two_one_polarKernel_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 2 (fun u => iteratedDeriv 1 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (2 : ℝ) - (1 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet21 (α / 2) θ φ ψ| := by
+        _ = |polarJet21 (α / 2) θ φ ψ| := by
           exact congrArg abs heq
         _ ≤ 512 * M * A ^ ((α - (2 : ℝ) - (1 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ φ ψ = A := by
+          have hpow : polarChordSq θ φ ψ = A := by
             rfl
           have hexp : ((α - (2 : ℝ) - (1 : ℝ)) / 2) = α / 2 - 3 / 2 := by ring
           rw [hexp]
@@ -24110,17 +24110,17 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
           exact mul_le_mul_of_nonneg_right (hCdom 512 (by norm_num))
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ ψ φ := by
-      rwa [← PolarDerivatives_polarChordSq_symm θ φ ψ]
-    have hj := PolarDerivatives_abs_polarJet22_le (α / 2) θ ψ φ hpos
-    have heq := PolarDerivatives_iteratedDeriv_two_two_polarKernel_eq α θ φ ψ hA
+  · have hpos : 0 < polarChordSq θ ψ φ := by
+      rwa [← polarChordSq_symm θ φ ψ]
+    have hj := abs_polarJet22_le (α / 2) θ ψ φ hpos
+    have heq := iteratedDeriv_two_two_polarKernel_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 2 (fun u => iteratedDeriv 2 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (2 : ℝ) - (2 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet22 (α / 2) θ ψ φ| := by
+        _ = |polarJet22 (α / 2) θ ψ φ| := by
           exact congrArg abs heq
         _ ≤ 2048 * M * A ^ ((α - (2 : ℝ) - (2 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ ψ φ = A := by
-            change PolarDerivatives_polarChordSq θ ψ φ = PolarDerivatives_polarChordSq θ φ ψ; exact PolarDerivatives_polarChordSq_symm θ ψ φ
+          have hpow : polarChordSq θ ψ φ = A := by
+            change polarChordSq θ ψ φ = polarChordSq θ φ ψ; exact polarChordSq_symm θ ψ φ
           have hexp : ((α - (2 : ℝ) - (2 : ℝ)) / 2) = α / 2 - 2 := by ring
           rw [hexp]
           simpa only [hpow, M] using hj
@@ -24130,16 +24130,16 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
   · omega
   · omega
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ φ ψ := by
+  · have hpos : 0 < polarChordSq θ φ ψ := by
       exact hA
-    have hj := PolarDerivatives_abs_polarJet30_le (α / 2) θ φ ψ hpos
-    have heq := PolarDerivatives_iteratedDeriv_three_polarKernel_phi_eq α θ φ ψ hA
+    have hj := abs_polarJet30_le (α / 2) θ φ ψ hpos
+    have heq := iteratedDeriv_three_polarKernel_phi_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 3 (fun u => iteratedDeriv 0 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (3 : ℝ) - (0 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet30 (α / 2) θ φ ψ| := by
+        _ = |polarJet30 (α / 2) θ φ ψ| := by
           simpa only [iteratedDeriv_zero] using congrArg abs heq
         _ ≤ 512 * M * A ^ ((α - (3 : ℝ) - (0 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ φ ψ = A := by
+          have hpow : polarChordSq θ φ ψ = A := by
             rfl
           have hexp : ((α - (3 : ℝ) - (0 : ℝ)) / 2) = α / 2 - 3 / 2 := by ring
           rw [hexp]
@@ -24148,16 +24148,16 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
           exact mul_le_mul_of_nonneg_right (hCdom 512 (by norm_num))
             (Real.rpow_pos_of_pos hA' _).le
     convert hcalc using 1 <;> simp only [A, Nat.cast_zero, Nat.cast_one, Nat.cast_ofNat]
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ φ ψ := by
+  · have hpos : 0 < polarChordSq θ φ ψ := by
       exact hA
-    have hj := PolarDerivatives_abs_polarJet31_le (α / 2) θ φ ψ hpos
-    have heq := PolarDerivatives_iteratedDeriv_three_one_polarKernel_eq α θ φ ψ hA
+    have hj := abs_polarJet31_le (α / 2) θ φ ψ hpos
+    have heq := iteratedDeriv_three_one_polarKernel_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 3 (fun u => iteratedDeriv 1 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (3 : ℝ) - (1 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet31 (α / 2) θ φ ψ| := by
+        _ = |polarJet31 (α / 2) θ φ ψ| := by
           exact congrArg abs heq
         _ ≤ 2048 * M * A ^ ((α - (3 : ℝ) - (1 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ φ ψ = A := by
+          have hpow : polarChordSq θ φ ψ = A := by
             rfl
           have hexp : ((α - (3 : ℝ) - (1 : ℝ)) / 2) = α / 2 - 2 := by ring
           rw [hexp]
@@ -24169,16 +24169,16 @@ theorem polar_derivative_bound {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) :
   · omega
   · omega
   · omega
-  · have hpos : 0 < PolarDerivatives_polarChordSq θ φ ψ := by
+  · have hpos : 0 < polarChordSq θ φ ψ := by
       exact hA
-    have hj := PolarDerivatives_abs_polarJet40_le (α / 2) θ φ ψ hpos
-    have heq := PolarDerivatives_iteratedDeriv_four_polarKernel_phi_eq α θ φ ψ hA
+    have hj := abs_polarJet40_le (α / 2) θ φ ψ hpos
+    have heq := iteratedDeriv_four_polarKernel_phi_eq α θ φ ψ hA
     have hcalc : |iteratedDeriv 4 (fun u => iteratedDeriv 0 (fun v => polarKernel α θ u v) ψ) φ| ≤ C * A ^ ((α - (4 : ℝ) - (0 : ℝ)) / 2) := by
       calc
-        _ = |PolarDerivatives_polarJet40 (α / 2) θ φ ψ| := by
+        _ = |polarJet40 (α / 2) θ φ ψ| := by
           simpa only [iteratedDeriv_zero] using congrArg abs heq
         _ ≤ 2048 * M * A ^ ((α - (4 : ℝ) - (0 : ℝ)) / 2) := by
-          have hpow : PolarDerivatives_polarChordSq θ φ ψ = A := by
+          have hpow : polarChordSq θ φ ψ = A := by
             rfl
           have hexp : ((α - (4 : ℝ) - (0 : ℝ)) / 2) = α / 2 - 2 := by ring
           rw [hexp]
@@ -25290,7 +25290,7 @@ theorem sphereHeight_abs_integral :
     rw [hleft, hright]
     ring
 
-private theorem SphereProjection_inner_northPole_eq_height (u : Sphere) :
+private theorem inner_northPole_eq_height (u : Sphere) :
     @Inner.inner ℝ Ambient _ (u : Ambient) (northPole : Ambient) = sphereHeight u := by
   simp [northPole, parallelPoint, parallelVector, sphereHeight,
     EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Fin.sum_univ_succ]
@@ -25324,7 +25324,7 @@ theorem sphere_unit_projection_abs_integral (w : Sphere) :
           filter_upwards with u
           exact heq u
     _ = ∫ u : Sphere, |@Inner.inner ℝ Ambient _ (u : Ambient) (northPole : Ambient)| ∂sigma := hmap.symm
-    _ = 1 / 2 := by simpa only [SphereProjection_inner_northPole_eq_height] using sphereHeight_abs_integral
+    _ = 1 / 2 := by simpa only [inner_northPole_eq_height] using sphereHeight_abs_integral
 
 /-- The average absolute projection onto an arbitrary ambient vector. -/
 theorem sphere_projection_abs_integral (v : Ambient) :
@@ -25398,7 +25398,7 @@ theorem sphere_projection_integral (v : Ambient) :
         filter_upwards with u
         exact heq u
       _ = ∫ u : Sphere, @Inner.inner ℝ Ambient _ (u : Ambient) (northPole : Ambient) ∂sigma := hmap.symm
-      _ = 0 := by simpa only [SphereProjection_inner_northPole_eq_height] using sphereHeight_integral
+      _ = 0 := by simpa only [inner_northPole_eq_height] using sphereHeight_integral
   have hpoint (u : Sphere) :
       @Inner.inner ℝ Ambient _ (u : Ambient) v =
         ‖v‖ * @Inner.inner ℝ Ambient _ (u : Ambient) (w : Ambient) := by
@@ -25446,7 +25446,7 @@ theorem sphereHeight_cap_measure {t : ℝ} (ht : t ∈ Set.Icc (-1 : ℝ) 1) :
   rw [Measure.map_apply continuous_sphereHeight.measurable measurableSet_Ici] at hmap
   exact hmap.trans (uniformHeightMeasure_Ici ht)
 
-private theorem SphereCapMeasure_inner_northPole_eq_height_cap (x : Sphere) :
+private theorem inner_northPole_eq_height_cap (x : Sphere) :
     @Inner.inner ℝ Ambient _ (x : Ambient) (northPole : Ambient) = sphereHeight x := by
   simp [northPole, parallelPoint, parallelVector, sphereHeight,
     EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Fin.sum_univ_succ]
@@ -25471,7 +25471,7 @@ theorem sphere_cap_measure (u : Sphere) {t : ℝ} (ht : t ∈ Set.Icc (-1 : ℝ)
   rw [Measure.map_apply e.measurable hS] at hmap
   have hinner (x : Sphere) :
       sphereHeight (e x) = @Inner.inner ℝ Ambient _ (u : Ambient) (x : Ambient) := by
-    rw [← SphereCapMeasure_inner_northPole_eq_height_cap (e x)]
+    rw [← inner_northPole_eq_height_cap (e x)]
     change @Inner.inner ℝ Ambient _ (R (x : Ambient)) (northPole : Ambient) = _
     rw [← hRu, R.inner_map_map]
     exact (real_inner_comm (x : Ambient) (u : Ambient)).symm
@@ -25689,22 +25689,22 @@ theorem integral_two_caps (u x y : Sphere) :
     integral_cap_indicators _ _ (sphere_inner_bounds u x).1
       (sphere_inner_bounds u x).2 (sphere_inner_bounds u y).1
 
-private noncomputable def CapDiscrepancy_capProjection (x u : Sphere) : ℝ :=
+private noncomputable def capProjection (x u : Sphere) : ℝ :=
   @Inner.inner ℝ Ambient _ (u : Ambient) (x : Ambient)
 
 /-- Spherical averaging of the `min` kernel leaves exactly a quarter of the
 chordal distance, with negative sign. -/
 theorem integral_min_sphere (x y : Sphere) :
-    (∫ u : Sphere, min (CapDiscrepancy_capProjection x u) (CapDiscrepancy_capProjection y u) ∂sigma) =
+    (∫ u : Sphere, min (capProjection x u) (capProjection y u) ∂sigma) =
       -dist x y / 4 := by
   have hfun : ∀ u : Sphere,
-      min (CapDiscrepancy_capProjection x u) (CapDiscrepancy_capProjection y u) =
-        (CapDiscrepancy_capProjection x u + CapDiscrepancy_capProjection y u -
+      min (capProjection x u) (capProjection y u) =
+        (capProjection x u + capProjection y u -
           |@Inner.inner ℝ Ambient _ (u : Ambient)
             ((x : Ambient) - (y : Ambient))|) / 2 := by
     intro u
     rw [min_eq_mean_sub_abs]
-    simp only [CapDiscrepancy_capProjection, inner_sub_right]
+    simp only [capProjection, inner_sub_right]
   simp_rw [hfun]
   have habs : Integrable (fun u : Sphere =>
       |@Inner.inner ℝ Ambient _ (u : Ambient)
@@ -25722,21 +25722,21 @@ theorem integral_min_sphere (x y : Sphere) :
       (continuous_subtype_val : Continuous fun u : Sphere => (u : Ambient)).inner
         continuous_const
     simpa using hc.continuousOn.integrableOn_compact isCompact_univ
-  have hx : Integrable (CapDiscrepancy_capProjection x) sigma := hint (x : Ambient)
-  have hy : Integrable (CapDiscrepancy_capProjection y) sigma := hint (y : Ambient)
+  have hx : Integrable (capProjection x) sigma := hint (x : Ambient)
+  have hy : Integrable (capProjection y) sigma := hint (y : Ambient)
   have hsplit :
-      (∫ u : Sphere, CapDiscrepancy_capProjection x u + CapDiscrepancy_capProjection y u -
+      (∫ u : Sphere, capProjection x u + capProjection y u -
         |@Inner.inner ℝ Ambient _ (u : Ambient)
           ((x : Ambient) - (y : Ambient))| ∂sigma) =
-      (∫ u : Sphere, CapDiscrepancy_capProjection x u ∂sigma) +
-      (∫ u : Sphere, CapDiscrepancy_capProjection y u ∂sigma) -
+      (∫ u : Sphere, capProjection x u ∂sigma) +
+      (∫ u : Sphere, capProjection y u ∂sigma) -
       (∫ u : Sphere, |@Inner.inner ℝ Ambient _ (u : Ambient)
         ((x : Ambient) - (y : Ambient))| ∂sigma) := by
     have h₁ := integral_sub (hx.add hy) habs
     have h₂ := integral_add hx hy
     simpa only [Pi.add_apply, Pi.sub_apply, h₂] using h₁
   rw [integral_div, hsplit]
-  simp only [CapDiscrepancy_capProjection, sphere_projection_integral, sphere_projection_abs_integral]
+  simp only [capProjection, sphere_projection_integral, sphere_projection_abs_integral]
   change (0 + 0 - ‖(x : Ambient) - (y : Ambient)‖ / 2) / 2 =
     -dist (x : Ambient) (y : Ambient) / 4
   rw [dist_eq_norm]
@@ -25750,30 +25750,30 @@ theorem integral_two_caps_sphere (x y : Sphere) :
       1 - dist x y / 4 := by
   simp_rw [integral_two_caps]
   have hc : Continuous (fun u : Sphere =>
-      min (CapDiscrepancy_capProjection x u) (CapDiscrepancy_capProjection y u)) := by
+      min (capProjection x u) (capProjection y u)) := by
     exact (((continuous_subtype_val : Continuous fun u : Sphere => (u : Ambient)).inner
       continuous_const).min
       ((continuous_subtype_val : Continuous fun u : Sphere => (u : Ambient)).inner
       continuous_const))
   have hmin : Integrable (fun u : Sphere =>
-      min (CapDiscrepancy_capProjection x u) (CapDiscrepancy_capProjection y u)) sigma := by
+      min (capProjection x u) (capProjection y u)) sigma := by
     simpa using hc.continuousOn.integrableOn_compact isCompact_univ
   change (∫ u : Sphere, (1 : ℝ) +
-    min (CapDiscrepancy_capProjection x u) (CapDiscrepancy_capProjection y u) ∂sigma) = _
+    min (capProjection x u) (capProjection y u) ∂sigma) = _
   have hsplit : (∫ u : Sphere, (1 : ℝ) +
-      min (CapDiscrepancy_capProjection x u) (CapDiscrepancy_capProjection y u) ∂sigma) =
+      min (capProjection x u) (capProjection y u) ∂sigma) =
       (∫ _u : Sphere, (1 : ℝ) ∂sigma) +
-      (∫ u : Sphere, min (CapDiscrepancy_capProjection x u) (CapDiscrepancy_capProjection y u) ∂sigma) := by
+      (∫ u : Sphere, min (capProjection x u) (capProjection y u) ∂sigma) := by
     simpa only [Pi.add_apply] using
       (integral_add (integrable_const (1 : ℝ)) hmin)
   rw [hsplit, integral_const, integral_min_sphere]
   simp [Measure.real_def, sigma_apply_univ]
   ring
 
-private noncomputable def CapDiscrepancy_capFeature (x : Sphere) (p : ℝ × Sphere) : ℝ :=
+private noncomputable def capFeature (x : Sphere) (p : ℝ × Sphere) : ℝ :=
   if x ∈ cap p.2 p.1 then 1 else 0
 
-private theorem CapDiscrepancy_measurable_capFeature (x : Sphere) : Measurable (CapDiscrepancy_capFeature x) := by
+private theorem measurable_capFeature (x : Sphere) : Measurable (capFeature x) := by
   have hset : MeasurableSet {p : ℝ × Sphere | x ∈ cap p.2 p.1} := by
     change MeasurableSet {p : ℝ × Sphere | p.1 ≤
       @Inner.inner ℝ Ambient _ (p.2 : Ambient) (x : Ambient)}
@@ -25782,15 +25782,15 @@ private theorem CapDiscrepancy_measurable_capFeature (x : Sphere) : Measurable (
     · fun_prop
   exact Measurable.ite hset measurable_const measurable_const
 
-private theorem CapDiscrepancy_integrable_capFeature_pair (x y : Sphere) :
-    Integrable (fun p : ℝ × Sphere => CapDiscrepancy_capFeature x p * CapDiscrepancy_capFeature y p)
+private theorem integrable_capFeature_pair (x y : Sphere) :
+    Integrable (fun p : ℝ × Sphere => capFeature x p * capFeature y p)
       ((volume.restrict (Set.Icc (-1 : ℝ) 1)).prod sigma) := by
   have hfinite : IsFiniteMeasure
       ((volume.restrict (Set.Icc (-1 : ℝ) 1)).prod sigma) := inferInstance
   refine Integrable.mono (integrable_const (1 : ℝ))
-    ((CapDiscrepancy_measurable_capFeature x).mul (CapDiscrepancy_measurable_capFeature y)).aestronglyMeasurable ?_
+    ((measurable_capFeature x).mul (measurable_capFeature y)).aestronglyMeasurable ?_
   filter_upwards with p
-  dsimp [CapDiscrepancy_capFeature]
+  dsimp [capFeature]
   split_ifs <;> norm_num
 
 /-- Fubini is valid for the actual bounded cap-pair indicator. -/
@@ -25801,10 +25801,10 @@ theorem integral_two_caps_swap (x y : Sphere) :
     (∫ u : Sphere, (∫ t in Set.Icc (-1 : ℝ) 1,
       (if x ∈ cap u t then (1 : ℝ) else 0) *
         (if y ∈ cap u t then (1 : ℝ) else 0)) ∂sigma) := by
-  simpa only [CapDiscrepancy_capFeature] using (integral_integral_swap
+  simpa only [capFeature] using (integral_integral_swap
     (μ := volume.restrict (Set.Icc (-1 : ℝ) 1)) (ν := sigma)
-    (f := fun t u => CapDiscrepancy_capFeature x (t, u) * CapDiscrepancy_capFeature y (t, u))
-    (CapDiscrepancy_integrable_capFeature_pair x y))
+    (f := fun t u => capFeature x (t, u) * capFeature y (t, u))
+    (integrable_capFeature_pair x y))
 
 /-- The overlap kernel in the manuscript's original order of integration. -/
 theorem integral_two_caps_manuscript_order (x y : Sphere) :
@@ -25863,7 +25863,7 @@ theorem integrable_cap_pair_centers (x y : Sphere) (t : ℝ) :
     ((measurableSet_cap x t).inter (measurableSet_cap y t))
 
 /-- Centered second-moment identity for finitely many integrable features. -/
-private theorem CapDiscrepancy_integral_empirical_centered_sq {Ω ι : Type*} [MeasurableSpace Ω]
+private theorem integral_empirical_centered_sq {Ω ι : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] [Fintype ι] [Nonempty ι]
     (f : ι → Ω → ℝ) (p : ℝ)
     (hf : ∀ i, Integrable (f i) μ)
@@ -25948,7 +25948,7 @@ theorem integral_capError_sq_fixed_height {n : ℕ} (hn : 0 < n) (X : Fin n → 
     rw [show (∫ u, f i u ∂sigma) = (sigma (cap (X i) t)).toReal from
       integral_cap_indicator_centers (X i) t]
     exact capArea_formula (X i) ht
-  have h := CapDiscrepancy_integral_empirical_centered_sq sigma f ((1 - t) / 2) hf hf2 hmean
+  have h := integral_empirical_centered_sq sigma f ((1 - t) / 2) hf hf2 hmean
   have heq (u : Sphere) : capError X u t =
       (∑ i, f i u) / (n : ℝ) - (1 - t) / 2 := by
     simp [capError, f, capArea_formula u ht]
@@ -25959,9 +25959,9 @@ theorem integrable_cap_pair_heights (x y : Sphere) :
       (if x ∈ cap u t then (1 : ℝ) else 0) *
       (if y ∈ cap u t then (1 : ℝ) else 0) ∂sigma)
       (volume.restrict (Set.Icc (-1 : ℝ) 1)) := by
-  simpa only [CapDiscrepancy_capFeature] using (CapDiscrepancy_integrable_capFeature_pair x y).integral_prod_left
+  simpa only [capFeature] using (integrable_capFeature_pair x y).integral_prod_left
 
-private theorem CapDiscrepancy_integral_capArea_sq :
+private theorem integral_capArea_sq :
     (∫ t in Set.Icc (-1 : ℝ) 1, ((1 - t) / 2) ^ 2) = (2 / 3 : ℝ) := by
   rw [integral_Icc_eq_integral_Ioc,
     ← intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]
@@ -26020,7 +26020,7 @@ theorem stolarsky_identity (n : ℕ) (hn : 0 < n) (X : Fin n → Sphere) :
     integrable_finset_sum Finset.univ (fun j _ => integrable_cap_pair_heights (X i) (X j)))]
   simp_rw [integral_finset_sum Finset.univ (fun j _ => integrable_cap_pair_heights _ _)]
   simp_rw [integral_two_caps_manuscript_order]
-  rw [CapDiscrepancy_integral_capArea_sq, continuousEnergy_one]
+  rw [integral_capArea_sq, continuousEnergy_one]
   have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
   simp only [energy, pow_one]
   simp_rw [Finset.sum_sub_distrib]
@@ -26145,7 +26145,7 @@ namespace BEMOC.Definitive
 noncomputable def chordBinomialCoeff (m : ℕ) : ℝ :=
   -((-1 : ℝ) ^ m * Ring.choose (1 / 2 : ℝ) m)
 
-private theorem BinomialTail_chordBinomialCoeff_one : chordBinomialCoeff 1 = 1 / 2 := by
+private theorem chordBinomialCoeff_one : chordBinomialCoeff 1 = 1 / 2 := by
   norm_num [chordBinomialCoeff]
 
 /-- The coefficient recurrence, with its positive form after degree one. -/
@@ -26165,7 +26165,7 @@ theorem chordBinomialCoeff_succ (m : ℕ) (_hm : 1 ≤ m) :
 theorem chordBinomialCoeff_pos (m : ℕ) (hm : 1 ≤ m) :
     0 < chordBinomialCoeff m := by
   induction m, hm using Nat.le_induction with
-  | base => simp [BinomialTail_chordBinomialCoeff_one]
+  | base => simp [chordBinomialCoeff_one]
   | succ m hm ih =>
       have h := chordBinomialCoeff_succ m hm
       have hh : (1 : ℝ) ≤ m := by exact_mod_cast hm
@@ -26173,64 +26173,64 @@ theorem chordBinomialCoeff_pos (m : ℕ) (hm : 1 ≤ m) :
       have hden : (0 : ℝ) < m + 1 := by positivity
       nlinarith [mul_pos hfactor ih]
 
-private noncomputable def BinomialTail_chordWallisCoeff (m : ℕ) : ℝ :=
+private noncomputable def chordWallisCoeff (m : ℕ) : ℝ :=
   (2 * (m : ℝ) - 1) * chordBinomialCoeff m
 
-private theorem BinomialTail_chordWallisCoeff_one : BinomialTail_chordWallisCoeff 1 = 1 / 2 := by
-  norm_num [BinomialTail_chordWallisCoeff, BinomialTail_chordBinomialCoeff_one]
+private theorem chordWallisCoeff_one : chordWallisCoeff 1 = 1 / 2 := by
+  norm_num [chordWallisCoeff, chordBinomialCoeff_one]
 
-private theorem BinomialTail_chordWallisCoeff_pos (m : ℕ) (hm : 1 ≤ m) :
-    0 < BinomialTail_chordWallisCoeff m := by
-  unfold BinomialTail_chordWallisCoeff
+private theorem chordWallisCoeff_pos (m : ℕ) (hm : 1 ≤ m) :
+    0 < chordWallisCoeff m := by
+  unfold chordWallisCoeff
   have hh : (1 : ℝ) ≤ m := by exact_mod_cast hm
   exact mul_pos (by linarith) (chordBinomialCoeff_pos m hm)
 
-private theorem BinomialTail_chordWallisCoeff_succ (m : ℕ) (hm : 1 ≤ m) :
-    (2 * (m : ℝ) + 2) * BinomialTail_chordWallisCoeff (m + 1) =
-      (2 * (m : ℝ) + 1) * BinomialTail_chordWallisCoeff m := by
+private theorem chordWallisCoeff_succ (m : ℕ) (hm : 1 ≤ m) :
+    (2 * (m : ℝ) + 2) * chordWallisCoeff (m + 1) =
+      (2 * (m : ℝ) + 1) * chordWallisCoeff m := by
   have h := chordBinomialCoeff_succ m hm
-  unfold BinomialTail_chordWallisCoeff
+  unfold chordWallisCoeff
   push_cast
   nlinarith [h]
 
-private theorem BinomialTail_chordWallisCoeff_sq_lower (m : ℕ) (hm : 1 ≤ m) :
-    1 ≤ 4 * (m : ℝ) * BinomialTail_chordWallisCoeff m ^ 2 := by
+private theorem chordWallisCoeff_sq_lower (m : ℕ) (hm : 1 ≤ m) :
+    1 ≤ 4 * (m : ℝ) * chordWallisCoeff m ^ 2 := by
   induction m, hm using Nat.le_induction with
-  | base => norm_num [BinomialTail_chordWallisCoeff_one]
+  | base => norm_num [chordWallisCoeff_one]
   | succ m hm ih =>
-      have hrec := BinomialTail_chordWallisCoeff_succ m hm
-      have hb0 := BinomialTail_chordWallisCoeff_pos m hm
-      have hb1 := BinomialTail_chordWallisCoeff_pos (m + 1) (by omega)
+      have hrec := chordWallisCoeff_succ m hm
+      have hb0 := chordWallisCoeff_pos m hm
+      have hb1 := chordWallisCoeff_pos (m + 1) (by omega)
       have hm0 : (0 : ℝ) < m := by exact_mod_cast hm
       have hpoly : (m : ℝ) * (2 * m + 2) ^ 2 ≤
           (m + 1) * (2 * m + 1) ^ 2 := by nlinarith [sq_nonneg (m : ℝ)]
-      have hrec_sq : (2 * (m : ℝ) + 2) ^ 2 * BinomialTail_chordWallisCoeff (m + 1) ^ 2 =
-          (2 * (m : ℝ) + 1) ^ 2 * BinomialTail_chordWallisCoeff m ^ 2 := by nlinarith [congrArg (fun x : ℝ => x ^ 2) hrec]
-      have hcompare : (m : ℝ) * BinomialTail_chordWallisCoeff m ^ 2 ≤
-          (m + 1) * BinomialTail_chordWallisCoeff (m + 1) ^ 2 := by
-        have hsq0 : 0 ≤ BinomialTail_chordWallisCoeff m ^ 2 := sq_nonneg _
+      have hrec_sq : (2 * (m : ℝ) + 2) ^ 2 * chordWallisCoeff (m + 1) ^ 2 =
+          (2 * (m : ℝ) + 1) ^ 2 * chordWallisCoeff m ^ 2 := by nlinarith [congrArg (fun x : ℝ => x ^ 2) hrec]
+      have hcompare : (m : ℝ) * chordWallisCoeff m ^ 2 ≤
+          (m + 1) * chordWallisCoeff (m + 1) ^ 2 := by
+        have hsq0 : 0 ≤ chordWallisCoeff m ^ 2 := sq_nonneg _
         have hmul := mul_le_mul_of_nonneg_right hpoly hsq0
         nlinarith
       push_cast
       nlinarith
 
-private theorem BinomialTail_chordWallisCoeff_sq_upper (m : ℕ) (hm : 1 ≤ m) :
-    (m + 1 : ℝ) * BinomialTail_chordWallisCoeff m ^ 2 ≤ 1 := by
+private theorem chordWallisCoeff_sq_upper (m : ℕ) (hm : 1 ≤ m) :
+    (m + 1 : ℝ) * chordWallisCoeff m ^ 2 ≤ 1 := by
   induction m, hm using Nat.le_induction with
-  | base => norm_num [BinomialTail_chordWallisCoeff_one]
+  | base => norm_num [chordWallisCoeff_one]
   | succ m hm ih =>
-      have hrec := BinomialTail_chordWallisCoeff_succ m hm
-      have hb0 := BinomialTail_chordWallisCoeff_pos m hm
-      have hb1 := BinomialTail_chordWallisCoeff_pos (m + 1) (by omega)
+      have hrec := chordWallisCoeff_succ m hm
+      have hb0 := chordWallisCoeff_pos m hm
+      have hb1 := chordWallisCoeff_pos (m + 1) (by omega)
       have hm0 : (0 : ℝ) < m := by exact_mod_cast hm
       have hpoly : (m + 2 : ℝ) * (2 * m + 1) ^ 2 ≤
           (m + 1) * (2 * m + 2) ^ 2 := by nlinarith [sq_nonneg (m : ℝ)]
-      have hrec_sq : (2 * (m : ℝ) + 2) ^ 2 * BinomialTail_chordWallisCoeff (m + 1) ^ 2 =
-          (2 * (m : ℝ) + 1) ^ 2 * BinomialTail_chordWallisCoeff m ^ 2 := by
+      have hrec_sq : (2 * (m : ℝ) + 2) ^ 2 * chordWallisCoeff (m + 1) ^ 2 =
+          (2 * (m : ℝ) + 1) ^ 2 * chordWallisCoeff m ^ 2 := by
         nlinarith [congrArg (fun x : ℝ => x ^ 2) hrec]
-      have hcompare : (m + 2 : ℝ) * BinomialTail_chordWallisCoeff (m + 1) ^ 2 ≤
-          (m + 1) * BinomialTail_chordWallisCoeff m ^ 2 := by
-        have hsq0 : 0 ≤ BinomialTail_chordWallisCoeff m ^ 2 := sq_nonneg _
+      have hcompare : (m + 2 : ℝ) * chordWallisCoeff (m + 1) ^ 2 ≤
+          (m + 1) * chordWallisCoeff m ^ 2 := by
+        have hsq0 : 0 ≤ chordWallisCoeff m ^ 2 := sq_nonneg _
         have hmul := mul_le_mul_of_nonneg_right hpoly hsq0
         nlinarith
       push_cast
@@ -26244,8 +26244,8 @@ theorem chordBinomialCoeff_upper (m : ℕ) (hm : 1 ≤ m) :
   have hsqrt : 0 < Real.sqrt (m : ℝ) := Real.sqrt_pos.2 hm0
   have hsqroot : (Real.sqrt (m : ℝ)) ^ 2 = m := Real.sq_sqrt hm0.le
   have ha := chordBinomialCoeff_pos m hm
-  have hb := BinomialTail_chordWallisCoeff_sq_upper m hm
-  unfold BinomialTail_chordWallisCoeff at hb
+  have hb := chordWallisCoeff_sq_upper m hm
+  unfold chordWallisCoeff at hb
   have hfactor : (m : ℝ) ^ 2 ≤ (2 * m - 1) ^ 2 := by nlinarith
   have hsqnonneg : 0 ≤ (m : ℝ) * chordBinomialCoeff m ^ 2 := by positivity
   have hmul := mul_le_mul_of_nonneg_right hfactor hsqnonneg
@@ -26263,8 +26263,8 @@ theorem chordBinomialCoeff_lower (m : ℕ) (hm : 1 ≤ m) :
   have hsqrt : 0 < Real.sqrt (m : ℝ) := Real.sqrt_pos.2 hm0
   have hsqroot : (Real.sqrt (m : ℝ)) ^ 2 = m := Real.sq_sqrt hm0.le
   have ha := chordBinomialCoeff_pos m hm
-  have hb := BinomialTail_chordWallisCoeff_sq_lower m hm
-  unfold BinomialTail_chordWallisCoeff at hb
+  have hb := chordWallisCoeff_sq_lower m hm
+  unfold chordWallisCoeff at hb
   have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast hm
   have hfactor : (2 * (m : ℝ) - 1) ^ 2 ≤ 4 * (m : ℝ) ^ 2 := by nlinarith
   have hsqnonneg : 0 ≤ (m : ℝ) * chordBinomialCoeff m ^ 2 := by positivity
@@ -26391,7 +26391,7 @@ theorem sphereHeight_odd_moment (r : ℕ) :
   rw [integral_pow]
   simp [pow_add, pow_mul]
 
-private theorem CapLowerBound_inner_northPole_eq_height_moment (x : Sphere) :
+private theorem inner_northPole_eq_height_moment (x : Sphere) :
     @Inner.inner ℝ Ambient _ (x : Ambient) (northPole : Ambient) = sphereHeight x := by
   simp [northPole, parallelPoint, parallelVector, sphereHeight,
     EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Fin.sum_univ_succ]
@@ -26413,7 +26413,7 @@ theorem sphere_projection_power_eq_height (u : Sphere) (m : ℕ) :
   rw [sigma_reflection_invariant ((u : Ambient) - (northPole : Ambient))] at hmap
   have hpoint (x : Sphere) :
       sphereHeight (e x) = @Inner.inner ℝ Ambient _ (u : Ambient) (x : Ambient) := by
-    rw [← CapLowerBound_inner_northPole_eq_height_moment (e x)]
+    rw [← inner_northPole_eq_height_moment (e x)]
     change @Inner.inner ℝ Ambient _ (R (x : Ambient)) (northPole : Ambient) = _
     rw [← hRu, R.inner_map_map]
     exact (real_inner_comm (x : Ambient) (u : Ambient)).symm
@@ -27085,24 +27085,24 @@ theorem chordRegularized_deficit_even_block_lower {n : ℕ} (hn : 0 < n)
   filter_upwards [Filter.eventually_ge_atTop (4 * n)] with M hM
   exact chordPartial_deficit_even_block_lower hn X hρ M hM
 
-private noncomputable def CapLowerBound_beckRho (k : ℕ) : ℝ := (k : ℝ) / (k + 1)
+private noncomputable def beckRho (k : ℕ) : ℝ := (k : ℝ) / (k + 1)
 
-private theorem CapLowerBound_beckRho_nonneg (k : ℕ) : 0 ≤ CapLowerBound_beckRho k := by
-  unfold CapLowerBound_beckRho
+private theorem beckRho_nonneg (k : ℕ) : 0 ≤ beckRho k := by
+  unfold beckRho
   positivity
 
-private theorem CapLowerBound_beckRho_lt_one (k : ℕ) : CapLowerBound_beckRho k < 1 := by
-  unfold CapLowerBound_beckRho
+private theorem beckRho_lt_one (k : ℕ) : beckRho k < 1 := by
+  unfold beckRho
   apply (div_lt_iff₀ (by positivity : 0 < (k : ℝ) + 1)).2
   linarith
 
-private theorem CapLowerBound_beckRho_tendsto_one :
-    Filter.Tendsto CapLowerBound_beckRho Filter.atTop (_root_.nhds (1 : ℝ)) := by
+private theorem beckRho_tendsto_one :
+    Filter.Tendsto beckRho Filter.atTop (_root_.nhds (1 : ℝ)) := by
   have h := RCLike.tendsto_add_mul_div_add_mul_atTop_nhds
     (𝕜 := ℝ) 0 1 1 (d := 1) one_ne_zero
-  simpa [CapLowerBound_beckRho, add_comm, mul_comm] using h
+  simpa [beckRho, add_comm, mul_comm] using h
 
-private theorem CapLowerBound_chordRegularizedKernel_norm_le_two {ρ : ℝ}
+private theorem chordRegularizedKernel_norm_le_two {ρ : ℝ}
     (hρ : 0 ≤ ρ) (hρ1 : ρ ≤ 1) (x y : Sphere) :
     ‖chordRegularizedKernel ρ x y‖ ≤ 2 := by
   have hinner := sphereInnerKernel_abs_le_one x y
@@ -27122,7 +27122,7 @@ private theorem CapLowerBound_chordRegularizedKernel_norm_le_two {ρ : ℝ}
   rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg (Real.sqrt_nonneg _) hsqrt)]
   nlinarith [mul_nonneg (Real.sqrt_nonneg 2) hsqrt]
 
-private theorem CapLowerBound_continuous_chordRegularizedKernel_rho (x y : Sphere) :
+private theorem continuous_chordRegularizedKernel_rho (x y : Sphere) :
     Continuous (fun ρ : ℝ ↦ chordRegularizedKernel ρ x y) := by
   unfold chordRegularizedKernel
   exact continuous_const.mul (Real.continuous_sqrt.comp
@@ -27131,20 +27131,20 @@ private theorem CapLowerBound_continuous_chordRegularizedKernel_rho (x y : Spher
 /-- Pair energies of regularized kernels converge as `ρ ↑ 1`. -/
 theorem kernelPairEnergy_chordRegularized_tendsto_one
     (μ ν : Measure Sphere) [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
-    Filter.Tendsto (fun k ↦ kernelPairEnergy (chordRegularizedKernel (CapLowerBound_beckRho k)) μ ν)
+    Filter.Tendsto (fun k ↦ kernelPairEnergy (chordRegularizedKernel (beckRho k)) μ ν)
       Filter.atTop (_root_.nhds (kernelPairEnergy (chordRegularizedKernel 1) μ ν)) := by
   simp_rw [kernelPairEnergy_eq_integral_prod μ ν
     (continuous_chordRegularizedKernel_prod _)]
   apply MeasureTheory.tendsto_integral_filter_of_norm_le_const
   · exact Filter.Eventually.of_forall fun k ↦
-      (continuous_chordRegularizedKernel_prod (CapLowerBound_beckRho k)).aestronglyMeasurable
+      (continuous_chordRegularizedKernel_prod (beckRho k)).aestronglyMeasurable
   · refine ⟨2, Filter.Eventually.of_forall fun k ↦ ?_⟩
     exact Filter.Eventually.of_forall fun p ↦
-      CapLowerBound_chordRegularizedKernel_norm_le_two (CapLowerBound_beckRho_nonneg k)
-        (CapLowerBound_beckRho_lt_one k).le p.1 p.2
+      chordRegularizedKernel_norm_le_two (beckRho_nonneg k)
+        (beckRho_lt_one k).le p.1 p.2
   · exact Filter.Eventually.of_forall fun p ↦
-      ((CapLowerBound_continuous_chordRegularizedKernel_rho p.1 p.2).tendsto 1).comp
-        CapLowerBound_beckRho_tendsto_one
+      ((continuous_chordRegularizedKernel_rho p.1 p.2).tendsto 1).comp
+        beckRho_tendsto_one
 
 /-- At the endpoint the regularized kernel is chordal distance. -/
 theorem chordRegularizedKernel_one (x y : Sphere) :
@@ -27187,14 +27187,14 @@ theorem distance_deficit_even_block_lower {n : ℕ} (hn : 0 < n)
     apply continuous_finset_sum
     intro r hr
     exact continuous_const.mul (continuous_id.pow _)
-  have hL := (hcont.tendsto 1).comp CapLowerBound_beckRho_tendsto_one
+  have hL := (hcont.tendsto 1).comp beckRho_tendsto_one
   have hR := (kernelPairEnergy_chordRegularized_tendsto_one
     ((n : ENNReal) • sigma) ((n : ENNReal) • sigma)).sub
     (kernelPairEnergy_chordRegularized_tendsto_one
       (empiricalSphereMeasure X) (empiricalSphereMeasure X))
   have hbound := le_of_tendsto_of_tendsto' hL hR (fun k ↦
     chordRegularized_deficit_even_block_lower hn X
-      (CapLowerBound_beckRho_nonneg k) (CapLowerBound_beckRho_lt_one k))
+      (beckRho_nonneg k) (beckRho_lt_one k))
   simp only [one_pow, mul_one] at hbound
   simpa only [kernelPairEnergy, chordRegularizedKernel_one] using hbound
 
@@ -28160,7 +28160,7 @@ theorem sigma_antipodal_invariant :
   norm_num
 
 /-- Each monomial scales by its total degree when all coordinates scale. -/
-private theorem HarmonicOrthogonality_monomial_eval_scaled (d : Fin 3 →₀ ℕ) (c : ℝ)
+private theorem monomial_eval_scaled (d : Fin 3 →₀ ℕ) (c : ℝ)
     (x : Fin 3 → ℝ) :
     d.prod (fun i e => (c * x i) ^ e) =
       c ^ d.degree * d.prod (fun i e => x i ^ e) := by
@@ -28184,7 +28184,7 @@ theorem homogeneous_eval_scaled {m : ℕ} {p : MvPolynomial (Fin 3) ℝ}
   apply Finset.sum_congr rfl
   intro d hd
   rw [MvPolynomial.eval_monomial, MvPolynomial.eval_monomial,
-    HarmonicOrthogonality_monomial_eval_scaled]
+    monomial_eval_scaled]
   have hdeg : d.degree = m := by
     simpa [Finsupp.degree_eq_weight_one] using
       hp (MvPolynomial.mem_support_iff.mp hd)
@@ -28227,15 +28227,15 @@ theorem homogeneous_restrictions_orthogonal_of_odd_sum
   rw [integral_const_mul, Odd.neg_one_pow hodd] at hmap
   linarith
 
-private theorem HarmonicOrthogonality_restrictPolynomial_mul_apply (p q : Poly3) (x : Sphere) :
+private theorem restrictPolynomial_mul_apply (p q : Poly3) (x : Sphere) :
     restrictPolynomial (p * q) x = restrictPolynomial p x * restrictPolynomial q x := by
   simp [restrictPolynomial_apply]
 
-private theorem HarmonicOrthogonality_restrictPolynomial_add_apply (p q : Poly3) (x : Sphere) :
+private theorem restrictPolynomial_add_apply (p q : Poly3) (x : Sphere) :
     restrictPolynomial (p + q) x = restrictPolynomial p x + restrictPolynomial q x := by
   simp [restrictPolynomial_apply]
 
-private theorem HarmonicOrthogonality_restrictPolynomial_smul_apply (c : ℝ) (p : Poly3) (x : Sphere) :
+private theorem restrictPolynomial_smul_apply (c : ℝ) (p : Poly3) (x : Sphere) :
     restrictPolynomial (c • p) x = c * restrictPolynomial p x := by
   simp [restrictPolynomial_apply, smul_eq_mul]
 
@@ -28256,7 +28256,7 @@ theorem harmonic_restrictions_orthogonal_of_angular_integral_zero
         restrictPolynomial (angularDerivation i j b) x ∂sigma) := by
     have h := hrotation i j (a * b)
     rw [angularDerivation_mul] at h
-    simp_rw [HarmonicOrthogonality_restrictPolynomial_add_apply, HarmonicOrthogonality_restrictPolynomial_mul_apply] at h
+    simp_rw [restrictPolynomial_add_apply, restrictPolynomial_mul_apply] at h
     rw [integral_add] at h
     · linarith
     · exact (restrictPolynomial (angularDerivation i j a) * restrictPolynomial b).continuous.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)
@@ -28282,7 +28282,7 @@ theorem harmonic_restrictions_orthogonal_of_angular_integral_zero
     let F := angularDerivation 1 2 (angularDerivation 1 2 q)
     change (∫ x : Sphere, restrictPolynomial (A + B + C) x * restrictPolynomial q x ∂sigma) =
       ∫ x : Sphere, restrictPolynomial p x * restrictPolynomial (D + E + F) x ∂sigma
-    simp_rw [HarmonicOrthogonality_restrictPolynomial_add_apply, add_mul, mul_add]
+    simp_rw [restrictPolynomial_add_apply, add_mul, mul_add]
     have hint (a b : Poly3) :
         Integrable (fun x : Sphere => restrictPolynomial a x * restrictPolynomial b x) sigma :=
       (restrictPolynomial a * restrictPolynomial b).continuous.integrable_of_hasCompactSupport
@@ -28321,7 +28321,7 @@ theorem harmonic_restrictions_orthogonal_of_angular_integral_zero
   obtain ⟨hqhom, hqlap⟩ := mem_harmonicPolynomialSubmodule.mp hq
   rw [angularCasimir_harmonic hphom hplap,
     angularCasimir_harmonic hqhom hqlap] at hcas
-  simp_rw [HarmonicOrthogonality_restrictPolynomial_smul_apply] at hcas
+  simp_rw [restrictPolynomial_smul_apply] at hcas
   have hcas' :
       (-(m : ℝ) * (m + 1)) *
           (∫ x : Sphere, restrictPolynomial p x * restrictPolynomial q x ∂sigma) =
@@ -29493,7 +29493,7 @@ theorem centeredDistanceKernel_average {n : ℕ} (hn : 0 < n)
   field_simp
   ring
 
-private theorem SobolevKernel_finite_basis_quadratic_identity {ι κ : Type}
+private theorem finite_basis_quadratic_identity {ι κ : Type}
     [Fintype ι] [Fintype κ] (F : κ → ι → ℝ) :
     (∑ i, ∑ j, ∑ k, F k i * F k j) =
       ∑ k, (∑ i, F k i) ^ 2 := by
@@ -29629,7 +29629,7 @@ theorem distanceCoefficient_weighted_tsum_le_energy {s : ℝ}
 
 /-- Bernoulli's inequality supplies the sharp power-law comparison for one
 step of the Pochhammer quotient. -/
-private theorem SobolevKernel_distance_ratio_power_step {s t : ℝ}
+private theorem distance_ratio_power_step {s t : ℝ}
     (hs : 1 < s) (ht : 0 < t) :
     t ^ (2 * s) ≤ (t / (t + 2 * s)) * (t + 1) ^ (2 * s) := by
   have hden : 0 < t + 2 * s := by linarith
@@ -29667,7 +29667,7 @@ theorem distanceHarmonicCoefficient_scaled_lower {s : ℝ}
     have ht : 0 < (ℓ : ℝ) + 2 - s := by
       have : (0 : ℝ) ≤ ℓ := Nat.cast_nonneg ℓ
       linarith
-    have hstep := SobolevKernel_distance_ratio_power_step hs1 ht
+    have hstep := distance_ratio_power_step hs1 ht
     have hcoef := (distanceHarmonicCoefficient_pos hs1 hs2 (ℓ + 1)).le
     have hmono :
         distanceHarmonicCoefficient s (ℓ + 1) *
@@ -29880,20 +29880,20 @@ theorem summable_sobolevNormTerm_partialRemainder (Y : HarmonicBasis)
   rw [sobolevNormTerm_partialRemainder]
   simp [not_lt.mpr hm]
 
-private theorem SobolevKernel_spectralWeight_half_mul (b s : ℝ) (hb : 0 < b) :
+private theorem spectralWeight_half_mul (b s : ℝ) (hb : 0 < b) :
     b ^ (s / 2) * b ^ (-s / 2) = 1 := by
   rw [← Real.rpow_add hb]
   have : s / 2 + -s / 2 = 0 := by ring
   simp [this]
 
-private theorem SobolevKernel_spectralWeight_half_sq (b s : ℝ) (hb : 0 < b) :
+private theorem spectralWeight_half_sq (b s : ℝ) (hb : 0 < b) :
     (b ^ (s / 2)) ^ 2 = b ^ s := by
   rw [← Real.rpow_natCast]
   rw [← Real.rpow_mul hb.le]
   congr 1
   ring
 
-private theorem SobolevKernel_spectralWeight_half_neg_sq (b s : ℝ) (hb : 0 < b) :
+private theorem spectralWeight_half_neg_sq (b s : ℝ) (hb : 0 < b) :
     (b ^ (-s / 2)) ^ 2 = b ^ (-s) := by
   rw [← Real.rpow_natCast]
   rw [← Real.rpow_mul hb.le]
@@ -29902,7 +29902,7 @@ private theorem SobolevKernel_spectralWeight_half_neg_sq (b s : ℝ) (hb : 0 < b
 
 /-- Finite weighted Cauchy–Schwarz, with the same `b^s`/`b^(-s)` weights
 as the Sobolev norm and canonical quadrature spectrum. -/
-private theorem SobolevKernel_finite_weighted_cauchy {κ : Type} (S : Finset κ)
+private theorem finite_weighted_cauchy {κ : Type} (S : Finset κ)
     (w a b : κ → ℝ) (s : ℝ) (hw : ∀ i ∈ S, 0 < w i) :
     (∑ i ∈ S, a i * b i) ^ 2 ≤
       (∑ i ∈ S, (w i) ^ s * (a i) ^ 2) *
@@ -29913,7 +29913,7 @@ private theorem SobolevKernel_finite_weighted_cauchy {κ : Type} (S : Finset κ)
     apply Finset.sum_congr rfl
     intro i hi
     dsimp [u, v]
-    have h := SobolevKernel_spectralWeight_half_mul (w i) s (hw i hi)
+    have h := spectralWeight_half_mul (w i) s (hw i hi)
     calc
       (w i) ^ (s / 2) * a i * ((w i) ^ (-s / 2) * b i) =
           ((w i) ^ (s / 2) * (w i) ^ (-s / 2)) * (a i * b i) := by ring
@@ -29922,12 +29922,12 @@ private theorem SobolevKernel_finite_weighted_cauchy {κ : Type} (S : Finset κ)
       ∑ i ∈ S, (w i) ^ s * (a i) ^ 2 := by
     apply Finset.sum_congr rfl
     intro i hi
-    simp [u, mul_pow, SobolevKernel_spectralWeight_half_sq (w i) s (hw i hi)]
+    simp [u, mul_pow, spectralWeight_half_sq (w i) s (hw i hi)]
   have hv : (∑ i ∈ S, v i ^ 2) =
       ∑ i ∈ S, (w i) ^ (-s) * (b i) ^ 2 := by
     apply Finset.sum_congr rfl
     intro i hi
-    simp [v, mul_pow, SobolevKernel_spectralWeight_half_neg_sq (w i) s (hw i hi)]
+    simp [v, mul_pow, spectralWeight_half_neg_sq (w i) s (hw i hi)]
   rw [← hprod, ← hu, ← hv]
   exact Finset.sum_mul_sq_le_sq_mul_sq S u v
 
@@ -29950,7 +29950,7 @@ theorem finite_spectral_cauchy {ι : Type} [Fintype ι]
     intro i hi
     dsimp [w]
     positivity
-  have h := SobolevKernel_finite_weighted_cauchy S w a b s hw
+  have h := finite_weighted_cauchy S w a b s hw
   simpa only [S, w, a, b, Finset.sum_sigma, sobolevNormTerm,
     spectralErrorTerm, ← Finset.mul_sum] using h
 
@@ -29984,7 +29984,7 @@ theorem finite_spectral_eval_cauchy (Y : HarmonicBasis) (s : ℝ)
     intro i hi
     dsimp [w]
     positivity
-  have h := SobolevKernel_finite_weighted_cauchy S w a b s hw
+  have h := finite_weighted_cauchy S w a b s hw
   simpa only [S, w, a, b, Finset.sum_sigma, sobolevNormTerm,
     spectralEvalTerm, ← Finset.mul_sum] using h
 
@@ -30006,7 +30006,7 @@ theorem finite_spectral_eval_cauchy_finset (Y : HarmonicBasis) (s : ℝ)
     intro i hi
     dsimp [w]
     positivity
-  have h := SobolevKernel_finite_weighted_cauchy S w a b s hw
+  have h := finite_weighted_cauchy S w a b s hw
   simpa only [S, w, a, b, Finset.sum_sigma, sobolevNormTerm,
     spectralEvalTerm, ← Finset.mul_sum] using h
 
@@ -30091,7 +30091,7 @@ theorem distanceKernelDegree_average {n : ℕ} (hn : 0 < n)
           ∑ k, (∑ i, Y.function (ℓ + 1) k (X i)) ^ 2 := by
     simp only [distanceKernelDegree]
     simp_rw [← Finset.mul_sum]
-    rw [SobolevKernel_finite_basis_quadratic_identity]
+    rw [finite_basis_quadratic_identity]
   rw [hsum]
   unfold distanceErrorTerm
   simp_rw [harmonicQuadratureCoefficient_pos_degree Y X (ℓ + 1) (Nat.zero_lt_succ ℓ)]
@@ -30674,7 +30674,7 @@ theorem legendreRodrigues_endpoint_vanish (ℓ r : ℕ) (hr : r < ℓ)
     Polynomial.dvd_iff_isRoot.mp (hqdiv.trans hder)
   exact hrootder
 
-private theorem DistanceZonal_legendre_interval_moment_derivative (p : Polynomial ℝ) (m : ℕ)
+private theorem legendre_interval_moment_derivative (p : Polynomial ℝ) (m : ℕ)
     (hp1 : p.eval 1 = 0) (hpm1 : p.eval (-1) = 0) :
     (∫ t : ℝ in (-1)..1, t ^ m * p.derivative.eval t) =
       -(m : ℝ) * (∫ t : ℝ in (-1)..1, t ^ (m - 1) * p.eval t) := by
@@ -30714,7 +30714,7 @@ theorem legendreRodrigues_interval_moment (ℓ r : ℕ) (hr : r ≤ ℓ)
         legendreRodrigues_endpoint_vanish ℓ r hrlt (-1) (by norm_num)
       rw [Function.iterate_succ_apply']
       change (∫ t : ℝ in (-1)..1, t ^ m * p.derivative.eval t) = _
-      rw [DistanceZonal_legendre_interval_moment_derivative p m hp1 hpm1]
+      rw [legendre_interval_moment_derivative p m hp1 hpm1]
       have hrec := ih (by omega : r ≤ ℓ) (m - 1)
       change (∫ t : ℝ in (-1)..1, t ^ (m - 1) * p.eval t) = _ at hrec
       rw [hrec]
@@ -30817,19 +30817,19 @@ section
 open scoped BigOperators
 namespace BEMOC.Definitive
 
-private noncomputable def HarmonicPullback_orthogonalCoordinate (T : Ambient ≃ₗᵢ[ℝ] Ambient)
+private noncomputable def orthogonalCoordinate (T : Ambient ≃ₗᵢ[ℝ] Ambient)
     (j : Fin 3) : MvPolynomial (Fin 3) ℝ :=
   ∑ i : Fin 3, MvPolynomial.C ((T (EuclideanSpace.single i 1)) j) * MvPolynomial.X i
 
 /-- Polynomial substitution by an ambient orthogonal transformation. -/
 noncomputable def orthogonalPolynomialPullback (T : Ambient ≃ₗᵢ[ℝ] Ambient)
     (p : MvPolynomial (Fin 3) ℝ) : MvPolynomial (Fin 3) ℝ :=
-  MvPolynomial.aeval (HarmonicPullback_orthogonalCoordinate T) p
+  MvPolynomial.aeval (orthogonalCoordinate T) p
 
-private theorem HarmonicPullback_orthogonalCoordinate_eval (T : Ambient ≃ₗᵢ[ℝ] Ambient)
+private theorem orthogonalCoordinate_eval (T : Ambient ≃ₗᵢ[ℝ] Ambient)
     (x : Ambient) (j : Fin 3) :
-    MvPolynomial.eval (fun i => x i) (HarmonicPullback_orthogonalCoordinate T j) = (T x) j := by
-  simp only [HarmonicPullback_orthogonalCoordinate, map_sum, MvPolynomial.eval_mul,
+    MvPolynomial.eval (fun i => x i) (orthogonalCoordinate T j) = (T x) j := by
+  simp only [orthogonalCoordinate, map_sum, MvPolynomial.eval_mul,
     MvPolynomial.eval_C, MvPolynomial.eval_X]
   have hx : x = ∑ i : Fin 3, x i • EuclideanSpace.single i 1 := by
     ext k
@@ -30855,11 +30855,11 @@ theorem orthogonalPolynomialPullback_eval (T : Ambient ≃ₗᵢ[ℝ] Ambient)
     ext c
     simp
   rw [hring]
-  simp only [HarmonicPullback_orthogonalCoordinate_eval, MvPolynomial.eval₂_id]
+  simp only [orthogonalCoordinate_eval, MvPolynomial.eval₂_id]
 
-private theorem HarmonicPullback_orthogonalCoordinate_isHomogeneous (T : Ambient ≃ₗᵢ[ℝ] Ambient)
-    (j : Fin 3) : (HarmonicPullback_orthogonalCoordinate T j).IsHomogeneous 1 := by
-  unfold HarmonicPullback_orthogonalCoordinate
+private theorem orthogonalCoordinate_isHomogeneous (T : Ambient ≃ₗᵢ[ℝ] Ambient)
+    (j : Fin 3) : (orthogonalCoordinate T j).IsHomogeneous 1 := by
+  unfold orthogonalCoordinate
   apply MvPolynomial.IsHomogeneous.sum
   intro i _
   exact MvPolynomial.isHomogeneous_C_mul_X _ _
@@ -30869,18 +30869,18 @@ theorem orthogonalPolynomialPullback_isHomogeneous (T : Ambient ≃ₗᵢ[ℝ] A
     {ℓ : ℕ} {p : MvPolynomial (Fin 3) ℝ} (hp : p.IsHomogeneous ℓ) :
     (orthogonalPolynomialPullback T p).IsHomogeneous ℓ := by
   simpa [orthogonalPolynomialPullback] using
-    hp.aeval (HarmonicPullback_orthogonalCoordinate T) (HarmonicPullback_orthogonalCoordinate_isHomogeneous T)
+    hp.aeval (orthogonalCoordinate T) (orthogonalCoordinate_isHomogeneous T)
 
-private theorem HarmonicPullback_pderiv_orthogonalCoordinate (T : Ambient ≃ₗᵢ[ℝ] Ambient)
+private theorem pderiv_orthogonalCoordinate (T : Ambient ≃ₗᵢ[ℝ] Ambient)
     (i j : Fin 3) :
-    MvPolynomial.pderiv i (HarmonicPullback_orthogonalCoordinate T j) =
+    MvPolynomial.pderiv i (orthogonalCoordinate T j) =
       MvPolynomial.C ((T (EuclideanSpace.single i 1)) j) := by
   classical
-  simp only [HarmonicPullback_orthogonalCoordinate, map_sum, MvPolynomial.pderiv_C_mul,
+  simp only [orthogonalCoordinate, map_sum, MvPolynomial.pderiv_C_mul,
     MvPolynomial.pderiv_X]
   simp [Pi.single_apply, Finset.sum_ite_eq', eq_comm]
 
-private theorem HarmonicPullback_fin3_sum_ite_add (A B : Fin 3 → MvPolynomial (Fin 3) ℝ)
+private theorem fin3_sum_ite_add (A B : Fin 3 → MvPolynomial (Fin 3) ℝ)
     (j : Fin 3) :
     (∑ x : Fin 3, if j = x then A x + B x else A x) =
       (∑ x : Fin 3, A x) + B j := by
@@ -30894,7 +30894,7 @@ private theorem HarmonicPullback_fin3_sum_ite_add (A B : Fin 3 → MvPolynomial 
       rw [Finset.sum_add_distrib]
       simp [Finset.sum_ite_eq', eq_comm]
 
-private theorem HarmonicPullback_pderiv_orthogonalPolynomialPullback
+private theorem pderiv_orthogonalPolynomialPullback
     (T : Ambient ≃ₗᵢ[ℝ] Ambient) (i : Fin 3)
     (p : MvPolynomial (Fin 3) ℝ) :
     MvPolynomial.pderiv i (orthogonalPolynomialPullback T p) =
@@ -30912,14 +30912,14 @@ private theorem HarmonicPullback_pderiv_orthogonalPolynomialPullback
       simp only [orthogonalPolynomialPullback, map_mul, MvPolynomial.aeval_X,
         MvPolynomial.pderiv_mul, MvPolynomial.pderiv_X,
         map_add, map_mul, mul_add] at hp ⊢
-      rw [hp, HarmonicPullback_pderiv_orthogonalCoordinate]
+      rw [hp, pderiv_orthogonalCoordinate]
       simp_rw [Pi.single_apply]
       simp only [apply_ite, map_one, map_zero]
       simp only [mul_one, mul_zero, add_zero]
-      rw [HarmonicPullback_fin3_sum_ite_add]
+      rw [fin3_sum_ite_add]
       simp [Finset.mul_sum, mul_assoc, mul_comm, mul_left_comm]
 
-private theorem HarmonicPullback_orthogonal_matrix_coeff_transpose
+private theorem orthogonal_matrix_coeff_transpose
     (T : Ambient ≃ₗᵢ[ℝ] Ambient) (i j : Fin 3) :
     (T (EuclideanSpace.single i 1)) j =
       (T.symm (EuclideanSpace.single j 1)) i := by
@@ -30928,11 +30928,11 @@ private theorem HarmonicPullback_orthogonal_matrix_coeff_transpose
   simpa [EuclideanSpace.inner_single_left, EuclideanSpace.inner_single_right,
     real_inner_comm] using h
 
-private theorem HarmonicPullback_orthogonal_matrix_coeff_sum
+private theorem orthogonal_matrix_coeff_sum
     (T : Ambient ≃ₗᵢ[ℝ] Ambient) (j k : Fin 3) :
     (∑ i : Fin 3, (T (EuclideanSpace.single i 1)) j *
       (T (EuclideanSpace.single i 1)) k) = if j = k then 1 else 0 := by
-  simp_rw [HarmonicPullback_orthogonal_matrix_coeff_transpose T]
+  simp_rw [orthogonal_matrix_coeff_transpose T]
   have h := T.symm.inner_map_map
     (EuclideanSpace.single j 1) (EuclideanSpace.single k 1)
   rw [EuclideanSpace.inner_eq_star_dotProduct] at h
@@ -30954,7 +30954,7 @@ theorem polynomialLaplacian_orthogonalPolynomialPullback
       ∑ k : Fin 3, MvPolynomial.C (e i j * e i k) *
         orthogonalPolynomialPullback T
           (MvPolynomial.pderiv k (MvPolynomial.pderiv j p)) := by
-    rw [MvPolynomial.pderiv_C_mul, HarmonicPullback_pderiv_orthogonalPolynomialPullback]
+    rw [MvPolynomial.pderiv_C_mul, pderiv_orthogonalPolynomialPullback]
     simp only [e, Finset.mul_sum, ← mul_assoc, ← MvPolynomial.C_mul]
   calc
     polynomialLaplacian (orthogonalPolynomialPullback T p) =
@@ -30962,7 +30962,7 @@ theorem polynomialLaplacian_orthogonalPolynomialPullback
           MvPolynomial.C (e i j * e i k) *
             orthogonalPolynomialPullback T
               (MvPolynomial.pderiv k (MvPolynomial.pderiv j p)) := by
-      simp only [polynomialLaplacian, HarmonicPullback_pderiv_orthogonalPolynomialPullback,
+      simp only [polynomialLaplacian, pderiv_orthogonalPolynomialPullback,
         map_sum, hderiv, e]
     _ = ∑ j : Fin 3, ∑ k : Fin 3,
           MvPolynomial.C (∑ i : Fin 3, e i j * e i k) *
@@ -30976,7 +30976,7 @@ theorem polynomialLaplacian_orthogonalPolynomialPullback
       intro k _
       simp only [← Finset.sum_mul, ← map_sum]
     _ = orthogonalPolynomialPullback T (polynomialLaplacian p) := by
-      simp only [e, HarmonicPullback_orthogonal_matrix_coeff_sum, polynomialLaplacian]
+      simp only [e, orthogonal_matrix_coeff_sum, polynomialLaplacian]
       simp only [map_sum, orthogonalPolynomialPullback]
       apply Finset.sum_congr rfl
       intro j _
@@ -31520,7 +31520,7 @@ open MeasureTheory
 
 namespace BEMOC.Definitive
 
-private theorem DistanceScalarUniqueness_interval_integrable_mul_polynomial
+private theorem interval_integrable_mul_polynomial
     {h : ℝ → ℝ} (hh : ContinuousOn h (Set.Icc (-1 : ℝ) 1))
     (p : Polynomial ℝ) :
     IntervalIntegrable (fun t => h t * p.eval t) volume (-1) 1 := by
@@ -31537,8 +31537,8 @@ noncomputable def intervalPolynomialMomentLinearMap
     intro p q
     simp only [Polynomial.eval_add, mul_add]
     exact intervalIntegral.integral_add
-      (DistanceScalarUniqueness_interval_integrable_mul_polynomial hh p)
-      (DistanceScalarUniqueness_interval_integrable_mul_polynomial hh q)
+      (interval_integrable_mul_polynomial hh p)
+      (interval_integrable_mul_polynomial hh q)
   map_smul' := by
     intro c p
     simp only [Polynomial.eval_smul, smul_eq_mul]
@@ -31636,7 +31636,7 @@ theorem continuousOn_eq_zero_of_legendre_moments
     have hIeq : I = ∫ t : ℝ in (-1)..1, h t * (h t - p.eval t) := by
       dsimp [I]
       simp_rw [mul_sub, ← pow_two]
-      rw [intervalIntegral.integral_sub hsqi (DistanceScalarUniqueness_interval_integrable_mul_polynomial hh p),
+      rw [intervalIntegral.integral_sub hsqi (interval_integrable_mul_polynomial hh p),
         hpoly p, sub_zero]
     have hsmall : |I| ≤ 2 * M * ε := by
       have h := intervalIntegral.norm_integral_le_of_norm_le_const
@@ -31684,8 +31684,8 @@ theorem continuousOn_eq_of_legendre_moments
     intro ℓ
     simp_rw [sub_mul]
     rw [intervalIntegral.integral_sub
-      (DistanceScalarUniqueness_interval_integrable_mul_polynomial hf _)
-      (DistanceScalarUniqueness_interval_integrable_mul_polynomial hg _), hmom ℓ, sub_self]
+      (interval_integrable_mul_polynomial hf _)
+      (interval_integrable_mul_polynomial hg _), hmom ℓ, sub_self]
   intro t ht
   exact sub_eq_zero.mp (hzero ht)
 
@@ -31785,7 +31785,7 @@ theorem legendrePolynomial_shifted_eval (ℓ : ℕ) (y : ℝ) :
   field_simp [h3, h4]
   ring
 
-private theorem DistanceZonalCoefficients_rpow_sub_one_mul_self {s y : ℝ} (hs : 0 < s) (hy : 0 ≤ y) :
+private theorem rpow_sub_one_mul_self {s y : ℝ} (hs : 0 < s) (hy : 0 ≤ y) :
     y ^ (s - 1) * y = y ^ s := by
   by_cases hy0 : y = 0
   · subst y
@@ -31823,7 +31823,7 @@ theorem weighted_euler_integral (s : ℝ) (hs : 1 < s)
     have hy0 : 0 ≤ y := by
       rw [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at hy
       exact hy.1
-    rw [DistanceZonalCoefficients_rpow_sub_one_mul_self (by linarith : 0 < s) hy0]
+    rw [rpow_sub_one_mul_self (by linarith : 0 < s) hy0]
   simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_X,
     Polynomial.eval_C, mul_add]
   rw [intervalIntegral.integral_add]
@@ -31927,7 +31927,7 @@ theorem shiftedCoreMoment_zero (s : ℝ) (ℓ : ℕ) :
     shiftedCoreMoment s ℓ 0 = shiftedBetaIntegral s ℓ := by
   simp [shiftedCoreMoment, shiftedLegendreCore, shiftedBetaIntegral]
 
-private theorem DistanceZonalCoefficients_shiftedBeta_split (s : ℝ) (hs : 1 < s) (ℓ : ℕ) :
+private theorem shiftedBeta_split (s : ℝ) (hs : 1 < s) (ℓ : ℕ) :
     shiftedBetaIntegral s ℓ = shiftedBetaIntegral s (ℓ + 1) +
       (∫ y : ℝ in (0 : ℝ)..1, y ^ s * (1 - y) ^ ℓ) := by
   unfold shiftedBetaIntegral
@@ -31938,14 +31938,14 @@ private theorem DistanceZonalCoefficients_shiftedBeta_split (s : ℝ) (hs : 1 < 
     have hy0 : 0 ≤ y := by
       rw [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at hy
       exact hy.1
-    rw [pow_succ, ← DistanceZonalCoefficients_rpow_sub_one_mul_self (by linarith : 0 < s) hy0]
+    rw [pow_succ, ← rpow_sub_one_mul_self (by linarith : 0 < s) hy0]
     ring
   · exact ((Real.continuous_rpow_const (by linarith : 0 ≤ s - 1)).mul
       ((continuous_const.sub continuous_id).pow (ℓ + 1))).intervalIntegrable _ _
   · exact ((Real.continuous_rpow_const (by linarith : 0 ≤ s)).mul
       ((continuous_const.sub continuous_id).pow ℓ)).intervalIntegrable _ _
 
-private theorem DistanceZonalCoefficients_shiftedBeta_derivative (ℓ : ℕ) :
+private theorem shiftedBeta_derivative (ℓ : ℕ) :
     Polynomial.derivative ((1 - Polynomial.X : Polynomial ℝ) ^ (ℓ + 1)) =
       Polynomial.C (-(ℓ + 1 : ℝ)) * (1 - Polynomial.X) ^ ℓ := by
   rw [Polynomial.derivative_pow]
@@ -31962,7 +31962,7 @@ theorem shiftedBetaIntegral_succ (s : ℝ) (hs : 1 < s) (ℓ : ℕ) :
   have hder (y : ℝ) : p.derivative.eval y =
       -(ℓ + 1 : ℝ) * (1 - y) ^ ℓ := by
     rw [show p.derivative = Polynomial.C (-(ℓ + 1 : ℝ)) *
-        (1 - Polynomial.X) ^ ℓ from DistanceZonalCoefficients_shiftedBeta_derivative ℓ]
+        (1 - Polynomial.X) ^ ℓ from shiftedBeta_derivative ℓ]
     simp [Polynomial.eval_mul]
   simp only [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_X,
     Polynomial.eval_C, Nat.cast_zero, zero_mul, add_zero, zero_sub] at h
@@ -31973,7 +31973,7 @@ theorem shiftedBetaIntegral_succ (s : ℝ) (hs : 1 < s) (ℓ : ℕ) :
     have hy0 : 0 ≤ y := by
       rw [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at hy
       exact hy.1
-    rw [← mul_assoc, DistanceZonalCoefficients_rpow_sub_one_mul_self (by linarith : 0 < s) hy0]
+    rw [← mul_assoc, rpow_sub_one_mul_self (by linarith : 0 < s) hy0]
     ring
   have hcongr :
       (∫ y : ℝ in (0 : ℝ)..1,
@@ -31985,7 +31985,7 @@ theorem shiftedBetaIntegral_succ (s : ℝ) (hs : 1 < s) (ℓ : ℕ) :
     intro y hy
     exact hpow y hy
   rw [hcongr] at h
-  have hsplit := DistanceZonalCoefficients_shiftedBeta_split s hs ℓ
+  have hsplit := shiftedBeta_split s hs ℓ
   simp only [p, Polynomial.eval_pow, Polynomial.eval_sub, Polynomial.eval_one,
     Polynomial.eval_X] at h
   change -(ℓ + 1 : ℝ) *
@@ -32053,7 +32053,7 @@ theorem shiftedLegendreMoment_core (s : ℝ) (ℓ : ℕ) :
   simp_rw [hmul]
   rw [intervalIntegral.integral_const_mul]
 
-private theorem DistanceZonalCoefficients_shiftedCore_product_reflect (s : ℝ) (ℓ : ℕ) :
+private theorem shiftedCore_product_reflect (s : ℝ) (ℓ : ℕ) :
     (∏ j ∈ Finset.range ℓ, (((ℓ - j : ℕ) : ℝ) - s)) =
       ∏ j ∈ Finset.range ℓ, (((j + 1 : ℕ) : ℝ) - s) := by
   have href := Finset.prod_range_reflect
@@ -32079,7 +32079,7 @@ theorem shiftedLegendreMoment_product {s : ℝ} (hs1 : 1 < s) (hs2 : s < 2)
   rw [shiftedLegendreMoment_core,
     shiftedCoreMoment_product s hs1 ℓ ℓ le_rfl,
     shiftedCoreMoment_zero, shiftedBetaIntegral_product s hs1,
-    DistanceZonalCoefficients_shiftedCore_product_reflect]
+    shiftedCore_product_reflect]
   have hfac : ((ℓ.factorial : ℝ)) ≠ 0 := by positivity
   have hden : s * ∏ j ∈ Finset.range ℓ, (s + (j : ℝ) + 1) ≠ 0 := by
     apply mul_ne_zero (by linarith)
@@ -32508,14 +32508,14 @@ noncomputable def zonalRodriguesCoefficient (ℓ j : ℕ) : ℝ :=
     ((2 * j).descFactorial ℓ : ℝ)) /
     ((2 : ℝ) ^ ℓ * (ℓ.factorial : ℝ))
 
-private noncomputable def HarmonicZonal_zonalRodriguesBaseExpanded (ℓ : ℕ) : Polynomial ℝ :=
+private noncomputable def zonalRodriguesBaseExpanded (ℓ : ℕ) : Polynomial ℝ :=
   ∑ j ∈ Finset.range (ℓ + 1),
     Polynomial.C ((-1 : ℝ) ^ (ℓ - j) * (Nat.choose ℓ j : ℝ)) *
       Polynomial.X ^ (2 * j)
 
-private theorem HarmonicZonal_zonalRodriguesBaseExpanded_eq (ℓ : ℕ) :
-    HarmonicZonal_zonalRodriguesBaseExpanded ℓ = legendreRodriguesBase ℓ := by
-  unfold HarmonicZonal_zonalRodriguesBaseExpanded legendreRodriguesBase
+private theorem zonalRodriguesBaseExpanded_eq (ℓ : ℕ) :
+    zonalRodriguesBaseExpanded ℓ = legendreRodriguesBase ℓ := by
+  unfold zonalRodriguesBaseExpanded legendreRodriguesBase
   rw [sub_eq_add_neg, add_pow]
   apply Finset.sum_congr rfl
   intro j hj
@@ -32530,8 +32530,8 @@ theorem legendrePolynomial_eq_zonalRodrigues_sum (ℓ : ℕ) :
         Polynomial.C (zonalRodriguesCoefficient ℓ j) *
           Polynomial.X ^ (2 * j - ℓ) := by
   unfold legendrePolynomial
-  rw [← HarmonicZonal_zonalRodriguesBaseExpanded_eq]
-  unfold HarmonicZonal_zonalRodriguesBaseExpanded
+  rw [← zonalRodriguesBaseExpanded_eq]
+  unfold zonalRodriguesBaseExpanded
   rw [Polynomial.iterate_derivative_sum]
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
@@ -32624,7 +32624,7 @@ theorem zonalLinear_pow_laplacian_general (u : Sphere) (n : ℕ) :
         (((n + 2 : ℕ) * (n + 1 : ℕ) : ℕ) : ℝ) • zonalLinear u ^ n
     simpa only [Nat.cast_mul] using zonalLinear_pow_laplacian u n
 
-private theorem HarmonicZonal_radialPower_zonal_laplacian
+private theorem radialPower_zonal_laplacian
     (u : Sphere) (k n : ℕ) :
     polynomialLaplacian (radialSquare ^ k * zonalLinear u ^ n) =
       (2 * (k : ℝ) * (2 * (n : ℝ) + 2 * (k : ℝ) + 1)) •
@@ -32655,43 +32655,43 @@ noncomputable def zonalHomogenized (ℓ : ℕ) (u : Sphere) :
     MvPolynomial.C (zonalRodriguesCoefficient ℓ j) *
       radialSquare ^ (ℓ - j) * zonalLinear u ^ (2 * j - ℓ)
 
-private noncomputable def HarmonicZonal_zonalTerm (ℓ : ℕ) (u : Sphere) (j : ℕ) :
+private noncomputable def zonalTerm (ℓ : ℕ) (u : Sphere) (j : ℕ) :
     MvPolynomial (Fin 3) ℝ :=
   zonalRodriguesCoefficient ℓ j •
     (radialSquare ^ (ℓ - j) * zonalLinear u ^ (2 * j - ℓ))
 
-private noncomputable def HarmonicZonal_zonalForward (ℓ : ℕ) (u : Sphere) (j : ℕ) :
+private noncomputable def zonalForward (ℓ : ℕ) (u : Sphere) (j : ℕ) :
     MvPolynomial (Fin 3) ℝ :=
   (zonalRodriguesCoefficient ℓ j *
       (2 * (ℓ - j : ℕ) * (2 * j + 1) : ℝ)) •
     (radialSquare ^ (ℓ - j - 1) * zonalLinear u ^ (2 * j - ℓ))
 
-private noncomputable def HarmonicZonal_zonalBackward (ℓ : ℕ) (u : Sphere) (j : ℕ) :
+private noncomputable def zonalBackward (ℓ : ℕ) (u : Sphere) (j : ℕ) :
     MvPolynomial (Fin 3) ℝ :=
   (zonalRodriguesCoefficient ℓ j *
       (((2 * j - ℓ) * (2 * j - ℓ - 1) : ℕ) : ℝ)) •
     (radialSquare ^ (ℓ - j) * zonalLinear u ^ (2 * j - ℓ - 2))
 
-private theorem HarmonicZonal_zonalHomogenized_eq_sum_terms (ℓ : ℕ) (u : Sphere) :
+private theorem zonalHomogenized_eq_sum_terms (ℓ : ℕ) (u : Sphere) :
     zonalHomogenized ℓ u =
-      ∑ j ∈ Finset.range (ℓ + 1), HarmonicZonal_zonalTerm ℓ u j := by
-  unfold zonalHomogenized HarmonicZonal_zonalTerm
+      ∑ j ∈ Finset.range (ℓ + 1), zonalTerm ℓ u j := by
+  unfold zonalHomogenized zonalTerm
   apply Finset.sum_congr rfl
   intro j hj
   simp only [MvPolynomial.smul_eq_C_mul, mul_assoc]
 
-private theorem HarmonicZonal_zonalTerm_laplacian
+private theorem zonalTerm_laplacian
     (ℓ : ℕ) (u : Sphere) {j : ℕ} (hj : j ≤ ℓ) :
-    polynomialLaplacian (HarmonicZonal_zonalTerm ℓ u j) =
-      HarmonicZonal_zonalForward ℓ u j + HarmonicZonal_zonalBackward ℓ u j := by
+    polynomialLaplacian (zonalTerm ℓ u j) =
+      zonalForward ℓ u j + zonalBackward ℓ u j := by
   by_cases hvalid : ℓ ≤ 2 * j
   · have hdeg :
         2 * (2 * j - ℓ) + 2 * (ℓ - j) + 1 = 2 * j + 1 := by omega
     have hdegR :
         2 * ((2 * j - ℓ : ℕ) : ℝ) + 2 * ((ℓ - j : ℕ) : ℝ) + 1 =
           2 * (j : ℝ) + 1 := by exact_mod_cast hdeg
-    unfold HarmonicZonal_zonalTerm HarmonicZonal_zonalForward HarmonicZonal_zonalBackward
-    rw [polynomialLaplacian_smul, HarmonicZonal_radialPower_zonal_laplacian]
+    unfold zonalTerm zonalForward zonalBackward
+    rw [polynomialLaplacian_smul, radialPower_zonal_laplacian]
     rw [smul_add, smul_smul, smul_smul]
     congr 1
     · congr 1
@@ -32700,7 +32700,7 @@ private theorem HarmonicZonal_zonalTerm_laplacian
       unfold zonalRodriguesCoefficient
       rw [Nat.descFactorial_eq_zero_iff_lt.mpr (by omega : 2 * j < ℓ)]
       simp
-    simp [HarmonicZonal_zonalTerm, HarmonicZonal_zonalForward, HarmonicZonal_zonalBackward, hzero,
+    simp [zonalTerm, zonalForward, zonalBackward, hzero,
       polynomialLaplacian]
 
 theorem zonalRodriguesCoefficient_eq_zero_of_lt
@@ -32710,7 +32710,7 @@ theorem zonalRodriguesCoefficient_eq_zero_of_lt
   rw [Nat.descFactorial_eq_zero_iff_lt.mpr hj]
   simp
 
-private theorem HarmonicZonal_zonal_descFactorial_step (ℓ j : ℕ) :
+private theorem zonal_descFactorial_step (ℓ j : ℕ) :
     (2 * j + 2 - ℓ) * (2 * j + 1 - ℓ) *
         (2 * j + 2).descFactorial ℓ =
       (2 * j + 2) * (2 * j + 1) *
@@ -32731,12 +32731,12 @@ private theorem HarmonicZonal_zonal_descFactorial_step (ℓ j : ℕ) :
     _ = (2 * j + 2) * (2 * j + 1) *
         (2 * j).descFactorial ℓ := by rw [h₂]; ring
 
-private theorem HarmonicZonal_zonal_coefficient_numerator_step (ℓ j : ℕ) :
+private theorem zonal_coefficient_numerator_step (ℓ j : ℕ) :
     2 * (ℓ.choose j) * (ℓ - j) * (2 * j + 1) *
         (2 * j).descFactorial ℓ =
       (ℓ.choose (j + 1)) * (2 * j + 2 - ℓ) *
         (2 * j + 1 - ℓ) * (2 * j + 2).descFactorial ℓ := by
-  have hdf := HarmonicZonal_zonal_descFactorial_step ℓ j
+  have hdf := zonal_descFactorial_step ℓ j
   have hc := Nat.choose_succ_right_eq ℓ j
   calc
     2 * (ℓ.choose j) * (ℓ - j) * (2 * j + 1) *
@@ -32750,7 +32750,7 @@ private theorem HarmonicZonal_zonal_coefficient_numerator_step (ℓ j : ℕ) :
           (2 * j + 2).descFactorial ℓ) := by rw [hdf]
     _ = _ := by ring
 
-private theorem HarmonicZonal_zonalRodriguesCoefficient_recurrence
+private theorem zonalRodriguesCoefficient_recurrence
     {ℓ j : ℕ} (hj : j < ℓ) :
     zonalRodriguesCoefficient ℓ j *
         (2 * (ℓ - j : ℕ) * (2 * j + 1) : ℝ) +
@@ -32761,7 +32761,7 @@ private theorem HarmonicZonal_zonalRodriguesCoefficient_recurrence
       -((-1 : ℝ) ^ (ℓ - (j + 1))) := by
     rw [hsub, pow_succ]
     ring
-  have hnum := HarmonicZonal_zonal_coefficient_numerator_step ℓ j
+  have hnum := zonal_coefficient_numerator_step ℓ j
   have hnumR := congrArg (fun z : ℕ => (z : ℝ)) hnum
   norm_num only [Nat.cast_mul, Nat.cast_add, Nat.cast_ofNat] at hnumR
   unfold zonalRodriguesCoefficient
@@ -32773,27 +32773,27 @@ private theorem HarmonicZonal_zonalRodriguesCoefficient_recurrence
     (-((-1 : ℝ) ^ (ℓ - (j + 1))) *
       (((2 : ℝ) ^ ℓ * (ℓ.factorial : ℝ))⁻¹)) * hnumR
 
-private theorem HarmonicZonal_zonalBackward_zero (ℓ : ℕ) (u : Sphere) :
-    HarmonicZonal_zonalBackward ℓ u 0 = 0 := by
-  simp [HarmonicZonal_zonalBackward]
+private theorem zonalBackward_zero (ℓ : ℕ) (u : Sphere) :
+    zonalBackward ℓ u 0 = 0 := by
+  simp [zonalBackward]
 
-private theorem HarmonicZonal_zonalForward_last (ℓ : ℕ) (u : Sphere) :
-    HarmonicZonal_zonalForward ℓ u ℓ = 0 := by
-  simp [HarmonicZonal_zonalForward]
+private theorem zonalForward_last (ℓ : ℕ) (u : Sphere) :
+    zonalForward ℓ u ℓ = 0 := by
+  simp [zonalForward]
 
-private theorem HarmonicZonal_zonalForward_add_backward_succ
+private theorem zonalForward_add_backward_succ
     (ℓ : ℕ) (u : Sphere) {j : ℕ} (hj : j < ℓ) :
-    HarmonicZonal_zonalForward ℓ u j + HarmonicZonal_zonalBackward ℓ u (j + 1) = 0 := by
+    zonalForward ℓ u j + zonalBackward ℓ u (j + 1) = 0 := by
   by_cases hvalid : ℓ ≤ 2 * j
   · have hrad : ℓ - j - 1 = ℓ - (j + 1) := by omega
     have hdot : 2 * (j + 1) - ℓ - 2 = 2 * j - ℓ := by omega
     have hfac1 : 2 * (j + 1) - ℓ = 2 * j + 2 - ℓ := by omega
     have hfac2 : 2 * j + 2 - ℓ - 1 = 2 * j + 1 - ℓ := by omega
-    unfold HarmonicZonal_zonalForward HarmonicZonal_zonalBackward
+    unfold zonalForward zonalBackward
     rw [hrad, hdot, hfac1, hfac2]
     rw [← add_smul]
     norm_num only [Nat.cast_mul]
-    rw [HarmonicZonal_zonalRodriguesCoefficient_recurrence hj]
+    rw [zonalRodriguesCoefficient_recurrence hj]
     simp
   · have hc : zonalRodriguesCoefficient ℓ j = 0 :=
       zonalRodriguesCoefficient_eq_zero_of_lt (by omega)
@@ -32805,7 +32805,7 @@ private theorem HarmonicZonal_zonalForward_add_backward_succ
       rcases hcases with h0 | h1
       · simp [h0]
       · simp [h1]
-    simp [HarmonicZonal_zonalForward, HarmonicZonal_zonalBackward, hc, hprod]
+    simp [zonalForward, zonalBackward, hc, hprod]
 
 theorem zonalHomogenized_eval_sphere (ℓ : ℕ) (u x : Sphere) :
     MvPolynomial.eval (fun i => (x : Ambient) i)
@@ -32839,30 +32839,30 @@ variables. Adjacent radial and linear-power Laplacian terms cancel by the
 coefficient recurrence. -/
 theorem zonalHomogenized_laplacian_zero (ℓ : ℕ) (u : Sphere) :
     polynomialLaplacian (zonalHomogenized ℓ u) = 0 := by
-  rw [HarmonicZonal_zonalHomogenized_eq_sum_terms, polynomialLaplacian_sum]
+  rw [zonalHomogenized_eq_sum_terms, polynomialLaplacian_sum]
   have hterms :
       (∑ j ∈ Finset.range (ℓ + 1),
-        polynomialLaplacian (HarmonicZonal_zonalTerm ℓ u j)) =
+        polynomialLaplacian (zonalTerm ℓ u j)) =
       ∑ j ∈ Finset.range (ℓ + 1),
-        (HarmonicZonal_zonalForward ℓ u j + HarmonicZonal_zonalBackward ℓ u j) := by
+        (zonalForward ℓ u j + zonalBackward ℓ u j) := by
     apply Finset.sum_congr rfl
     intro j hj
-    exact HarmonicZonal_zonalTerm_laplacian ℓ u (by
+    exact zonalTerm_laplacian ℓ u (by
       have := Finset.mem_range.mp hj
       omega)
   rw [hterms, Finset.sum_add_distrib]
   have hforward :
-      (∑ j ∈ Finset.range (ℓ + 1), HarmonicZonal_zonalForward ℓ u j) =
-        ∑ j ∈ Finset.range ℓ, HarmonicZonal_zonalForward ℓ u j := by
-    rw [Finset.sum_range_succ, HarmonicZonal_zonalForward_last, add_zero]
+      (∑ j ∈ Finset.range (ℓ + 1), zonalForward ℓ u j) =
+        ∑ j ∈ Finset.range ℓ, zonalForward ℓ u j := by
+    rw [Finset.sum_range_succ, zonalForward_last, add_zero]
   have hbackward :
-      (∑ j ∈ Finset.range (ℓ + 1), HarmonicZonal_zonalBackward ℓ u j) =
-        ∑ j ∈ Finset.range ℓ, HarmonicZonal_zonalBackward ℓ u (j + 1) := by
-    rw [Finset.sum_range_succ', HarmonicZonal_zonalBackward_zero, add_zero]
+      (∑ j ∈ Finset.range (ℓ + 1), zonalBackward ℓ u j) =
+        ∑ j ∈ Finset.range ℓ, zonalBackward ℓ u (j + 1) := by
+    rw [Finset.sum_range_succ', zonalBackward_zero, add_zero]
   rw [hforward, hbackward, ← Finset.sum_add_distrib]
   apply Finset.sum_eq_zero
   intro j hj
-  exact HarmonicZonal_zonalForward_add_backward_succ ℓ u (Finset.mem_range.mp hj)
+  exact zonalForward_add_backward_succ ℓ u (Finset.mem_range.mp hj)
 
 /-- The degree-`ℓ` zonal harmonic centered at `u`. -/
 noncomputable def zonalHarmonic (ℓ : ℕ) (u : Sphere) :
@@ -33297,32 +33297,32 @@ theorem moment_coefficient_interpolation
         rw [mul_assoc, heq]
 
 /-- Product factor in the even Legendre expansion of `t^(2n)`. -/
-private noncomputable def SobolevLowerBound_evenMomentRatio (n j : ℕ) : ℝ :=
+private noncomputable def evenMomentRatio (n j : ℕ) : ℝ :=
   (2 * ((n : ℝ) - j)) / (2 * (n : ℝ) + 2 * j + 3)
 
 /-- The explicit candidate coefficient in harmonic degree `2k`; it is zero
 above the polynomial degree. -/
 noncomputable def evenMomentModelCoefficient (n k : ℕ) : ℝ :=
   if k ≤ n then
-    (1 / (2 * (n : ℝ) + 1)) * ∏ j ∈ Finset.range k, SobolevLowerBound_evenMomentRatio n j
+    (1 / (2 * (n : ℝ) + 1)) * ∏ j ∈ Finset.range k, evenMomentRatio n j
   else 0
 
-private theorem SobolevLowerBound_evenMomentRatio_nonneg {n j : ℕ} (hj : j ≤ n) :
-    0 ≤ SobolevLowerBound_evenMomentRatio n j := by
-  unfold SobolevLowerBound_evenMomentRatio
+private theorem evenMomentRatio_nonneg {n j : ℕ} (hj : j ≤ n) :
+    0 ≤ evenMomentRatio n j := by
+  unfold evenMomentRatio
   have h : (j : ℝ) ≤ n := by exact_mod_cast hj
   exact div_nonneg (by linarith) (by positivity)
 
 /-- Each factor is bounded by the exponential of a negative linear term. -/
-private theorem SobolevLowerBound_evenMomentRatio_le_exp {n j : ℕ}
+private theorem evenMomentRatio_le_exp {n j : ℕ}
     (hn : 0 < n) (hj : j ≤ n) :
-    SobolevLowerBound_evenMomentRatio n j ≤ Real.exp (-(j : ℝ) / n) := by
+    evenMomentRatio n j ≤ Real.exp (-(j : ℝ) / n) := by
   have hnr : (0 : ℝ) < n := by exact_mod_cast hn
   have hjr : (j : ℝ) ≤ n := by exact_mod_cast hj
   have hj0 : (0 : ℝ) ≤ j := by positivity
   have hd : (0 : ℝ) < 2 * (n : ℝ) + 2 * j + 3 := by positivity
-  have hpart : SobolevLowerBound_evenMomentRatio n j ≤ 1 - (j : ℝ) / n := by
-    unfold SobolevLowerBound_evenMomentRatio
+  have hpart : evenMomentRatio n j ≤ 1 - (j : ℝ) / n := by
+    unfold evenMomentRatio
     have heq : 1 - (j : ℝ) / n = ((n : ℝ) - j) / n := by
       field_simp
     rw [heq]
@@ -33334,7 +33334,7 @@ private theorem SobolevLowerBound_evenMomentRatio_le_exp {n j : ℕ}
       (le_div_iff₀ hnr).2 (by nlinarith [haux])
     convert hbase using 1 <;> ring
   calc
-    SobolevLowerBound_evenMomentRatio n j ≤ 1 - (j : ℝ) / n := hpart
+    evenMomentRatio n j ≤ 1 - (j : ℝ) / n := hpart
     _ ≤ Real.exp (-(j : ℝ) / n) := by
       convert Real.add_one_le_exp (-(j : ℝ) / n) using 1 <;> ring
 
@@ -33345,13 +33345,13 @@ theorem evenMomentModelCoefficient_le_exp {n k : ℕ}
       (1 / (2 * (n : ℝ) + 1)) *
         Real.exp (-(k : ℝ) * (k - 1) / (2 * n)) := by
   classical
-  have hprod : (∏ j ∈ Finset.range k, SobolevLowerBound_evenMomentRatio n j) ≤
+  have hprod : (∏ j ∈ Finset.range k, evenMomentRatio n j) ≤
       ∏ j ∈ Finset.range k, Real.exp (-(j : ℝ) / n) := by
     apply Finset.prod_le_prod
     · intro j hj
-      exact SobolevLowerBound_evenMomentRatio_nonneg (by have := Finset.mem_range.mp hj; omega)
+      exact evenMomentRatio_nonneg (by have := Finset.mem_range.mp hj; omega)
     · intro j hj
-      exact SobolevLowerBound_evenMomentRatio_le_exp hn (by have := Finset.mem_range.mp hj; omega)
+      exact evenMomentRatio_le_exp hn (by have := Finset.mem_range.mp hj; omega)
   have hnr : (0 : ℝ) < n := by exact_mod_cast hn
   have hsum_general : ∀ t : ℕ,
       (∑ j ∈ Finset.range t, -(j : ℝ) / n) =
@@ -33373,7 +33373,7 @@ theorem evenMomentModelCoefficient_le_exp {n k : ℕ}
     _ = _ := by rw [← Real.exp_sum, hsum]
 
 /-- A useful polynomial tail bound for the Gaussian majorant. -/
-private theorem SobolevLowerBound_exp_neg_le_four_div_sq {u : ℝ} (hu : 0 < u) :
+private theorem exp_neg_le_four_div_sq {u : ℝ} (hu : 0 < u) :
     Real.exp (-u) ≤ 4 / u ^ (2 : ℕ) := by
   have hlin := Real.add_one_le_exp (u / 2)
   have hhalf : 0 ≤ u / 2 := by linarith
@@ -33412,7 +33412,7 @@ theorem evenMomentModelCoefficient_poly_decay {n k : ℕ}
       mul_nonneg (by linarith) (by linarith)
     nlinarith [hterm]
   have hb := evenMomentModelCoefficient_le_exp hn hkn
-  have hexp := SobolevLowerBound_exp_neg_le_four_div_sq hu
+  have hexp := exp_neg_le_four_div_sq hu
   have hmain : evenMomentModelCoefficient n k ≤
       (1 / (2 * (n : ℝ) + 1)) * (4 / u ^ (2 : ℕ)) := by
     have hhexp : Real.exp (-(k : ℝ) * (k - 1) / (2 * n)) ≤
@@ -33456,7 +33456,7 @@ theorem evenMomentModelCoefficient_nonneg (n k : ℕ) :
     apply mul_nonneg (by positivity)
     apply Finset.prod_nonneg
     intro j hj
-    exact SobolevLowerBound_evenMomentRatio_nonneg (by have := Finset.mem_range.mp hj; omega)
+    exact evenMomentRatio_nonneg (by have := Finset.mem_range.mp hj; omega)
   · simp [evenMomentModelCoefficient, hk]
 
 /-- The zeroth coefficient bounds all even-degree model coefficients. -/
@@ -33608,7 +33608,7 @@ theorem evenMomentModelCoefficient_one {n : ℕ} (hn : 0 < n) :
       2 * (n : ℝ) / ((2 * (n : ℝ) + 1) * (2 * (n : ℝ) + 3)) := by
   rw [evenMomentModelCoefficient, if_pos (by omega : 1 ≤ n)]
   simp only [Finset.prod_range_succ, Finset.prod_range_zero, one_mul]
-  unfold SobolevLowerBound_evenMomentRatio
+  unfold evenMomentRatio
   norm_num
   have h1 : (2 * (n : ℝ) + 1) ≠ 0 := by positivity
   have h3 : (2 * (n : ℝ) + 3) ≠ 0 := by positivity
@@ -35191,7 +35191,7 @@ theorem evenLegendreMoment_zero (n : ℕ) :
   simp only [Finset.prod_range_zero, mul_one]
   ring
 
-private theorem ZonalPolynomials_evenLegendre_descFactorial_step (n k : ℕ) (hk : k < n) :
+private theorem evenLegendre_descFactorial_step (n k : ℕ) (hk : k < n) :
     ((2 * n).descFactorial (2 * (k + 1)) : ℝ) =
       (2 * (n : ℝ) - 2 * k - 1) * (2 * (n : ℝ) - 2 * k) *
         ((2 * n).descFactorial (2 * k) : ℝ) := by
@@ -35212,7 +35212,7 @@ private theorem ZonalPolynomials_evenLegendre_descFactorial_step (n k : ℕ) (hk
   push_cast
   rw [h1, h2]
 
-private theorem ZonalPolynomials_evenLegendre_denominator_step (k : ℕ) :
+private theorem evenLegendre_denominator_step (k : ℕ) :
     (2 : ℝ) ^ (2 * (k + 1)) * ((2 * (k + 1)).factorial : ℝ) =
       4 * (2 * (k : ℝ) + 1) * (2 * (k : ℝ) + 2) *
         ((2 : ℝ) ^ (2 * k) * ((2 * k).factorial : ℝ)) := by
@@ -35226,8 +35226,8 @@ theorem evenLegendreMoment_step (n k : ℕ) (hk : k < n) :
       (2 * ((n : ℝ) - k) / (2 * (n : ℝ) + 2 * k + 3)) *
         evenLegendreMoment n k := by
   rw [evenLegendreMoment_rodrigues, evenLegendreMoment_rodrigues]
-  have hF := ZonalPolynomials_evenLegendre_descFactorial_step n k hk
-  have hD := ZonalPolynomials_evenLegendre_denominator_step k
+  have hF := evenLegendre_descFactorial_step n k hk
+  have hD := evenLegendre_denominator_step k
   have hB := evenBetaIntegral_shift_two (n - k) (2 * k) (by omega)
   have hnk : (((n - k : ℕ) : ℝ)) = (n : ℝ) - k := by
     rw [Nat.cast_sub (by omega : k ≤ n)]
@@ -35295,7 +35295,7 @@ theorem radialEvenMomentCoefficient_zero (n : ℕ) :
     radialEvenMomentCoefficient n 0 = 1 / (2 * (n : ℝ) + 1) := by
   simp [radialEvenMomentCoefficient]
 
-private theorem ZonalPolynomials_radialNumerator_step (n k : ℕ) (hk : k < n) :
+private theorem radialNumerator_step (n k : ℕ) (hk : k < n) :
     (((n + (k + 1)).descFactorial (2 * (k + 1)) : ℕ) : ℝ) =
       (n + (k : ℝ) + 1) * (n - (k : ℝ)) *
         ((n + k).descFactorial (2 * k) : ℝ) := by
@@ -35313,7 +35313,7 @@ private theorem ZonalPolynomials_radialNumerator_step (n k : ℕ) (hk : k < n) :
   push_cast
   rw [hsub]
 
-private theorem ZonalPolynomials_radialDenominator_step (n k : ℕ) :
+private theorem radialDenominator_step (n k : ℕ) :
     (((2 * n + 2 * (k + 1)).descFactorial (2 * (k + 1)) : ℕ) : ℝ) =
       (2 * (n : ℝ) + 2 * k + 2) *
         (2 * (n : ℝ) + 2 * k + 1) *
@@ -35336,7 +35336,7 @@ theorem radialEvenMomentCoefficient_step (n k : ℕ) (hk : k < n) :
       (2 * ((n : ℝ) - k) / (2 * (n : ℝ) + 2 * k + 3)) *
         radialEvenMomentCoefficient n k := by
   unfold radialEvenMomentCoefficient
-  rw [ZonalPolynomials_radialNumerator_step n k hk, ZonalPolynomials_radialDenominator_step n k]
+  rw [radialNumerator_step n k hk, radialDenominator_step n k]
   have hpow : (2 : ℝ) ^ (2 * (k + 1)) = 4 * (2 : ℝ) ^ (2 * k) := by
     rw [show 2 * (k + 1) = 2 * k + 2 by omega, pow_add]
     norm_num
@@ -37098,11 +37098,11 @@ open MeasureTheory
 open scoped InnerProductSpace
 namespace BEMOC.Definitive
 
-private theorem HarmonicL2Laplacian_restrictPolynomial_mul_apply (p q : Poly3) (x : Sphere) :
+private theorem restrictPolynomial_mul_apply_l2 (p q : Poly3) (x : Sphere) :
     restrictPolynomial (p * q) x = restrictPolynomial p x * restrictPolynomial q x := by
   simp [restrictPolynomial_apply]
 
-private theorem HarmonicL2Laplacian_restrictPolynomial_add_apply (p q : Poly3) (x : Sphere) :
+private theorem restrictPolynomial_add_apply_l2 (p q : Poly3) (x : Sphere) :
     restrictPolynomial (p + q) x = restrictPolynomial p x + restrictPolynomial q x := by
   simp [restrictPolynomial_apply]
 
@@ -37121,7 +37121,7 @@ theorem angularCasimir_integral_selfAdjoint (p q : Poly3) :
         restrictPolynomial (angularDerivation i j b) x ∂sigma) := by
     have h := angular_integral_zero i j (a * b)
     rw [angularDerivation_mul] at h
-    simp_rw [HarmonicL2Laplacian_restrictPolynomial_add_apply, HarmonicL2Laplacian_restrictPolynomial_mul_apply] at h
+    simp_rw [restrictPolynomial_add_apply_l2, restrictPolynomial_mul_apply_l2] at h
     rw [integral_add] at h
     · linarith
     · exact (restrictPolynomial (angularDerivation i j a) * restrictPolynomial b).continuous.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)
@@ -37147,7 +37147,7 @@ theorem angularCasimir_integral_selfAdjoint (p q : Poly3) :
     let F := angularDerivation 1 2 (angularDerivation 1 2 q)
     change (∫ x : Sphere, restrictPolynomial (A + B + C) x * restrictPolynomial q x ∂sigma) =
       ∫ x : Sphere, restrictPolynomial p x * restrictPolynomial (D + E + F) x ∂sigma
-    simp_rw [HarmonicL2Laplacian_restrictPolynomial_add_apply, add_mul, mul_add]
+    simp_rw [restrictPolynomial_add_apply_l2, add_mul, mul_add]
     have hint (a b : Poly3) :
         Integrable (fun x : Sphere => restrictPolynomial a x * restrictPolynomial b x) sigma :=
       (restrictPolynomial a * restrictPolynomial b).continuous.integrable_of_hasCompactSupport

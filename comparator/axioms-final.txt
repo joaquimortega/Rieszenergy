@@ -1,0 +1,8 @@
+warning: mathlib: repository '././.lake/packages/mathlib' has local changes
+warning: batteries: repository '././.lake/packages/batteries' has local changes
+'BEMOC.Definitive.manuscript_targets' depends on axioms: [propext, Classical.choice, Quot.sound]
+'BEMOC.Definitive.manuscript_sobolev_model' depends on axioms: [propext, Classical.choice, Quot.sound]
+'BEMOC.Definitive.diamond_energy_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'BEMOC.Definitive.spherePolynomialLaplacian_eigen_iff_unconditional' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]

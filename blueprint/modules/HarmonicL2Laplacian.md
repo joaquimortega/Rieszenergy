@@ -26,11 +26,11 @@ open MeasureTheory
 open scoped InnerProductSpace
 namespace BEMOC.Definitive
 
-private theorem restrictPolynomial_mul_apply (p q : Poly3) (x : Sphere) :
+private theorem restrictPolynomial_mul_apply_l2 (p q : Poly3) (x : Sphere) :
     restrictPolynomial (p * q) x = restrictPolynomial p x * restrictPolynomial q x := by
   simp [restrictPolynomial_apply]
 
-private theorem restrictPolynomial_add_apply (p q : Poly3) (x : Sphere) :
+private theorem restrictPolynomial_add_apply_l2 (p q : Poly3) (x : Sphere) :
     restrictPolynomial (p + q) x = restrictPolynomial p x + restrictPolynomial q x := by
   simp [restrictPolynomial_apply]
 
@@ -49,7 +49,7 @@ theorem angularCasimir_integral_selfAdjoint (p q : Poly3) :
         restrictPolynomial (angularDerivation i j b) x ∂sigma) := by
     have h := angular_integral_zero i j (a * b)
     rw [angularDerivation_mul] at h
-    simp_rw [restrictPolynomial_add_apply, restrictPolynomial_mul_apply] at h
+    simp_rw [restrictPolynomial_add_apply_l2, restrictPolynomial_mul_apply_l2] at h
     rw [integral_add] at h
     · linarith
     · exact (restrictPolynomial (angularDerivation i j a) * restrictPolynomial b).continuous.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)
@@ -75,7 +75,7 @@ theorem angularCasimir_integral_selfAdjoint (p q : Poly3) :
     let F := angularDerivation 1 2 (angularDerivation 1 2 q)
     change (∫ x : Sphere, restrictPolynomial (A + B + C) x * restrictPolynomial q x ∂sigma) =
       ∫ x : Sphere, restrictPolynomial p x * restrictPolynomial (D + E + F) x ∂sigma
-    simp_rw [restrictPolynomial_add_apply, add_mul, mul_add]
+    simp_rw [restrictPolynomial_add_apply_l2, add_mul, mul_add]
     have hint (a b : Poly3) :
         Integrable (fun x : Sphere => restrictPolynomial a x * restrictPolynomial b x) sigma :=
       (restrictPolynomial a * restrictPolynomial b).continuous.integrable_of_hasCompactSupport
