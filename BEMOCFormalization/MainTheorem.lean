@@ -2,6 +2,8 @@ import BEMOCFormalization.Latitude
 import BEMOCFormalization.LatitudeIdentity
 import BEMOCFormalization.LatitudeSummation
 import BEMOCFormalization.Longitude
+import BEMOCFormalization.UnequalBlockEstimates
+import BEMOCFormalization.ComparableAssembly
 
 namespace BEMOC.Definitive
 
@@ -29,7 +31,7 @@ theorem main_theorem_of_estimates {α : ℝ}
   · have hs := hsmall N hN (by omega) φ
     nlinarith [mul_nonneg (le_of_lt hA) hscale, mul_nonneg (le_of_lt hB) hscale]
 
-/-- Complete unconditional statement to be proved; no proof of this target is asserted. -/
+/-- The phase-uniform main theorem throughout the manuscript's open exponent range. -/
 def MainTheoremTarget : Prop := ∀ α : ℝ, 0 < α → α < 2 → MainTheorem α
 
 /-- The remaining analytic burden is exactly the latitude and longitude upper estimates. -/
@@ -49,5 +51,20 @@ theorem main_theorem_of_block_estimates {α : ℝ} (hα0 : 0 < α) (hα2 : α < 
   main_theorem_of_latitude hα0 hα2
     (latitude_bound_of_blocks hα0 hα2 (latitudeIdentity_of_pos hα0)
       (blockSymmetry_of_pos hα0) hc hs ho)
+
+/-- The two unequal regimes are proved; only the comparable-band bound remains. -/
+theorem main_theorem_of_comparable {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2)
+    (hc : ComparableBlockBound α) : MainTheorem α :=
+  main_theorem_of_block_estimates hα0 hα2 hc
+    (sameSideBlockBound hα0 hα2) (oppositeBlockBound hα0 hα2)
+
+/-- The unconditional energy deficit bound, uniform over all ring phases and every N ≥ 4. -/
+theorem main_theorem {α : ℝ} (hα0 : 0 < α) (hα2 : α < 2) : MainTheorem α :=
+  main_theorem_of_comparable hα0 hα2 (comparable_block_bound hα0 hα2)
+
+/-- All exponents in the manuscript's range satisfy the main theorem. -/
+theorem main_theorem_target : MainTheoremTarget := by
+  intro α hα0 hα2
+  exact main_theorem hα0 hα2
 
 end BEMOC.Definitive

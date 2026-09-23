@@ -1,6 +1,6 @@
 # LatitudeSummation: finite block summation
 
-Checked theorem: `latitude_bound_of_blocks` proves `LatitudeBound α` for `0 < α < 2`, conditional on the actual `LatitudeIdentity`, `BlockSymmetry`, `ComparableBlockBound`, `SameSideBlockBound`, and `OppositeBlockBound` contracts. It does not assume `GeometryBounds`; the needed population ceiling `r_j ≤ 15M` is already proved in `Geometry.lean`. The analytic block bounds and exact identity remain separate obligations.
+Checked theorem: `latitude_bound_of_blocks` proves `LatitudeBound α` for `0 < α < 2`, conditional on the actual `LatitudeIdentity`, `BlockSymmetry`, `ComparableBlockBound`, `SameSideBlockBound`, and `OppositeBlockBound` contracts. It does not assume `GeometryBounds`; the needed population ceiling `r_j ≤ 15M` is already proved in `Geometry.lean`. The analytic block bounds and exact identity are proved in their respective modules; this theorem keeps them explicit as modular inputs.
 
 The proof follows `definitive.tex`, lines 1019–1060, but uses a coarser summation for unequal populations. A comparable row is encoded by `(Nat.dist j k, k ≤ j)`, an injective code into distance times a Boolean. Thus every distance has multiplicity at most two, and the row sum is bounded by twice a convergent p-series because `α−3 < −1`. Summing the population factor uses the exact `∑_j r_j = N` identity.
 

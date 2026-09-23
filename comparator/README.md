@@ -14,21 +14,18 @@ rg -n '^\s*(axiom|opaque)\b|\b(sorry|admit)\b' \
   --glob '*.lean'
 ```
 
-The expected `rg` result is no matches (exit code 1). The standalone file
-currently contains definitions, formal proof obligations, and conditional
-assembly results including `BEMOC.Definitive.main_theorem_of_estimates` and
-`BEMOC.Definitive.main_theorem_of_latitude`. Its successful elaboration does
-**not** prove `BEMOC.Definitive.MainTheoremTarget` or the cap/Sobolev targets.
+The expected `rg` result is no matches (exit code 1). The final source includes
+unconditional energy, cap discrepancy, and Sobolev theorems. A successful
+standalone elaboration verifies the source as Lean code; the separate
+comparator gate additionally matches the selected statements and their
+transitive definitions to the modular challenge, checks proof dependencies
+against the permitted axioms, and replays the exported solution in the kernel.
 
-Comparator compares the statement of a solution theorem with a trusted
-challenge theorem and checks its proof against permitted axioms. It does not
-prove missing mathematical estimates or transform an imported development
-into standalone source. The trusted challenge can be an existing project
-module, such as `BEMOCFormalization.MainTheorem` for the current conditional
-assembly theorem. A complete proof would first need named, proved theorems
-for the unconditional main target and corollaries in the authoritative project
-modules. The trusted challenge must expose those exact statements, and the
-standalone solution must elaborate with `import Mathlib` alone.
+The trusted challenge is the complete `BEMOCFormalization` root. Final
+verification selects the manuscript aggregate, finite-set energy theorem,
+cap corollary, genuine L² Sobolev upper/lower bounds, and model identification.
+The current final run status is recorded below; historical checkpoint
+successes do not certify later source changes.
 
 The project uses Lean 4.19.0. `scripts/build_comparator_419.sh` builds a pinned,
 experimental backport: comparator `437574b` with the patch in this directory,
@@ -46,8 +43,8 @@ process stack limit to 64 MiB for deep Mathlib expressions. Set
 
 ```sh
 python3 scripts/run_comparator.py \
-  --challenge-module BEMOCFormalization.MainTheorem \
-  --theorem BEMOC.Definitive.main_theorem_of_estimates
+  --challenge-module BEMOCFormalization \
+  --theorem BEMOC.Definitive.manuscript_targets
 ```
 
 `run_comparator.py` writes a temporary JSON config with only Lean's standard
@@ -59,8 +56,8 @@ upstream's `systemd-run` containment advice when checking untrusted solutions.
 Never use a custom axiom, `sorry`, `admit`, or `opaque` proof shortcut to fill a
 challenge or solution theorem.
 
-The full comparator check **passed** on the current 40-module proof
-checkpoint for these exact declarations:
+A historical full comparator check **passed** on the 40-module proof
+checkpoint at commit `1eb5d8f` for these exact declarations:
 
 - `BEMOC.Definitive.main_theorem_of_block_estimates`
 - `BEMOC.Definitive.beckLowerBound`
@@ -73,10 +70,11 @@ standalone solution under real landrun, matched the selected statements and
 their transitive definitions, checked the permitted axioms, and replayed the
 solution in the kernel: `Solution valid. Your solution is okay!`
 See the [verification record](checkpoint-verification.md) and
-[actual run log](verification-40-modules.txt). The standalone source has
-15,307 lines. Its source hash is recorded with the command.
+[actual run log](verification-40-modules.txt). That historical standalone source has
+15,307 lines. Its source hash is recorded with the command; it is not the
+hash of a later regenerated export.
 
-The main theorem in this check assumes the three latitude block bounds, and
+The main theorem in that historical check assumes the three latitude block bounds, and
 the cap corollary assumes the main energy theorem at α=1. Comparator confirms
 those exact conditional statements; it does not prove their remaining
 hypotheses. The universal Beck, longitude, and mixed Taylor results have
@@ -95,6 +93,11 @@ file gave the same numeral proof different generated names. The cache is
 explicitly local and absent from `.olean` files in Lean 4.19. The exporter
 also isolates file-level `open` state in sections and prefixes file-private
 declaration names to avoid collisions when multiple modules become one file.
+Each section is elaborated with its original module identity, preserving
+the names of automatically generated private proofs. The standalone module
+identity is saved before the sections and restored afterwards. This fixes
+the generated-private-name mismatch found at `harmonicBasisDegree._proof_4`
+without changing the original proof or comparator's equality checks.
 
 Upstream documentation: https://github.com/leanprover/comparator
 

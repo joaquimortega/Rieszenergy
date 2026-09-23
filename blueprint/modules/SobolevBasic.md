@@ -2,7 +2,7 @@
 
 The spectral unit ball includes the zero continuous function, including its explicit `Summable` guard. This makes the defining set of `sobolevWCE` nonempty and gives zero quadrature error.
 
-Assuming the stated `SobolevEmbedding Y s` contract and a nonempty finite node type, every unit-ball function has pointwise bound `K`. Its sample mean and sphere integral each lie in `[-K,K]`, so its quadrature error has absolute value at most `2K`. Consequently the defining error set is bounded above, `sobolevWCE` is nonnegative, and each admissible function's error is below that supremum. These lemmas validate the real `sSup` semantics; they do not establish the embedding itself.
+Assuming the stated `SobolevEmbedding Y s` contract and a nonempty finite node type, every unit-ball function has pointwise bound `K`. Its sample mean and sphere integral each lie in `[-K,K]`, so its quadrature error has absolute value at most `2K`. Consequently the defining error set is bounded above, `sobolevWCE` is nonnegative, and each admissible function's error is below that supremum. These lemmas validate the real `sSup` semantics; the embedding itself is established downstream in `SobolevEmbeddingDirect`.
 
 Public declarations: `zero_mem_sobolev_unit_ball`, `quadratureError_zero`, `sobolev_error_set_nonempty`, `sobolev_error_set_bddAbove`, `sobolevWCE_nonneg`, `quadratureError_abs_le_sobolevWCE`, and `sobolevWCE_le_two_mul`.
 

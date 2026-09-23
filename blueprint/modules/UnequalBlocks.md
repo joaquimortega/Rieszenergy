@@ -1,5 +1,11 @@
 # UnequalBlocks: same-side decay and opposite/central smoothness
 
+Both contracts in this module are now proved for 0<α<2 in
+[UnequalBlockEstimates](UnequalBlockEstimates.md), using the common separated
+extension and the proved mixed Taylor bound. The proof includes the central
+band and closed polar endpoints, with constants uniform in the population.
+
+
 `UnequalBlocks.lean` states the manuscript's `eq:farblock` and `eq:oppositeblock`. Both predicates orient the ordered pair with `r_k>8r_j`, leaving the reverse orientation for `BlockSymmetry` in `Latitude.lean`. `SameSide N j k` means both one-based indices are strictly below `M` or strictly above `M`; its negation deliberately includes the central index `M`. A case split on the one-based index, not merely height signs, is needed because the central band spans both sides of the equator. All block statements assume `N≥1024` and have constants independent of `N`, `j`, and `k`.
 
 For `SameSideBlockBound`, reflect the south hemisphere to the north. The northern population formula gives `r_j=4j`, `r_k=4k`; `r_k>8r_j` implies `k>8j`, so `j≤M/2` and the small band is close to the pole relative to the large one. On the full closed rectangle `s∈B_j`, `t∈B_k`, show `s>t≥0`, `U=2(1−st)>0`, and `U≥c(r_k/M)²`. An efficient exact proof of the separation ratio uses `x=1−k²/N` and boundary formulas:

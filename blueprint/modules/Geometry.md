@@ -14,7 +14,7 @@ The third conjunct handles ring offsets at least two. Ordered disjoint polar int
 
 These bounds feed the appendix's angular-distance model `D²≍(φ−ψ)²+sinφ sinψ θ²`, comparable-block gap estimates, and smooth unequal-block estimates. They do not themselves establish the kernel's derivative bounds. In particular, they must be combined with special treatment when heights coincide and the angular kernel has a cusp, and with polar endpoint expansions where `sqrt(1−z²)` has singular derivatives.
 
-Status: `GeometryBounds` is proved by `geometry_bounds` with constants `c=2` and `C=15`. The proof includes the population cap, threefold multiplicity, northern radius estimate, and equatorial reflection. `sum_radius_bounds` also gives `(4/15)M ≤ Σρ_j ≤ 8M`. `AngularGeometry` remains an explicit obligation; `polarBand` is defined. Any reused legacy bound should be checked against the new exact height `1−4j²/N` and central residual population.
+Status: `GeometryBounds` is proved by `geometry_bounds` with constants `c=2` and `C=15`. The proof includes the population cap, threefold multiplicity, northern radius estimate, and equatorial reflection. `sum_radius_bounds` also gives `(4/15)M ≤ Σρ_j ≤ 8M`. `AngularGeometry.angular_geometry` now inhabits the geometric contract; `polarBand` is defined here. Any reused legacy bound should be checked against the new exact height `1−4j²/N` and central residual population.
 
 <!-- LEAN_STATEMENTS -->
 

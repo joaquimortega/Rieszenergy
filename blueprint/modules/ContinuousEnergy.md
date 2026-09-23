@@ -14,7 +14,7 @@ For `EnergyNonnegative α`, take an arbitrary labelled finite configuration `X :
 
 An alternate proof could apply a finite negative-type inequality directly to the points plus a weak approximation of `σ`, but the measure-level route is also needed for `A=I_αN²−E[ν]≥0`, so prove the general version first. For `ν=Σ_jr_j U_{h_j}`, show mass `N`; then the same expansion with `Nσ` yields `A=−E[ν−Nσ]≥0`. This latter bridge belongs in EnergyDecomposition or BandErrors but depends on the facts proved here.
 
-Status: the file currently declares four `Prop` contracts and proves none of them. The contracts are correctly separated: surface integration, potential, finite nonnegativity, and measure negative type. In a final theorem proof, `0<α<2` must enter before the negative-type step; merely having `ConstantPotential α` does not establish nonnegativity at arbitrary exponents.
+Status: this file declares four separate `Prop` contracts. `SurfaceIntegration` remains a standalone unproved height-angle formula. The other three are inhabited externally by `SurfaceMeasure.constantPotential_of_pos`, `EnergyDecomposition.energy_nonnegative`, and `NegativeType.measureNegativeType_of_pos_of_lt_two`. The latter uses exactly `0<α<2`; constant potential alone does not establish nonnegativity at arbitrary exponents. The final main theorem uses these proved specialized results without assuming `SurfaceIntegration`.
 
 <!-- LEAN_STATEMENTS -->
 

@@ -4,7 +4,22 @@
 
 First, handle a polar endpoint. After swapping indices and reflecting north/south, take `j=1`, so `r_j=4` and comparability forces `r_k≤32`. Since the equatorial population is at least `4M≥64`, either `k≤8` or `2M−k≤8`. In the first branch, `φ+ψ≤C/M` throughout both polar bands; `D≤C/M` uniformly in angle. Use `|bandError f|≤2r sup|f|` twice to bound the block by `C_α M^(−α)`. Here `ℓ≤7`, so this implies `C_α r M^(−α)(1+ℓ)^(α−3)` after absorbing fixed constants. In the opposite-pole branch, `s≥127/128`, `t≤0`, `2≤U≤4`, `V/U≤1/2`. Obtain a rectangle-level smooth extension from `SeparatedDerivativeBound` and invoke `MixedTaylorBound` to get `C_α M^(−8)` because both populations are bounded by 32. As `ℓ≈M`, the desired bound is of order `M^(−3)` for every `α`; `M^(−8)` is stronger. The reflection identity for `F_α(−s,−t)=F_α(s,t)` proves the south case.
 
-For nonpolar bands use `AngularGeometry`: `sinφ,sinψ≈r/M` on the full angle intervals, even when one band is central (its population is `≈M`). If `3≤ℓ≤2r`, angular separation yields `D²≥c[(ℓ/M)²+(rθ/M)²]`. Apply the four-term height derivative bound from `KernelDerivatives`, integrate in `θ`, and split at `θ=ℓ/r`. The needed integrals of `D^(α−4)` and `D^(α−3)` scale respectively as `M^(4−α)ℓ^(α−3)/r` and `M^(3−α)ℓ^(α−2)/r`. For `D^(α−2)`, split **three ways**: `α<1` gives `M^(2−α)ℓ^(α−1)/r`; `α=1` gives `(M/r)log(2+r/ℓ)`; `α>1` gives `(r/M)^(α−2)`. Relative to the leading term, the subsidiary terms are bounded by `ℓ/r`, `(ℓ/r)²`, `(ℓ/r)²log(2+r/ℓ)`, or `(ℓ/r)^(3−α)`, all bounded on `0<ℓ/r≤2`. Therefore `sup|∂²_s∂²_tF_α|≤C_α M^(8−α)ℓ^(α−3)/r⁵`, and `MixedTaylorBound` gives the target.
+For nonpolar bands use `AngularGeometry`: `sinφ,sinψ≈r/M` on the
+full angle intervals, including a central band. Set R=r/M and d=ℓ/M.
+When 3≤ℓ≤2r, the checked geometry bounds the squared chord below by a
+constant times `d²+R²θ²` and above by a constant times R². The four-term
+height-chain formula has a coefficient bounded by `C R^(k−8)` in front of
+a polar derivative of total order k=2,3,4. The polar bound and D≤CR
+therefore dominate all four terms by `Cα R^(−4)D^(α−4)`.
+
+The single scalar estimate in `AngularPowerIntegrals` gives
+`∫₀^π(d²+R²θ²)^((α−4)/2) dθ ≤ Cα d^(α−3)/R`. Hence the integrated
+mixed fourth derivative is at most `Cα M^(8−α)ℓ^(α−3)/r⁵`, and mixed
+Taylor gives the required block scale. This deliberately coarser domination
+avoids separate α−3 and α−2 integrals and their apparent logarithmic
+resonance at α=1. The analytic chain and block assembly still must be
+completed; the scalar integral and geometric bounds are already checked.
+
 
 If `ℓ≤2`, the untruncated kernel can have a diagonal cusp; no `C⁴` statement for it should be used. Split the angular average at `θ₀=1/r`. The low-angle part has `D≤C/M` because `|φ−ψ|≤C/M` and `rθ/M≤1/M`; its angular length is `1/r`, so `|F_lo|≤C_α/(rM^α)`. Two TV bounds contribute `r²`, giving `C_α r/M^α`. For the high-angle part, `D≥c/M` uniformly, including on a touching or identical rectangle. Differentiate under its integral and repeat the four-term estimate with lower cutoff `1/r` to obtain `C_α M^(8−α)/r⁵`; Taylor gives the same target. This branch also handles the exact diagonal `j=k`.
 

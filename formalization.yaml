@@ -1,119 +1,233 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
-version: "v0.4"
+version: v0.4
 project:
-  name: "Deterministic Diamond points: Riesz energy and discrepancy"
-  description: >-
-    Formalization in progress of the distance-power energy bound for deterministic
-    Diamond points on S², optimal L² cap discrepancy, and Sobolev quadrature error
-    for 1<s<2. The reviewed scaffold has concrete observables, checked construction and
-    analytic foundations, and explicit open contracts; the unconditional main theorem and corollaries are not
-    yet proved.
+  name: 'Deterministic Diamond points: Riesz energy and discrepancy'
+  description: Lean formalization of the distance-power energy bound for deterministic Diamond points
+    on S², optimal L² cap discrepancy, and genuine L² Sobolev quadrature bounds with universal optimality.
+    All 104 active modules build. Continuous representatives and intrinsic weak Laplacian eigenspaces
+    are identified explicitly; final standalone comparator verification is pending.
   authors:
-    - "Codex, under instructions from Joaquim Ortega-Cerdà"
-  license: "Unspecified: no repository license grant has been supplied."
+  - Codex, under instructions from Joaquim Ortega-Cerdà
+  license: 'Unspecified: no repository license grant has been supplied.'
 sources:
-  - title: "A set of points with optimal L² spherical cap discrepancy"
-    authors: ["Carlos Beltrán", "Jordi Marzo", "Joaquim Ortega-Cerdà"]
-    id: "definitive.tex (repository source snapshot)"
-    type: "article"
-    location: "thm:main; cor:main; cor:wce; appendices 1 and 2"
-    relationship: "formalizes"
-    note: "The user supplied this manuscript. The source is preserved; corrections and clarifications are recorded in NOTEBOOK.md."
-  - title: "QMC designs: optimal order Quasi Monte Carlo integration schemes on the sphere"
-    authors: ["Johann S. Brauchart", "Edward B. Saff", "Ian H. Sloan", "Robert S. Womersley"]
-    id: "https://arxiv.org/abs/1208.3267"
-    type: "article"
-    location: "Section 5, equations (38)–(42); Theorem 3"
-    relationship: "background"
-    note: "Planned proof source for the spectral/distance-kernel comparison and Sobolev lower bound; not imported as an axiom."
-  - title: "On the lower bounds for the spherical cap discrepancy"
-    authors: ["Dmitriy Bilyk", "Johann S. Brauchart"]
-    id: "https://arxiv.org/abs/2502.15984"
-    type: "article"
-    location: "Section 2"
-    relationship: "background"
-    note: "Elementary positive-binomial and projection-moment route used in the checked Beck lower proof; no external result is assumed as an axiom."
+- title: A set of points with optimal L² spherical cap discrepancy
+  authors:
+  - Carlos Beltrán
+  - Jordi Marzo
+  - Joaquim Ortega-Cerdà
+  id: definitive.tex (repository source snapshot)
+  type: article
+  location: thm:main; cor:main; cor:wce; appendices 1 and 2
+  relationship: formalizes
+  note: The user supplied this manuscript. The source is preserved; corrections and clarifications are
+    recorded in NOTEBOOK.md.
+- title: 'QMC designs: optimal order Quasi Monte Carlo integration schemes on the sphere'
+  authors:
+  - Johann S. Brauchart
+  - Edward B. Saff
+  - Ian H. Sloan
+  - Robert S. Womersley
+  id: https://arxiv.org/abs/1208.3267
+  type: article
+  location: Section 5, equations (38)–(42); Theorem 3
+  relationship: background
+  note: Background for the spectral/distance-kernel comparison and optimal Sobolev rate. The formalization
+    proves its harmonic basis, addition formula, exact coefficients, embedding, comparison and universal
+    lower bound; no external result is imported as an axiom.
+- title: On the lower bounds for the spherical cap discrepancy
+  authors:
+  - Dmitriy Bilyk
+  - Johann S. Brauchart
+  id: https://arxiv.org/abs/2502.15984
+  type: article
+  location: Section 2
+  relationship: background
+  note: Elementary positive-binomial and projection-moment route used in the checked Beck lower proof;
+    no external result is assumed as an axiom.
 related_formalizations:
-  - id: "https://github.com/joaquimortega/Rieszenergy/tree/2348f376b5944bd36343bce8531332bdebf3cd65"
-    relationship: "adapts"
-    note: "Preserved in legacy/. It concerns different 4j−1 Simpson rings. Generic geometry, measure negative type, surface potential, cusp quadrature, grid counting and arithmetic proofs were extracted and rebuilt; no concrete Simpson estimate was transferred."
+- id: https://github.com/joaquimortega/Rieszenergy/tree/2348f376b5944bd36343bce8531332bdebf3cd65
+  relationship: adapts
+  note: Preserved in legacy/. It concerns different 4j−1 Simpson rings. Generic geometry, measure negative
+    type, surface potential, cusp quadrature, grid counting and arithmetic proofs were extracted and rebuilt;
+    no concrete Simpson estimate was transferred.
 classification:
-  arxiv: ["math.CA", "math.NA"]
+  arxiv:
+  - math.CA
+  - math.NA
 status:
-  scope: "Reviewed scaffold and substantial checked analytic foundations; the unconditional main theorem and corollaries remain in progress."
+  scope: Unconditional main theorem and both corollaries for all stated exponents, including genuine L²
+    Sobolev classes, basis existence, representative and weak eigenspace identification, and universal
+    optimality. Full 104-module build passed; final standalone verification pending.
   sorry_count: 0
   sorry_in_definitions: 0
-  axioms: ["propext", "Quot.sound", "Classical.choice"]
+  axioms:
+  - propext
+  - Quot.sound
+  - Classical.choice
   main_results:
-    - declaration: "BEMOC.Definitive.main_theorem_of_latitude"
-      file: "BEMOCFormalization/MainTheorem.lean"
-      sorry_count: 0
-      axioms: ["propext", "Quot.sound", "Classical.choice"]
-      note: "Checked conditional assembly: only LatitudeBound remains an analytic assumption; longitude, nonnegativity and small sizes are proved."
-    - declaration: "BEMOC.Definitive.beckLowerBound"
-      file: "BEMOCFormalization/CapLowerBound.lean"
-      sorry_count: 0
-      axioms: ["propext", "Quot.sound", "Classical.choice"]
-      note: "Universal lower bound for the actual cap discrepancy, with explicit constant 1/16; the stronger underlying theorem permits repeated points."
-  open_targets:
-    - "BEMOC.Definitive.MainTheoremTarget"
-    - "BEMOC.Definitive.CapDiscrepancyCorollary"
-    - "Nonempty BEMOC.Definitive.HarmonicBasis"
-    - "BEMOC.Definitive.SobolevCorollary"
-    - "BEMOC.Definitive.SobolevOptimality"
-  comparator_status: "Full comparator passed on five selected results in the 40-module checkpoint, including Beck, longitude, mixed Taylor, and the conditional main/cap assemblies; standard axioms only and kernel replay passed."
+  - declaration: BEMOC.Definitive.manuscript_targets
+    file: BEMOCFormalization/Manuscript.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: All requested results, including the genuine all-L² Sobolev WCE upper/lower bounds and harmonic
+      basis existence; no analytic premises.
+  - declaration: BEMOC.Definitive.main_theorem
+    file: BEMOCFormalization/MainTheorem.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Energy deficit bound for every 0<α<2, N≥4 and arbitrary ring phases.
+  - declaration: BEMOC.Definitive.cap_corollary
+    file: BEMOCFormalization/Corollaries.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Two-sided optimal L² cap discrepancy for all N≥4 and phases, using ordinary dt normalization.
+  - declaration: BEMOC.Definitive.sobolev_corollary
+    file: BEMOCFormalization/Corollaries.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Actual spectral Sobolev worst-case error at most Cs N^(-s/2) for all 1<s<2 and all Diamond phases.
+  - declaration: BEMOC.Definitive.sobolevOptimality
+    file: BEMOCFormalization/SobolevMomentSpectral.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Universal matching lower bound for the same genuine spectral norm.
+  - declaration: BEMOC.Definitive.harmonicBasis_nonempty
+    file: BEMOCFormalization/HarmonicBasisExistence.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Existence of an orthonormal complete basis of homogeneous harmonic polynomial restrictions.
+  - declaration: BEMOC.Definitive.beckLowerBound
+    file: BEMOCFormalization/CapLowerBound.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Universal actual cap discrepancy lower bound with explicit constant 1/16; the underlying result
+      permits repeated points.
+  - declaration: BEMOC.Definitive.manuscript_sobolev_model
+    file: BEMOCFormalization/Manuscript.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Unique continuous representative for every L² Sobolev unit-ball class; exact weak eigenspace
+      identification for the intrinsic angular Laplacian.
+  - declaration: BEMOC.Definitive.diamond_energy_bound
+    file: BEMOCFormalization/Manuscript.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Literal finite-set energy formula and exact cardinality N.
+  - declaration: BEMOC.Definitive.l2_sobolev_corollary
+    file: BEMOCFormalization/SobolevL2Corollary.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Canonical WCE over all L² Sobolev unit-ball classes has the optimal Diamond upper rate.
+  - declaration: BEMOC.Definitive.l2_sobolev_optimality
+    file: BEMOCFormalization/SobolevL2Corollary.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Quot.sound
+    - Classical.choice
+    note: Matching universal lower rate for the genuine L² Sobolev WCE.
+  open_targets: []
+  comparator_status: Historical full comparator PASS at 1eb5d8f (40 modules, conditional main/cap assemblies).
+    The 97-module standalone run detected a duplicate helper name, now repaired. Final
+    104-module unconditional theorem comparison is in progress.
 automation:
   methods:
-    - method: "agent"
-      framework: "Codex"
-      tool_setup: "Repository inspection, recovery from GitHub, Lean/Lake elaboration, local source audits, checked source export, and notebook maintenance."
-      prompting_notes: "User requested a detailed scaffold followed by full formalization, reuse audit, independent Sol reviews, comparator export and publication."
-    - method: "agent"
-      models: ["gpt-6-sol"]
-      framework: "Codex subagents"
-      tool_setup: "Independent construction, longitude, latitude-block, and corollary interface reviews; later disjoint proof tasks."
-      prompting_notes: "Review actual Lean statements against definitive.tex, record findings, and write detailed proof guides. Subagents were explicitly selected as Sol."
-  notes: >-
-    Proof techniques used or under development: finite gcd/lcm fiber counting, uniform Fourier
-    domination and Gamma ratios, p-series estimates, zero-mass and first-moment
-    cancellation, double Taylor remainders, angular cusp truncation, separated
-    even binomial series, Schoenberg negative type, Stolarsky indicator expansion,
-    positive-definite projection moments and binomial coefficient blocks for Beck's bound,
-    and spherical-harmonic reproducing-kernel comparison. The status of checked facts and remaining techniques
-    is listed separately in LEAN_FORMALIZATION.md; planned techniques are not
-    represented as completed proofs.
+  - method: agent
+    framework: Codex
+    tool_setup: Repository inspection, recovery from GitHub, Lean/Lake elaboration, local source audits,
+      checked source export, and notebook maintenance.
+    prompting_notes: User requested a detailed scaffold followed by full formalization, reuse audit, independent
+      Sol reviews, comparator export and publication.
+  - method: agent
+    models:
+    - gpt-6-sol
+    framework: Codex subagents
+    tool_setup: Independent construction, longitude, latitude-block and corollary reviews; disjoint proof
+      tasks; independent final energy and Sobolev statement/proof reviews.
+    prompting_notes: Review actual Lean statements against definitive.tex, record findings, and write
+      detailed proof guides. Subagents were explicitly selected as Sol.
+  notes: 'Proof techniques: finite gcd/lcm fiber counting; uniform cusp quadrature and p-series; zero-mass
+    and first-moment cancellation; mixed Taylor remainders; angular cusp truncation and order-four polar
+    domination; separated even binomial series with closed-endpoint transfer; Schoenberg negative type;
+    Stolarsky indicator expansion; positive projection moments and binomial coefficient blocks for Beck;
+    Fischer decomposition, Casimir orthogonality, harmonic dimension and polynomial density; zonal Legendre
+    addition formula; exact Rodrigues distance coefficients; uniform spectral reconstruction and embedding;
+    positive-coefficient comparison; Hobson radial differentiation and centered even-moment polynomial
+    tests for Sobolev optimality. Genuine L² coefficient completeness via density of continuous tests,
+    uniform construction of unique continuous Sobolev representatives, extension-independent angular differential
+    operators, and weak eigenspace characterization through integration by parts and Fourier coefficient
+    separation.'
 fidelity:
-  divergences: >-
-    The target explicitly requires N≥4, as the construction does, and generalizes
-    the fixed meridian choice to arbitrary ring phases with a uniform constant.
-    Integrals against band signed measures are represented as differences of
-    ordinary integrals. A swapped integration-variable binding in the manuscript
-    is corrected in the formal definition. The Sobolev model uses continuous
-    representatives with an explicit summability guard; its identification with
-    the complete spectral space remains a proof obligation. No energy-defined
-    substitutes for discrepancy or WCE are used.
+  divergences: The theorem explicitly requires N≥4 and strengthens the fixed-meridian construction to
+    arbitrary ring phases with a uniform constant. Band signed measures are differences of ordinary integrals,
+    with a swapped manuscript variable binding corrected. Comparable estimates use order-four domination
+    valid through α=1. The genuine L² Sobolev unit ball includes an explicit summability guard and uses
+    its proved unique continuous representative for point evaluation. The sphere Laplacian is constructed
+    through tangential rotation fields on polynomial restrictions and weak L² tests; its eigenspaces are
+    identified exactly, without a separate general-manifold Laplacian API or maximal-domain realization.
+    Optional unused scaffold Gamma and full surface-disintegration contracts are not claimed as proved.
+    No energy-defined substitute is used for discrepancy or WCE.
 review:
-  status: "agent-reviewed"
-  reviewers: ["gpt-6-sol: foundations", "gpt-6-sol: longitude", "gpt-6-sol: latitude blocks", "gpt-6-sol: corollaries"]
-  notes: "reviews/ records independent scaffold/interface audits. This is not human peer review and does not certify unfinished analytic proofs."
+  status: agent-reviewed
+  reviewers:
+  - 'gpt-6-sol: foundations'
+  - 'gpt-6-sol: longitude'
+  - 'gpt-6-sol: latitude blocks'
+  - 'gpt-6-sol: corollaries'
+  notes: Independent Sol final reviews confirm the main theorem and the genuine L² Sobolev proof chains,
+    including the representative, canonical WCE, intrinsic weak eigenspace, and polynomial-core eigenspace
+    identifications. Full active graph and frozen graph builds pass. This is not human peer review.
 alignment:
-  namespace: "BEMOC.Definitive"
+  namespace: BEMOC.Definitive
   statements:
-    - source: "thm:main"
-      lean: "MainTheoremTarget"
-      module: "BEMOCFormalization/MainTheorem.lean"
-      status: "in-progress"
-      note: "Concrete statement exists; conditional assembly proved; only the latitude bound remains open."
-    - source: "cor:main"
-      lean: "CapDiscrepancyCorollary"
-      module: "BEMOCFormalization/CapDiscrepancy.lean"
-      status: "in-progress"
-    - source: "cor:wce"
-      lean: "SobolevCorollary"
-      module: "BEMOCFormalization/Sobolev.lean"
-      status: "in-progress"
-    - source: "eq:decomp"
-      lean: "deficit_eq_latitude_add_longitude"
-      module: "BEMOCFormalization/EnergyDecomposition.lean"
-      status: "proved"
-acknowledgements: "Lean and mathlib; previous generic proofs preserved in legacy; comparator; the formalization.yaml reporting standard."
+  - source: thm:main
+    lean: main_theorem_target
+    module: BEMOCFormalization/MainTheorem.lean
+    status: proved
+    note: All analytic premises are discharged; phase-uniform for every N≥4.
+  - source: cor:main
+    lean: cap_corollary
+    module: BEMOCFormalization/Corollaries.lean
+    status: proved
+  - source: cor:wce
+    lean: l2_sobolev_corollary
+    module: BEMOCFormalization/SobolevL2Corollary.lean
+    status: proved
+    note: All L² spectral unit-ball classes participate through their unique continuous representatives;
+      the universal matching lower bound is l2_sobolev_optimality.
+  - source: eq:decomp
+    lean: deficit_eq_latitude_add_longitude
+    module: BEMOCFormalization/EnergyDecomposition.lean
+    status: proved
+acknowledgements: Lean and mathlib; previous generic proofs preserved in legacy; comparator; the formalization.yaml
+  reporting standard.

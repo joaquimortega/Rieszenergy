@@ -6,7 +6,7 @@ For an arbitrary finite label type `ι`, define its counting measure `μ = Σᵢ
 
 The specialization `energy_nonnegative` inhabits the existing `EnergyNonnegative α` contract for `Fin n`. The specialization `diamond_nonnegative` inhabits `DiamondNonnegative α`, using `card_pointIndex N hN` and `diamondEnergy = energy (point N φ) α`. Injectivity of the point map is unnecessary for this numerical inequality. Both theorems retain the exact assumptions `0 < α` and `α < 2`.
 
-The two-term algebraic decomposition remains independent of analytic estimates. The geometric identification of `ringEnergy` with the energy of a continuous ring measure, the latitude block identity, and the bounds on latitude/longitude errors are separate obligations.
+The two-term algebraic decomposition remains independent of analytic estimates. The geometric identification of `ringEnergy` with the energy of a continuous ring measure, the latitude block identity, and the bounds on latitude/longitude errors are proved in separate downstream modules.
 
 Status: all statements in this module elaborate. `lake build BEMOCFormalization.EnergyDecomposition` passes. The proof-shortcut audit finds no `sorry`, `admit`, `axiom`, or `opaque`.
 

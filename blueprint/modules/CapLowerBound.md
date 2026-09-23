@@ -81,8 +81,9 @@ real-power identities identify the right side as
 `((1/16)n^(-3/4))²`; taking square roots proves the claimed constant.
 
 The final `beckLowerBound` merely packages this universal theorem in the
-scaffold's contract, ignoring its unnecessary injectivity premise. The cap
-corollary's upper half still requires the main Diamond energy theorem.
+scaffold's contract, ignoring its unnecessary injectivity premise. The
+unconditional `Corollaries.cap_corollary` combines this lower bound with
+`MainTheorem.main_theorem` for the upper half.
 
 <!-- LEAN_STATEMENTS -->
 

@@ -248,3 +248,102 @@ forms elaborate; matching definitions, permitted axioms and kernel replay
 pass. This strengthens the tool evidence in N33 while retaining the explicit
 conditional scope of the main and cap assemblies. See the recorded command,
 standalone hash and actual log in `comparator/`.
+
+
+**N35 — One separated extension closes both unequal regimes.** The actual
+latitude kernel is expanded as `U^(α/2) H(Q)`, with
+`U=2−2st` and `Q=4(1−s²)(1−t²)/U²`. A single smooth function on the open
+set `U>0, |Q|<1` avoids incompatible local choices. Termwise mixed
+differentiation is proved on compact interior rectangles; continuity and
+contracted heights transfer the uniform estimate to the physical poles.
+This now proves the full separated derivative contract and, through mixed
+Taylor, both `SameSideBlockBound` and `OppositeBlockBound`. The main theorem
+is consequently reduced to the comparable regime alone.
+
+
+**N36 — Avoid the apparent α=1 resonance in comparable estimates.** For
+nearby comparable bands let ρ denote their common sine/radius scale and D
+the chord distance. The height-chain coefficient multiplying a polar
+derivative of total order k is O(ρ^(k−8)), for k=2,3,4. When D≤Cρ, all
+three terms are dominated by O(ρ^(−4)D^(α−4)). Thus one order-four angular
+integral suffices. On the truncated near arc, D is bounded below by a
+constant times ρθ; integrating θ^(α−4) from r⁻¹ to π has denominator
+3−α, which stays positive throughout 0<α<2. This offers a coarser route
+around the logarithmic intermediate estimate discussed in N16. The scalar
+integrals are Lean-checked in AngularPowerIntegrals; the full chain, all
+comparable regimes, and their exhaustive assembly are now proved.
+
+
+**N37 — Recover unexpectedly replaced active files before final integration.**
+`Core.lean` and `MainTheorem.lean` reappeared byte-for-byte equal to their
+archived legacy counterparts, and an extra `MainTheorem (2).lean` contained
+the correct definitive source. The cause was not established. All displaced
+copies and guides were preserved under `/tmp/riesz-sync-recovery-20260923`,
+and the correct active files were restored from the verified Git index.
+The final proof graph is rebuilt from frozen source, so an earlier direct
+elaboration against cached artifacts is not used as the release check.
+This is a worktree/integration issue, not a manuscript correction.
+
+**N38 — Qualified private names need different handling in a merged source.**
+The exporter initially treated `private theorem SeparatedSeriesRectangle.swap`
+as if the public structure prefix were a private bare name. Renaming that
+prefix corrupted the standalone file. The exporter now excludes dotted
+private declarations from bare-name rewriting. The corrected 51-module
+standalone elaborated successfully; the final graph receives its own full
+comparison. Module-local generated-lemma caches and file-local open states
+continue to be isolated as recorded in N33.
+
+**N39 — Consolidate the derivative-slice integrability lemma.** Two parallel
+branches supplied the same generic helper name. Final integration keeps
+`intervalIntegrable_mixedFourth_slice` in `NearTailIntegralCalculus` and
+specializes it to the actual latitude profile in
+`ComparableIntermediateIntegrability`. The final build also corrected the
+orientation of one equality when transferring continuity. These are proof
+integration repairs, with no changed mathematical hypothesis.
+
+**N40 — Complete the Sobolev background inside the project.** The harmonic
+model is constructed from homogeneous harmonic polynomials: Fischer
+spanning, dimension 2ℓ+1, cross-degree orthogonality, and polynomial density.
+The addition formula and exact Legendre distance moments connect the
+specified spectral norm to the Riesz deficit. Direct spectral embedding
+justifies the worst-case supremum. A centered even-moment polynomial and
+the all-degree radial differentiation identity prove the matching universal
+lower bound. This replaces the manuscript's reliance on external background
+for the corollary by explicit Lean proofs; it does not change the observable.
+
+
+**N41 — Make the Sobolev model identification explicit.** Independent final
+review distinguished the already-proved continuous spectral formulation from
+the manuscript's initial L² presentation. `HarmonicL2` now proves genuine
+L² coefficient completeness, and `SobolevL2` constructs the unique continuous
+representative of every spectral unit-ball class for s>1, preserving each
+Fourier coefficient and norm term. `SobolevL2Corollary` defines the supremum
+using that representative for every L² class and proves exact agreement
+with the continuous spectral WCE. The intrinsic Laplacian bridge uses actual
+tangential rotation fields on polynomial restrictions and their weak L²
+test relation; it does not define an operator by prescribing a spectrum.
+This closes a formal-model presentation issue, not a correction of the
+manuscript's standard Sobolev embedding assertion. The scope is a
+polynomial-core intrinsic operator and weak eigenfunctions, rather than a
+separate general-manifold differential-geometry library.
+
+
+**N42 — A standalone build detects a duplicate public helper.** The
+97-module merged source found `sobolevNormTerm_smul` independently declared
+in both the kernel and lower-bound branches, despite successful modular
+builds. The lower-bound helper is now named `sobolevNormTerm_smul_lower`,
+with its local uses updated. Its statement and proof are unchanged.
+The failed 97-module export is not a comparator certificate; the final
+source receives a new standalone elaboration and full comparison.
+
+**N43 — Preserve original module identities for generated private proofs.**
+The first 104-module standalone elaborated, but strict comparison rejected
+`harmonicBasisDegree._proof_4`. Its type matched, and the proof expressions
+differed only in the module component of a generated private helper name:
+`BEMOCFormalization.HarmonicAddition` versus `comparator.SelfContained`.
+The exporter now elaborates each source section under its original module
+identity, then restores the standalone identity before writing its compiled
+module. It retains the cache reset and explicit private-name collision
+handling. A focused export reproduces the original proof expression exactly.
+No mathematical proof or comparator equality rule was changed; the full
+final comparison checks this export transformation separately.

@@ -1,6 +1,6 @@
 # Independent Sol reviews
 
-All current scaffold modules were assigned to reviewers explicitly selected
+The initial scaffold modules were assigned to reviewers explicitly selected
 as **gpt-6-sol**, independently of the main scaffold author. These are
 mathematical/interface reviews, not completed Lean proofs or human peer review.
 
@@ -43,3 +43,26 @@ discrepancy definition, ordered-pair convention, endpoint limit and constant
 The [angular and scalar-series review](angular-series-review.md) checks
 AngularDistance, SeparatedKernel, and ScalarPowerSeries, including closed
 height endpoints and the open convergence interval for scalar derivatives.
+
+The [separated and unequal-block review](separated-unequal-review.md) checks
+the global extension, mixed derivative identification, polar boundary passage,
+and exact same-side/opposite block contracts, including the central band.
+
+
+The [final main-theorem review](final-main-theorem-review.md) checks the
+construction, ordered-pair normalization, phase uniformity, exhaustive
+latitude cases, and small-size closure. Its remaining wrapper integration
+was subsequently completed and the later 104-module dependency graph built.
+
+The [final Sobolev review](final-sobolev-review.md) confirms the unconditional
+continuous spectral WCE upper/lower estimates and exact normalization. It
+initially identified a formal link needed for the manuscript’s L² and
+Laplace–Beltrami presentation. The follow-up review confirms that the
+representative, canonical all-L² WCE, and intrinsic weak eigenspace theorems
+close it. The Laplacian is the sphere-specific angular operator on a
+polynomial test core; no separate general-manifold API is claimed.
+
+The [standalone exporter hygiene review](export-hygiene-review.md) checks the
+per-module elaboration identity, private-name rewriting, auxiliary cache
+reset, scoped command state, and final identity restoration. It is a static
+review; the strict eight-theorem comparator result remains a separate check.

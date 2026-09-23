@@ -1,16 +1,16 @@
-# Current proof blueprint
+# Current formalization blueprint
 
-The authoritative source is now `definitive.tex`. The full module-by-module
-blueprint is [blueprint/README.md](blueprint/README.md), with detailed proof
-guides, exact Lean statements and explicit dependencies for every module.
+[`definitive.tex`](definitive.tex) is the authoritative manuscript. The complete inventory of **104 Lean modules**, their proof roles, and links to every per-module guide is in [blueprint/README.md](blueprint/README.md). The entry point [BEMOCFormalization.lean](BEMOCFormalization.lean) now imports all 104 modules transitively.
 
-The previous Simpson-based blueprint is archived at
-[legacy/FORMALIZATION_BLUEPRINT.md](legacy/FORMALIZATION_BLUEPRINT.md); its
-completion claims apply to the earlier project, not the new configuration.
+The Lean source now contains an unconditional proof of `main_theorem`: for every `0 < α < 2`, every `N ≥ 4`, and every ring-phase choice, its Riesz deficit is nonnegative and bounded by a constant depending only on α times the manuscript scale. The comparable, same-side, and opposite block estimates close the latitude estimate; the independent longitude estimate and finite-size argument complete the energy proof. `main_theorem_target` packages the full exponent range.
 
-Current status: the construction, generic analytic foundations, angular
-quadrature, exact latitude decomposition and conditional theorem/corollary
-assemblies have checked proofs. Stolarsky and Beck are proved, reducing the
-cap corollary to the main energy theorem at α=1. The unconditional main theorem and both final
-corollaries remain proof goals. See [LEAN_FORMALIZATION.md](LEAN_FORMALIZATION.md) for the precise
-boundary and [NOTEBOOK.md](NOTEBOOK.md) for source corrections.
+The source also contains `cap_corollary` using Stolarsky's identity and Beck's lower bound. For the Sobolev result, actual homogeneous harmonic polynomials yield a complete orthonormal basis through rotation-based cross-degree orthogonality, Fischer decomposition, and full-support L² positivity. The all-degree addition formula and distance-kernel coefficients establish `sobolev_energy_comparison`; the direct embedding and moment lower-bound arguments complete `sobolev_corollary` for `1 < s < 2` and its optimality. `definitive_targets` combines the main theorem, cap corollary, existence of the harmonic basis, and Sobolev corollary with optimality.
+
+
+The L² extension now works with actual `Lp ℝ 2 sigma` equivalence classes. `HarmonicL2` proves coefficient completeness and injectivity; `SobolevL2` constructs the unique continuous representative of each L² Sobolev class in the stated range. `SobolevL2Corollary` gives its canonical worst-case error, energy comparison, and optimality through that representative. Separately, `HarmonicLaplacian` defines the intrinsic angular Laplacian on polynomial sphere restrictions from the three tangent rotation generators; `HarmonicL2Laplacian` proves that the weak L² eigenspace at degree `ℓ` is exactly the space of restrictions of degree-`ℓ` harmonic polynomials. This is an intrinsic **polynomial-core weak Laplacian**, not a general manifold Laplace–Beltrami construction. `Manuscript` now proves `manuscript_targets`, aggregating the main energy theorem, cap discrepancy, existence of the harmonic basis, and the genuine L² Sobolev upper and lower rates. It also proves the raw finite-set `diamond_energy_bound` with exact cardinality and ordered-pair normalization. `manuscript_sobolev_model` combines unique L² Sobolev representatives with that weak eigenspace characterization.
+
+The expanded 104-module build passes; its final standalone comparator check is pending. The source theorem bodies and the final verification result are distinct claims; consult [LEAN_FORMALIZATION.md](LEAN_FORMALIZATION.md) for the current check status.
+
+Some older or stronger interface propositions remain optional: `SurfaceIntegration` in `ContinuousEnergy.lean`, and `FourierDomination`, `CuspCoefficientFormula` (the Gamma formula), and `FourierDecayBound` in `FourierDecay.lean`. None is a premise of the final exported targets. The operative geometric surface-measure, angular quadrature, and Fourier estimates are proved along the routes listed in the [module inventory](blueprint/README.md).
+
+The previous Simpson-based blueprint is archived at [legacy/FORMALIZATION_BLUEPRINT.md](legacy/FORMALIZATION_BLUEPRINT.md); its completion claims concern the earlier configuration. Source corrections and manuscript audits are recorded in [NOTEBOOK.md](NOTEBOOK.md).

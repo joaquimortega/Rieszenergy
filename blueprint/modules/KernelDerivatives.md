@@ -8,7 +8,17 @@ For the height derivative estimate, substitute `s=cosφ`, `t=cosψ` only when `�
 
 `SeparatedDerivativeBound α` formalizes the binomial-series proof at `U=2−2st>0`, `V=2√(1−s²)√(1−t²)`, with `V≤(1−ε)U`. Put `A=1−s²`, `B=1−t²`. On the physical square, `A,B≥0`, `A,B≤U≤4`, and `V²=4AB`. The angular average equals `U^(α/2)∑_{m≥0}a_m(4AB/U²)^m`, where odd cosine powers vanish. Prove local uniform convergence for four derivatives when `|4AB/U²|<(1−ε')²<1`; after differentiation, the `m≥2` terms are bounded by `C_α(1+m)^4(1−ε')^(2m−4)U^(α/2−4)`. Treat `m=0,1` separately so that no negative powers of `A` or `B` appear at a pole. This series in the polynomial variables `A,B,U` defines a smooth extension outside `[-1,1]²`, unlike the original square-root expression. It provides the pointwise witness `G,W` and the derivative bound in the contract.
 
-**Gluing obligation:** The current contract returns a potentially different `G,W` at each `(s,t)`. `MixedTaylorBound` needs one `G` on each closed separated band rectangle. Prove local extensions agree where their neighborhoods meet the physical square, hence their derivatives agree on interior overlaps; use continuity for boundary points. Compactness and a finite subcover then give a uniform rectangle-level `C⁴` extension, or replace the local witness with the same canonical binomial-series formula on a common open set around the rectangle. This is a real proof obligation, not a definitional rewrite.
+**Rectangle-level extension (now proved):** `SeparatedComplete` constructs
+one canonical `separatedSmoothExtension α` on the common algebraic open set
+`U>0, |Q|<1`. Its equality to the latitude kernel holds throughout the
+physical part of that set. Local rectangles justify termwise mixed
+differentiation, and continuity transfers the uniform estimate to boundary
+points. Thus the same function and domain work on each whole closed
+separated band rectangle; no gluing of unrelated local witnesses is used.
+The exact `SeparatedDerivativeBound` contract is proved for 0<α<2. See
+[the completion guide](SeparatedComplete.md) and its explicit dependencies.
+The polar derivative branch is developed separately in `PolarDerivatives`.
+
 
 Legacy candidates: `legacy/BEMOCFormalization/LatitudeUnequalSeries.lean` for the normalized series and polynomial-geometric summability; `LatitudeCoefficientDerivatives.lean`, `LatitudePowerJetBounds.lean`, and `LatitudeAngularJetBounds.lean` for derivative patterns. Translate exponents and normalization carefully: the present theorem is for `0<α<2`, with `β=α/2`, and `latitudeKernel` integrates over `[0,2π]` before the `[0,π]` symmetry reduction.
 

@@ -2,6 +2,10 @@ import BEMOCFormalization.MainTheorem
 import BEMOCFormalization.CapDiscrepancy
 import BEMOCFormalization.CapLowerBound
 import BEMOCFormalization.Sobolev
+import BEMOCFormalization.HarmonicBasisExistence
+import BEMOCFormalization.DistanceScalarBridge
+import BEMOCFormalization.HarmonicAdditionLegendre
+import BEMOCFormalization.SobolevMomentSpectral
 
 namespace BEMOC.Definitive
 
@@ -27,7 +31,7 @@ def SobolevAssembly : Prop :=
     MainTheorem (2 * s - 2) → SobolevEmbedding Y s →
     SobolevEnergyComparison Y s → SobolevCorollary Y s
 
-/-- Full requested scaffold destination, including existence of the harmonic model. -/
+/-- The main theorem and both corollaries, including existence of the harmonic model. -/
 def DefinitiveTargets : Prop :=
   MainTheoremTarget ∧ CapDiscrepancyCorollary ∧ Nonempty HarmonicBasis ∧
     ∀ Y : HarmonicBasis, ∀ s : ℝ, 1 < s → s < 2 →
@@ -93,6 +97,11 @@ theorem cap_corollary_of_main_and_beck (hmain : MainTheorem 1)
 theorem cap_corollary_of_main (hmain : MainTheorem 1) : CapDiscrepancyCorollary :=
   cap_corollary_of_main_and_beck hmain beckLowerBound
 
+/-- The cap corollary is reduced to the comparable-band estimate at exponent one. -/
+theorem cap_corollary_of_comparable (hc : ComparableBlockBound 1) :
+    CapDiscrepancyCorollary :=
+  cap_corollary_of_main (main_theorem_of_comparable (by norm_num) (by norm_num) hc)
+
 /-- Conditional transfer from the actual spectral WCE comparison to the paper's decay rate. -/
 theorem sobolev_assembly : SobolevAssembly := by
   intro Y s _hs1 _hs2 hcon hmain _hemb hcomp
@@ -123,5 +132,27 @@ theorem sobolev_assembly : SobolevAssembly := by
     have hh := hcomparison.trans (mul_le_mul_of_nonneg_left hnormalized hA.le)
     convert hh using 1 <;> ring
   exact nonneg_le_sqrt_mul_rpow (mul_pos hA hC) hn hsq
+
+/-- Optimal spherical cap discrepancy for every Diamond configuration and all ring phases. -/
+theorem cap_corollary : CapDiscrepancyCorollary :=
+  cap_corollary_of_main (main_theorem (by norm_num) (by norm_num))
+
+/-- The actual spectral Sobolev worst-case error is controlled by the Riesz deficit. -/
+theorem sobolev_energy_comparison (Y : HarmonicBasis) {s : ℝ}
+    (hs1 : 1 < s) (hs2 : s < 2) : SobolevEnergyComparison Y s :=
+  sobolevEnergyComparison_of_addition Y hs1 hs2 (harmonic_addition_legendre Y)
+
+/-- Optimal-order Sobolev cubature for every Diamond configuration in the range 1 < s < 2. -/
+theorem sobolev_corollary (Y : HarmonicBasis) {s : ℝ}
+    (hs1 : 1 < s) (hs2 : s < 2) : SobolevCorollary Y s :=
+  sobolev_assembly Y s hs1 hs2 constructionFacts
+    (main_theorem (sobolev_exponent_range hs1 hs2).1 (sobolev_exponent_range hs1 hs2).2)
+    (sobolevEmbedding_of_harmonicAddition Y hs1) (sobolev_energy_comparison Y hs1 hs2)
+
+/-- The complete, unconditional formalization of the main theorem and both corollaries. -/
+theorem definitive_targets : DefinitiveTargets := by
+  refine ⟨main_theorem_target, cap_corollary, harmonicBasis_nonempty, ?_⟩
+  intro Y s hs1 hs2
+  exact ⟨sobolev_corollary Y hs1 hs2, sobolevOptimality Y hs1 hs2⟩
 
 end BEMOC.Definitive

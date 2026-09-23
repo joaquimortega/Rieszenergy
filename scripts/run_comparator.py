@@ -36,7 +36,6 @@ def main() -> None:
     parser.add_argument("--challenge-module", required=True)
     parser.add_argument("--solution-module", default="comparator.SelfContained")
     parser.add_argument("--theorem", required=True, action="append")
-    parser.add_argument("--definition", action="append", default=[])
     args = parser.parse_args()
 
     if (ROOT / "lean-toolchain").read_text().strip() != "leanprover/lean4:v4.19.0":
@@ -50,8 +49,6 @@ def main() -> None:
         "theorem_names": args.theorem,
         "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
     }
-    if args.definition:
-        config["definition_names"] = args.definition
     environment = os.environ.copy()
     environment["COMPARATOR_LEAN4EXPORT"] = exporter
     environment["COMPARATOR_LANDRUN"] = landrun

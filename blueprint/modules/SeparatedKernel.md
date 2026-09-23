@@ -1,7 +1,8 @@
 # Algebra of the separated kernel
 
 This module proves the elementary bounds used by the separated even-power
-series. It does not yet prove the full separated derivative contract.
+series. The full separated derivative contract is proved downstream in
+`SeparatedComplete` and consumed by the unequal and comparable block estimates.
 
 ## Dependencies
 
